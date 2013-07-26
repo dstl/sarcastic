@@ -1,0 +1,215 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9504211817A24F9400A076FC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504211717A24F9400A076FC /* main.c */; };
+		9504211A17A24F9400A076FC /* GOSS.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9504211917A24F9400A076FC /* GOSS.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9504211117A24F9400A076FC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				9504211A17A24F9400A076FC /* GOSS.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9504211317A24F9400A076FC /* GOSS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GOSS; sourceTree = BUILT_PRODUCTS_DIR; };
+		9504211717A24F9400A076FC /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		9504211917A24F9400A076FC /* GOSS.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GOSS.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9504211017A24F9400A076FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9504210817A24F9400A076FC = {
+			isa = PBXGroup;
+			children = (
+				9504211617A24F9400A076FC /* GOSS */,
+				9504211417A24F9400A076FC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9504211417A24F9400A076FC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9504211317A24F9400A076FC /* GOSS */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9504211617A24F9400A076FC /* GOSS */ = {
+			isa = PBXGroup;
+			children = (
+				9504211717A24F9400A076FC /* main.c */,
+				9504211917A24F9400A076FC /* GOSS.1 */,
+			);
+			path = GOSS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9504211217A24F9400A076FC /* GOSS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9504211D17A24F9400A076FC /* Build configuration list for PBXNativeTarget "GOSS" */;
+			buildPhases = (
+				9504210F17A24F9400A076FC /* Sources */,
+				9504211017A24F9400A076FC /* Frameworks */,
+				9504211117A24F9400A076FC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GOSS;
+			productName = GOSS;
+			productReference = 9504211317A24F9400A076FC /* GOSS */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9504210A17A24F9400A076FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = Dstl;
+			};
+			buildConfigurationList = 9504210D17A24F9400A076FC /* Build configuration list for PBXProject "GOSS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9504210817A24F9400A076FC;
+			productRefGroup = 9504211417A24F9400A076FC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9504211217A24F9400A076FC /* GOSS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9504210F17A24F9400A076FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9504211817A24F9400A076FC /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9504211B17A24F9400A076FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9504211C17A24F9400A076FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9504211E17A24F9400A076FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9504211F17A24F9400A076FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9504210D17A24F9400A076FC /* Build configuration list for PBXProject "GOSS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9504211B17A24F9400A076FC /* Debug */,
+				9504211C17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9504211D17A24F9400A076FC /* Build configuration list for PBXNativeTarget "GOSS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9504211E17A24F9400A076FC /* Debug */,
+				9504211F17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9504210A17A24F9400A076FC /* Project object */;
+}
