@@ -7,8 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9504211817A24F9400A076FC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504211717A24F9400A076FC /* main.c */; };
 		9504211A17A24F9400A076FC /* GOSS.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9504211917A24F9400A076FC /* GOSS.1 */; };
+		9504214F17A4501A00A076FC /* GOSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504214E17A4501A00A076FC /* GOSS.c */; };
+		9504215817A453E300A076FC /* readKdTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215717A453E300A076FC /* readKdTree.c */; };
+		9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */; };
+		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
+		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
+		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
+		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
+		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95DB871917A8267200180864 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95DB871817A8267200180864 /* getUserInput.c */; };
+		95E31A3F17AED7BC00808314 /* libSIlib-0.4.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E31A3E17AED7BC00808314 /* libSIlib-0.4.4.a */; };
+		95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +37,27 @@
 
 /* Begin PBXFileReference section */
 		9504211317A24F9400A076FC /* GOSS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GOSS; sourceTree = BUILT_PRODUCTS_DIR; };
-		9504211717A24F9400A076FC /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		9504211917A24F9400A076FC /* GOSS.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GOSS.1; sourceTree = "<group>"; };
+		9504214E17A4501A00A076FC /* GOSS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GOSS.c; sourceTree = "<group>"; };
+		9504215117A4502800A076FC /* GOSS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GOSS.h; sourceTree = "<group>"; };
+		9504215617A453E300A076FC /* readKdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readKdTree.h; sourceTree = "<group>"; };
+		9504215717A453E300A076FC /* readKdTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readKdTree.c; sourceTree = "<group>"; };
+		9504215917A453F100A076FC /* BuildRopesAndBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildRopesAndBoxes.h; sourceTree = "<group>"; };
+		9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BuildRopesAndBoxes.c; sourceTree = "<group>"; };
+		9504216117A4543000A076FC /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = banner.c; sourceTree = "<group>"; };
+		9504216817A454AA00A076FC /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
+		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
+		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
+		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
+		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		95DB871817A8267200180864 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
+		95DB873817A9931800180864 /* libSIlib-0.4.0-2-2bb2516.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.0-2-2bb2516.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.0-2-2bb2516.a"; sourceTree = "<group>"; };
+		95E31A3E17AED7BC00808314 /* libSIlib-0.4.4.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.4.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.4.a"; sourceTree = "<group>"; };
+		95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
+		95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
+		95E3E50817AA58110094496B /* GOSSKernelCode.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = GOSSKernelCode.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +65,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E31A3F17AED7BC00808314 /* libSIlib-0.4.4.a in Frameworks */,
+				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
+				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
+				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +78,11 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
+				95E31A3E17AED7BC00808314 /* libSIlib-0.4.4.a */,
+				957B840917AD25DA00B963DE /* OpenCL.framework */,
+				957B840717AD25C600B963DE /* libreadline.dylib */,
+				957B840517AD255E00B963DE /* libexpat.dylib */,
+				95DB873817A9931800180864 /* libSIlib-0.4.0-2-2bb2516.a */,
 				9504211617A24F9400A076FC /* GOSS */,
 				9504211417A24F9400A076FC /* Products */,
 			);
@@ -60,7 +99,21 @@
 		9504211617A24F9400A076FC /* GOSS */ = {
 			isa = PBXGroup;
 			children = (
-				9504211717A24F9400A076FC /* main.c */,
+				95E3E50817AA58110094496B /* GOSSKernelCode.cl */,
+				9504216817A454AA00A076FC /* GenGitVersion.sh */,
+				9504214E17A4501A00A076FC /* GOSS.c */,
+				95339DA517AAFCF00007466A /* threadCore.c */,
+				9504215117A4502800A076FC /* GOSS.h */,
+				95DB871817A8267200180864 /* getUserInput.c */,
+				9504215617A453E300A076FC /* readKdTree.h */,
+				9504215717A453E300A076FC /* readKdTree.c */,
+				9504215917A453F100A076FC /* BuildRopesAndBoxes.h */,
+				9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */,
+				9504216117A4543000A076FC /* banner.c */,
+				9504216A17A4654D00A076FC /* TxPowerPerRay.c */,
+				9504216B17A4654D00A076FC /* TxPowerPerRay.h */,
+				95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */,
+				95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */,
 				9504211917A24F9400A076FC /* GOSS.1 */,
 			);
 			path = GOSS;
@@ -73,6 +126,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9504211D17A24F9400A076FC /* Build configuration list for PBXNativeTarget "GOSS" */;
 			buildPhases = (
+				9504216917A454D000A076FC /* ShellScript */,
 				9504210F17A24F9400A076FC /* Sources */,
 				9504211017A24F9400A076FC /* Frameworks */,
 				9504211117A24F9400A076FC /* CopyFiles */,
@@ -112,12 +166,35 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		9504216917A454D000A076FC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PROJECT_DIR}/GOSS/GenGitVersion.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		9504210F17A24F9400A076FC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9504211817A24F9400A076FC /* main.c in Sources */,
+				9504214F17A4501A00A076FC /* GOSS.c in Sources */,
+				9504215817A453E300A076FC /* readKdTree.c in Sources */,
+				9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */,
+				9504216217A4543000A076FC /* banner.c in Sources */,
+				9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */,
+				95DB871917A8267200180864 /* getUserInput.c in Sources */,
+				95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */,
+				95339DA617AAFCF00007466A /* threadCore.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +224,14 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include/SIlib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -170,6 +255,14 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include/SIlib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
@@ -178,6 +271,10 @@
 		9504211E17A24F9400A076FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -185,6 +282,10 @@
 		9504211F17A24F9400A076FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -208,6 +309,7 @@
 				9504211F17A24F9400A076FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
