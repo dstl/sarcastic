@@ -54,7 +54,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     *bounceToShow       =  0 ;
     
     prompt  = (char *)malloc(sizeof(char)*256);
-    file    = (char *)malloc(sizeof(char)*256);
+//    file    = (char *)malloc(sizeof(char)*256);
 
     do {
         im_init_status(fileStat, 0) ;
@@ -137,6 +137,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                              (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
     
     free(prompt);
+//    free(file) ;
 
     destroy_cphd_header(&hdr, status);
     return (status->status) ;

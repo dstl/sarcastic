@@ -101,20 +101,6 @@ typedef struct Texture {
     float n;     // Shininess constant
 } Texture;
 
-typedef struct Triangle {
-    int  triNum;    // Triangle ID
-    double d;         // Constant of plane equation
-    double nd_u;      // Normal.u / normal.k
-    double nd_v;      // normal.v / normal.k
-    int k;          // projection dimension
-    double kbu;
-    double kbv;
-    double kbd;
-    double kcu;
-    double kcv;
-    double kcd;
-    int textureInd;
-} Triangle;
 
 typedef struct TriCoords {
     SPVector A ;      // Cartesian coordinates of triangle
@@ -145,6 +131,22 @@ typedef struct cplxf {
     float r;
     float i;
 } cplxf;
+
+typedef struct Triangle {
+    int  triNum;    // Triangle ID
+    double d;         // Constant of plane equation
+    double nd_u;      // Normal.u / normal.k
+    double nd_v;      // normal.v / normal.k
+    int k;          // projection dimension
+    double kbu;
+    double kbv;
+    double kbd;
+    double kcu;
+    double kcv;
+    double kcd;
+    int textureInd;
+} Triangle;
+
 
 void banner () ;
 

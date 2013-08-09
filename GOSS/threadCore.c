@@ -39,7 +39,7 @@
  ***************************************************************************/
 #include "GOSS.h"
 
-static char *kernelCodePath = "/GOSSKernelCode.cl" ;
+static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
 
 typedef struct beamParams {
     int nAzBeam ;                // Number of azimuth slices in beam
@@ -84,6 +84,9 @@ void * devPulseBlock ( void * threadArg ) {
     SPVector aimdir ;
     double derampRange, currentReal, currentImag, phse, power ;
     int nrnpItems;
+    
+    printf("ptr to threadData %p\n",threadArg);
+    printf("ptr to threadData TxPositions : %p\n",td->TxPositions);
     
     beam.nAzBeam          = td->nAzBeam ;
     beam.nElBeam          = td->nElBeam ;
@@ -154,11 +157,11 @@ void * devPulseBlock ( void * threadArg ) {
     if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-7); }
     dKdTree = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &err);
     if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-8); }
-    dtriListData = clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, NULL);
+    dtriListData = clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &err);
     if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-9); }
-    dtriListPtrs = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, NULL);
+    dtriListPtrs = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &err);
     if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-10); }
-    drnp = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*beam.dAz*beam.dEl*MAXBOUNCES, NULL, NULL);
+    drnp = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES, NULL, &err);
     if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-11); }
 
     // Load the device buffers
@@ -177,12 +180,12 @@ void * devPulseBlock ( void * threadArg ) {
     //
     err  = clSetKernelArg(kernel, 0,  sizeof(beamParams), &beam);
     err |= clSetKernelArg(kernel, 1,  sizeof(int), &td->bounceToShow);
-    err |= clSetKernelArg(kernel, 2,  sizeof(cl_mem), dTriangles);
-    err |= clSetKernelArg(kernel, 3,  sizeof(cl_mem), dTextures);
-    err |= clSetKernelArg(kernel, 4,  sizeof(cl_mem), dKdTree);
-    err |= clSetKernelArg(kernel, 5,  sizeof(cl_mem), dtriListData);
-    err |= clSetKernelArg(kernel, 6,  sizeof(cl_mem), dtriListPtrs);
-    err |= clSetKernelArg(kernel, 7,  sizeof(cl_mem), drnp);
+    err |= clSetKernelArg(kernel, 2,  sizeof(cl_mem), &dTriangles);
+    err |= clSetKernelArg(kernel, 3,  sizeof(cl_mem), &dTextures);
+    err |= clSetKernelArg(kernel, 4,  sizeof(cl_mem), &dKdTree);
+    err |= clSetKernelArg(kernel, 5,  sizeof(cl_mem), &dtriListData);
+    err |= clSetKernelArg(kernel, 6,  sizeof(cl_mem), &dtriListPtrs);
+    err |= clSetKernelArg(kernel, 7,  sizeof(cl_mem), &drnp);
     if (err != CL_SUCCESS){
         printf("Error: Failed to set kernel arguments! %d\n", err);
         exit(1);
@@ -204,6 +207,7 @@ void * devPulseBlock ( void * threadArg ) {
                    ,tid, sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES);
             exit(-6);
         }
+        
         err = clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES,rnp,0,NULL,NULL);
         if (err != CL_SUCCESS){
             printf("Error: Failed to set write buffer for device %d : [%d]\n",tid, err);
@@ -212,7 +216,12 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Set correct parameters for beam to ray trace
         //
-        beam.TxPos = td->TxPositions[pulseIndex] ;
+        beam.TxPos.x = td->TxPositions[pulseIndex].x ;
+        beam.TxPos.y = td->TxPositions[pulseIndex].y ;
+        beam.TxPos.z = td->TxPositions[pulseIndex].z ;
+
+        printf("Tx position is %f,%f,%f\n",td->TxPositions[pulseIndex].x,td->TxPositions[pulseIndex].y,td->TxPositions[pulseIndex].z );
+        printf("beam.TxPos is %f,%f,%f\n", beam.TxPos.x, beam.TxPos.y, beam.TxPos.z) ;
         beam.RxPos = td->RxPositions[pulseIndex] ;
                 
         err = clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);

@@ -41,9 +41,12 @@
 #include "Version.h"
 
 void banner (){
+    printf(" \n");
     printf("              Geometrical Optics SAR Simulator (GOSS) [Magdalen]\n");
     printf("                          Version : %s \n", FULL_VERSION);
-    printf("                               Revision: %s, %s \n",REVISION, VERSION_DATE);
+    printf("                    Revision: %s, %s \n",REVISION, VERSION_DATE);
     printf("               Copyright (c) 2013 [Dstl]. All rights reserved.\n");
+    printf(" \n");
+
     return ;
 }

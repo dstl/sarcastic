@@ -74,7 +74,14 @@ void ClipToRect(float *x0, float *y0, float *x1, float *y1, float xmin, float xm
 
 // defines the structure for a vector
 //
-typedef struct { double x, y, z; } SPVector ;
+typedef union {
+    struct { double x, y, z; };
+    struct { double r, g, b; };
+    struct { double cell[3]; };
+    struct { double R, theta, phi; };
+    struct { double lat, lon, alt; };
+    
+} SPVector ;
 
 /// Create a vector
 ///
@@ -87,9 +94,9 @@ typedef struct { double x, y, z; } SPVector ;
 /// Multiply a vector by a constant
 ///
 #define VECT_SCMULT(inVect,inScal,outVect)  {   \
-    outVect.x = (vect.x)*scal;                  \
-    outVect.y = (vect.y)*scal;                  \
-    outVect.z = (vect.z)*sc;                    \
+    outVect.x = (inVect.x)*inScal;              \
+    outVect.y = (inVect.y)*inScal;              \
+    outVect.z = (inVect.z)*inScal;              \
 }
 
 /// Subtract two vectors
@@ -153,11 +160,11 @@ typedef struct { double x, y, z; } SPVector ;
 /// project a vector along a normal
 ///
 #define VECT_PROJ(vect, norm, outVect) {                        \
-    SPVector tmp;                                               \
-    double dot = VECT_DOT(vect, norm);                          \
-    tmp.x = vect.x - dot*norm.x;                                \
-    tmp.y = vect.y - dot*norm.y;                                \
-    tmp.z = vect.z - dot*norm.z;                                \
+    SPVector __tmp;                                             \
+    double __dot = VECT_DOT(vect, norm);                        \
+    __tmp.x = vect.x - __dot*norm.x;                            \
+    __tmp.y = vect.y - __dot*norm.y;                            \
+    __tmp.z = vect.z - __dot*norm.z;                            \
     VECT_UNIT(tmp, outVect);                                    \
 }
 
@@ -190,8 +197,8 @@ typedef struct { double x, y, z; } SPVector ;
 void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector outVect);
 
 typedef struct Ray {
-    VectorH org;    // Origin
-    VectorH dir;    // Direction
+    SPVector org;    // Origin
+    SPVector dir;    // Direction
     float   san;    // Solid Angle for Ray
 } Ray;
 
@@ -210,8 +217,8 @@ typedef struct Texture {
 } Texture;
 
 typedef struct AABB {
-    VectorH AA;
-    VectorH BB;
+    SPVector AA;
+    SPVector BB;
 } AABB;
 
 typedef union {
@@ -255,10 +262,39 @@ typedef struct beamParams {
     int bounceToShow;            // Which bounce to output
 } beamParams ;
 
-__kernel void rayTraceBeam (const beamParams beam           // structure for beam parameters
-                            const int bounceToShow          // Which bounce to print out
-                            __global Triangle * Triangles,     // array - triangle data
-                            __global Texture * textureData,    // array - texture data
+typedef struct Triangle {
+    int  triNum;    // Triangle ID
+    double d;         // Constant of plane equation
+    double nd_u;      // Normal.u / normal.k
+    double nd_v;      // normal.v / normal.k
+    int k;          // projection dimension
+    double kbu;
+    double kbv;
+    double kbd;
+    double kcu;
+    double kcv;
+    double kcd;
+    int textureInd;
+} Triangle;
+
+
+// forward declaration of functions
+//
+int occluded(SPVector point, SPVector dir,AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int * triangleListPtrs, __global Triangle * Triangles);
+Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int * triangleListPtrs, __global Triangle * Triangles, int debug);
+double reflectPower(double rayPower, SPVector L,    SPVector R, SPVector V, Hit h, __global Triangle * Triangles, __global Texture * textureData);
+Ray reflect(Ray ray, Hit h, __global Triangle * Triangles);
+int clipToAABB(AABB boundingBox, SPVector *lineStart, SPVector *lineEnd);
+void ClipToBox(SPVector *p0, SPVector *p1, SPVector min, SPVector max, int *status);
+void Intersect(__global Triangle *tri, Ray *ray, Hit *hit);
+OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max);
+SPVector hitPoint (Hit h, Ray r);
+
+
+__kernel void rayTraceBeam (const beamParams beam,          // structure for beam parameters
+                            const int bounceToShow,         // Which bounce to print out
+                            __global Triangle * Triangles,  // array - triangle data
+                            __global Texture * textureData, // array - texture data
                            __global KdData * KdTree,        // array containing KdTree
                            __global int *triangleListData,  // array of triangle indices into Triangles
                            __global int *triangleListPtrs,  // array of pointers into triangleListData for each node
@@ -268,23 +304,37 @@ __kernel void rayTraceBeam (const beamParams beam           // structure for bea
     int xId = get_global_id(0);
     int yId = get_global_id(1);
     
-    SPVector aimdir, elAxis, azAxis, zHat ;
-    double rayPow, totalDist=0, RCSArea, beamWidth, beamHeight ;
+    SPVector aimdir, elAxis, azAxis, zHat, azRayDir, elRayDir, v_tmp ;
+    double rayPow, totalDist=0, RCSArea, beamWidth, beamHeight, thetaAz, thetaEl ;
     double range, refPow, refPowatRx, rangeOfreturn ;
     int bounces=0,debug,ind;
     Ray r;
     Hit h;
-    
-    if (xId >=0 && xId < beam.nAzBeam && yId >=0 && yId < beam.nElBeam) {
         
+    if (xId >=0 && xId < beam.nAzBeam && yId >=0 && yId < beam.nElBeam) {
+
         // DEBUG a single thread by setting values below and uncommenting
         //
-        // if(x==0 && y == 0){debug = 1;}else{debug=0;}
+         if(xId==0 && yId == 0){debug = 10;}else{debug=0;}
+        
+        if(debug){
+            printf("nAzBeam : %d\n",beam.nAzBeam);
+            printf("nElBeam : %d\n",beam.nElBeam);
+            printf("RxPos : %f,%f,%f\n",beam.RxPos.x, beam.RxPos.y,beam.RxPos.z);
+            printf("TxPos : %f,%f,%f\n",beam.TxPos.x, beam.TxPos.x,beam.TxPos.z);
+            printf("dAz : %f\n",beam.dAz);
+            printf("dEl : %d\n",beam.dEl);
+            printf("raySolidAng : %d\n",beam.raySolidAng);
+            printf("TxPowPerRay : %d\n",beam.TxPowPerRay);
+            printf("SceneBoundingBox : %f,%f,%f-%f,%f,%f\n",beam.SceneBoundingBox.AA.x,beam.SceneBoundingBox.AA.y,beam.SceneBoundingBox.AA.z,beam.SceneBoundingBox.BB.x,beam.SceneBoundingBox.BB.y,beam.SceneBoundingBox.BB.z);
+            printf("Aeff : %f\n",beam.Aeff);
+            printf("bounceToShow : %d\n",beam.bounceToShow);
+        }
         
         beamWidth  = beam.nAzBeam * beam.dAz;
         beamHeight = beam.nElBeam * beam.dEl;
         
-        VECT_MINUS(RxPos, aimdir) ;
+        VECT_MINUS(beam.RxPos, aimdir) ;
         VECT_CREATE(0,0,1.,zHat) ;
         VECT_CROSS(aimdir,zHat,elAxis) ;
         VECT_CROSS(elAxis,aimdir,azAxis) ;
@@ -295,7 +345,7 @@ __kernel void rayTraceBeam (const beamParams beam           // structure for bea
         
         // Rotate aimDir around azimuth beam axis of rotation to get the direction of this Ray
         //
-        azRayDir = vectRotateAxis(aimDir, azAxis, thetaAz);
+        vectRotateAxis(aimdir, azAxis, thetaAz, azRayDir);
         
         // Angle of this elevation slice from the aimDir in radians
         //
@@ -303,19 +353,19 @@ __kernel void rayTraceBeam (const beamParams beam           // structure for bea
         
         // For every elevation slice within pulse rotate the ray in the elevation direction.
         //
-        elRayDir = vectRotateAxis(azRayDir, elAxis, thetaEl);
+        vectRotateAxis(azRayDir, elAxis, thetaEl, elRayDir);
         
-        r.org  = TxPos ;
-        r.san  = raySolidAng ;
-        rayPow = TxPowPerRay ;
+        r.org  = beam.TxPos ;
+        r.san  = beam.raySolidAng ;
+        rayPow = beam.TxPowPerRay ;
         VECT_NORM(elRayDir, r.dir) ;
         
         while (bounces < MAXBOUNCES){
-            if(debug>10)printf("================start of stacklesstraverse===============\n");
-            h = StacklessTraverse(r, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug);
-            if(debug>10)printf("================= end of stacklesstraverse===============\n");
+            if(debug>=10)printf("================start of stacklesstraverse===============\n");
+            h = StacklessTraverse(r, beam.SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug);
+            if(debug>=10)printf("================= end of stacklesstraverse===============\n");
             
-            if(debug>10)printf("h: trinum = %d, dist = %f\n",h.trinum,h.dist);
+            if(debug>=10)printf("h: trinum = %d, dist = %f\n",h.trinum,h.dist);
             if( h.trinum == NOINTERSECTION){
                 break ;
             }
@@ -333,9 +383,11 @@ __kernel void rayTraceBeam (const beamParams beam           // structure for bea
             //
             Ray reflected = reflect(r, h, Triangles);
             
-            VectorH returnVect = vectSub(RxPos[threadId], reflected.org );
-            VectorH returnVectDir = vectNorm(returnVect);
-            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
+            SPVector returnVect, returnVectDir ;
+            VECT_SUB(beam.RxPos, reflected.org, returnVect);
+            VECT_NORM(returnVect, returnVectDir) ;
+            
+            if (! occluded(reflected.org, returnVectDir, beam.SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and return the values
                 //
@@ -343,15 +395,16 @@ __kernel void rayTraceBeam (const beamParams beam           // structure for bea
                 if(bounces == beam.bounceToShow){
                     printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
                 }
-                if(debug>10)printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
+                if(debug>=10)printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
                 
-                range = vectMag( returnVect );
-                refPow = reflectPower(rayPow, vectMinus(r.dir), reflected.dir, returnVectDir, h,Triangles, textureData);
+                range = VECT_MAG( returnVect );
+                VECT_MINUS(r.dir, v_tmp) ;
+                refPow = reflectPower(rayPow, v_tmp, reflected.dir, returnVectDir, h,Triangles, textureData);
                 
                 refPowatRx = refPow * beam.Aeff / (4.0 * PI * range * range);
                 rangeOfreturn = (totalDist + range)*0.5;
                 
-                ind = (bounces*nAzBeam*nElBeam) + (yId * nAzBeam) + xId ;
+                ind = (bounces * beam.nAzBeam * beam.nElBeam) + (yId * beam.nAzBeam) + xId ;
                 rnp[ind].range = rangeOfreturn ;
                 rnp[ind].power = refPowatRx ;
                 
@@ -368,8 +421,9 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     
     int i,trisInLeaf;
     float t_entry = 0;
-    float t_exit  = vectMag( ray.org ) + 100;
-    VectorH volumeEntry, volumeExit, PEntry;
+    float t_exit  = VECT_MAG( ray.org ) + 100;
+    SPVector volumeEntry, volumeExit, PEntry, v_tmp, dirInverse;
+;
     Hit hit;
     float t1,t2,xinv,yinv,zinv;
     
@@ -379,8 +433,9 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     // Create an infinite line from the ray
     //
     volumeEntry  = ray.org;
-    volumeExit   = vectAdd(ray.org, vectMult(ray.dir, t_exit ));
-    
+    VECT_SCMULT(ray.dir, t_exit, v_tmp);
+    VECT_ADD(ray.org, v_tmp, volumeExit);
+
     // Calculate the ray segment within the scene volume
     // Do this early to reduce calcs for ray misses
     //
@@ -393,7 +448,7 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     xinv = (ray.dir.x == 0) ? 0 : 1./ray.dir.x;
     yinv = (ray.dir.y == 0) ? 0 : 1./ray.dir.y;
     zinv = (ray.dir.z == 0) ? 0 : 1./ray.dir.z;
-    VectorH dirInverse = vectCreate(xinv, yinv, zinv);
+    VECT_CREATE(xinv, yinv, zinv, dirInverse);
     
     // initialise the root of the tree
     //
@@ -406,15 +461,16 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     
     while (t_entry <= t_exit ) {
         
-        PEntry = vectAdd(volumeEntry, vectMult(ray.dir, t_entry));
+        VECT_SCMULT(ray.dir, t_entry, v_tmp);
+        VECT_ADD(volumeEntry, v_tmp, PEntry);
         
         while (!KDT_ISLEAF(node)){  // Branch node
             
             if (PEntry.cell[KDT_DIMENSION(node)] < (node->branch.splitPosition-EPSILON)) {
-                if(debug>10)printf("[%f < %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition-EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node));
+                if(debug>=10)printf("[%f < %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition-EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node));
                 node = &(KdTree[KDT_OFFSET(node)]);
             }else if (PEntry.cell[KDT_DIMENSION(node)] > (node->branch.splitPosition+EPSILON)) {
-                if(debug>10)printf("[%f > %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition+EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+                if(debug>=10)printf("[%f > %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition+EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
                 node = &(KdTree[KDT_OFFSET(node)+1]);
             }else{
                 // PEntry is on splitposition
@@ -424,21 +480,21 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
                 // in Case 1. next node is node
                 // in Case 2. next node is node+1
                 if (ray.org.cell[KDT_DIMENSION(node)] < node->branch.splitPosition-EPSILON){
-                    if(debug>10)printf("o[%f < %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node));
+                    if(debug>=10)printf("o[%f < %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node));
                     node = &(KdTree[KDT_OFFSET(node)]);
                 } else if (ray.org.cell[KDT_DIMENSION(node)] > node->branch.splitPosition+EPSILON){
-                    if(debug>10)printf("o[%f > %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+                    if(debug>=10)printf("o[%f > %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
                     node = &(KdTree[KDT_OFFSET(node)+1]);
                 } else {
                     // ray origin on split plane. Determine next node by direction of ray
                     //
                     if(ray.dir.cell[KDT_DIMENSION(node)] > 0 ){
-                        if(debug>10)printf("|[] next node is %d, dir is %f\n",KDT_OFFSET(node)+1,ray.dir.cell[KDT_DIMENSION(node)]);
+                        if(debug>=10)printf("|[] next node is %d, dir is %f\n",KDT_OFFSET(node)+1,ray.dir.cell[KDT_DIMENSION(node)]);
                         node = &(KdTree[KDT_OFFSET(node)+1]);
                     }else {
                         // Includes situation where origin is on split position and ray is travelling parallel to split position
                         //
-                        if(debug>10)printf("|[] next node is %d dir is %f\n",KDT_OFFSET(node),ray.dir.cell[KDT_DIMENSION(node)]);
+                        if(debug>=10)printf("|[] next node is %d dir is %f\n",KDT_OFFSET(node),ray.dir.cell[KDT_DIMENSION(node)]);
                         node = &(KdTree[KDT_OFFSET(node)]);
                     }
                 }
@@ -447,7 +503,7 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
         // Have a leaf now
         //
         trisInLeaf = triangleListData[triangleListPtrs[KDT_OFFSET(node)]];
-        if(debug>10)printf("Leaf found : %d triangles\n",trisInLeaf);
+        if(debug>=10)printf("Leaf found : %d triangles\n",trisInLeaf);
         for (i=0; i<trisInLeaf; i++){
             __global Triangle * tri = &(Triangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
             Intersect(tri, &ray, &hit);
@@ -456,7 +512,7 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
             return hit;
         }
         
-        if(debug>10)printf("No Intersection found; Chasing rope...\n");
+        if(debug>=10)printf("No Intersection found; Chasing rope...\n");
         // If ray doesnt intersect triangle in this leaf then propagate the
         // ray to an adjacent node using this leaf's Ropes. (rather than popping
         // back up the tree)
@@ -505,7 +561,7 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     return hit ;
 }
 
-int clipToAABB(AABB boundingBox, VectorH *lineStart, VectorH *lineEnd){
+int clipToAABB(AABB boundingBox, SPVector *lineStart, SPVector *lineEnd){
     
     int status=0;
     ClipToBox(lineStart, lineEnd, boundingBox.AA, boundingBox.BB, &status);
@@ -519,7 +575,7 @@ int clipToAABB(AABB boundingBox, VectorH *lineStart, VectorH *lineEnd){
 // P0 = (x0, y0) to P1 = (x1, y1) against a rectangle with
 // diagonal from (xmin, ymin) to (xmax, ymax).
 //
-void ClipToBox(VectorH *p0, VectorH *p1, VectorH min, VectorH max, int *status)
+void ClipToBox(SPVector *p0, SPVector *p1, SPVector min, SPVector max, int *status)
 {
     // compute outcodes for P0, P1, and whatever point lies outside the clip rectangle
     //
@@ -604,7 +660,7 @@ void ClipToBox(VectorH *p0, VectorH *p1, VectorH min, VectorH max, int *status)
 // Compute the bit code for a point (x, y) using the clip rectangle
 // bounded diagonally by (xmin, ymin), and (xmax, ymax)
 //
-OutCode ComputeOutCode(VectorH p, VectorH min, VectorH max)
+OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max)
 {
     OutCode code;
     
@@ -678,14 +734,16 @@ Ray reflect(Ray ray, Hit h, __global Triangle * Triangles){
     int k = T.k;
     int ku = modulo[k+1];
     int kv = modulo[k+2];
-    VectorH N;
+    SPVector N;
     N.cell[k] = 1;
     N.cell[ku] = T.nd_u;
     N.cell[kv] = T.nd_v;
     
-    VectorH R;
-    VectorH I = ray.dir;
-    R = vectSub(I, vectMult(N, 2.0 * vectDot(I, N)) );
+    SPVector R, v_tmp;
+    SPVector I = ray.dir;
+    
+    VECT_SCMULT(N, (2.0 * (VECT_DOT(I,N))), v_tmp );
+    VECT_SUB(I,v_tmp, R) ;
     Ray reflected;
     reflected.org = hitPoint(h, ray);
     reflected.dir = R;
@@ -698,14 +756,16 @@ Ray reflect(Ray ray, Hit h, __global Triangle * Triangles){
     return reflected;
 }
 
-VectorH hitPoint (Hit h, Ray r){
+SPVector hitPoint (Hit h, Ray r){
+    SPVector ans;
     double x = r.org.x + h.dist * r.dir.x;
     double y = r.org.y + h.dist * r.dir.y;
     double z = r.org.z + h.dist * r.dir.z;
-    return vectCreate(x, y, z);
+    VECT_CREATE(x,y,z, ans);
+    return ans;
 }
 
-int occluded(VectorH point, VectorH dir, AABB SceneBoundingBox,
+int occluded(SPVector point, SPVector dir, AABB SceneBoundingBox,
              __global KdData * KdTree,
              __global int * triangleListData,
              __global int * triangleListPtrs,
@@ -720,7 +780,7 @@ int occluded(VectorH point, VectorH dir, AABB SceneBoundingBox,
     return 0;
 }
 
-double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __global Triangle * Triangles, __global Texture * textureData){
+double reflectPower(double rayPower, SPVector L, SPVector R, SPVector V, Hit h, __global Triangle * Triangles, __global Texture * textureData){
     // Phong equation
 	// Ip = ka*ia + kd(L.N)id + ks((R.V)^n)is
 	// Ip is the power at the intersection point reflected in direction V
@@ -744,7 +804,7 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
     modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
     int ku = modulo[k+1];
     int kv = modulo[k+2];
-    VectorH N;
+    SPVector N;
     N.cell[k] = 1;
     N.cell[ku] = T.nd_u;
     N.cell[kv] = T.nd_v;
@@ -755,8 +815,10 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
     double kd = 0.0 ;  //texture.kd;
     double ks = 1.0 ;  //texture.ks;
     double n  = 50.0 ; // texture.n;
-    double LdotN = vectDot(L, N);
-    double RdotV = vectDot(vectNorm(R), vectNorm(V));
+    double LdotN = VECT_DOT(L, N);
+    VECT_NORM(R,R) ;
+    VECT_NORM(V,V) ;
+    double RdotV = VECT_DOT(R, V);
     
     LdotN = (LdotN < 0) ? -LdotN : LdotN;   // removes 'one-way mirror' effect
     RdotV = (RdotV < 0) ? 0 : RdotV;        // if ray bouncing away from radar then there is no specular component

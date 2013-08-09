@@ -336,7 +336,7 @@ int main (int argc, char **argv){
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    
+    im_init(&cphd, &status) ;
     load_cphd(&cphd, &hdr, 0, hdr.num_azi, &status);
     
     // Calculate how many pulses can be processed on a device at a time
@@ -383,6 +383,9 @@ int main (int argc, char **argv){
         
         // Create thread data for each device
         //
+        printf("ptr to threadDataArray : %p\n",threadDataArray);
+        printf("ptr to threadDataArray TxPositions : %p\n", TxPos);
+        
         rc = pthread_create(&threads[dev], NULL, devPulseBlock, (void *) &threadDataArray[dev]) ;
         if (rc){
             printf("ERROR; return code from pthread_create() is %d\n", rc);
