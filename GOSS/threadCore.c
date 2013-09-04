@@ -278,7 +278,6 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnp);
         
     } // end of pulse loop
-    exit(0);
     // Clear down OpenCL allocations
     //
     clReleaseCommandQueue(commandQ);

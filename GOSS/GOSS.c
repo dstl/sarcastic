@@ -404,7 +404,7 @@ int main (int argc, char **argv){
     }
     if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
 
-    pthread_exit(NULL);
+//    pthread_exit(NULL);
 
     FILE *fp;
     fp = fopen(outCPHDFile, "w") ;
@@ -416,10 +416,13 @@ int main (int argc, char **argv){
     
     endTimer(&runTimer, &status) ;
     printf("Done  is %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+    printf("Writing CPHD File \"%s\"....",outCPHDFile);
     writeCPHD3Header( &hdr, fp, &status ) ;
     write_cphd3_nb_vectors(&hdr, 0, fp, &status) ;
     write_cphd3_wb_vectors(&hdr, &cphd, 0, fp, &status) ;
+    printf("...Done\n");
     
+    im_destroy(&cphd, &status);
     im_close_lib(&status);
     return 0;
 
