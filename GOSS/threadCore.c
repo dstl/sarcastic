@@ -170,12 +170,27 @@ void * devPulseBlock ( void * threadArg ) {
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, td->triListDataSize, td->triListData,              0, NULL, NULL);
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*td->nLeaves, td->triPtrs,              0, NULL, NULL)));
     
-
+    Timer threadTimer ;
+    SPStatus status;
+    startTimer(&threadTimer, &status) ;
+    int reportN = 100 ;
+    
     // **** loop  start here
     //
     for (int pulse=0; pulse<td->nPulses; pulse++){
         int pulseIndex = (tid * td->nPulses) + pulse ;
-        
+        if ( td->devIndex == 0 ) {
+            if( pulse % reportN == 0){
+                double pCentDone = 100.0*pulse/td->nPulses ;
+                double sexToGo = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
+                if(pulse != 0 ){
+                    printf("  ETC in %3.0f Seconds\n",sexToGo);
+                }else{
+                    printf("  Calculating ETC...\n");
+                }
+            }
+        }
         // Set correct parameters for beam to ray trace
         //
         TxPos = td->TxPositions[pulseIndex] ;
@@ -269,7 +284,6 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].r = currentReal+power*cos(phse) ;
                     td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].i = currentImag+power*sin(phse) ;
-
                 }
             }
         }

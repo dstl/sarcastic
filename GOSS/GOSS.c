@@ -350,6 +350,7 @@ int main (int argc, char **argv){
     for (dev=0; dev<ndevs; dev++) {
         
         threadDataArray[dev].devIndex               = dev ;
+        threadDataArray[dev].nThreads               = ndevs ;
         threadDataArray[dev].platform               = platform ;
         threadDataArray[dev].nTriangles             = nTriangles ;
         threadDataArray[dev].Triangles              = Triangles;

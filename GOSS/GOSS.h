@@ -168,6 +168,7 @@ void banner () ;
 
 typedef struct threadData {
     int devIndex ;
+    int nThreads ;
     OCLPlatform platform ;
     int nTriangles ;
     Triangle * Triangles ;
