@@ -197,9 +197,13 @@ int main (int argc, char **argv){
     }
     
     SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
+    printf("TxPos[10000] : %f,%f,%f\n", TxPos[0].x, TxPos[0].y, TxPos[0].z);
+    printf("SRP : %f,%f,%f\n", SRP.x, SRP.y, SRP.z);
+
     ecef2SceneCoords(nPulses, RxPos, SRP);
     ecef2SceneCoords(nPulses, TxPos, SRP);
-    
+    printf("TxPos[10000] : %f,%f,%f\n", TxPos[0].x, TxPos[0].y, TxPos[0].z);
+
     // Calculate azbeamwidth from scene
     // Calculate elbeamwidth from scene
     // use largest so that beam sampling is uniform
@@ -367,6 +371,7 @@ int main (int argc, char **argv){
         threadDataArray[dev].nElBeam                = nElBeam ;
         threadDataArray[dev].dAz                    = dAz ;
         threadDataArray[dev].dEl                    = dEl ;
+        threadDataArray[dev].Aeff                   = Aeff ;            // The effective area of the Receive Antenna
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
         threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data

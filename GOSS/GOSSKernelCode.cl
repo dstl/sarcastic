@@ -40,7 +40,12 @@
 //
 //***************************************************************************
 
-#pragma OPENCL EXTENSION cl_khr_fp64: enable
+#if defined(cl_khr_fp64)  // Khronos extension available?
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#elif defined(cl_amd_fp64)  // AMD extension available?
+#pragma OPENCL EXTENSION cl_amd_fp64 : enable
+#endif
+
 #define MAXBOUNCES 8
 #define PI 3.1415927
 #define CC 299792458.0
@@ -194,7 +199,7 @@ typedef union {
 
 /// Rotate a vector around another vector
 ///
-void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector outVect);
+void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector *outVect, int debug);
 
 typedef struct Ray {
     SPVector org;    // Origin
@@ -291,78 +296,101 @@ OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max);
 SPVector hitPoint (Hit h, Ray r);
 
 
-__kernel void rayTraceBeam (const beamParams beam,          // structure for beam parameters
+__kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth slices in beam
+                            const int nElBeam,              // Number of elevation slices in beam
+                            const SPVector RxPos,           // Receiver position for this pulse
+                            const SPVector TxPos,           // Transmitter position for this pulse
+                            const double dAz,               // Azimuth slice in radians
+                            const double dEl,               // Elevation slice in radians
+                            const double raySolidAng,       // Solid angle of a single ray
+                            const double TxPowPerRay,       // Transmitter power per ray
+                            const AABB SceneBoundingBox,    // Scene bounding box
+                            const double Aeff,              // The effective area of the Receive Antenna
                             const int bounceToShow,         // Which bounce to print out
                             __global Triangle * Triangles,  // array - triangle data
                             __global Texture * textureData, // array - texture data
                            __global KdData * KdTree,        // array containing KdTree
                            __global int *triangleListData,  // array of triangle indices into Triangles
                            __global int *triangleListPtrs,  // array of pointers into triangleListData for each node
-                           __global rangeAndPower *rnp      // Array storing ranges and powers (dim: nAzbeam x nElBeam x MAXBOUNCES )
+                           __global rangeAndPower *rnp,      // Array storing ranges and powers (dim: nAzbeam x nElBeam x MAXBOUNCES )
+                            const double testdbl
                             )
 {
     int xId = get_global_id(0);
     int yId = get_global_id(1);
     
-    SPVector aimdir, elAxis, azAxis, zHat, azRayDir, elRayDir, v_tmp ;
+    SPVector aimDir, elAxis, azAxis, zHat, azRayDir, elRayDir, v_tmp ;
     double rayPow, totalDist=0, RCSArea, beamWidth, beamHeight, thetaAz, thetaEl ;
     double range, refPow, refPowatRx, rangeOfreturn ;
-    int bounces=0,debug,ind;
+    int bounces=0,debug=0,ind;
     Ray r;
     Hit h;
         
-    if (xId >=0 && xId < beam.nAzBeam && yId >=0 && yId < beam.nElBeam) {
+    if (xId >=0 && xId < nAzBeam && yId >=0 && yId < nElBeam) {
 
         // DEBUG a single thread by setting values below and uncommenting
         //
-         if(xId==0 && yId == 0){debug = 10;}else{debug=0;}
+        if(xId==0 && yId == 0){debug = 10;}else{debug=0;}
         
         if(debug){
-            printf("nAzBeam : %d\n",beam.nAzBeam);
-            printf("nElBeam : %d\n",beam.nElBeam);
-            printf("RxPos : %f,%f,%f\n",beam.RxPos.x, beam.RxPos.y,beam.RxPos.z);
-            printf("TxPos : %f,%f,%f\n",beam.TxPos.x, beam.TxPos.x,beam.TxPos.z);
-            printf("dAz : %f\n",beam.dAz);
-            printf("dEl : %d\n",beam.dEl);
-            printf("raySolidAng : %d\n",beam.raySolidAng);
-            printf("TxPowPerRay : %d\n",beam.TxPowPerRay);
-            printf("SceneBoundingBox : %f,%f,%f-%f,%f,%f\n",beam.SceneBoundingBox.AA.x,beam.SceneBoundingBox.AA.y,beam.SceneBoundingBox.AA.z,beam.SceneBoundingBox.BB.x,beam.SceneBoundingBox.BB.y,beam.SceneBoundingBox.BB.z);
-            printf("Aeff : %f\n",beam.Aeff);
-            printf("bounceToShow : %d\n",beam.bounceToShow);
+            printf("%d,%d : Device parameters :\n",xId,yId);
+            printf("%d,%d : nAzBeam : %d\n",xId,yId,nAzBeam);
+            printf("%d,%d : nElBeam : %d\n",xId,yId,nElBeam);
+            printf("%d,%d : RxPos : %1.9e,%1.9e,%1.9e\n",xId,yId,RxPos.x, RxPos.y,RxPos.z);
+            printf("%d,%d : TxPos : %1.9e,%1.9e,%1.9e\n",xId,yId,TxPos.x, TxPos.x,TxPos.z);
+            printf("%d,%d : dAz : %1.9e\n",xId,yId,dAz);
+            printf("%d,%d : dEl : %1.9e\n",xId,yId,dEl);
+            printf("%d,%d : raySolidAng : %1.9e\n",xId,yId,raySolidAng);
+            printf("%d,%d : TxPowPerRay : %e\n",xId,yId,TxPowPerRay);
+            printf("%d,%d : SceneBoundingBox : %f,%f,%f-%f,%f,%f\n",xId,yId,SceneBoundingBox.AA.x,SceneBoundingBox.AA.y,SceneBoundingBox.AA.z,SceneBoundingBox.BB.x,SceneBoundingBox.BB.y,SceneBoundingBox.BB.z);
+            printf("%d,%d : Aeff : %e\n",xId,yId,Aeff);
+            printf("%d,%d : bounceToShow : %d\n",xId,yId,bounceToShow);
+            printf("%d,%d : testdbl is %1.9e\n",xId,yId,testdbl);
         }
         
-        beamWidth  = beam.nAzBeam * beam.dAz;
-        beamHeight = beam.nElBeam * beam.dEl;
+        beamWidth  = nAzBeam * dAz;
+        beamHeight = nElBeam * dEl;
         
-        VECT_MINUS(beam.RxPos, aimdir) ;
+        if(debug>=10)printf("rxp : %f,%f,%f\n",RxPos.x,RxPos.y,RxPos.z);
+
+        VECT_MINUS(RxPos, aimDir) ;
+        if(debug>=10)printf("aimDir : %f,%f,%f\n",aimDir.x,aimDir.y,aimDir.z);
+
         VECT_CREATE(0,0,1.,zHat) ;
-        VECT_CROSS(aimdir,zHat,elAxis) ;
-        VECT_CROSS(elAxis,aimdir,azAxis) ;
+        VECT_CROSS(aimDir,zHat,elAxis) ;
+        VECT_CROSS(elAxis,aimDir,azAxis) ;
         
         // Angle of this azimuth slice from the aimDir in radians
         //
-        thetaAz = (yId * beam.dAz) - (beamWidth/2) + (beam.dAz/2);
+        thetaAz = (yId * dAz) - (beamWidth/2) + (dAz/2);
         
         // Rotate aimDir around azimuth beam axis of rotation to get the direction of this Ray
         //
-        vectRotateAxis(aimdir, azAxis, thetaAz, azRayDir);
-        
+        if(debug>=10)printf("inVect at call: %f,%f,%f\n",aimDir.x,aimDir.y,aimDir.z);
+        vectRotateAxis(aimDir, azAxis, thetaAz, &azRayDir, 0);
+
         // Angle of this elevation slice from the aimDir in radians
         //
-        thetaEl = (xId * beam.dEl) - (beamHeight/2) + (beam.dEl/2);
+        thetaEl = (xId * dEl) - (beamHeight/2) + (dEl/2);
         
         // For every elevation slice within pulse rotate the ray in the elevation direction.
         //
-        vectRotateAxis(azRayDir, elAxis, thetaEl, elRayDir);
+        vectRotateAxis(azRayDir, elAxis, thetaEl, &elRayDir,debug);
+        if(debug>=10)printf("azRayDir : %f,%f,%f\n",azRayDir.x,azRayDir.y,azRayDir.z);
+
         
-        r.org  = beam.TxPos ;
-        r.san  = beam.raySolidAng ;
-        rayPow = beam.TxPowPerRay ;
+        r.org  = TxPos ;
+        r.san  = raySolidAng ;
+        rayPow = TxPowPerRay ;
+        if(debug>=10)printf("elRayDir : %f,%f,%f\n",elRayDir.x,elRayDir.y,elRayDir.z);
+
         VECT_NORM(elRayDir, r.dir) ;
+        if(debug>=10)printf("r.dir : %f,%f,%f\n",r.dir.x,r.dir.y,r.dir.z);
+
         
         while (bounces < MAXBOUNCES){
             if(debug>=10)printf("================start of stacklesstraverse===============\n");
-            h = StacklessTraverse(r, beam.SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug);
+            h = StacklessTraverse(r, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug);
             if(debug>=10)printf("================= end of stacklesstraverse===============\n");
             
             if(debug>=10)printf("h: trinum = %d, dist = %f\n",h.trinum,h.dist);
@@ -376,7 +404,7 @@ __kernel void rayTraceBeam (const beamParams beam,          // structure for bea
             //
             totalDist = totalDist + h.dist; // total dist to hitpoint
             RCSArea = r.san * totalDist * totalDist ;
-            rayPow = RCSArea * beam.TxPowPerRay / (4 * PI * totalDist * totalDist);  // pow at hitpoint
+            rayPow = RCSArea * TxPowPerRay / (4 * PI * totalDist * totalDist);  // pow at hitpoint
             // rayPow = rayPow * 1000000000000.0; // to cover gaps between rays
             // Above value should be the 'collander fill factor' ie the difference in solid angles between
             // the sum of all the rays and the part of teh beam being used.
@@ -384,15 +412,15 @@ __kernel void rayTraceBeam (const beamParams beam,          // structure for bea
             Ray reflected = reflect(r, h, Triangles);
             
             SPVector returnVect, returnVectDir ;
-            VECT_SUB(beam.RxPos, reflected.org, returnVect);
+            VECT_SUB(RxPos, reflected.org, returnVect);
             VECT_NORM(returnVect, returnVectDir) ;
             
-            if (! occluded(reflected.org, returnVectDir, beam.SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
+            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and return the values
                 //
             {
-                if(bounces == beam.bounceToShow){
+                if(bounces == bounceToShow){
                     printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
                 }
                 if(debug>=10)printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
@@ -401,10 +429,10 @@ __kernel void rayTraceBeam (const beamParams beam,          // structure for bea
                 VECT_MINUS(r.dir, v_tmp) ;
                 refPow = reflectPower(rayPow, v_tmp, reflected.dir, returnVectDir, h,Triangles, textureData);
                 
-                refPowatRx = refPow * beam.Aeff / (4.0 * PI * range * range);
+                refPowatRx = refPow * Aeff / (4.0 * PI * range * range);
                 rangeOfreturn = (totalDist + range)*0.5;
                 
-                ind = (bounces * beam.nAzBeam * beam.nElBeam) + (yId * beam.nAzBeam) + xId ;
+                ind = (bounces * nAzBeam * nElBeam) + (yId * nAzBeam) + xId ;
                 rnp[ind].range = rangeOfreturn ;
                 rnp[ind].power = refPowatRx ;
                 
@@ -436,6 +464,19 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     VECT_SCMULT(ray.dir, t_exit, v_tmp);
     VECT_ADD(ray.org, v_tmp, volumeExit);
 
+    if(debug>=10){
+        printf("volumeEntry : %f,%f,%f\n",volumeEntry.x,volumeEntry.y,volumeEntry.z);
+        printf("volumeExit : %f,%f,%f\n",volumeExit.x,volumeExit.y,volumeExit.z);
+        printf("ray.dir: %f,%f,%f\n",ray.dir.x,ray.dir.y,ray.dir.z);
+        printf("t_exit: %f\n",t_exit);
+        SPVector at;
+        at.x = ray.dir.x * t_exit;
+        at.y = ray.dir.y * t_exit;
+        at.z = ray.dir.z * t_exit;
+        printf("at: %f,%f,%f\n",at.x,at.y,at.z);
+        printf("v_tmp: %f,%f,%f\n",v_tmp.x,v_tmp.y,v_tmp.z);
+    }
+    
     // Calculate the ray segment within the scene volume
     // Do this early to reduce calcs for ray misses
     //
@@ -463,6 +504,13 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
         
         VECT_SCMULT(ray.dir, t_entry, v_tmp);
         VECT_ADD(volumeEntry, v_tmp, PEntry);
+        
+        if(debug>=10){
+            printf("PEntry:%f,%f,%f\n",PEntry.x,PEntry.y,PEntry.z);
+            printf("volumeEntry : %f,%f,%f\n",volumeEntry.x,volumeEntry.y,volumeEntry.z);
+            printf("ray.dir: %f,%f,%f\n",ray.dir.x,ray.dir.y,ray.dir.z);
+            printf("t_entry : %f\n",t_entry);
+        }
         
         while (!KDT_ISLEAF(node)){  // Branch node
             
@@ -828,17 +876,26 @@ double reflectPower(double rayPower, SPVector L, SPVector R, SPVector V, Hit h, 
 
 // Rotate a vector around another vector
 //
-void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector outVect){
+void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector *outVect, int debug){
+    if(debug>=10)printf("inVect on entry: %f,%f,%f\n", inVect.x,inVect.y,inVect.z);
+    SPVector out;
     if(axisVect.x == 0 && axisVect.y == 0 ){
-        VECT_ROTATEZ(inVect, angRads, outVect) ;
+        VECT_ROTATEZ(inVect, angRads, out) ;
     }else if(axisVect.x == 0 && axisVect.z == 0){
-        VECT_ROTATEY(inVect, angRads, outVect);
+        VECT_ROTATEY(inVect, angRads, out);
     }else if(axisVect.y == 0 && axisVect.z == 0){
-        VECT_ROTATEZ(inVect, angRads, outVect);
+        VECT_ROTATEZ(inVect, angRads, out);
     }else{
         SPVector ansa,ansb,ansc,ansd;
         double thetaz = atan(axisVect.y/axisVect.x);
         double thetay = atan( sqrt( (axisVect.x * axisVect.x) + (axisVect.y * axisVect.y)) / axisVect.z );
+        if(debug>=10){
+            printf("thetaz : %f\n",thetaz);
+            printf("thetay : %f\n",thetaz);
+            printf("inVect : %f,%f,%f \n",inVect.x,inVect.y,inVect.z);
+            printf("axisVect : %f,%f,%f\n",axisVect.x,axisVect.y,axisVect.z);
+            printf("angRads : %f\n", angRads);
+        }
         
         // First rotate around the z axis
         //
@@ -855,7 +912,11 @@ void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector
         // Now add on the rotation axis around y and z to get back to the original reference frame
         //
         VECT_ROTATEY(ansc, thetay, ansd);
-        VECT_ROTATEZ(ansd, thetaz, outVect);
+        VECT_ROTATEZ(ansd, thetaz, out);
     }
+    
+    outVect->x = out.x;
+    outVect->y = out.y;
+    outVect->z = out.z;
     
 }

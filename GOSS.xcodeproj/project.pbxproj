@@ -13,11 +13,15 @@
 		9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */; };
 		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
 		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
-		9528903817B5003C000449DE /* libSIlib-0.4.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9528903717B5003C000449DE /* libSIlib-0.4.5.a */; };
 		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95BA790D17BE57190061162F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95BA790C17BE57190061162F /* main.c */; };
+		95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95BA790E17BE57190061162F /* doublePrecisionTest.1 */; };
+		95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95BA792B17BECFFB0061162F /* libSIlib-0.4.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */; };
+		95BA792C17BED0B50061162F /* libSIlib-0.4.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */; };
 		95DB871917A8267200180864 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95DB871817A8267200180864 /* getUserInput.c */; };
 		95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */; };
 /* End PBXBuildFile section */
@@ -30,6 +34,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				9504211A17A24F9400A076FC /* GOSS.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		95BA790717BE57190061162F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -48,11 +62,14 @@
 		9504216817A454AA00A076FC /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
-		9528903717B5003C000449DE /* libSIlib-0.4.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.5.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.5.a"; sourceTree = "<group>"; };
 		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		95BA790917BE57190061162F /* doublePrecisionTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = doublePrecisionTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		95BA790C17BE57190061162F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		95BA790E17BE57190061162F /* doublePrecisionTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = doublePrecisionTest.1; sourceTree = "<group>"; };
+		95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.6.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.6.a"; sourceTree = "<group>"; };
 		95DB871817A8267200180864 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
 		95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
 		95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
@@ -64,10 +81,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9528903817B5003C000449DE /* libSIlib-0.4.5.a in Frameworks */,
+				95BA792C17BED0B50061162F /* libSIlib-0.4.6.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		95BA790617BE57190061162F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95BA792B17BECFFB0061162F /* libSIlib-0.4.6.a in Frameworks */,
+				95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,11 +103,12 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
-				9528903717B5003C000449DE /* libSIlib-0.4.5.a */,
+				95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */,
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
 				9504211617A24F9400A076FC /* GOSS */,
+				95BA790B17BE57190061162F /* doublePrecisionTest */,
 				9504211417A24F9400A076FC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				9504211317A24F9400A076FC /* GOSS */,
+				95BA790917BE57190061162F /* doublePrecisionTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -117,6 +145,15 @@
 			path = GOSS;
 			sourceTree = "<group>";
 		};
+		95BA790B17BE57190061162F /* doublePrecisionTest */ = {
+			isa = PBXGroup;
+			children = (
+				95BA790C17BE57190061162F /* main.c */,
+				95BA790E17BE57190061162F /* doublePrecisionTest.1 */,
+			);
+			path = doublePrecisionTest;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -136,6 +173,23 @@
 			name = GOSS;
 			productName = GOSS;
 			productReference = 9504211317A24F9400A076FC /* GOSS */;
+			productType = "com.apple.product-type.tool";
+		};
+		95BA790817BE57190061162F /* doublePrecisionTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 95BA791017BE57190061162F /* Build configuration list for PBXNativeTarget "doublePrecisionTest" */;
+			buildPhases = (
+				95BA790517BE57190061162F /* Sources */,
+				95BA790617BE57190061162F /* Frameworks */,
+				95BA790717BE57190061162F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = doublePrecisionTest;
+			productName = doublePrecisionTest;
+			productReference = 95BA790917BE57190061162F /* doublePrecisionTest */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -160,6 +214,7 @@
 			projectRoot = "";
 			targets = (
 				9504211217A24F9400A076FC /* GOSS */,
+				95BA790817BE57190061162F /* doublePrecisionTest */,
 			);
 		};
 /* End PBXProject section */
@@ -176,7 +231,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${PROJECT_DIR}/GOSS/GenGitVersion.sh\n";
+			shellScript = "cd ${PROJECT_DIR}/GOSS ; ./GenGitVersion.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -193,6 +248,14 @@
 				95DB871917A8267200180864 /* getUserInput.c in Sources */,
 				95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */,
 				95339DA617AAFCF00007466A /* threadCore.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		95BA790517BE57190061162F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95BA790D17BE57190061162F /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +351,28 @@
 			};
 			name = Release;
 		};
+		95BA791117BE57190061162F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		95BA791217BE57190061162F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -308,6 +393,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		95BA791017BE57190061162F /* Build configuration list for PBXNativeTarget "doublePrecisionTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95BA791117BE57190061162F /* Debug */,
+				95BA791217BE57190061162F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

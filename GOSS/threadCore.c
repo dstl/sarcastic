@@ -41,20 +41,20 @@
 
 static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
 
-typedef struct beamParams {
-    int nAzBeam ;                // Number of azimuth slices in beam
-    int nElBeam ;                // Number of elevation slices in beam
-    SPVector RxPos ;             // Receiver position for this pulse
-    SPVector TxPos ;             // Transmitter position for this pulse
-    double dAz ;                 // Azimuth slice in radians
-    double dEl ;                 // Elevation slice in radians
-    double raySolidAng ;         // Solid angle of a single ray
-    double TxPowPerRay ;         // Transmitter power per ray
-    AABB SceneBoundingBox ;      // Scene bounding box
-    double Aeff ;                // The effective area of the Receive Antenna
-    int bounceToShow;            // Which bounce to output
-
-} beamParams ;
+//typedef struct beamParams {
+//    int nAzBeam ;                // Number of azimuth slices in beam
+//    int nElBeam ;                // Number of elevation slices in beam
+//    SPVector RxPos ;             // Receiver position for this pulse
+//    SPVector TxPos ;             // Transmitter position for this pulse
+//    double dAz ;                 // Azimuth slice in radians
+//    double dEl ;                 // Elevation slice in radians
+//    double raySolidAng ;         // Solid angle of a single ray
+//    double TxPowPerRay ;         // Transmitter power per ray
+//    AABB SceneBoundingBox ;      // Scene bounding box
+//    double Aeff ;                // The effective area of the Receive Antenna
+//    int bounceToShow;            // Which bounce to output
+//
+//} beamParams ;
 
 typedef struct rndData_t {
     double range;
@@ -65,6 +65,25 @@ typedef struct rndData_t {
     double rdiff;
 }rndData_t ;
 
+#define CL_CHECK(_expr)                                                             \
+    do {                                                                            \
+        cl_int _err = _expr;                                                        \
+            if (_err == CL_SUCCESS)                                                 \
+            break;                                                                  \
+        fprintf(stderr, "OpenCL Error: '%s' returned %d!\n", #_expr, (int)_err);    \
+        abort();                                                                    \
+} while (0)
+
+#define CL_CHECK_ERR(_expr)                                                         \
+({                                                                                  \
+    cl_int _err = CL_INVALID_VALUE;                                                 \
+    typeof(_expr) _ret = _expr;                                                     \
+    if (_err != CL_SUCCESS) {                                                       \
+        fprintf(stderr, "OpenCL Error: '%s' returned %d!\n", #_expr, (int)_err);    \
+        abort();                                                                    \
+    }                                                                               \
+    _ret;                                                                           \
+})
 
 void * devPulseBlock ( void * threadArg ) {
     
@@ -79,7 +98,7 @@ void * devPulseBlock ( void * threadArg ) {
     cl_int err ;
     cl_mem dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, drnp ;
     rangeAndPower * rnp ;
-    beamParams beam ;
+//    beamParams beam ;
     double freqSampsToCentreStart, ADCSampsToTargStart ;
     SPVector aimdir ;
     double derampRange, currentReal, currentImag, phse, power ;
@@ -88,14 +107,17 @@ void * devPulseBlock ( void * threadArg ) {
     printf("ptr to threadData %p\n",threadArg);
     printf("ptr to threadData TxPositions : %p\n",td->TxPositions);
     
-    beam.nAzBeam          = td->nAzBeam ;
-    beam.nElBeam          = td->nElBeam ;
-    beam.dAz              = td->dAz ;
-    beam.dEl              = td->dEl ;
-    beam.raySolidAng      = td->raySolidAng ;
-    beam.TxPowPerRay      = td->TxPowPerRay ;
-    beam.SceneBoundingBox = td->SceneBoundingBox ;
-    beam.bounceToShow     = td->bounceToShow ;
+    int nAzBeam             = td->nAzBeam ;
+    int nElBeam             = td->nElBeam ;
+    SPVector RxPos;
+    SPVector TxPos;
+    double dAz              = td->dAz ;
+    double dEl              = td->dEl ;
+    double raySolidAng      = td->raySolidAng ;
+    double TxPowPerRay      = td->TxPowPerRay ;
+    AABB SceneBoundingBox   = td->SceneBoundingBox ;
+    double Aeff             = td->Aeff ;
+    int bounceToShow        = td->bounceToShow ;
     
     double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
     double B = 4.0*SIPC_pi*td->oneOverLambda ;
@@ -105,17 +127,9 @@ void * devPulseBlock ( void * threadArg ) {
     tid   = td->devIndex ;
     devId = td->platform.device_ids[tid] ;
     
-    context = clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &err);
-    if (!context){
-        printf("[thread:%d], Error [%d] : Failed to create a compute context! \n",tid,err);
-        exit(-1);
-    }
+    context = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
+    program = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
     
-    program = clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &err);
-    if (!program){
-        printf("[thread:%d], Error [%d]: Failed to create compute program for device!\n",tid,err);
-        exit(-2);
-    }
     err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
@@ -127,121 +141,110 @@ void * devPulseBlock ( void * threadArg ) {
         exit(-3);
     }
     
-    kernel = clCreateKernel(program, "rayTraceBeam", &err);
-    if (!kernel || err != CL_SUCCESS){
-        printf("[thread:%d], Error: Failed to build kernel \"%s\" ! : %d\n",tid,"rayTraceBeam",err);
-        exit(-4);
-    }
-    commandQ = clCreateCommandQueue(context, devId, 0, &err);
-    if (!commandQ){
-        printf("[thread:%d], Error: Failed to create a command commands!\n",tid);
-        exit(-5);
-    }
+    kernel = CL_CHECK_ERR(clCreateKernel(program, "rayTraceBeam", &_err));
+    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
+    
     
     // Calculate global and local work sizes
     //
     int tx,ty ;
     size_t localWorkSize [2] ;
     size_t globalWorkSize[2] ;
-    globalWorkSize[0] = beam.nAzBeam ;
-    globalWorkSize[1] = beam.nElBeam ;
+    globalWorkSize[0] = nAzBeam ;
+    globalWorkSize[1] = nElBeam ;
     best2DWorkSize(kernel, devId, globalWorkSize[0], globalWorkSize[1], &tx, &ty, &td->status) ;
     localWorkSize[0]  = tx ;
     localWorkSize[1]  = ty ;
     
     // Create device buffers
     //
-    dTriangles = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Triangle)*td->nTriangles, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-6); }
-    dTextures = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Texture)*td->nTextures, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-7); }
-    dKdTree = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-8); }
-    dtriListData = clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-9); }
-    dtriListPtrs = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-10); }
-    drnp = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES, NULL, &err);
-    if (err != CL_SUCCESS) { printf("Error : failed to create buffer for device %d : [%d]\n",tid,err); exit(-11); }
+    dTriangles = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Triangle)*td->nTriangles, NULL, &_err));
+    dTextures = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Texture)*td->nTextures, NULL, &_err));
+    dKdTree = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &_err));
+    dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &_err));
+    dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &_err));
+    drnp = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
 
     // Load the device buffers
     //
-    err  = clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*td->nTriangles, td->Triangles,    0, NULL, NULL);
-    err |= clEnqueueWriteBuffer(commandQ, dTextures,    CL_TRUE, 0, sizeof(Texture)*td->nTextures,td->Textures,        0, NULL, NULL);
-    err |= clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*td->nTreeNodes, td->KdTree,         0, NULL, NULL);
-    err |= clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, td->triListDataSize, td->triListData,              0, NULL, NULL);
-    err |= clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*td->nLeaves, td->triPtrs,              0, NULL, NULL);
-    if (err != CL_SUCCESS){
-        printf("Error: Failed to set write buffer for device %d : [%d]\n",tid, err);
-        exit(-12);
-    }
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*td->nTriangles, td->Triangles,    0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTextures,    CL_TRUE, 0, sizeof(Texture)*td->nTextures,td->Textures,        0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*td->nTreeNodes, td->KdTree,         0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, td->triListDataSize, td->triListData,              0, NULL, NULL);
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*td->nLeaves, td->triPtrs,              0, NULL, NULL)));
     
-    // Set up the kernel arguments
-    //
-    err  = clSetKernelArg(kernel, 0,  sizeof(beamParams), &beam);
-    err |= clSetKernelArg(kernel, 1,  sizeof(int), &td->bounceToShow);
-    err |= clSetKernelArg(kernel, 2,  sizeof(cl_mem), &dTriangles);
-    err |= clSetKernelArg(kernel, 3,  sizeof(cl_mem), &dTextures);
-    err |= clSetKernelArg(kernel, 4,  sizeof(cl_mem), &dKdTree);
-    err |= clSetKernelArg(kernel, 5,  sizeof(cl_mem), &dtriListData);
-    err |= clSetKernelArg(kernel, 6,  sizeof(cl_mem), &dtriListPtrs);
-    err |= clSetKernelArg(kernel, 7,  sizeof(cl_mem), &drnp);
-    if (err != CL_SUCCESS){
-        printf("Error: Failed to set kernel arguments! %d\n", err);
-        exit(1);
-    }
-    
+
     // **** loop  start here
     //
     for (int pulse=0; pulse<td->nPulses; pulse++){
-        int pulseIndex = td->startPulse+pulse ;
-        
-        VECT_MINUS(td->RxPositions[pulseIndex], aimdir) ;
-        derampRange = VECT_MAG(aimdir);
-
-        // allocate buffer for answers and make sure its zeroed (using calloc)
-        //
-        rnp = (rangeAndPower *)calloc(beam.nAzBeam*beam.nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
-        if (rnp == NULL){
-            printf("Error : failed to malloc rangeAndPower array in thread %d (size %ld)\n"
-                   ,tid, sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES);
-            exit(-6);
-        }
-        
-        err = clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES,rnp,0,NULL,NULL);
-        if (err != CL_SUCCESS){
-            printf("Error: Failed to set write buffer for device %d : [%d]\n",tid, err);
-            exit(-13);
-        }
+        int pulseIndex = (tid * td->nPulses) + pulse ;
         
         // Set correct parameters for beam to ray trace
         //
-        beam.TxPos.x = td->TxPositions[pulseIndex].x ;
-        beam.TxPos.y = td->TxPositions[pulseIndex].y ;
-        beam.TxPos.z = td->TxPositions[pulseIndex].z ;
+        TxPos = td->TxPositions[pulseIndex] ;
+        
+        printf("Tx position is %1.9e,%1.9e,%1.9e\n",td->TxPositions[pulseIndex].x,td->TxPositions[pulseIndex].y,td->TxPositions[pulseIndex].z );
+        printf("TxPos  is %1.9e,%1.9e,%1.9e\n", TxPos.x, TxPos.y, TxPos.z) ;
+        RxPos = td->RxPositions[pulseIndex] ;
+        
+        double testdbl = TxPos.x ;
+        printf("testdbl is %1.9e\n",testdbl);
+        // Set up the kernel arguments
+        //
+        CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(int), &nAzBeam));
+        CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(int), &nElBeam));
+        CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(SPVector), &RxPos));
+        CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(SPVector), &TxPos));
+        CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(double), &dAz));
+        CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double), &dEl));
+        CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(double), &raySolidAng));
+        CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(double), &TxPowPerRay));
+        CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(AABB), &SceneBoundingBox));
+        CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(double), &Aeff));
+        CL_CHECK(clSetKernelArg(kernel, 10,  sizeof(int), &bounceToShow));
+        CL_CHECK(clSetKernelArg(kernel, 11,  sizeof(cl_mem), &dTriangles));
+        CL_CHECK(clSetKernelArg(kernel, 12,  sizeof(cl_mem), &dTextures));
+        CL_CHECK(clSetKernelArg(kernel, 13,  sizeof(cl_mem), &dKdTree));
+        CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListData));
+        CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &dtriListPtrs));
+        CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(cl_mem), &drnp));
+        CL_CHECK(clSetKernelArg(kernel, 17,  sizeof(double), &testdbl));
 
-        printf("Tx position is %f,%f,%f\n",td->TxPositions[pulseIndex].x,td->TxPositions[pulseIndex].y,td->TxPositions[pulseIndex].z );
-        printf("beam.TxPos is %f,%f,%f\n", beam.TxPos.x, beam.TxPos.y, beam.TxPos.z) ;
-        beam.RxPos = td->RxPositions[pulseIndex] ;
-                
-        err = clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
-        if (err){
-            printf("Error: Failed to execute kernel! %d \n", err);
-            exit(EXIT_FAILURE);
+        // allocate buffer for answers and make sure its zeroed (using calloc)
+        //
+        rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
+        if (rnp == NULL){
+            printf("Error : failed to malloc rangeAndPower array in thread %d (size %ld)\n"
+                   ,tid, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES);
+            exit(-6);
         }
+        
+        CL_CHECK(clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
+        
+        printf("Host parameters :\n");
+        printf(" nAzBeam : %d\n",nAzBeam);
+        printf(" nElBeam : %d\n",nElBeam);
+        printf(" RxPos : %1.9e,%1.9e,%1.9e\n",RxPos.x, RxPos.y,RxPos.z);
+        printf(" TxPos : %1.9e,%1.9e,%1.9e\n",TxPos.x, TxPos.x,TxPos.z);
+        printf(" dAz : %1.9e\n",dAz);
+        printf(" dEl : %1.9e\n",dEl);
+        printf(" raySolidAng : %1.9e\n",raySolidAng);
+        printf(" TxPowPerRay : %e\n",TxPowPerRay);
+        printf(" SceneBoundingBox : %f,%f,%f-%f,%f,%f\n",SceneBoundingBox.AA.x,SceneBoundingBox.AA.y,SceneBoundingBox.AA.z,SceneBoundingBox.BB.x,SceneBoundingBox.BB.y,SceneBoundingBox.BB.z);
+        printf(" Aeff : %e\n",Aeff);
+        printf(" bounceToShow : %d\n",bounceToShow);
+        printf(" testdbl is %1.9e\n",testdbl);
+
+        CL_CHECK(clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
         
         // Read results from device
         //
-        err = clEnqueueReadBuffer(commandQ,drnp, CL_TRUE,0,sizeof(rangeAndPower)*beam.nAzBeam*beam.nElBeam*MAXBOUNCES,rnp,0,NULL,NULL);
-        if (err != CL_SUCCESS){
-            printf("Error: Failed to read rnp array from device %d! %d\n",tid , err);
-            exit(-14);
-        }
+        CL_CHECK(clEnqueueReadBuffer(commandQ,drnp, CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
         
         // Remove all blank data from rnp
         //
         int cnt=0;
-        for (int i=0; i<beam.nAzBeam*beam.nElBeam*MAXBOUNCES; i++){
+        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0) cnt++ ;
         }
         if(cnt > 0){
@@ -255,8 +258,12 @@ void * devPulseBlock ( void * threadArg ) {
             printf("Error : malloc fail for rnpData on device %d. request data for %d items\n",tid,nrnpItems) ;
             exit(-15);
         }
+        
+        VECT_MINUS(td->RxPositions[pulseIndex], aimdir) ;
+        derampRange = VECT_MAG(aimdir);
+        
         cnt=0;
-        for (int i=0; i<beam.nAzBeam*beam.nElBeam*MAXBOUNCES; i++){
+        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0){
                 rnpData[cnt].power = rnp[i].power ;
                 rnpData[cnt].range = rnp[i].range ;
@@ -294,7 +301,7 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnp);
         
     } // end of pulse loop
-
+    exit(0);
     // Clear down OpenCL allocations
     //
     clReleaseCommandQueue(commandQ);
