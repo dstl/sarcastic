@@ -104,9 +104,6 @@ void * devPulseBlock ( void * threadArg ) {
     double derampRange, currentReal, currentImag, phse, power ;
     int nrnpItems;
     
-    printf("ptr to threadData %p\n",threadArg);
-    printf("ptr to threadData TxPositions : %p\n",td->TxPositions);
-    
     int nAzBeam             = td->nAzBeam ;
     int nElBeam             = td->nElBeam ;
     SPVector RxPos;
@@ -183,12 +180,8 @@ void * devPulseBlock ( void * threadArg ) {
         //
         TxPos = td->TxPositions[pulseIndex] ;
         
-        printf("Tx position is %1.9e,%1.9e,%1.9e\n",td->TxPositions[pulseIndex].x,td->TxPositions[pulseIndex].y,td->TxPositions[pulseIndex].z );
-        printf("TxPos  is %1.9e,%1.9e,%1.9e\n", TxPos.x, TxPos.y, TxPos.z) ;
         RxPos = td->RxPositions[pulseIndex] ;
         
-        double testdbl = TxPos.x ;
-        printf("testdbl is %1.9e\n",testdbl);
         // Set up the kernel arguments
         //
         CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(int), &nAzBeam));
@@ -208,7 +201,6 @@ void * devPulseBlock ( void * threadArg ) {
         CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListData));
         CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &dtriListPtrs));
         CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(cl_mem), &drnp));
-        CL_CHECK(clSetKernelArg(kernel, 17,  sizeof(double), &testdbl));
 
         // allocate buffer for answers and make sure its zeroed (using calloc)
         //
@@ -220,21 +212,6 @@ void * devPulseBlock ( void * threadArg ) {
         }
         
         CL_CHECK(clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
-        
-        printf("Host parameters :\n");
-        printf(" nAzBeam : %d\n",nAzBeam);
-        printf(" nElBeam : %d\n",nElBeam);
-        printf(" RxPos : %1.9e,%1.9e,%1.9e\n",RxPos.x, RxPos.y,RxPos.z);
-        printf(" TxPos : %1.9e,%1.9e,%1.9e\n",TxPos.x, TxPos.x,TxPos.z);
-        printf(" dAz : %1.9e\n",dAz);
-        printf(" dEl : %1.9e\n",dEl);
-        printf(" raySolidAng : %1.9e\n",raySolidAng);
-        printf(" TxPowPerRay : %e\n",TxPowPerRay);
-        printf(" SceneBoundingBox : %f,%f,%f-%f,%f,%f\n",SceneBoundingBox.AA.x,SceneBoundingBox.AA.y,SceneBoundingBox.AA.z,SceneBoundingBox.BB.x,SceneBoundingBox.BB.y,SceneBoundingBox.BB.z);
-        printf(" Aeff : %e\n",Aeff);
-        printf(" bounceToShow : %d\n",bounceToShow);
-        printf(" testdbl is %1.9e\n",testdbl);
-
         CL_CHECK(clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
         
         // Read results from device

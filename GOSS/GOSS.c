@@ -92,7 +92,7 @@ int main (int argc, char **argv){
 //    SPVector sceneCent;
 
     SPStatus status ;
-    im_init_status(status, 25) ;
+    im_init_status(status, 0) ;
     im_init_lib(&status, (char *)"GOSS", argc, (char **)argv);
 	CHECK_STATUS_NON_PTR(status);
     
@@ -197,12 +197,9 @@ int main (int argc, char **argv){
     }
     
     SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
-    printf("TxPos[10000] : %f,%f,%f\n", TxPos[0].x, TxPos[0].y, TxPos[0].z);
-    printf("SRP : %f,%f,%f\n", SRP.x, SRP.y, SRP.z);
 
     ecef2SceneCoords(nPulses, RxPos, SRP);
     ecef2SceneCoords(nPulses, TxPos, SRP);
-    printf("TxPos[10000] : %f,%f,%f\n", TxPos[0].x, TxPos[0].y, TxPos[0].z);
 
     // Calculate azbeamwidth from scene
     // Calculate elbeamwidth from scene
@@ -211,8 +208,9 @@ int main (int argc, char **argv){
     // set to be beamwidth
     
     
-    centreRange = VECT_MAG(hdr.pulses[startPulse+(nPulses/2)].sat_ps_tx) ;
-    VECT_MINUS( hdr.pulses[startPulse+(nPulses/2)].sat_ps_tx, rVect ) ;
+//    centreRange = VECT_MAG(hdr.pulses[startPulse+(nPulses/2)].sat_ps_tx) ;
+    centreRange = VECT_MAG(TxPos[nPulses/2]);
+    VECT_MINUS( TxPos[nPulses/2], rVect ) ;
     VECT_CREATE(0, 0, 1., zHat) ;
     VECT_CROSS(rVect, zHat, unitBeamAz);
     VECT_NORM(unitBeamAz, unitBeamAz) ;
@@ -235,7 +233,6 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    
     dAz = 2.0 * maxAz / centreRange ;
     dEl = 2.0 * maxEl / centreRange ;
     
@@ -386,11 +383,9 @@ int main (int argc, char **argv){
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
         
+        if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         // Create thread data for each device
         //
-        printf("ptr to threadDataArray : %p\n",threadDataArray);
-        printf("ptr to threadDataArray TxPositions : %p\n", TxPos);
-        
         rc = pthread_create(&threads[dev], NULL, devPulseBlock, (void *) &threadDataArray[dev]) ;
         if (rc){
             printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -407,7 +402,8 @@ int main (int argc, char **argv){
             exit(-1);
         }
     }
-    
+    if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
+
     pthread_exit(NULL);
 
     FILE *fp;

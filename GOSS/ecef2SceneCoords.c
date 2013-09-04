@@ -48,7 +48,6 @@ void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
     VECT_CREATE(0, 0, 1., Z) ;          // Create Z-axis - Earth axis of rotation
     VECT_CROSS(Z, geoPoint, E) ;        // Create local East vector - tangent to Earth's surface
     VECT_NORM(E, E) ;                   // and make it a unit vector
-    printf("E : %f,%f,%f\n",E.x,E.y,E.z);
     VECT_CROSS(geoPoint, E, N);         // Create local North vector - tangent to Earth's surface
     VECT_NORM(N, N) ;                   // and make it a unit vector
     VECT_NORM(geoPoint, A) ;            // Create local height vector
