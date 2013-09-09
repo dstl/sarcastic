@@ -155,9 +155,9 @@ void * devPulseBlock ( void * threadArg ) {
     
     // Create device buffers
     //
-    dTriangles = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Triangle)*td->nTriangles, NULL, &_err));
-    dTextures = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Texture)*td->nTextures, NULL, &_err));
-    dKdTree = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &_err));
+    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Triangle)*td->nTriangles, NULL, &_err));
+    dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Texture)*td->nTextures, NULL, &_err));
+    dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &_err));
     dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &_err));
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &_err));
     drnp = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
