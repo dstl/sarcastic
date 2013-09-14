@@ -204,6 +204,26 @@ typedef struct threadData {
 
 } threadData ;
 
+typedef struct rnpData_t {
+    double range;
+    double power;
+    double samplingOffset;
+    int samplingOffsetInt;
+    int indexOffset ;
+    double rdiff;
+}rnpData_t ;
+
+typedef struct threadDataBF {
+    int nx ;
+    int nrnpItems ;
+    int startSamp ;
+    int nSamp ;
+    rnpData_t *rnpData ;
+    int pulseIndex ;
+    SPImage * phd ;
+    double A ;
+    double B ;
+} threadDataBF ;
 
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
@@ -222,6 +242,6 @@ char * loadProgramSource(const char *filename);
                      cplxf * pulses             // output array - nPulses x nSamps
                      );*/
 void * devPulseBlock ( void * threadArg ) ;
-
+void * beamForm ( void * threadArg ) ;
 
 #endif

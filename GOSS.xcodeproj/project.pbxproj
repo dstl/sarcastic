@@ -14,6 +14,7 @@
 		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
 		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
 		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
+		95693B5F17E4D07400834C3A /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 95693B5E17E4D07400834C3A /* threadBeamForm.c */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
@@ -63,6 +64,7 @@
 		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
 		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
+		95693B5E17E4D07400834C3A /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -129,6 +131,7 @@
 				9504216817A454AA00A076FC /* GenGitVersion.sh */,
 				9504214E17A4501A00A076FC /* GOSS.c */,
 				95339DA517AAFCF00007466A /* threadCore.c */,
+				95693B5E17E4D07400834C3A /* threadBeamForm.c */,
 				9504215117A4502800A076FC /* GOSS.h */,
 				95DB871817A8267200180864 /* getUserInput.c */,
 				9504215617A453E300A076FC /* readKdTree.h */,
@@ -248,6 +251,7 @@
 				95DB871917A8267200180864 /* getUserInput.c in Sources */,
 				95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */,
 				95339DA617AAFCF00007466A /* threadCore.c in Sources */,
+				95693B5F17E4D07400834C3A /* threadBeamForm.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +405,7 @@
 				95BA791217BE57190061162F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

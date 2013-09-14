@@ -56,14 +56,6 @@ static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCod
 //
 //} beamParams ;
 
-typedef struct rndData_t {
-    double range;
-    double power;
-    double samplingOffset;
-    int samplingOffsetInt;
-    int indexOffset ;
-    double rdiff;
-}rndData_t ;
 
 #define CL_CHECK(_expr)                                                             \
     do {                                                                            \
@@ -101,7 +93,7 @@ void * devPulseBlock ( void * threadArg ) {
 //    beamParams beam ;
     double freqSampsToCentreStart, ADCSampsToTargStart ;
     SPVector aimdir ;
-    double derampRange, currentReal, currentImag, phse, power ;
+    double derampRange; //, currentReal, currentImag, phse, power ;
     int nrnpItems;
     
     int nAzBeam             = td->nAzBeam ;
@@ -173,7 +165,7 @@ void * devPulseBlock ( void * threadArg ) {
     Timer threadTimer ;
     SPStatus status;
     startTimer(&threadTimer, &status) ;
-    int reportN = 100 ;
+    int reportN = 1000 ;
     
     // **** loop  start here
     //
@@ -245,7 +237,7 @@ void * devPulseBlock ( void * threadArg ) {
             printf("ERROR: No intersections on device %d\n",tid);
             exit(-1);
         }
-        rndData_t * rnpData = (rndData_t *)malloc(sizeof(rndData_t)*nrnpItems) ;
+        rnpData_t * rnpData = (rnpData_t *)malloc(sizeof(rnpData_t)*nrnpItems) ;
         if(rnpData == NULL){
             printf("Error : malloc fail for rnpData on device %d. request data for %d items\n",tid,nrnpItems) ;
             exit(-15);
@@ -268,26 +260,84 @@ void * devPulseBlock ( void * threadArg ) {
                 cnt++;
             }
         }
-        // Create the uncompressed (but deramped) range profile for this pulse, storing it
-        // back in its original location
-        //
-        int samplingOffsetInt;
-        for (int ksamp=0; ksamp<td->phd->nx; ksamp++) {
-            for (int j=0; j<nrnpItems; j++ ){
-                samplingOffsetInt = rnpData[j].samplingOffsetInt ;
-                if ((ksamp+samplingOffsetInt >=0) && (ksamp+samplingOffsetInt < td->phd->nx)) {
-                    currentReal = td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].r ;
-                    currentImag = td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].i ;
-                    
-                    power = rnpData[j].power ;
-                    phse  = rnpData[j].rdiff * ( A * (ksamp+rnpData[j].indexOffset) + B);
-                    
-                    td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].r = currentReal+power*cos(phse) ;
-                    td->phd->data.cmpl_f[(pulseIndex)*td->phd->ny + (ksamp+rnpData[j].samplingOffsetInt)].i = currentImag+power*sin(phse) ;
+        
+        int nbeamThreads = (int)sysconf(_SC_NPROCESSORS_ONLN);
+        int nbeamThreadsRem = td->phd->nx % nbeamThreads ;
+        int loops = (nbeamThreadsRem == 0) ? 1 : 2 ;
+        int nSamp;
+        int rc ;
+        int thd ;
+        int startSamp ;
+        
+//        while (td->phd->nx % nbeamThreads !=0 ) nbeamThreads--;
+
+        for(int iloop = 0; iloop<loops; iloop++){
+            if (iloop == 1) {
+                nbeamThreads = nbeamThreadsRem ;
+            }
+            pthread_t *beamThreads;
+            beamThreads = (pthread_t *)malloc(sizeof(pthread_t)*nbeamThreads) ;
+            if (beamThreads == NULL) {
+                printf("Error : Failed to malloc %d threads\n",nbeamThreads);
+                exit(-1);
+            }
+        
+            threadDataBF *threadDataArray ;
+            threadDataArray = (threadDataBF *)malloc(sizeof(threadDataBF)*nbeamThreads);
+            if (threadDataArray == NULL) {
+                printf("Error : Failed to malloc %d threadDataArrays\n",nbeamThreads);
+                exit(-1);
+            }
+        
+            pthread_attr_t attr;
+            pthread_attr_init(&attr);
+            pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+        
+            if(iloop==1){
+                nSamp = 1 ;
+            }else{
+                startSamp = 
+                nSamp = (int)(td->phd->nx / nbeamThreads) ;
+            }
+           
+            for (thd=0; thd<nbeamThreads; thd++) {
+            
+                threadDataArray[thd].A          = A ;
+                threadDataArray[thd].B          = B ;
+                threadDataArray[thd].nrnpItems  = nrnpItems ;
+                threadDataArray[thd].nSamp      = nSamp ;
+                threadDataArray[thd].nx         = (int)td->phd->nx ;
+                threadDataArray[thd].phd        = td->phd ;
+                threadDataArray[thd].pulseIndex = pulseIndex ;
+                threadDataArray[thd].rnpData    = rnpData ;
+                if(iloop ==1){
+                    threadDataArray[thd].startSamp  = (int)td->phd->nx - nbeamThreads + thd ;
+                }else{
+                    threadDataArray[thd].startSamp  = thd*nSamp ;
+                }
+            
+                // Create thread data for each device
+                //
+                rc = pthread_create(&beamThreads[thd], NULL, beamForm, (void *) &threadDataArray[thd]) ;
+                if (rc){
+                    printf("ERROR; return code from pthread_create() is %d\n", rc);
+                    exit(-1);
                 }
             }
-        }
         
+            pthread_attr_destroy(&attr);
+            void * threadStatus ;
+            for (thd=0; thd<nbeamThreads; thd++) {
+                rc = pthread_join(beamThreads[thd], &threadStatus);
+                if (rc) {
+                    printf("ERROR; return code from pthread_join() is %d\n", rc);
+                    exit(-1);
+                }
+            }
+     
+            free(beamThreads);
+            free(threadDataArray);
+        }
         free(rnpData) ;
         free(rnp);
         

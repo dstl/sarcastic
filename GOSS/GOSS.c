@@ -329,7 +329,7 @@ int main (int argc, char **argv){
     
     threadData *threadDataArray ;
     threadDataArray = (threadData *)malloc(sizeof(threadData)*ndevs);
-    if (threads == NULL) {
+    if (threadDataArray == NULL) {
         printf("Error : Failed to malloc %d threadDataArrays\n",ndevs);
         exit(-1);
     }
@@ -404,8 +404,6 @@ int main (int argc, char **argv){
         }
     }
     if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
-
-//    pthread_exit(NULL);
 
     FILE *fp;
     fp = fopen(outCPHDFile, "w") ;
