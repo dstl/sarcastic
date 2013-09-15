@@ -177,7 +177,7 @@ void * devPulseBlock ( void * threadArg ) {
                 double sexToGo = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
                 printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
                 if(pulse != 0 ){
-                    printf("  ETC in %3.0f Seconds\n",sexToGo);
+                    printf("  ETC in %3.0d Min %3.0d Seconds\n",(int)floor(sexToGo/60),((int)sexToGo) % 60);
                 }else{
                     printf("  Calculating ETC...\n");
                 }
