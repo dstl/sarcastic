@@ -64,7 +64,6 @@ int main (int argc, char **argv){
     CPHDHeader  hdr ;
     AABB        SceneBoundingBox;
     OCLPlatform platform;
-    threadData   td ;
     
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8] ;
     double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda ;
@@ -72,6 +71,7 @@ int main (int argc, char **argv){
     int startPulse, nPulses, bounceToShow, nTriangles, nTextures, nLeaves, nTreeNodes ;
     int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
     SPImage cphd ;
+    int debug, debugX=0, debugY=0;
 
     cl_int      err;
     cl_uint     ndevs;
@@ -87,10 +87,6 @@ int main (int argc, char **argv){
     double    * Fx0s          = NULL ;
     double    * FxSteps       = NULL ;
 
-//    double gr,sq,az,ra,resGr;
-//    int lr;
-//    SPVector sceneCent;
-
     SPStatus status ;
     im_init_status(status, 0) ;
     im_init_lib(&status, (char *)"GOSS", argc, (char **)argv);
@@ -102,7 +98,7 @@ int main (int argc, char **argv){
     
     banner() ;
     
-    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &status) ;
+    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &debug, &debugX, &debugY,&status) ;
     
     // Start timing after user input
     //
@@ -207,8 +203,6 @@ int main (int argc, char **argv){
     // multiply by sceneBeamMargin
     // set to be beamwidth
     
-    
-//    centreRange = VECT_MAG(hdr.pulses[startPulse+(nPulses/2)].sat_ps_tx) ;
     centreRange = VECT_MAG(TxPos[nPulses/2]);
     VECT_MINUS( TxPos[nPulses/2], rVect ) ;
     VECT_CREATE(0, 0, 1., zHat) ;
@@ -247,16 +241,6 @@ int main (int argc, char **argv){
     double raySolidAng,TxPowPerRay, Aeff ;
     TxPowPerRay = TxPowerPerRay(nAzBeam, nElBeam, dAz, dEl,&raySolidAng, &Aeff);
 
-    td.ADRate           = hdr.clock_speed ;
-    td.chirpRate        = hdr.chirp_gamma ;
-    td.dAz              = dAz ;
-    td.dEl              = dEl ;
-    td.Aeff             = Aeff ;
-    td.oneOverLambda    = hdr.freq_centre / SIPC_c ;
-    td.nAzBeam          = nAzBeam ;
-    td.nElBeam          = nElBeam ;
-    td.bounceToShow     = bounceToShow-1 ;
-        
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
     //
@@ -317,6 +301,7 @@ int main (int argc, char **argv){
         devMemSize = (memSizeTmp < devMemSize) ? memSizeTmp : devMemSize;
     }
     if (bounceToShow != 0) ndevs = 1;
+    platform.nDevs = ndevs ;
 
     printf("DEVICES USED                : %d\n",ndevs);
     
@@ -339,6 +324,12 @@ int main (int argc, char **argv){
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     im_init(&cphd, &status) ;
     load_cphd(&cphd, &hdr, 0, hdr.num_azi, &status);
+    
+    // wiping pulse data...
+    //
+    for (int i = 0; i<cphd.nx*cphd.ny; i++){
+        cphd.data.cmpl_f[i].i = cphd.data.cmpl_f[i].r = 0.0f;
+    }
     
     // Calculate how many pulses can be processed on a device at a time
     //
@@ -380,9 +371,12 @@ int main (int argc, char **argv){
         threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
         threadDataArray[dev].ADRate                 = hdr.clock_speed ;
         threadDataArray[dev].oneOverLambda          = hdr.freq_centre / SIPC_c ;
-        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_size*hdr.chirp_gamma/2) ;
+        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length *hdr.chirp_gamma/2) ;
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
+        threadDataArray[dev].debug                  = debug ;
+        threadDataArray[dev].debugX                 = debugX ;
+        threadDataArray[dev].debugY                 = debugY ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         // Create thread data for each device
@@ -416,6 +410,7 @@ int main (int argc, char **argv){
     endTimer(&runTimer, &status) ;
     printf("Done  is %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     printf("Writing CPHD File \"%s\"....",outCPHDFile);
+    hdr.data_type = ITYPE_CMPL_FLOAT ;
     writeCPHD3Header( &hdr, fp, &status ) ;
     write_cphd3_nb_vectors(&hdr, 0, fp, &status) ;
     write_cphd3_wb_vectors(&hdr, &cphd, 0, fp, &status) ;

@@ -107,6 +107,9 @@ void * devPulseBlock ( void * threadArg ) {
     AABB SceneBoundingBox   = td->SceneBoundingBox ;
     double Aeff             = td->Aeff ;
     int bounceToShow        = td->bounceToShow ;
+    int debug               = td->debug;
+    int debugX              = td->debugX;
+    int debugY              = td->debugY;
     
     double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
     double B = 4.0*SIPC_pi*td->oneOverLambda ;
@@ -119,7 +122,15 @@ void * devPulseBlock ( void * threadArg ) {
     context = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
     program = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
     
-    err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    char compilerOptions[255];
+    strcat(compilerOptions, "-Werror");
+    if (debug) {
+        char dbgxy[128];
+        sprintf(dbgxy, " -D DEBUG=%d -D DBGX=%d -D DBGY=%d",debug,debugX,debugY);
+        strcat(compilerOptions, dbgxy);
+    }
+    
+    err = clBuildProgram(program, 0, NULL, compilerOptions, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
         char buffer[32768];
@@ -130,7 +141,7 @@ void * devPulseBlock ( void * threadArg ) {
         exit(-3);
     }
     
-    kernel = CL_CHECK_ERR(clCreateKernel(program, "rayTraceBeam", &_err));
+    kernel   = CL_CHECK_ERR(clCreateKernel(program, "rayTraceBeam", &_err));
     commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
     
     
@@ -165,14 +176,14 @@ void * devPulseBlock ( void * threadArg ) {
     Timer threadTimer ;
     SPStatus status;
     startTimer(&threadTimer, &status) ;
-    int reportN = 1000 ;
+    int reportN = 500 ;
     
     // **** loop  start here
     //
     for (int pulse=0; pulse<td->nPulses; pulse++){
         int pulseIndex = (tid * td->nPulses) + pulse ;
         if ( td->devIndex == 0 ) {
-            if( pulse % reportN == 0){
+            if( pulse % reportN == 0 && td->nPulses != 1){
                 double pCentDone = 100.0*pulse/td->nPulses ;
                 double sexToGo = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
                 printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
@@ -208,6 +219,8 @@ void * devPulseBlock ( void * threadArg ) {
         CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListData));
         CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &dtriListPtrs));
         CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(cl_mem), &drnp));
+        CL_CHECK(clSetKernelArg(kernel, 17,  sizeof(int), &pulseIndex));
+
 
         // allocate buffer for answers and make sure its zeroed (using calloc)
         //
@@ -261,7 +274,7 @@ void * devPulseBlock ( void * threadArg ) {
             }
         }
         
-        int nbeamThreads = (int)sysconf(_SC_NPROCESSORS_ONLN);
+        int nbeamThreads = (int)(sysconf(_SC_NPROCESSORS_ONLN)/td->nThreads);
         int nbeamThreadsRem = td->phd->nx % nbeamThreads ;
         int loops = (nbeamThreadsRem == 0) ? 1 : 2 ;
         int nSamp;
@@ -269,8 +282,6 @@ void * devPulseBlock ( void * threadArg ) {
         int thd ;
         int startSamp ;
         
-//        while (td->phd->nx % nbeamThreads !=0 ) nbeamThreads--;
-
         for(int iloop = 0; iloop<loops; iloop++){
             if (iloop == 1) {
                 nbeamThreads = nbeamThreadsRem ;

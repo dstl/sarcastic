@@ -201,6 +201,9 @@ typedef struct threadData {
     double StartFrequency ;
     int bounceToShow ;
     SPStatus status ;
+    int debug;                  // Compiler the kernel with debug options
+    int debugX;                 // Which ray in X within the beam to debug
+    int debugY;                 // Which ray in Y within the beam to debug
 
 } threadData ;
 
@@ -228,6 +231,7 @@ typedef struct threadDataBF {
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
+                 int *debug, int *debugX, int *debugY,
                  SPStatus *status) ;
 char * loadProgramSource(const char *filename);
 /*void radarRayBouncer(int iPulse,              // Pulse to process

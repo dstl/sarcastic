@@ -10,6 +10,12 @@
 // Description:
 //     This file needs to be self contained as it will become the
 //     OpenCL / Cuda kernel
+//     If compiled with DEBUG defined then various levels of debug information
+//      are displayed.
+//          DEBUG >= 10 top level output from rayTraceBeam
+//          DEBUG >= 15 output from stacklessTraverse() function
+//          DEBUG >= 20 output from intersect() function
+//          DEBUg >= 25 output from reflectPower() function
 //
 //
 // CLASSIFICATION        :  UNCLASSIFIED
@@ -55,9 +61,8 @@
 #define TRUE 1
 #define FALSE 0
 #define HIDDENSCATTERERS 0
-#define RXLNA 1000        // Receiver Low-Noise amplifier in dB (30dB)
-#define RXImp 50          // Receiver Impedence
-
+#define RXLNA 1000000000000        // Receiver Low-Noise amplifier in dB (30dB)
+#define MAXTRAVERSAL 1000          // Maximum kdTree traversal steps before we blow up
 typedef int OutCode;
 
 #define INSIDEAABB  0   // 000000
@@ -68,6 +73,15 @@ typedef int OutCode;
 #define TOPAABB     16  // 010000
 #define BOTTOMAABB  32  // 100000
 #define NOINTERSECTION -1
+
+#ifdef DEBUG
+#ifndef DBGX
+#define DBGX 0
+#endif
+#ifndef DBGY
+#define DBGY 0
+#endif
+#endif
 
 void ClipToRect(float *x0, float *y0, float *x1, float *y1, float xmin, float xmax, float ymin, float ymax, int *status);
 
@@ -190,15 +204,13 @@ VectorH vectRotateAxis(VectorH v, VectorH axis, double theta);
 VectorH vectNorm(VectorH v);
 
 int occluded(VectorH point, VectorH dir,AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int * triangleListPtrs, __global Triangle * Triangles);
-Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int * triangleListPtrs, __global Triangle * Triangles, int debug);
-double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __global Triangle * Triangles, __global Texture * textureData);
+Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int * triangleListPtrs, __global Triangle * Triangles, int debug, int rayx, int rayy, int pulseIndex);
+double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __global Triangle * Triangles, __global Texture * textureData, int debug);
 Ray reflect(Ray ray, Hit h, __global Triangle * Triangles);
 int clipToAABB(AABB boundingBox, VectorH *lineStart, VectorH *lineEnd);
 void ClipToBox(VectorH *p0, VectorH *p1, VectorH min, VectorH max, int *status);
-void Intersect(__global Triangle *tri, Ray *ray, Hit *hit);
+void Intersect(__global Triangle *tri, Ray *ray, Hit *hit, int debug);
 OutCode ComputeOutCode(VectorH p, VectorH min, VectorH max);
-//double intersectionArea(Hit h, __global TriCoords * Tricos, VectorH direction, double SolidAngle );
-//void triAreaProj(VectorH A, VectorH B, VectorH C, float *area, VectorH *normal);
 
 VectorH vectCreate(double a, double b, double c){
     VectorH v;
@@ -269,7 +281,8 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                            __global KdData * KdTree,        // array containing KdTree
                            __global int *triangleListData,  // array of triangle indices into Triangles
                            __global int *triangleListPtrs,  // array of pointers into triangleListData for each node
-                           __global rangeAndPower *rnp      // Array storing ranges and powers (dim: nAzbeam x nElBeam x MAXBOUNCES )
+                           __global rangeAndPower *rnp,     // Array storing ranges and powers (dim: nAzbeam x nElBeam x MAXBOUNCES )
+                            const int pulseIndex            // For debugging - Index of this pulse
                             )
 {
     int xId = get_global_id(0);
@@ -277,24 +290,27 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
     
     double beamHeight, beamWidth, thetaAz, thetaEl, rayPow, totalDist, RCSArea;
     VectorH aimDir, elAxis, azAxis, azRayDir, elRayDir, rxp;
+    VectorH srcPt, dstPt ;
+    double dist;
     int debug = 0, bounces;
     Ray r;
     Hit h;
 
     if (xId >=0 && xId < nAzBeam && yId >=0 && yId < nElBeam) {
 
-//        if( xId == 0 && yId == 0){debug = 11;}else{debug=0;}
+#ifdef DEBUG
+        if( xId == DBGX && yId == DBGY ){debug = DEBUG;}else{debug=0;}
         if(debug>=10)printf("+++++++++++++++++++++++++++++++++++++++\n");
-
+#endif
         beamWidth  = nAzBeam * dAz;
         beamHeight = nElBeam * dEl;
         rxp        = RxPos;
         aimDir     = vectMinus(rxp);
         elAxis     = vectCross(aimDir,vectCreate(0, 0, 1));
         azAxis     = vectCross(elAxis,aimDir);
-        thetaAz    = (yId * dAz) - (beamWidth/2) + (dAz/2);
+        thetaAz    = (xId * dAz) - (beamWidth/2) + (dAz/2);
         azRayDir   = vectRotateAxis(aimDir, azAxis, thetaAz);
-        thetaEl    = (xId * dEl) - (beamHeight/2) + (dEl/2);
+        thetaEl    = (yId * dEl) - (beamHeight/2) + (dEl/2);
         elRayDir   = vectRotateAxis(azRayDir, elAxis, thetaEl);
         r.org      = TxPos;
         r.dir      = vectNorm (  elRayDir );
@@ -302,13 +318,16 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
         rayPow     = TxPowPerRay;
         totalDist  = 0.0;
         bounces    = 0;
-        
+                
         while (bounces < MAXBOUNCES){
-            if(debug>10)printf("================start of stacklesstraverse===============\n");
-            h = StacklessTraverse(r, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug);
-            if(debug>10)printf("================= end of stacklesstraverse===============\n");
-            
-            if(debug>10)printf("h: trinum = %d, dist = %f\n",h.trinum,h.dist);
+#ifdef DEBUG
+            if(debug>=10)printf("================start of stacklesstraverse===============\n");
+#endif
+            h = StacklessTraverse(r, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles,debug,xId,yId, pulseIndex);
+#ifdef DEBUG
+            if(debug>=10)printf("================= end of stacklesstraverse===============\n");
+            if(debug>=10)printf("h: trinum = %d, dist = %f\n",h.trinum,h.dist);
+#endif
             if( h.trinum == NOINTERSECTION){
                 break ;
             }
@@ -317,13 +336,26 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
             
             // For power calculations we need the effective area of the triangle being hit
             //
-            totalDist = totalDist + h.dist; // total dist to hitpoint
+            Ray reflected = reflect(r, h, Triangles);
+            srcPt = r.org;
+            dstPt = reflected.org;
+            dist  =  vectMag( vectSub(dstPt,srcPt) );
+#ifdef DEBUG
+            if(debug>=10)printf("dist = %f\n",h.trinum,dist);
+#endif
+            totalDist = totalDist + dist ;
             RCSArea = r.san * totalDist * totalDist ;
             rayPow = RCSArea * TxPowPerRay / (4 * PI * totalDist * totalDist);  // pow at hitpoint
-            Ray reflected = reflect(r, h, Triangles);
             
             VectorH returnVect = vectSub(rxp, reflected.org );
             VectorH returnVectDir = vectNorm(returnVect);
+
+#ifdef DEBUG
+            if(debug>=10){
+                printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
+                printf("ray dir: %f,%f,%f\n", reflected.dir.x, reflected.dir.y, reflected.dir.z);
+            }
+#endif
             if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and mix the signal back into the receiver
@@ -332,11 +364,10 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                 if(bounces == bounceToShow){
                     printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
                 }
-                if(debug>10)printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
                 
                 double range = vectMag( returnVect );
-                double refPow = reflectPower(rayPow, vectMinus(r.dir), reflected.dir, returnVectDir, h,Triangles, textureData);                
-                double refPowatRx = refPow * Aeff / (4.0 * PI * range * range);
+                double refPow = reflectPower(rayPow, vectMinus(r.dir), reflected.dir, returnVectDir, h,Triangles, textureData, debug);
+                double refPowatRx = RXLNA*refPow * Aeff / (4.0 * PI * range * range);
                 double rangeOfreturn = (totalDist + range)*0.5;
                 
                 rnp[((yId * nAzBeam) + xId)+(nAzBeam*nElBeam*bounces)].range = rangeOfreturn ;
@@ -350,12 +381,12 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
 
 
 Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, __global int *triangleListData, __global int *triangleListPtrs,
-                      __global Triangle * Triangles, int debug){
+                      __global Triangle * Triangles, int debug, int rayx, int rayy, int pulseIndex){
     
     int i,trisInLeaf;
     float t_entry = 0;
     float t_exit  = vectMag( ray.org ) + 100;
-    VectorH volumeEntry, volumeExit, PEntry;
+    VectorH volumeEntry, volumeExit, PEntry, hp;
     Hit hit;
     float t1,t2,xinv,yinv,zinv;
     
@@ -366,6 +397,14 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     //
     volumeEntry  = ray.org;
     volumeExit   = vectAdd(ray.org, vectMult(ray.dir, t_exit ));
+    
+#ifdef DEBUG
+    if(debug>=15){
+        printf("volumeEntry : %f,%f,%f\n",volumeEntry.x,volumeEntry.y,volumeEntry.z);
+        printf("volumeExit  : %f,%f,%f\n",volumeExit.x,volumeExit.y,volumeExit.z);
+        printf("ray.dir     : %f,%f,%f\n",ray.dir.x,ray.dir.y,ray.dir.z);
+    }
+#endif
     
     // Calculate the ray segment within the scene volume
     // Do this early to reduce calcs for ray misses
@@ -386,24 +425,44 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     while (dirInverse.cell[dimToUse] == 0)dimToUse++;
     t_entry = 0.0;
     t_exit  = (volumeExit.cell[dimToUse]   - volumeEntry.cell[dimToUse])* dirInverse.cell[dimToUse];
+
+#ifdef DEBUG
+    if(debug>=15){
+        printf("t_exit : %f\n",t_exit);
+    }
+#endif
     
+    int cnt =0;
     while (t_entry <= t_exit ) {
-        
+        cnt++;
+        if(cnt > MAXTRAVERSAL){
+            printf("Error : max stacktraversal exceeded for ray [%d,%d] in pulse %d\n",rayx,rayy,pulseIndex);
+            exit(0);
+        }
         PEntry = vectAdd(volumeEntry, vectMult(ray.dir, t_entry));
-        if(debug>=10){
-            printf("PEntry      : %f,%f,%f\n",PEntry.x,PEntry.y,PEntry.z);
+        
+#ifdef DEBUG
+        if(debug>=15){
             printf("volumeEntry : %f,%f,%f\n",volumeEntry.x,volumeEntry.y,volumeEntry.z);
+            printf("PEntry      : %f,%f,%f\n",PEntry.x,PEntry.y,PEntry.z);
+            printf("ray.org     : %f,%f,%f\n",ray.org.x,ray.org.y,ray.org.z);
             printf("ray.dir     : %f,%f,%f\n",ray.dir.x,ray.dir.y,ray.dir.z);
             printf("t_entry     : %f\n",t_entry);
         }
+#endif
         
         while (!KDT_ISLEAF(node)){  // Branch node
-            
+            hp.x = hp.y = hp.z = -666;
+
             if (PEntry.cell[KDT_DIMENSION(node)] < (node->branch.splitPosition-EPSILON)) {
-                if(debug>10)printf("[%f < %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition-EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node));
+#ifdef DEBUG
+                if(debug>15)printf("[%f < %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition-EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node));
+#endif
                 node = &(KdTree[KDT_OFFSET(node)]);
             }else if (PEntry.cell[KDT_DIMENSION(node)] > (node->branch.splitPosition+EPSILON)) {
-                if(debug>10)printf("[%f > %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition+EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+#ifdef DEBUG
+                if(debug>15)printf("[%f > %f (k:%d)], next node is %d\n",PEntry.cell[KDT_DIMENSION(node)],node->branch.splitPosition+EPSILON,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+#endif
                 node = &(KdTree[KDT_OFFSET(node)+1]);
             }else{
                 // PEntry is on splitposition
@@ -413,21 +472,29 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
                 // in Case 1. next node is node
                 // in Case 2. next node is node+1
                 if (ray.org.cell[KDT_DIMENSION(node)] < node->branch.splitPosition-EPSILON){
-                    if(debug>10)printf("o[%f < %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node));
+#ifdef DEBUG
+                    if(debug>15)printf("o[%f < %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node));
+#endif
                     node = &(KdTree[KDT_OFFSET(node)]);
                 } else if (ray.org.cell[KDT_DIMENSION(node)] > node->branch.splitPosition+EPSILON){
-                    if(debug>10)printf("o[%f > %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+#ifdef DEBUG
+                    if(debug>15)printf("o[%f > %f (k:%d)] next node is %d\n",ray.org.cell[KDT_DIMENSION(node)],node->branch.splitPosition,KDT_DIMENSION(node),KDT_OFFSET(node)+1);
+#endif
                     node = &(KdTree[KDT_OFFSET(node)+1]);
                 } else {
                     // ray origin on split plane. Determine next node by direction of ray
                     //
                     if(ray.dir.cell[KDT_DIMENSION(node)] > 0 ){
-                        if(debug>10)printf("|[] next node is %d, dir is %f\n",KDT_OFFSET(node)+1,ray.dir.cell[KDT_DIMENSION(node)]);
+#ifdef DEBUG
+                        if(debug>15)printf("|[] next node is %d, dir is %f\n",KDT_OFFSET(node)+1,ray.dir.cell[KDT_DIMENSION(node)]);
+#endif
                         node = &(KdTree[KDT_OFFSET(node)+1]);
                     }else {
                         // Includes situation where origin is on split position and ray is travelling parallel to split position
                         //
-                        if(debug>10)printf("|[] next node is %d dir is %f\n",KDT_OFFSET(node),ray.dir.cell[KDT_DIMENSION(node)]);
+#ifdef DEBUG
+                        if(debug>15)printf("|[] next node is %d dir is %f\n",KDT_OFFSET(node),ray.dir.cell[KDT_DIMENSION(node)]);
+#endif
                         node = &(KdTree[KDT_OFFSET(node)]);
                     }
                 }
@@ -435,16 +502,34 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
         }
         // Have a leaf now
         trisInLeaf = triangleListData[triangleListPtrs[KDT_OFFSET(node)]];
-        if(debug>10)printf("Leaf found : %d triangles\n",trisInLeaf);
+        hit.dist = 10e6;
+#ifdef DEBUG
+        if(debug>15)printf("Leaf found : %d triangles (hit.dist : %f)\n",trisInLeaf,hit.dist);
+#endif
         for (i=0; i<trisInLeaf; i++){
             __global Triangle * tri = &(Triangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
-            Intersect(tri, &ray, &hit);
+            Intersect(tri, &ray, &hit, debug);
         }
-        if((hit.trinum != NOINTERSECTION) && (hit.dist > 0.01)){
+        if((hit.trinum != NOINTERSECTION) && (hit.dist > 0.001)){
+            // hitpoint may be outside box defining node and there may therefore be another
+            // node beyond this node that has a nearer hitpoint. If so then follow rope to next
+            // node
+            hp = hitPoint(hit,ray);
+            if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
+               && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
+               && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON))
             return hit;
         }
         
-        if(debug>10)printf("No Intersection found; Chasing rope...\n");
+#ifdef DEBUG
+        if(debug>15){
+            printf("No Intersection found; Chasing rope...(hit.dist : %f, Hit: %2.8f,%2.8f,%2.8f)\n",hit.dist, hp.x,hp.y,hp.z);
+            if( !(hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)) )printf("X hitpoint component not in AABB (%2.8f - %2.8f)\n",node->leaf.aabb.AA.x,node->leaf.aabb.BB.x);
+            if( !(hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y)-EPSILON) )printf("Y hitpoint component not in AABB (%2.8f - %2.8f)\n",node->leaf.aabb.AA.y,node->leaf.aabb.BB.y);
+            if( !(hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)) )printf("Z hitpoint component not in AABB (%2.8f - %2.8f)\n",node->leaf.aabb.AA.z,node->leaf.aabb.BB.z);
+        }
+#endif
+
         // If ray doesnt intersect triangle in this leaf then propagate the
         // ray to an adjacent node using this leaf's Ropes. (rather than popping
         // back up the tree)
@@ -457,14 +542,22 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
             if (dirInverse.cell[i] != 0){
                 t1 = (node->branch.aabb.AA.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
                 t2 = (node->branch.aabb.BB.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
-                
-                if(t2 > t1 && t2 >= 0){
+                if(t2-t1 > EPSILON && t2 >= 0){
+#ifdef DEBUG
+                    if(debug>15)printf("t2>t1 option\n");
+#endif
                     tpos = t2;
                     ropeIndSide = 1;
-                }else if( t1 > t2 && t1 >= 0){
+                }else if( t1-t2 > EPSILON && t1 >= 0){
+#ifdef DEBUG
+                    if(debug>15)printf("t1>t2 option\n");
+#endif
                     tpos = t1;
                     ropeIndSide = 0;
-                }else if (t2 == t1){
+                }else{
+#ifdef DEBUG
+                    if(debug>15)printf("t1==t2 option\n");
+#endif
                     // AABB is planar so select rope based upon direction of ray
                     tpos = t1;
                     ropeIndSide = (dirInverse.cell[i] < 0 ) ? 0 : 1;
@@ -474,6 +567,11 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
                     ropeInd = i;
                     ropeIndOff = ropeIndSide;
                 }
+#ifdef DEBUG
+                if(debug>=10)printf("Which rope? t1(%d)=%2.8f, t2(%d)=%2.8f, dirInverse(%d)=%f; tmax=%f ropeInd=%d, ropeIndOff=%d\n"
+                                   ,i,t1,i,t2,i,dirInverse.cell[i],t_max,ropeInd,ropeIndOff);
+#endif
+
             }
         }
         t_entry = t_max;
@@ -484,6 +582,9 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
             hit.trinum = NOINTERSECTION;
             return hit ;
         }
+#ifdef DEBUG
+        if(debug>10)printf("Chased rope to node %d\n",node->branch.Ropes[2*ropeInd+ropeIndOff]);
+#endif
         node = &(KdTree[node->branch.Ropes[2*ropeInd+ropeIndOff]]);
         
     }
@@ -494,7 +595,7 @@ int clipToAABB(AABB boundingBox, VectorH *lineStart, VectorH *lineEnd){
     
     int status=0;
     ClipToBox(lineStart, lineEnd, boundingBox.AA, boundingBox.BB, &status);
-    if (status == NOINTERSECTION) return 0; // No intersect in any dim means no intersection with volume
+    if (status == NOINTERSECTION) return 0;     // No intersect in any dim means no intersection with volume
     
     return 1;
     
@@ -607,7 +708,7 @@ OutCode ComputeOutCode(VectorH p, VectorH min, VectorH max)
 }
 
 
-void Intersect(__global Triangle *tri, Ray *ray, Hit *hit){
+void Intersect(__global Triangle *tri, Ray *ray, Hit *hit, int debug){
     unsigned int modulo[5];
     modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
     
@@ -616,7 +717,9 @@ void Intersect(__global Triangle *tri, Ray *ray, Hit *hit){
     
     const double nd = 1.0/(ray->dir.cell[tri->k] + ((tri->nd_u) * ray->dir.cell[ ku ]) + ((tri->nd_v) * ray->dir.cell[ kv ]) );
     const double thit = (tri->d - ray->org.cell[tri->k] - tri->nd_u * ray->org.cell[ ku ] - tri->nd_v * ray->org.cell[ kv ]) * nd;
-    
+#ifdef DEBUG
+    if(debug>=20)printf("thit: %f hit->dist : %f\n",thit,hit->dist);
+#endif
     // check for valid distance.
     if ( !(hit->dist > thit && thit >  EPSILON  ) ) return;
     
@@ -656,6 +759,7 @@ Ray reflect(Ray ray, Hit h, __global Triangle * Triangles){
     N.cell[k] = 1;
     N.cell[ku] = T.nd_u;
     N.cell[kv] = T.nd_v;
+    N = vectNorm(N);
     
     VectorH R;
     VectorH I = ray.dir;
@@ -689,12 +793,12 @@ int occluded(VectorH point, VectorH dir, AABB SceneBoundingBox,
     r.org = point;
     r.dir = dir;
     r.san = 0;
-    h = StacklessTraverse(r,SceneBoundingBox,KdTree,triangleListData,triangleListPtrs,Triangles,0);
+    h = StacklessTraverse(r,SceneBoundingBox,KdTree,triangleListData,triangleListPtrs,Triangles,0,0,0,0);
     if (h.trinum != NOINTERSECTION) return 1;
     return 0;
 }
 
-double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __global Triangle * Triangles, __global Texture * textureData){
+double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __global Triangle * Triangles, __global Texture * textureData, int debug){
     // Phong equation
 	// Ip = ka*ia + kd(L.N)id + ks((R.V)^n)is
 	// Ip is the power at the intersection point reflected in direction V
@@ -722,22 +826,33 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
     N.cell[k] = 1;
     N.cell[ku] = T.nd_u;
     N.cell[kv] = T.nd_v;
+    N = vectNorm(N);
+
     double id = rayPower;
     double is = rayPower;
     double ia = 0;
     double ka = 0.0;
-    double kd = 0.0 ;  //texture.kd;
-    double ks = 1.0 ;  //texture.ks;
+    double kd = 0.3 ;  //texture.kd;
+    double ks = 0.7 ;  //texture.ks;
     double n  = 50.0 ; // texture.n;
     double LdotN = vectDot(L, N);
     double RdotV = vectDot(vectNorm(R), vectNorm(V));
     
     LdotN = (LdotN < 0) ? -LdotN : LdotN;   // removes 'one-way mirror' effect
     RdotV = (RdotV < 0) ? 0 : RdotV;        // if ray bouncing away from radar then there is no specular component
-    //    printf("Diffuse : %e\n", (kd * LdotN * id));
-    //    printf("Specular: %e, RdotV : %f n : %f ks : %f is : %e\n", ( ks * pow( RdotV , n) * is),RdotV,n,ks,is);
     double ans = (ia * ka ) +  (kd * LdotN * id) + ( ks * pow( RdotV , n) * is );
-    //    printf("ans     : %e\n",ans);
+
+#ifdef DEBUG
+    if(debug >= 25){
+        printf("Diffuse : %e\n", (kd * LdotN * id));
+        printf("Specular: %e, RdotV : %f n : %f ks : %f is : %e\n", ( ks * pow( RdotV , n) * is),RdotV,n,ks,is);
+        VectorH vtmp,rtmp;
+        vtmp = vectNorm(V);
+        rtmp = vectNorm(R);
+        printf(" R: %f,%f,%f     V: %f,%f,%f\n",rtmp.x,rtmp.y,rtmp.z,vtmp.x,vtmp.y,vtmp.z);
+        printf("ans     : %e\n",ans);
+    }
+#endif
     
     return ans;
 }

@@ -43,6 +43,7 @@ static char *rootpath = "/local_storage/DGM" ;
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
+                 int *debug, int *debugX, int *debugY,
                  SPStatus *status){
     
     char * prompt;
@@ -54,7 +55,6 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     *bounceToShow       =  0 ;
     
     prompt  = (char *)malloc(sizeof(char)*256);
-//    file    = (char *)malloc(sizeof(char)*256);
 
     do {
         im_init_status(fileStat, 0) ;
@@ -113,31 +113,59 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     CPHDHeader hdr;
     readCPHDHeader(*inCPHDFile, &hdr, status) ;
     
-    *startPulse = 0;
-    sprintf(prompt, "Start Pulse (0-%d)",hdr.num_azi);
-    *startPulse = input_int(prompt, (char *)"startPulse", (char *)"Start pulse in CPHD file to reconstruct", *startPulse);
-
+    do{
+        *startPulse = 0;
+        sprintf(prompt, "Start Pulse (0-%d)",hdr.num_azi-2);
+        *startPulse = input_int(prompt, (char *)"startPulse", (char *)"Start pulse in CPHD file to reconstruct", *startPulse);
+    } while (!(*startPulse >=0 && *startPulse <= hdr.num_azi-2)) ;
+    
     sprintf(prompt, "Number of pulses (1-%d)",hdr.num_azi - *startPulse);
     *nPulses = hdr.num_azi ;
     *nPulses = input_int(prompt, (char *)"nPulses", (char *)"Number of pulses to reconstruct in cphdFile", *nPulses);
+    *nAzBeam = *nElBeam = 100 ;
+    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
+                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
+    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
+                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
+    
+
     if(*nPulses == 1){
         *useGPU = 0;
         *bounceToShow = input_int((char *)"Which bounce number to show (1-8)", (char *)"bounceToShow",
                                   (char *)"Which radar bounce should be displayed? (<1 is do not show bounce info)", *bounceToShow);
         if (*bounceToShow > MAXBOUNCES || *bounceToShow < 1) *bounceToShow = 0 ;
+        
+        *debug = input_int("Debug level ?", "DEBUG",
+                           "Compile the raytracing thread with additional debug information. \n \
+    This will print out lots of information for an individual ray. \n \
+    Valid values for DEBUG are : \n \
+          0      :  No debug information \n \
+          >=10   :  Debug the main raytracing thread (highest level) \n \
+          >=15   :  Debug the stackless KdTree Traversal routines (medium level) \n \
+          >=20   :  Debug the ray-triangle intersection algorithm (low level) \n \
+          >=25   :  Debug the reflected ray power calculations (lowest level)", 0);
+        if(*debug){
+            *debugX = *nAzBeam / 2;
+            do{
+                *debugX = input_int("X coordinate of ray to debug", "debugX",
+                                    "The beam is made up of an X by Y grid of radar rays. This is the X \n \
+    coordinate (azimuth direction) of the ray to debug", *debugX);
+            }while (*debugX < 0 || *debugX >= *nAzBeam) ;
+            
+            *debugY = *nElBeam / 2 ;
+            do{
+                *debugY = input_int("Y coordinate of ray to debug", "debugY",
+                                    "The beam is made up of xan X by Y grid of radar rays. This is the Y \n \
+    coordinate (elevation direction) of the ray to debug", *debugY);
+            }while (*debugY < 0 || *debugY >= *nElBeam);
+        }
+        if(*bounceToShow == 0)
+            *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
+                                  (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
     }
 
-    *nAzBeam = *nElBeam = 100 ;
-    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
-                        (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
-    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
-                        (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
-    if(*bounceToShow == 0)
-        *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
-                             (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
     
     free(prompt);
-//    free(file) ;
 
     destroy_cphd_header(&hdr, status);
     return (status->status) ;
