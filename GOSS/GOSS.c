@@ -227,8 +227,8 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    dAz = 2.0 * maxAz / centreRange ;
-    dEl = 2.0 * maxEl / centreRange ;
+    dAz = 1. * maxAz / centreRange ;
+    dEl = 1. * maxEl / centreRange ;
     
     printf("  Beamwidth (Az,El)         : %f deg x %f deg (%f x %f metres)\n",
            GeoConsts_RADTODEG*dAz,GeoConsts_RADTODEG*dEl,centreRange*dAz,centreRange*dEl);
@@ -261,21 +261,19 @@ int main (int argc, char **argv){
     // Find number of devices on this platform
     //
     if (useGPU){
-#ifdef NVIDIA
-        err = oclGetNvidiaDevices(platform.clSelectedPlatformID, GPUCAPABILITY_MAJOR, GPUCAPABILITY_MINOR, &platform.device_ids, &ndevs, &status);
-#else
-        err = oclGetGPUDevices(platform.clSelectedPlatformID, 1, &platform.device_ids, &ndevs, &status) ;
-#endif
+        err = oclGetNamedGPUDevices(platform.clSelectedPlatformID, "NVIDIA", "",&platform.device_ids , &ndevs, &status);
         if(err == CL_SUCCESS){
             char cbuf[1024];
+            cl_uint max_compute_units;
             printf("GPU DEVICES                 : %d\n",ndevs);
             for(int d=0; d<ndevs; d++){
                 printf("DEVICE                      : %d\n",d);
-                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_NAME, sizeof(cbuf), &cbuf, NULL);
-                printf("  DEVICE NAME               : %s\n",cbuf);
                 clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_VENDOR, sizeof(cbuf), &cbuf, NULL);
                 printf("  DEVICE VENDOR             : %s\n",cbuf);
-                
+                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_NAME, sizeof(cbuf), &cbuf, NULL);
+                printf("  DEVICE NAME               : %s\n",cbuf);
+                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &max_compute_units, NULL);
+                printf("  DEVICE MAX COMPUTE UNITS  : %d\n",max_compute_units);
             }
         }else{
             printf("No GPU devices available with compute capability: %d.%d\n", GPUCAPABILITY_MAJOR, GPUCAPABILITY_MINOR);
@@ -408,7 +406,7 @@ int main (int argc, char **argv){
     }
     
     endTimer(&runTimer, &status) ;
-    printf("Done  is %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+    printf("Done in %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     printf("Writing CPHD File \"%s\"....",outCPHDFile);
     hdr.data_type = ITYPE_CMPL_FLOAT ;
     writeCPHD3Header( &hdr, fp, &status ) ;

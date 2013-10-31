@@ -41,42 +41,6 @@
 
 static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
 
-//typedef struct beamParams {
-//    int nAzBeam ;                // Number of azimuth slices in beam
-//    int nElBeam ;                // Number of elevation slices in beam
-//    SPVector RxPos ;             // Receiver position for this pulse
-//    SPVector TxPos ;             // Transmitter position for this pulse
-//    double dAz ;                 // Azimuth slice in radians
-//    double dEl ;                 // Elevation slice in radians
-//    double raySolidAng ;         // Solid angle of a single ray
-//    double TxPowPerRay ;         // Transmitter power per ray
-//    AABB SceneBoundingBox ;      // Scene bounding box
-//    double Aeff ;                // The effective area of the Receive Antenna
-//    int bounceToShow;            // Which bounce to output
-//
-//} beamParams ;
-
-
-#define CL_CHECK(_expr)                                                             \
-    do {                                                                            \
-        cl_int _err = _expr;                                                        \
-            if (_err == CL_SUCCESS)                                                 \
-            break;                                                                  \
-        fprintf(stderr, "OpenCL Error: '%s' returned %d!\n", #_expr, (int)_err);    \
-        abort();                                                                    \
-} while (0)
-
-#define CL_CHECK_ERR(_expr)                                                         \
-({                                                                                  \
-    cl_int _err = CL_INVALID_VALUE;                                                 \
-    typeof(_expr) _ret = _expr;                                                     \
-    if (_err != CL_SUCCESS) {                                                       \
-        fprintf(stderr, "OpenCL Error: '%s' returned %d!\n", #_expr, (int)_err);    \
-        abort();                                                                    \
-    }                                                                               \
-    _ret;                                                                           \
-})
-
 void * devPulseBlock ( void * threadArg ) {
     
     struct threadData *td;

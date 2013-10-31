@@ -159,10 +159,10 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     coordinate (elevation direction) of the ray to debug", *debugY);
             }while (*debugY < 0 || *debugY >= *nElBeam);
         }
-        if(*bounceToShow == 0)
-            *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
-                                  (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
     }
+    if(*bounceToShow == 0)
+        *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
+                              (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
 
     
     free(prompt);

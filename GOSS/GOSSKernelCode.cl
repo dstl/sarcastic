@@ -437,7 +437,6 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
         cnt++;
         if(cnt > MAXTRAVERSAL){
             printf("Error : max stacktraversal exceeded for ray [%d,%d] in pulse %d\n",rayx,rayy,pulseIndex);
-            exit(0);
         }
         PEntry = vectAdd(volumeEntry, vectMult(ray.dir, t_entry));
         
@@ -832,8 +831,8 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
     double is = rayPower;
     double ia = 0;
     double ka = 0.0;
-    double kd = 0.3 ;  //texture.kd;
-    double ks = 0.7 ;  //texture.ks;
+    double kd = 1.0 ;  //texture.kd;
+    double ks = 0.0 ;  //texture.ks;
     double n  = 50.0 ; // texture.n;
     double LdotN = vectDot(L, N);
     double RdotV = vectDot(vectNorm(R), vectNorm(V));
@@ -844,13 +843,29 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
 
 #ifdef DEBUG
     if(debug >= 25){
-        printf("Diffuse : %e\n", (kd * LdotN * id));
-        printf("Specular: %e, RdotV : %f n : %f ks : %f is : %e\n", ( ks * pow( RdotV , n) * is),RdotV,n,ks,is);
-        VectorH vtmp,rtmp;
+        VectorH vtmp,rtmp,ltmp;
         vtmp = vectNorm(V);
         rtmp = vectNorm(R);
-        printf(" R: %f,%f,%f     V: %f,%f,%f\n",rtmp.x,rtmp.y,rtmp.z,vtmp.x,vtmp.y,vtmp.z);
-        printf("ans     : %e\n",ans);
+        ltmp = vectNorm(L);
+        printf("\n");
+        printf("               Ray Scattering Properties: \n");
+        printf(" ------------------------------------------------------\n");
+        printf(" Incident specular power (is)               : %f\n",is);
+        printf(" Incident diffuse power (id)                : %f\n",id);
+        printf(" Ambient incident power (ia)                : %f\n",ia);
+        printf(" Material ambient reflection constant (ka)  : %f\n",ka);
+        printf(" Material diffuse reflection constant (kd)  : %f\n",kd);
+        printf(" Material specular reflection constant (ks) : %f\n",ks);
+        printf(" Material shininess constant (n)            : %f\n",n);
+        printf(" Reflection vector (R)                      : %f, %f, %f\n",rtmp.x,rtmp.y,rtmp.z);
+        printf(" Viewpoint vector (V)                       : %f, %f, %f\n",vtmp.x,vtmp.y,vtmp.z);
+        printf(" Illumination vector (L)                    : %f, %f, %f\n",ltmp.x,ltmp.y,ltmp.z);
+        printf(" L . N                                      : %f\n",LdotN);
+        printf(" R . V                                      : %f\n",RdotV);
+        printf(" Ambient power component                    : %f\n",ia*ka);
+        printf(" Specular power component                   : %f \n", ( ks * pow( RdotV , n) * is));
+        printf(" Diffuse power component                    : %f \n",(kd * LdotN * id));
+        printf("Total power for this ray                    : %f\n",ans);
     }
 #endif
     

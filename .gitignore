@@ -7,10 +7,7 @@
 .DS_Store
 ._*
 Version.h
-test_expat
-test_gdal
 Makefile
-GOSS-config
 # Ignore user specific Xcode files
 GOSS.xcodeproj/project.xcworkspace
 GOSS.xcodeproj/xcuserdata
