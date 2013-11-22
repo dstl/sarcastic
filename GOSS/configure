@@ -2,15 +2,15 @@
 #***************************************************************************
 #*
 #*       Module:    configure
-#*      Program:    SIlib
+#*      Program:    GOSS
 #*   Created by:    Darren Muff 23/07/2013
 #*                  Copyright (c) 2013 [dstl]. All rights reserved.
 #*
 #*   Description:
-#*      configure script for SIlib
+#*      configure script for GOSS
 #*
 #*   CLASSIFICATION        :  UNCLASSIFIED
-#*   Date of CLASSN        :  19/07/2013
+#*   Date of CLASSN        :  22/11/2013
 #*
 #* Permission is hereby granted, free of charge, to any person obtaining a
 #* copy of this software and associated documentation files (the "Software"),
@@ -103,6 +103,6 @@ sed s@_CC_@"${CC}"@g Makefile.1 > Makefile
 rm -f Makefile.1
 
 echo "Configuration is complete."
-echo " Now type 'make; make install; make docs' "
+echo " Now type 'make; make install; ' "
 echo " "
 echo " "
