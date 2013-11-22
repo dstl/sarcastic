@@ -227,15 +227,17 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    dAz = 1. * maxAz / centreRange ;
-    dEl = 1. * maxEl / centreRange ;
+    dAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    dEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
     
-    printf("  Beamwidth (Az,El)         : %f deg x %f deg (%f x %f metres)\n",
-           GeoConsts_RADTODEG*dAz,GeoConsts_RADTODEG*dEl,centreRange*dAz,centreRange*dEl);
+    collectionGeom cGeom;
+    collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
+    printf("RayTracing beam (Az,El)     : %f deg x %f deg (%3.2f x %3.2f metres (ground plane))\n",
+           GeoConsts_RADTODEG*dAz,GeoConsts_RADTODEG*dEl,centreRange*dAz,centreRange*dEl/sin(cGeom.grazingRad));
     dAz = dAz / nAzBeam;
     dEl = dEl / nElBeam;
     lambda = SIPC_c / hdr.freq_centre ;
-    printf("  Ray density               : %f rays per wavelength cell\n",
+    printf("Ray density                 : %f rays per wavelength cell\n",
            (lambda / (centreRange * dAz))*(lambda/ (centreRange *dEl)));
     
     double raySolidAng,TxPowPerRay, Aeff ;
@@ -246,7 +248,7 @@ int main (int argc, char **argv){
     //
     
     platform.clSelectedPlatformID = NULL;
-    err = oclGetPlatformID (&platform.clSelectedPlatformID, &status);
+    err = oclGetPlatformID (&platform, &status);
     if(err != CL_SUCCESS){
         printf("Error: Failed to find a suitable OpenCL Launch platform\n");
         exit(-1);
@@ -261,7 +263,7 @@ int main (int argc, char **argv){
     // Find number of devices on this platform
     //
     if (useGPU){
-        err = oclGetNamedGPUDevices(platform.clSelectedPlatformID, "NVIDIA", "",&platform.device_ids , &ndevs, &status);
+        err = oclGetNamedGPUDevices(&platform, "NVIDIA", "",&platform.device_ids , &ndevs, &status);
         if(err == CL_SUCCESS){
             char cbuf[1024];
             cl_uint max_compute_units;
@@ -280,7 +282,7 @@ int main (int argc, char **argv){
             exit(1);
         }
     }else{
-        err = oclGetCPUDevices(platform.clSelectedPlatformID, &platform.device_ids, &ndevs, &status);
+        err = oclGetCPUDevices(&platform, &platform.device_ids, &ndevs, &status);
         if(err == CL_SUCCESS){
             printf("CPU DEVICES                 : %d\n",ndevs);
         }

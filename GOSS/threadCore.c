@@ -140,7 +140,13 @@ void * devPulseBlock ( void * threadArg ) {
     Timer threadTimer ;
     SPStatus status;
     startTimer(&threadTimer, &status) ;
+    int hrs,min,sec;
+    time_t current,complete;
+    struct tm *p;
     int reportN = 500 ;
+    char ct[1000];
+    double pCentDone ;
+    double sexToGo ;
     
     // **** loop  start here
     //
@@ -148,11 +154,18 @@ void * devPulseBlock ( void * threadArg ) {
         int pulseIndex = (tid * td->nPulses) + pulse ;
         if ( td->devIndex == 0 ) {
             if( pulse % reportN == 0 && td->nPulses != 1){
-                double pCentDone = 100.0*pulse/td->nPulses ;
-                double sexToGo = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                pCentDone = 100.0*pulse/td->nPulses ;
                 printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
                 if(pulse != 0 ){
-                    printf("  ETC in %3.0d Min %3.0d Seconds\n",(int)floor(sexToGo/60),((int)sexToGo) % 60);
+                    current  = time(NULL);
+                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                    hrs      = (int)floor(sexToGo/60/60) ;
+                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+                    sec      = (int)sexToGo % 60;
+                    complete = current + sexToGo ;
+                    p        = localtime(&complete) ;
+                    strftime(ct, 1000, "%a %b %d %H:%M", p);
+                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
                 }else{
                     printf("  Calculating ETC...\n");
                 }

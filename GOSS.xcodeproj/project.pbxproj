@@ -21,10 +21,9 @@
 		95BA790D17BE57190061162F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95BA790C17BE57190061162F /* main.c */; };
 		95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95BA790E17BE57190061162F /* doublePrecisionTest.1 */; };
 		95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
-		95BA792B17BECFFB0061162F /* libSIlib-0.4.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */; };
 		95DB871917A8267200180864 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95DB871817A8267200180864 /* getUserInput.c */; };
-		95DB8BAE1822A07E00D082CE /* libSIlib-0.4.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DB8BAD1822A07E00D082CE /* libSIlib-0.4.7.a */; };
 		95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */; };
+		95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,16 +67,14 @@
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		9598B9F91822718C00D039D9 /* libSIlib-0.4.6-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.6-dirty.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.6-dirty.a"; sourceTree = "<group>"; };
 		95BA790917BE57190061162F /* doublePrecisionTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = doublePrecisionTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95BA790C17BE57190061162F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		95BA790E17BE57190061162F /* doublePrecisionTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = doublePrecisionTest.1; sourceTree = "<group>"; };
-		95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.6.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.6.a"; sourceTree = "<group>"; };
 		95DB871817A8267200180864 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
-		95DB8BAD1822A07E00D082CE /* libSIlib-0.4.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.4.7.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.4.7.a"; sourceTree = "<group>"; };
 		95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
 		95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
 		95E3E50817AA58110094496B /* GOSSKernelCode.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = GOSSKernelCode.cl; sourceTree = "<group>"; };
+		95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.0.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95DB8BAE1822A07E00D082CE /* libSIlib-0.4.7.a in Frameworks */,
+				95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
@@ -96,7 +93,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95BA792B17BECFFB0061162F /* libSIlib-0.4.6.a in Frameworks */,
 				95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -107,9 +103,7 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
-				95DB8BAD1822A07E00D082CE /* libSIlib-0.4.7.a */,
-				9598B9F91822718C00D039D9 /* libSIlib-0.4.6-dirty.a */,
-				95BA792A17BECFFB0061162F /* libSIlib-0.4.6.a */,
+				95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */,
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
