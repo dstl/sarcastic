@@ -46,7 +46,7 @@
 //
 //***************************************************************************
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
-#define MAXBOUNCES 8
+#define MAXBOUNCES 10
 #define PI 3.1415927
 #define CC 299792458.0
 #define NOINTERSECTION -1
@@ -831,8 +831,8 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
     double is = rayPower;
     double ia = 0;
     double ka = 0.0;
-    double kd = 1.0 ;  //texture.kd;
-    double ks = 0.0 ;  //texture.ks;
+    double kd = 0.0 ;  //texture.kd;
+    double ks = 1.0 ;  //texture.ks;
     double n  = 50.0 ; // texture.n;
     double LdotN = vectDot(L, N);
     double RdotV = vectDot(vectNorm(R), vectNorm(V));
@@ -844,9 +844,9 @@ double reflectPower(double rayPower, VectorH L, VectorH R, VectorH V, Hit h, __g
 #ifdef DEBUG
     if(debug >= 25){
         VectorH vtmp,rtmp,ltmp;
-        vtmp = vectNorm(V);
-        rtmp = vectNorm(R);
-        ltmp = vectNorm(L);
+        vtmp = V ; //vectNorm(V);
+        rtmp = R ; //vectNorm(R);
+        ltmp = L ; //vectNorm(L);
         printf("\n");
         printf("               Ray Scattering Properties: \n");
         printf(" ------------------------------------------------------\n");
