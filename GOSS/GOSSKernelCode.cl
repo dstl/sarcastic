@@ -436,7 +436,8 @@ Hit StacklessTraverse(Ray ray, AABB SceneBoundingBox, __global KdData * KdTree, 
     while (t_entry <= t_exit ) {
         cnt++;
         if(cnt > MAXTRAVERSAL){
-            printf("Error : max stacktraversal exceeded for ray [%d,%d] in pulse %d\n",rayx,rayy,pulseIndex);
+            printf("Exception : max stacktraversal exceeded for ray [%d,%d] in pulse %d\n",rayx,rayy,pulseIndex);
+            break;
         }
         PEntry = vectAdd(volumeEntry, vectMult(ray.dir, t_entry));
         
