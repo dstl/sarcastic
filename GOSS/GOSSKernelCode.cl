@@ -356,14 +356,15 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                 printf("ray dir: %f,%f,%f\n", reflected.dir.x, reflected.dir.y, reflected.dir.z);
             }
 #endif
+            if(bounces == bounceToShow){
+                printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
+            }
+            
             if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and mix the signal back into the receiver
                 //
             {
-                if(bounces == bounceToShow){
-                    printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
-                }
                 
                 double range = vectMag( returnVect );
                 double refPow = reflectPower(rayPow, vectMinus(r.dir), reflected.dir, returnVectDir, h,Triangles, textureData, debug);
