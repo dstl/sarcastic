@@ -46,7 +46,6 @@
 //
 //***************************************************************************
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
-#define MAXBOUNCES 10
 #define PI 3.1415927
 #define CC 299792458.0
 #define NOINTERSECTION -1
@@ -267,8 +266,8 @@ VectorH vectRotateAxis(VectorH v, VectorH axis, double theta){
 
 __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth slices in beam
                             const int nElBeam,              // Number of elevation slices in beam
-                            const VectorH RxPos,           // Receiver position for this pulse
-                            const VectorH TxPos,           // Transmitter position for this pulse
+                            const VectorH RxPos,            // Receiver position for this pulse
+                            const VectorH TxPos,            // Transmitter position for this pulse
                             const double dAz,               // Azimuth slice in radians
                             const double dEl,               // Elevation slice in radians
                             const double raySolidAng,       // Solid angle of a single ray
@@ -360,7 +359,7 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                 printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
             }
             
-            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
+            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) && bounces==2 )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and mix the signal back into the receiver
                 //

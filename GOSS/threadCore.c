@@ -38,8 +38,16 @@
  *
  ***************************************************************************/
 #include "GOSS.h"
+#include <fftw3.h>
+
+#define FASTPULSEBUILD
+#define NPOINTS (32)
+#define OVERSAMP (512)
 
 static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
+void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, float * ikernel, int debug);
+static void ham1dx(double * data, int nx);
+double * sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing);
 
 void * devPulseBlock ( void * threadArg ) {
     
@@ -54,11 +62,8 @@ void * devPulseBlock ( void * threadArg ) {
     cl_int err ;
     cl_mem dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, drnp ;
     rangeAndPower * rnp ;
-//    beamParams beam ;
-    double freqSampsToCentreStart, ADCSampsToTargStart ;
     SPVector aimdir ;
-    double derampRange; //, currentReal, currentImag, phse, power ;
-    int nrnpItems;
+
     
     int nAzBeam             = td->nAzBeam ;
     int nElBeam             = td->nElBeam ;
@@ -74,10 +79,35 @@ void * devPulseBlock ( void * threadArg ) {
     int debug               = td->debug;
     int debugX              = td->debugX;
     int debugY              = td->debugY;
-    
+    int nrnpItems;
+    double derampRange ;
+    int dbg = 0;
+#ifdef FASTPULSEBUILD
+    double rdiff, rangeLabel, sx, phse ;
+    SPCmplx pcorr, tmp , tmp1;
+    int nint_rl;
+    SPImage pulseLine ;
+    SPImage pulseLine1 ;
+    double sampsPerPulse ;
+    double oversampfact;
+    double bandwidth = td->chirpRate * td->pulseDuration ;
+    fftwf_init_threads();
+    double power, range; //, currentReal, currentImag, phse, power ;
+    SPCmplx t ;
+    double phasecorr; // Phase correction term
+    SPCmplx cmpx_correction ; // complex correction term
+    double phase_cent ;
+    printf("Using FAST pulse building routines...\n");
+    double freqSampsToCentre, ADCSampsToTargStart ;
     double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
     double B = 4.0*SIPC_pi*td->oneOverLambda ;
-    
+    double freqSampsToCentreStart;
+#else
+    double freqSampsToCentreStart, ADCSampsToTargStart ;
+    double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
+    double B = 4.0*SIPC_pi*td->oneOverLambda ;
+#endif
+
     int tid ;
 
     tid   = td->devIndex ;
@@ -87,7 +117,7 @@ void * devPulseBlock ( void * threadArg ) {
     program = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
     
     char compilerOptions[255];
-    strcat(compilerOptions, "-Werror");
+    sprintf(compilerOptions, "-Werror -D MAXBOUNCES=%d",MAXBOUNCES) ;
     if (debug) {
         char dbgxy[128];
         sprintf(dbgxy, " -D DEBUG=%d -D DBGX=%d -D DBGY=%d",debug,debugX,debugY);
@@ -147,6 +177,34 @@ void * devPulseBlock ( void * threadArg ) {
     char ct[1000];
     double pCentDone ;
     double sexToGo ;
+    int nx;
+    
+    nx = (int)td->phd->nx ;
+#ifdef FASTPULSEBUILD
+//    oversampfact = nx / sampsPerPulse ;
+//    ix = (SIPC_c / (2.0 * bandwidth)) / oversampfact ;
+    // build a sinc kernel and convert it to floats for quick GPU processing
+    //
+    
+    double resolution = SIPC_c / (2 * bandwidth ) ;
+    double sampSpacing = SIPC_c /  (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
+    double * ikernel_dbl = sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing);
+    
+    if (ikernel_dbl == NULL) {
+        printf("Failed to create ikernel!\n");
+        exit(614);
+    }
+    float *ikernel = (float *)calloc(OVERSAMP * NPOINTS + 1, sizeof(float));
+    if (ikernel == NULL) {
+        printf("Failed to create ikernel!\n");
+        exit(825);
+    }
+    for(int i = 0; i < (OVERSAMP * NPOINTS+1); i++) {
+        ikernel[i] = ikernel_dbl[i];
+    }
+    free(ikernel_dbl);
+    
+#endif
     
     // **** loop  start here
     //
@@ -155,7 +213,7 @@ void * devPulseBlock ( void * threadArg ) {
         if ( td->devIndex == 0 ) {
             if( pulse % reportN == 0 && td->nPulses != 1){
                 pCentDone = 100.0*pulse/td->nPulses ;
-                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
+//                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
                 if(pulse != 0 ){
                     current  = time(NULL);
                     sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
@@ -165,20 +223,20 @@ void * devPulseBlock ( void * threadArg ) {
                     complete = current + sexToGo ;
                     p        = localtime(&complete) ;
                     strftime(ct, 1000, "%a %b %d %H:%M", p);
-                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+//                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
                 }else{
-                    printf("  Calculating ETC...\n");
+//                    printf("  Calculating ETC...\n");
                 }
             }
         }
         // Set correct parameters for beam to ray trace
         //
         TxPos = td->TxPositions[pulseIndex] ;
-        
         RxPos = td->RxPositions[pulseIndex] ;
         
         // Set up the kernel arguments
         //
+        
         CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(int), &nAzBeam));
         CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(int), &nElBeam));
         CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(SPVector), &RxPos));
@@ -210,13 +268,11 @@ void * devPulseBlock ( void * threadArg ) {
         
         CL_CHECK(clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
         CL_CHECK(clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
-        
+
         // Read results from device
         //
         CL_CHECK(clEnqueueReadBuffer(commandQ,drnp, CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
         
-        // Remove all blank data from rnp
-        //
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0) cnt++ ;
@@ -224,9 +280,13 @@ void * devPulseBlock ( void * threadArg ) {
         if(cnt > 0){
             nrnpItems = cnt;
         }else{
-            printf("ERROR: No intersections on device %d\n",tid);
-            exit(-1);
+//            printf("ERROR: No intersections on device %d\n",tid);
+//            exit(-1);
         }
+        
+// DEBUG
+        nrnpItems = 1;
+// DEBUG
         rnpData_t * rnpData = (rnpData_t *)malloc(sizeof(rnpData_t)*nrnpItems) ;
         if(rnpData == NULL){
             printf("Error : malloc fail for rnpData on device %d. request data for %d items\n",tid,nrnpItems) ;
@@ -236,23 +296,150 @@ void * devPulseBlock ( void * threadArg ) {
         VECT_MINUS(td->RxPositions[pulseIndex], aimdir) ;
         derampRange = VECT_MAG(aimdir);
         
-        cnt=0;
+        cnt = 0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0){
                 rnpData[cnt].power = rnp[i].power ;
                 rnpData[cnt].range = rnp[i].range ;
-                freqSampsToCentreStart = (td->StartFrequency - td->Fx0s[pulseIndex]) / td->FxSteps[pulseIndex];
-                rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                ADCSampsToTargStart    = (2.0*rnpData[cnt].rdiff/SIPC_c)*td->ADRate;
-                rnpData[cnt].samplingOffset = freqSampsToCentreStart - ADCSampsToTargStart;
-                rnpData[cnt].samplingOffsetInt = (int)(rnpData[cnt].samplingOffset);
-                rnpData[cnt].indexOffset = rnpData[cnt].samplingOffsetInt - rnpData[cnt].samplingOffset - (td->phd->nx / 2) ;
-                cnt++;
+                rnpData[cnt].rdiff = -1*(derampRange - rnp[i].range);
+                cnt++ ;
             }
         }
         
+        ////////// DEBUG CODE to inject a single point target
+        
+        float xpos = -5 ;
+        float ypos = 0 ;
+        SPVector tp ; // Target Point in metres from scene centre in E,N,Alt system
+        SPVector rvect1, rvect2 ;
+        SPVector R,sensor_pos, sc_pos, R_,KDP_,JDP_,IDP_;
+        SPVector rng_dir, azi_dir ;
+//        VECT_CREATE(xpos, ypos, 0, tp);
+        sensor_pos = td->TxPositions[td->nPulses/2] ;
+        VECT_CREATE(0, 0, 0, sc_pos);
+        VECT_SUB(sensor_pos, sc_pos, R);
+        VECT_UNIT(R, R_);
+        VECT_CREATE(0, 0, 1, KDP_);     // == zbar
+        VECT_PROJ(R_, KDP_, JDP_);
+        VECT_CROSS(JDP_, KDP_, IDP_);
+        
+        VECT_SCMULT(JDP_, -1*ypos, rng_dir);
+        VECT_SCMULT(IDP_,  xpos, azi_dir);
+        VECT_ADD(azi_dir, rng_dir, tp) ;
+        
+        VECT_SUB(tp, TxPos, rvect1);
+        VECT_SUB(tp, RxPos, rvect2) ;
+        double r1,r2 ;
+        r1 = VECT_MAG(rvect1);
+        r2 = VECT_MAG(rvect2);
+        int phase_sign = -1.0;
+        rnpData[0].power = 1.0 ;
+        rnpData[0].range = (r1 + r2) / 2.0 ;
+        rnpData[0].rdiff = phase_sign * (derampRange - rnpData[0].range) ;
+        
+        ////////// DEBUG CODE to inject a single point target
+        
+#ifdef FASTPULSEBUILD
+        
+        
+//        double RCOMPOVERSAMPLE = 1;
+        int chirplen = (int)(td->pulseDuration * td->ADRate) ;
+        im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
+        sx =  SIPC_c / (2.0 * bandwidth) ;
+
+        /* 
+         The reciver triggers recording at time such that the first sample records a frequency of Fx0 with each ADC sample being FxStep Hz 
+         higher in frequency than the previous one. (or (1/ADRate) * chirprate). 
+         In a non-clock-driven theoretical system the first recorded sample would be at a fixed range from the centre position.
+         (( Fcentre - (Bandwidth/2) ) / chirprate) * c/2 metres for a point at scene centre)
+         For nx ADC samples, the first sample will be at f0 = Fcentre - bandwidth/2
+         The varying Fx0 means that the returned pulse after deramp, will be shifted in range by ((f0 - Fx0) / chirprate) * C/2 metres
+         */
+        
+        double f0 = td->freq_centre - (bandwidth/2);
+        double shift = ((f0 - td->Fx0s[pulseIndex]) / td->chirpRate) * SIPC_c / 2.0 ;
+        shift = (((td->Fx0s[pulseIndex] - f0) / td->FxSteps[pulseIndex]) / td->chirpRate) * (SIPC_c/2);
+        printf("%d, %f\n",pulseIndex,shift);
+        
+        for (int i=0; i<nrnpItems; i++){
+            
+            double oldphse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
+            
+            freqSampsToCentreStart       = (td->StartFrequency - td->Fx0s[pulseIndex]) / td->FxSteps[pulseIndex];
+            ADCSampsToTargStart          = (2.0*rnpData[i].rdiff/SIPC_c)*td->ADRate;
+            rnpData[i].samplingOffset    = freqSampsToCentreStart - ADCSampsToTargStart;
+            rnpData[i].samplingOffsetInt = (int)(rnpData[i].samplingOffset);
+            rnpData[i].indexOffset       = rnpData[i].samplingOffsetInt - rnpData[i].samplingOffset - (nx/2) ;
+            //  double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
+            //  double B = 4.0*SIPC_pi*td->oneOverLambda ;
+            phse  = -1 * rnpData[i].rdiff * ( A * (rnpData[i].indexOffset) + B);
+            pcorr.r = rnpData[i].power*cos(oldphse) ;
+            pcorr.i = rnpData[i].power*sin(oldphse) ;
+
+            
+            rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
+//            printf("rangeLabel: %f, rdiff : %f, sampSpacing: %f, nx/2: %lld\n",rangeLabel, rnpData[i].rdiff,sampSpacing,pulseLine.nx/2);
+            
+//            rangeLabel = rnpData[i].indexOffset + (pulseLine.nx);
+//            nint_rl    = (int)floor((rangeLabel+0.5)) ;
+            
+            if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
+               
+                packSinc(pcorr, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel, debug);
+
+            }
+        }
+        
+        // perform phase correction to account for deramped jitter in receiver timing
+        //
+        phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
+        
+        for(int x = 0; x < pulseLine.nx; x++) {
+            pcorr.r = td->amp_sf0[pulseIndex] * cos(phasecorr * (x - pulseLine.nx/2)) ;
+            pcorr.i = td->amp_sf0[pulseIndex] * sin(phasecorr * (x - pulseLine.nx/2)) ;
+            
+            CMPLX_MULT(pulseLine.data.cmpl_f[x], pcorr, tmp);
+            pulseLine.data.cmpl_f[x] = tmp;
+        }
+
+        
+        im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
+//        printf("--pulse %d, nint_rl:%d phase[0] %f pcorr: %f rdiff %f r2pt: %f r2srp: %f rangeLabel: %f sampID:%d\n",pulseIndex,nint_rl,CMPLX_PHASE(pulseLine.data.cmpl_f[0]), CMPLX_PHASE(pcorr),rnpData[0].rdiff,rnpData[0].range,derampRange,rangeLabel-(pulseLine.nx/2),nint_rl);
+
+        im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
+
+//        im_create(&pulseLine1, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
+//        im_extract(&pulseLine, 0, 0, &pulseLine1, &status) ;
+        im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
+        
+
+        SPImage debugim ;
+        im_init(&debugim, &status);
+        debugim.nx = nx ;
+        debugim.ny = 1  ;
+        im_extract(td->phd, 0, pulseIndex, &debugim, &status);
+        im_fftw(&debugim, FFT_X_ONLY+REV+SCALE_N, &status);
+//        printf("%d, %f,%f    %f,%f    %f,%f\n",pulseIndex,CMPLX_PHASE(debugim.data.cmpl_f[0]),CMPLX_MAG(debugim.data.cmpl_f[0]),CMPLX_PHASE(debugim.data.cmpl_f[1]),CMPLX_MAG(debugim.data.cmpl_f[1]),CMPLX_PHASE(debugim.data.cmpl_f[2]),CMPLX_MAG(debugim.data.cmpl_f[2]));
+//        printf("%d, %f\n",pulseIndex,CMPLX_MAG(debugim.data.cmpl_f[0]));
+
+//        im_save(&debugim, "/local_storage/DGM/raw_lin1.dat", &status);
+        im_destroy(&debugim, &status);
+        
+//        im_destroy(&pulseLine1, &status) ;
+        im_destroy(&pulseLine, &status) ;
+#else
+        for (int i=0; i<nrnpItems; i++){
+            freqSampsToCentreStart       = (td->StartFrequency - td->Fx0s[pulseIndex]) / td->FxSteps[pulseIndex];
+            ADCSampsToTargStart          = (2.0*rnpData[i].rdiff/SIPC_c)*td->ADRate;
+            rnpData[i].samplingOffset    = freqSampsToCentreStart - ADCSampsToTargStart;
+            rnpData[i].samplingOffsetInt = (int)(rnpData[i].samplingOffset);
+            rnpData[i].indexOffset       = rnpData[i].samplingOffsetInt - rnpData[i].samplingOffset - (nx / 2) ;
+//            printf("pulse:%d, freqSampsToCentreStart : %f ADCSampsToTargStart: %f samplingOffset: %f samplingOffsetInt: %d indexOffset: %f (nx/2:%d)\n",pulseIndex,freqSampsToCentreStart,ADCSampsToTargStart,rnpData[i].samplingOffset,rnpData[i].samplingOffsetInt,rnpData[i].indexOffset,nx/2);
+
+        }
+        
         int nbeamThreads = (int)(sysconf(_SC_NPROCESSORS_ONLN)/td->nThreads);
-        int nbeamThreadsRem = td->phd->nx % nbeamThreads ;
+        int nbeamThreadsRem = nx % nbeamThreads ;
         int loops = (nbeamThreadsRem == 0) ? 1 : 2 ;
         int nSamp;
         int rc ;
@@ -284,8 +471,7 @@ void * devPulseBlock ( void * threadArg ) {
             if(iloop==1){
                 nSamp = 1 ;
             }else{
-                startSamp = 
-                nSamp = (int)(td->phd->nx / nbeamThreads) ;
+                nSamp = (int)(nx / nbeamThreads) ;
             }
            
             for (thd=0; thd<nbeamThreads; thd++) {
@@ -294,12 +480,12 @@ void * devPulseBlock ( void * threadArg ) {
                 threadDataArray[thd].B          = B ;
                 threadDataArray[thd].nrnpItems  = nrnpItems ;
                 threadDataArray[thd].nSamp      = nSamp ;
-                threadDataArray[thd].nx         = (int)td->phd->nx ;
+                threadDataArray[thd].nx         = (int)nx ;
                 threadDataArray[thd].phd        = td->phd ;
                 threadDataArray[thd].pulseIndex = pulseIndex ;
                 threadDataArray[thd].rnpData    = rnpData ;
                 if(iloop ==1){
-                    threadDataArray[thd].startSamp  = (int)td->phd->nx - nbeamThreads + thd ;
+                    threadDataArray[thd].startSamp  = (int)nx - nbeamThreads + thd ;
                 }else{
                     threadDataArray[thd].startSamp  = thd*nSamp ;
                 }
@@ -322,16 +508,37 @@ void * devPulseBlock ( void * threadArg ) {
                     exit(-1);
                 }
             }
-     
+            
+            
+            
             free(beamThreads);
             free(threadDataArray);
         }
         free(rnpData) ;
+        
+        
+            SPImage debugim ;
+            im_init(&debugim, &status);
+            debugim.nx = nx ;
+            debugim.ny = 1  ;
+            im_extract(td->phd, 0, pulseIndex, &debugim, &status);
+            im_fftw(&debugim, FFT_X_ONLY+REV+SCALE_N, &status);
+        printf("%d, %f,%f    %f,%f    %f,%f\n",pulseIndex,CMPLX_PHASE(debugim.data.cmpl_f[0]),CMPLX_MAG( debugim.data.cmpl_f[0]),CMPLX_PHASE(debugim.data.cmpl_f[1]),CMPLX_MAG( debugim.data.cmpl_f[1]),CMPLX_PHASE(debugim.data.cmpl_f[2]),CMPLX_MAG( debugim.data.cmpl_f[2]));
+//        printf("%d, %f\n",pulseIndex,CMPLX_PHASE(debugim.data.cmpl_f[0]));
+       
+
+
+//            im_save(&debugim, "/local_storage/DGM/raw_lin.dat", &status);
+            im_destroy(&debugim, &status);
+#endif
+        
         free(rnp);
         
     } // end of pulse loop
+    
     // Clear down OpenCL allocations
     //
+
     clReleaseCommandQueue(commandQ);
     clReleaseContext(context);
     clReleaseKernel(kernel);
@@ -347,3 +554,111 @@ void * devPulseBlock ( void * threadArg ) {
     //
     pthread_exit(NULL) ;
 }
+
+void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, float * ikernel, int debug)
+{
+//    int n = OVERSAMP * NPOINTS + 1;
+    double xpos ;
+    
+    double diffFromSincCentre = rdiff / sampleSpacing + nxInData/2;
+    int nearestSample = (int)(diffFromSincCentre+0.5);
+    double nearestSincSample = nearestSample - diffFromSincCentre;
+    int offset;
+    int iidx = (int)(nearestSincSample*OVERSAMP);
+    if (iidx < 0 ){
+        iidx += OVERSAMP ;
+        offset = 1;
+    }else{
+        offset = 0;
+    }
+    
+    for(int x = 0; x < NPOINTS; x++)
+    {
+        xpos = (x - NPOINTS/2) * sampleSpacing ;
+        outData[nearestSample+x-NPOINTS/2+offset].r += point.r * ikernel[iidx];
+        outData[nearestSample+x-NPOINTS/2+offset].i += point.i * ikernel[iidx];
+        if (debug) {
+            printf("xpos:%f iidx:%d :ikernel:%f outdata[%d]: %f,%f\n",xpos,iidx,ikernel[iidx],nearestSample+x-NPOINTS/2+offset,CMPLX_MAG(outData[nearestSample+x-NPOINTS/2+offset]),CMPLX_PHASE(outData[nearestSample+x-NPOINTS/2+offset]));
+        }
+        iidx += OVERSAMP ;
+    }
+
+    return ;
+}
+
+double *
+sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing)
+{
+    int n = oversample_factor * num_of_points + 1;
+    int x;
+    double val;
+    double * data;
+    double scaling = resolution / sampleSpacing ;
+    double k = M_PI / resolution ;
+    double xpos ;
+    
+    if (oversample_factor == 0 || num_of_points == 0)
+    {
+        fprintf(stderr, "Either oversample_factor (= %d) or number of points (= %d) is zero in generate_sinc_kernel\n",
+                oversample_factor, num_of_points);
+        exit(803);
+    }
+    
+    data = calloc(n, sizeof(double));
+    if (!data)
+    {
+        fprintf(stderr, "Failed to calloc %s:%d\n", __FILE__, __LINE__);
+        exit(802);
+    }
+    
+    for(x = 0; x < n; x++)
+    {
+        xpos = (x - n/2) * (sampleSpacing/oversample_factor) ;
+        val  = k * xpos ;
+        data[x] = (fabs(val) < 1.0e-4 ) ? 1.0 : sin(val)/val;
+//        printf("%d, %f, %f\n",x,xpos,data[x]);
+    }
+    
+    double rdiff = -12.4;
+    double sx = sampleSpacing ;
+    double diffFromSincCentre = rdiff / sx + n/2;
+    int nearestSample = (int)(diffFromSincCentre+0.5);
+    double nearestSincSample = diffFromSincCentre - nearestSample ;
+//    printf("Resolution : %f, sampSpacing: %f\n",resolution, sx);
+    int offset;
+    int iidx = (int)(nearestSincSample*oversample_factor);
+    if (iidx < 0 ){
+        iidx += oversample_factor ;
+        offset = 1;
+    }else{
+        offset = 0;
+    }
+    
+    for(x = 0; x < num_of_points; x++)
+    {
+        xpos = (x - num_of_points/2) * sx ;
+//        printf("%f,%d %f\n",xpos,iidx,data[iidx]);
+        iidx += oversample_factor ;
+    }
+    
+    ham1dx(data, n);
+    
+    return(data);
+}
+
+static void
+ham1dx(double * data, int nx)
+{
+    int x;
+    
+    double ped = 0.08;
+    double a = 1.0 - ped;
+    double val;
+    
+    for(x = 0; x < nx; x++)
+    {
+        val = M_PI * (-0.5 + (double) x / (double) (nx - 1));
+        data[x] *= ped + a * cos(val) * cos(val);
+    }
+}
+

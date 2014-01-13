@@ -68,7 +68,10 @@ void * beamForm ( void * threadArg ) {
                 currentImag = phd->data.cmpl_f[(pulseIndex)*phd->nx + (startSamp+ksamp+samplingOffsetInt)].i ;
                 
                 power = rnpData[j].power ;
-                phse  = rnpData[j].rdiff * ( A * (startSamp+ksamp+rnpData[j].indexOffset) + B);
+                // Reminder
+                //  double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
+                //  double B = 4.0*SIPC_pi*td->oneOverLambda ;
+                phse  = -1 * rnpData[j].rdiff * ( A * (startSamp+ksamp+rnpData[j].indexOffset) + B);
                 td->phd->data.cmpl_f[(pulseIndex)*td->phd->nx + (startSamp+ksamp+samplingOffsetInt)].r = currentReal+power*cos(phse) ;
                 td->phd->data.cmpl_f[(pulseIndex)*td->phd->nx + (startSamp+ksamp+samplingOffsetInt)].i = currentImag+power*sin(phse) ;
             }

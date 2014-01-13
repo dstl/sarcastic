@@ -13,11 +13,13 @@
 		9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */; };
 		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
 		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
+		952B7F011855C042003CF741 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 952B7EFF1855C042003CF741 /* libfftw3f.a */; };
 		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
-		95693B5F17E4D07400834C3A /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 95693B5E17E4D07400834C3A /* threadBeamForm.c */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 95693B5E17E4D07400834C3A /* threadBeamForm.c */; };
+		9583A9E818576F6000AA4C44 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 952B7EFE1855C042003CF741 /* libfftw3f_threads.a */; };
 		95BA790D17BE57190061162F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95BA790C17BE57190061162F /* main.c */; };
 		95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95BA790E17BE57190061162F /* doublePrecisionTest.1 */; };
 		95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
@@ -62,6 +64,9 @@
 		9504216817A454AA00A076FC /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		952B7EFC1855BFE4003CF741 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3.a; sourceTree = "<group>"; };
+		952B7EFE1855C042003CF741 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		952B7EFF1855C042003CF741 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		95693B5E17E4D07400834C3A /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
@@ -82,6 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9583A9E818576F6000AA4C44 /* libfftw3f_threads.a in Frameworks */,
+				952B7F011855C042003CF741 /* libfftw3f.a in Frameworks */,
 				95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
@@ -103,6 +110,9 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
+				952B7EFE1855C042003CF741 /* libfftw3f_threads.a */,
+				952B7EFF1855C042003CF741 /* libfftw3f.a */,
+				952B7EFC1855BFE4003CF741 /* libfftw3.a */,
 				95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */,
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
@@ -128,8 +138,8 @@
 				95E3E50817AA58110094496B /* GOSSKernelCode.cl */,
 				9504216817A454AA00A076FC /* GenGitVersion.sh */,
 				9504214E17A4501A00A076FC /* GOSS.c */,
-				95339DA517AAFCF00007466A /* threadCore.c */,
 				95693B5E17E4D07400834C3A /* threadBeamForm.c */,
+				95339DA517AAFCF00007466A /* threadCore.c */,
 				9504215117A4502800A076FC /* GOSS.h */,
 				95DB871817A8267200180864 /* getUserInput.c */,
 				9504215617A453E300A076FC /* readKdTree.h */,
@@ -241,6 +251,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */,
 				9504214F17A4501A00A076FC /* GOSS.c in Sources */,
 				9504215817A453E300A076FC /* readKdTree.c in Sources */,
 				9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */,
@@ -249,7 +260,6 @@
 				95DB871917A8267200180864 /* getUserInput.c in Sources */,
 				95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */,
 				95339DA617AAFCF00007466A /* threadCore.c in Sources */,
-				95693B5F17E4D07400834C3A /* threadBeamForm.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +345,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.3/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -346,6 +357,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.3/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -86,6 +86,7 @@ int main (int argc, char **argv){
     SPVector  * TxPos         = NULL ;
     double    * Fx0s          = NULL ;
     double    * FxSteps       = NULL ;
+    double    * amp_sf0       = NULL ;
 
     SPStatus status ;
     im_init_status(status, 0) ;
@@ -180,7 +181,10 @@ int main (int argc, char **argv){
         printf("Error : Malloc failed allocating %ld bytes for FxSteps\n",sizeof(double)*nVec);
         exit(-1);
     }
-    
+    if((amp_sf0 = (double *)malloc(sizeof(double)*nPulses))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for amp_sf0\n",sizeof(double)*nVec);
+        exit(-1);
+    }
     
     for (int p = 0; p < nPulses; p++){
         RxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
@@ -190,6 +194,7 @@ int main (int argc, char **argv){
         //
         Fx0s[p]    = hdr.pulses[p+startPulse].fx0 ;
         FxSteps[p] = hdr.pulses[p+startPulse].fx_step_size ;
+        amp_sf0[p] = hdr.pulses[p+startPulse].amp_sf0 ;
     }
     
     SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
@@ -365,13 +370,16 @@ int main (int argc, char **argv){
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
         threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
         threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
+        threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
         threadDataArray[dev].raySolidAng            = raySolidAng;
         threadDataArray[dev].TxPowPerRay            = TxPowPerRay ;
         threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
         threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
         threadDataArray[dev].ADRate                 = hdr.clock_speed ;
+        threadDataArray[dev].pulseDuration          = hdr.pulse_length ;
         threadDataArray[dev].oneOverLambda          = hdr.freq_centre / SIPC_c ;
-        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length *hdr.chirp_gamma/2) ;
+        threadDataArray[dev].freq_centre            = hdr.freq_centre ;
+        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length * hdr.chirp_gamma / 2) ;
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
         threadDataArray[dev].debug                  = debug ;

@@ -63,7 +63,7 @@
 #define MAXDEVICES 8
 #define RXLNA 30        // Receiver Low-Noise amplifier in dB
 #define RXImp 50        // Receiver Impedence
-#define MAXBOUNCES  8   // Maximum number of ray bounces
+#define MAXBOUNCES  10  // Maximum number of ray bounces
 
 #define BOUNCEINDEXERROR    (-1)
 
@@ -192,12 +192,15 @@ typedef struct threadData {
     SPVector * RxPositions ;    // Pointer to beginning of RxPos data
     double * Fx0s ;             // Pointer to beginning of Fx0s data
     double * FxSteps ;          // Pointer to beginning of FxSteps data
+    double * amp_sf0 ;          // Pointer to beginning of amp_sf0 data
     double raySolidAng ;
     double TxPowPerRay ;
     SPImage * phd ;             // Pointer to beginning of cphd data
     double chirpRate ;
     double ADRate ;
+    double pulseDuration ;      // Pulse duration in seconds
     double oneOverLambda ;
+    double freq_centre ;        // Centre frequency
     double StartFrequency ;
     int bounceToShow ;
     SPStatus status ;
@@ -212,7 +215,7 @@ typedef struct rnpData_t {
     double power;
     double samplingOffset;
     int samplingOffsetInt;
-    int indexOffset ;
+    double indexOffset ;
     double rdiff;
 }rnpData_t ;
 
