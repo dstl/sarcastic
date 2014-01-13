@@ -359,7 +359,7 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                 printf("%f,%f,%f\n",reflected.org.x,reflected.org.y,reflected.org.z);
             }
             
-            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) && bounces==2 )
+            if (! occluded(reflected.org, returnVectDir, SceneBoundingBox, KdTree, triangleListData, triangleListPtrs, Triangles) )
                 // If not occluded - ie there is a path from the found intersection point back to the SAR receiver
                 // Calculate power and range and mix the signal back into the receiver
                 //
