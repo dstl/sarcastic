@@ -6,12 +6,11 @@
  *                  Copyright (c) 2013 Dstl. All rights reserved.
  *
  *   Description:
- *   <ENTER DESCRIPTION HERE>
-    This function runs on a single thread and controls a single OpenCL device
+ *      This function runs on a single thread and controls a single OpenCL device
  *
  *
- *   CLASSIFICATION        :  <PENDING>
- *   Date of CLASSN        :  14/03/2013
+ *   CLASSIFICATION        :  UNCLASSIFIED
+ *   Date of CLASSN        :  15/01/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -163,6 +162,7 @@ void * devPulseBlock ( void * threadArg ) {
     double sexToGo ;
     int nx;
     nx = (int)td->phd->nx ;
+
 #ifdef FASTPULSEBUILD
 
     // build a sinc kernel and convert it to floats for quick GPU processing
@@ -359,7 +359,6 @@ void * devPulseBlock ( void * threadArg ) {
         int nSamp;
         int rc ;
         int thd ;
-        int startSamp ;
         
         for(int iloop = 0; iloop<loops; iloop++){
             if (iloop == 1) {
@@ -458,8 +457,6 @@ void * devPulseBlock ( void * threadArg ) {
 
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel)
 {
-//    int n = OVERSAMP * NPOINTS + 1;
-    double xpos ;
     
     double diffFromSincCentre = rdiff / sampleSpacing + nxInData/2;
     int nearestSample = (int)(diffFromSincCentre+0.5);
@@ -475,7 +472,6 @@ void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacin
     
     for(int x = 0; x < NPOINTS; x++)
     {
-        xpos = (x - NPOINTS/2) * sampleSpacing ;
         outData[nearestSample+x-NPOINTS/2+offset].r += point.r * ikernel[iidx];
         outData[nearestSample+x-NPOINTS/2+offset].i += point.i * ikernel[iidx];
         iidx += OVERSAMP ;

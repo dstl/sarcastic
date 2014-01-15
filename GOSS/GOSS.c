@@ -6,24 +6,23 @@
  *                  Copyright (c) 2013 Dstl. All rights reserved.
  *
  *   Description:
- *   <ENTER DESCRIPTION HERE>
- One set up the algorithm splits pulses across the number of available devices
- each device then runs its own pthread to process its own block of pulses.
- The pulses are interleaved across the threads (pulse n -> thread n%ndevs)
- This is so that the file can be written in parallel as each thread completes
- a loop
- Each thread loops through its pulses.
- Each pulse is then processed using OpenCL to ray trace all the rays within the 
- pulse's beam.
- Each OpenCL call returns an array of intersections (azBeam x elBeam x MAXBOUNCE
- storing (doubl)range & (double)power)
- These are then combined in the thread to form a single pulse return
- Each thread then writes its pulse to file in thread order (blocking write top the
- other threads as it  does)
+ *   Once set up the algorithm splits pulses across the number of available devices
+ *   each device then runs its own pthread to process its own block of pulses.
+ *   The pulses are interleaved across the threads (pulse n -> thread n%ndevs)
+ *   This is so that the file can be written in parallel as each thread completes
+ *   a loop
+ *   Each thread loops through its pulses.
+ *   Each pulse is then processed using OpenCL to ray trace all the rays within the
+ *   pulse's beam.
+ *   Each OpenCL call returns an array of intersections (azBeam x elBeam x MAXBOUNCE
+ *   storing (double)range & (double)power)
+ *   These are then combined in the thread to form a single pulse return
+ *   Each thread then writes its pulse to file in thread order (blocking write to the
+ *   other threads as it  does)
  *
  *
- *   CLASSIFICATION        :  <PENDING>
- *   Date of CLASSN        :  14/03/2013
+ *   CLASSIFICATION        :  UNCLASSIFIED
+ *   Date of CLASSN        :  15/01/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -55,9 +54,7 @@
 #include "BuildRopesAndBoxes.h"
 #include "ecef2SceneCoords.h"
 
-
 double TxPowerPerRay(int xRays, int yRays, double xBeamUsed, double yBeamUsed, double * raySolidAngle, double *effectiveArea);
-
 
 int main (int argc, char **argv){
     
