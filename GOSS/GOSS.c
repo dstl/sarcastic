@@ -53,6 +53,7 @@
 #include "readKdTree.h"
 #include "BuildRopesAndBoxes.h"
 #include "ecef2SceneCoords.h"
+#include "colourCodes.h"
 
 double TxPowerPerRay(int xRays, int yRays, double xBeamUsed, double yBeamUsed, double * raySolidAngle, double *effectiveArea);
 
@@ -413,7 +414,7 @@ int main (int argc, char **argv){
     }
     
     endTimer(&runTimer, &status) ;
-    printf("Done in %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+    printf("Done in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     printf("Writing CPHD File \"%s\"....",outCPHDFile);
     hdr.data_type = ITYPE_CMPL_FLOAT ;
     writeCPHD3Header( &hdr, fp, &status ) ;

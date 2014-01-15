@@ -39,13 +39,14 @@
 
 #include <stdio.h>
 #include "Version.h"
+#include "colourCodes.h"
 
 void banner (){
     printf(" \n");
-    printf("              Geometrical Optics SAR Simulator (GOSS) [Magdalen]\n");
-    printf("                          Version : %s \n", FULL_VERSION);
-    printf("                    Revision: %s, %s \n",REVISION, VERSION_DATE);
-    printf("               Copyright (c) 2013 [Dstl]. All rights reserved.\n");
+    printf(DARK GREEN "              Geometrical Optics SAR Simulator (GOSS) [Magdalen]\n" NORMAL);
+    printf(BLUE "                          Version :"RED" %s \n", FULL_VERSION);
+    printf(BLUE "                    Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
+    printf(BLUE "               Copyright (c) 2013 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);
     printf(" \n");
 
     return ;

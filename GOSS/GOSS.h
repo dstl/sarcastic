@@ -51,7 +51,6 @@
 #endif
 
 #define EPSILON ((double)(0.00000001))  // Small number
-
 #define NILROPE ((int) -666666 )
 #define NOINTERSECTION -1
 #define KDT_ISLEAF(n)    (n->leaf.flagDimAndOffset & (unsigned int)(1<<31))
@@ -64,7 +63,6 @@
 #define RXLNA 30        // Receiver Low-Noise amplifier in dB
 #define RXImp 50        // Receiver Impedence
 #define MAXBOUNCES  10  // Maximum number of ray bounces
-
 #define BOUNCEINDEXERROR    (-1)
 
 typedef struct AABB {
@@ -237,18 +235,9 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *debug, int *debugX, int *debugY,
                  SPStatus *status) ;
 char * loadProgramSource(const char *filename);
-/*void radarRayBouncer(int iPulse,              // Pulse to process
-                     RadarParams radar,         // struct for radar params
-                     SPVector * RxPos,          // array - nPulses long
-                     SPVector * TxPos,          // array - nPulses long
-                     Triangle * Triangles,      // array - triangle data
-                     Texture * textureData,     // array - texture data
-                     AABB SceneBoundingBox,     // Scene bounding box
-                     KdData * KdTree,           // array containing KdTree
-                     int **triangleLists,       // array of triangle list arrays
-                     cplxf * pulses             // output array - nPulses x nSamps
-                     );*/
 void * devPulseBlock ( void * threadArg ) ;
 void * beamForm ( void * threadArg ) ;
+
+
 
 #endif

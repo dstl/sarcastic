@@ -38,6 +38,8 @@
  ***************************************************************************/
 
 #include "GOSS.h"
+#include "colourCodes.h"
+
 static char *rootpath = "/local_storage/DGM" ;
 
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
@@ -63,7 +65,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                                   (char *)"The name of a KdTree file containing the scene.",
                                   prompt);
         if( access( *KdTreeFile, F_OK ) == -1 ) {
-            printf("Cannot access file %s\n",*KdTreeFile);
+            printf(RED "Cannot access file %s\n" RESETCOLOR,*KdTreeFile);
             fileStat.status = BAD_FILE ;
         }
     } while(fileStat.status != NO_ERROR);
@@ -75,7 +77,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                                   (char *)"The name of a CPHD file to use.",
                                   prompt);
         if( access( *inCPHDFile, R_OK ) == -1 ){
-            printf("Cannot access file %s\n",*inCPHDFile);
+            printf(RED "Cannot access file %s\n" RESETCOLOR,*inCPHDFile);
             fileStat.status = BAD_FILE ;
         }
     } while(fileStat.status != NO_ERROR);
@@ -102,7 +104,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                                (char *)"The name of a CPHD file to create.",
                                prompt);
         if ( (fp = fopen(*outCPHDFile, "w")) == NULL){
-            printf("Cannot access file %s\n",*outCPHDFile);
+            printf(RED "Cannot access file %s\n" RESETCOLOR,*outCPHDFile);
             fileStat.status = BAD_FILE ;
         }else fclose(fp) ;
             

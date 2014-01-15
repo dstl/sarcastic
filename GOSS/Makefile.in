@@ -40,7 +40,7 @@ SRC = GOSS.c readKdTree.c BuildRopesAndBoxes.c banner.c TxPowerPerRay.c getUserI
 
 INCLUDE = GOSS.h readKdTree.h BuildRopesAndBoxes.h TxPowerPerRay.h ecef2SceneCoords.h
 
-LIBS = -lSIlib -lreadline -lexpat
+LIBS = -lSIlib -lreadline -lexpat -lfftw3f -lfftw3f_threads
 
 CC	:= _CC_
 CFLAGS = -O2 -Wall -c -g -D_REENTRANT -Wmissing-prototypes -I/usr/local/dstl/include/SIlib

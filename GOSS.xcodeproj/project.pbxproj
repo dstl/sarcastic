@@ -72,6 +72,7 @@
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		95AC4958188730F9006A0981 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
 		95BA790917BE57190061162F /* doublePrecisionTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = doublePrecisionTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95BA790C17BE57190061162F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		95BA790E17BE57190061162F /* doublePrecisionTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = doublePrecisionTest.1; sourceTree = "<group>"; };
@@ -152,6 +153,7 @@
 				95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */,
 				95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */,
 				9504211917A24F9400A076FC /* GOSS.1 */,
+				95AC4958188730F9006A0981 /* colourCodes.h */,
 			);
 			path = GOSS;
 			sourceTree = "<group>";

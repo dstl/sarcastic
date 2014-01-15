@@ -70,7 +70,7 @@ set CC          = $CCtmp
 
 echo " "
 echo "Please enter the full path name of the directory"
-echo "that SIlib is to be installed into. Executable files"
+echo "that GOSS is to be installed into. Executable files"
 echo "will be placed in a bin subdirectory [$def_INSTALL_DIR]"
 echo " "
 
