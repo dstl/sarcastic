@@ -46,7 +46,7 @@
 static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
-double * sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing);
+void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
 
 void * devPulseBlock ( void * threadArg ) {
     
@@ -80,18 +80,12 @@ void * devPulseBlock ( void * threadArg ) {
     int debugY              = td->debugY;
     int nrnpItems;
     double derampRange ;
-#ifdef FASTPULSEBUILD
     SPCmplx targ, pcorr, tmp;
     SPImage pulseLine ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel ;
     double bandwidth = td->chirpRate * td->pulseDuration ;
     fftwf_init_threads();
     printf("Using FAST pulse building routines...\n");
-#else
-    double freqSampsToCentreStart, ADCSampsToTargStart ;
-    double A = 4.0*SIPC_pi*td->chirpRate / (SIPC_c * td->ADRate);
-    double B = 4.0*SIPC_pi*td->oneOverLambda ;
-#endif
 
     int tid ;
     tid   = td->devIndex ;
@@ -140,7 +134,7 @@ void * devPulseBlock ( void * threadArg ) {
     dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &_err));
     dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &_err));
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &_err));
-    drnp = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
+    drnp         = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
 
     // Load the device buffers
     //
@@ -163,20 +157,20 @@ void * devPulseBlock ( void * threadArg ) {
     int nx;
     nx = (int)td->phd->nx ;
 
-#ifdef FASTPULSEBUILD
 
     // build a sinc kernel and convert it to floats for quick GPU processing
     //
     
     resolution = SIPC_c / (2 * bandwidth ) ;
     sampSpacing = SIPC_c /  (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
-    ikernel = sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing);
-    if (ikernel == NULL) {
-        printf("Failed to create ikernel!\n");
-        exit(614);
+    ikernel = calloc((OVERSAMP * NPOINTS + 1), sizeof(double));
+    if (ikernel == NULL){
+        fprintf(stderr, "Failed to calloc ikernel %s:%d\n", __FILE__, __LINE__);
+        exit(802);
     }
-    
-#endif
+
+    sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
+   
     
     // **** loop  start here
     //
@@ -308,8 +302,6 @@ void * devPulseBlock ( void * threadArg ) {
         
         ////////// DEBUG CODE to inject a single point target
         
-#ifdef FASTPULSEBUILD
-        
         
         im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
         
@@ -343,98 +335,12 @@ void * devPulseBlock ( void * threadArg ) {
         im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
         im_destroy(&pulseLine, &status) ;
         
-#else
-        
-        for (int i=0; i<nrnpItems; i++){
-            freqSampsToCentreStart       = (td->StartFrequency - td->Fx0s[pulseIndex]) / td->FxSteps[pulseIndex];
-            ADCSampsToTargStart          = (2.0*rnpData[i].rdiff/SIPC_c)*td->ADRate;
-            rnpData[i].samplingOffset    = freqSampsToCentreStart - ADCSampsToTargStart;
-            rnpData[i].samplingOffsetInt = (int)(rnpData[i].samplingOffset);
-            rnpData[i].indexOffset       = rnpData[i].samplingOffsetInt - rnpData[i].samplingOffset - (nx / 2) ;
-        }
-        
-        int nbeamThreads = (int)(sysconf(_SC_NPROCESSORS_ONLN)/td->nThreads);
-        int nbeamThreadsRem = nx % nbeamThreads ;
-        int loops = (nbeamThreadsRem == 0) ? 1 : 2 ;
-        int nSamp;
-        int rc ;
-        int thd ;
-        
-        for(int iloop = 0; iloop<loops; iloop++){
-            if (iloop == 1) {
-                nbeamThreads = nbeamThreadsRem ;
-            }
-            pthread_t *beamThreads;
-            beamThreads = (pthread_t *)malloc(sizeof(pthread_t)*nbeamThreads) ;
-            if (beamThreads == NULL) {
-                printf("Error : Failed to malloc %d threads\n",nbeamThreads);
-                exit(-1);
-            }
-        
-            threadDataBF *threadDataArray ;
-            threadDataArray = (threadDataBF *)malloc(sizeof(threadDataBF)*nbeamThreads);
-            if (threadDataArray == NULL) {
-                printf("Error : Failed to malloc %d threadDataArrays\n",nbeamThreads);
-                exit(-1);
-            }
-        
-            pthread_attr_t attr;
-            pthread_attr_init(&attr);
-            pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-        
-            if(iloop==1){
-                nSamp = 1 ;
-            }else{
-                nSamp = (int)(nx / nbeamThreads) ;
-            }
-           
-            for (thd=0; thd<nbeamThreads; thd++) {
-            
-                threadDataArray[thd].A          = A ;
-                threadDataArray[thd].B          = B ;
-                threadDataArray[thd].nrnpItems  = nrnpItems ;
-                threadDataArray[thd].nSamp      = nSamp ;
-                threadDataArray[thd].nx         = (int)nx ;
-                threadDataArray[thd].phd        = td->phd ;
-                threadDataArray[thd].pulseIndex = pulseIndex ;
-                threadDataArray[thd].rnpData    = rnpData ;
-                if(iloop ==1){
-                    threadDataArray[thd].startSamp  = (int)nx - nbeamThreads + thd ;
-                }else{
-                    threadDataArray[thd].startSamp  = thd*nSamp ;
-                }
-            
-                // Create thread data for each device
-                //
-                rc = pthread_create(&beamThreads[thd], NULL, beamForm, (void *) &threadDataArray[thd]) ;
-                if (rc){
-                    printf("ERROR; return code from pthread_create() is %d\n", rc);
-                    exit(-1);
-                }
-            }
-        
-            pthread_attr_destroy(&attr);
-            void * threadStatus ;
-            for (thd=0; thd<nbeamThreads; thd++) {
-                rc = pthread_join(beamThreads[thd], &threadStatus);
-                if (rc) {
-                    printf("ERROR; return code from pthread_join() is %d\n", rc);
-                    exit(-1);
-                }
-            }
-            
-            
-            
-            free(beamThreads);
-            free(threadDataArray);
-        }
-        free(rnpData) ;
-        
-#endif
-        
         free(rnp);
+        free(rnpData);
         
     } // end of pulse loop
+    
+    free(ikernel);
     
     // Clear down OpenCL allocations
     //
@@ -480,13 +386,10 @@ void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacin
     return ;
 }
 
-double *
-sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing)
-{
+void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double * data) {
     int n = oversample_factor * num_of_points + 1;
     int x;
     double val;
-    double * data;
     double k = M_PI / resolution ;
     double xpos ;
     
@@ -495,13 +398,6 @@ sinc_kernel(int oversample_factor, int num_of_points, double resolution, double 
         fprintf(stderr, "Either oversample_factor (= %d) or number of points (= %d) is zero in generate_sinc_kernel\n",
                 oversample_factor, num_of_points);
         exit(803);
-    }
-    
-    data = calloc(n, sizeof(double));
-    if (!data)
-    {
-        fprintf(stderr, "Failed to calloc %s:%d\n", __FILE__, __LINE__);
-        exit(802);
     }
     
     for(x = 0; x < n; x++)
@@ -513,7 +409,7 @@ sinc_kernel(int oversample_factor, int num_of_points, double resolution, double 
     
     ham1dx(data, n);
     
-    return(data);
+    return ;
 }
 
 static void

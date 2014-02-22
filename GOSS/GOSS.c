@@ -424,6 +424,14 @@ int main (int argc, char **argv){
     
     im_destroy(&cphd, &status);
     im_close_lib(&status);
+    free ( threadDataArray );
+    free ( threads ) ;
+    free ( RxPos ) ;
+    free ( TxPos ) ;
+    free ( Fx0s ) ;
+    free ( FxSteps ) ;
+    free ( amp_sf0 ) ;
+    
     return 0;
 
 }
