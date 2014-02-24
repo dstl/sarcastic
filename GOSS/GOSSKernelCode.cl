@@ -60,8 +60,8 @@
 #define TRUE 1
 #define FALSE 0
 #define HIDDENSCATTERERS 0
-#define RXLNA 1000000000000        // Receiver Low-Noise amplifier in dB (30dB)
-#define MAXTRAVERSAL 1000          // Maximum kdTree traversal steps before we blow up
+#define RXLNA 1                     // Receiver Low-Noise amplifier in dB (30dB)
+#define MAXTRAVERSAL 1000           // Maximum kdTree traversal steps before we blow up
 typedef int OutCode;
 
 #define INSIDEAABB  0   // 000000
@@ -268,13 +268,12 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
                             const int nElBeam,              // Number of elevation slices in beam
                             const VectorH RxPos,            // Receiver position for this pulse
                             const VectorH TxPos,            // Transmitter position for this pulse
-                            const double dAz,               // Azimuth slice in radians
-                            const double dEl,               // Elevation slice in radians
                             const double raySolidAng,       // Solid angle of a single ray
                             const double TxPowPerRay,       // Transmitter power per ray
                             const AABB SceneBoundingBox,    // Scene bounding box
                             const double Aeff,              // The effective area of the Receive Antenna
                             const int bounceToShow,         // Which bounce to print out
+                            __global Ray * rays,            // Array of ray to trace (dims are nAzBeam*nElBeam)
                             __global Triangle * Triangles,  // array - triangle data
                             __global Texture * textureData, // array - texture data
                            __global KdData * KdTree,        // array containing KdTree
@@ -287,8 +286,8 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
     int xId = get_global_id(0);
     int yId = get_global_id(1);
     
-    double beamHeight, beamWidth, thetaAz, thetaEl, rayPow, totalDist, RCSArea;
-    VectorH aimDir, elAxis, azAxis, azRayDir, elRayDir, rxp;
+    double rayPow, totalDist, RCSArea;
+    VectorH rxp;
     VectorH srcPt, dstPt ;
     double dist;
     int debug = 0, bounces;
@@ -301,18 +300,10 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
         if( xId == DBGX && yId == DBGY ){debug = DEBUG;}else{debug=0;}
         if(debug>=10)printf("+++++++++++++++++++++++++++++++++++++++\n");
 #endif
-        beamWidth  = nAzBeam * dAz;
-        beamHeight = nElBeam * dEl;
         rxp        = RxPos;
-        aimDir     = vectMinus(rxp);
-        elAxis     = vectCross(aimDir,vectCreate(0, 0, 1));
-        azAxis     = vectCross(elAxis,aimDir);
-        thetaAz    = (xId * dAz) - (beamWidth/2) + (dAz/2);
-        azRayDir   = vectRotateAxis(aimDir, azAxis, thetaAz);
-        thetaEl    = (yId * dEl) - (beamHeight/2) + (dEl/2);
-        elRayDir   = vectRotateAxis(azRayDir, elAxis, thetaEl);
-        r.org      = TxPos;
-        r.dir      = vectNorm (  elRayDir );
+        r.org      = rays[xId*nAzBeam+yId].org;
+        r.dir      = rays[xId*nAzBeam+yId].dir;
+//        printf("[%d,%d]  ray: %f,%f,%f->%f,%f,%f\n",xId,yId,r.org.x,r.org.y,r.org.z,r.dir.x,r.dir.y,r.dir.z);
         r.san      = raySolidAng ;
         rayPow     = TxPowPerRay;
         totalDist  = 0.0;

@@ -183,8 +183,6 @@ typedef struct threadData {
     int nPulses ;
     int nAzBeam ;
     int nElBeam ;
-    double dAz ;
-    double dEl ;
     double Aeff ;               // The effective area of the Receive Antenna
     SPVector * TxPositions ;    // Pointer to beginning of TxPos data
     SPVector * RxPositions ;    // Pointer to beginning of RxPos data
@@ -205,6 +203,8 @@ typedef struct threadData {
     int debug;                  // Compiler the kernel with debug options
     int debugX;                 // Which ray in X within the beam to debug
     int debugY;                 // Which ray in Y within the beam to debug
+    double beamMaxAz;           // Maximum azimuth beamwidth to consider for scene
+    double beamMaxEl;           // Maximum azimuth beamwidth to consider for scene
 
 } threadData ;
 

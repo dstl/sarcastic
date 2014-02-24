@@ -361,8 +361,8 @@ int main (int argc, char **argv){
         threadDataArray[dev].nPulses                = pulsesPerDevice ;
         threadDataArray[dev].nAzBeam                = nAzBeam ;
         threadDataArray[dev].nElBeam                = nElBeam ;
-        threadDataArray[dev].dAz                    = dAz ;
-        threadDataArray[dev].dEl                    = dEl ;
+        threadDataArray[dev].beamMaxAz              = dAz ;
+        threadDataArray[dev].beamMaxEl              = dEl ;
         threadDataArray[dev].Aeff                   = Aeff ;            // The effective area of the Receive Antenna
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data

@@ -47,6 +47,7 @@ static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCod
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
+void generate_gaussian_ray_distribution(double xStdev,double yStdev, SPVector txPos, SPVector GRP, int nx,int ny, Ray *rayArray);
 
 void * devPulseBlock ( void * threadArg ) {
     
@@ -59,7 +60,7 @@ void * devPulseBlock ( void * threadArg ) {
     cl_kernel kernel ;
     cl_command_queue commandQ ;
     cl_int err ;
-    cl_mem dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, drnp ;
+    cl_mem dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, drnp, dRays ;
     rangeAndPower * rnp ;
     SPVector aimdir ;
 
@@ -68,8 +69,6 @@ void * devPulseBlock ( void * threadArg ) {
     int nElBeam             = td->nElBeam ;
     SPVector RxPos;
     SPVector TxPos;
-    double dAz              = td->dAz ;
-    double dEl              = td->dEl ;
     double raySolidAng      = td->raySolidAng ;
     double TxPowPerRay      = td->TxPowPerRay ;
     AABB SceneBoundingBox   = td->SceneBoundingBox ;
@@ -135,6 +134,7 @@ void * devPulseBlock ( void * threadArg ) {
     dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &_err));
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &_err));
     drnp         = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
+    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nAzBeam*nElBeam, NULL, &_err));
 
     // Load the device buffers
     //
@@ -158,11 +158,11 @@ void * devPulseBlock ( void * threadArg ) {
     nx = (int)td->phd->nx ;
 
 
-    // build a sinc kernel and convert it to floats for quick GPU processing
+    // build a sinc kernel
     //
     
-    resolution = SIPC_c / (2 * bandwidth ) ;
-    sampSpacing = SIPC_c /  (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
+    resolution  = SIPC_c / (2.0 * bandwidth ) ;
+    sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
     ikernel = calloc((OVERSAMP * NPOINTS + 1), sizeof(double));
     if (ikernel == NULL){
         fprintf(stderr, "Failed to calloc ikernel %s:%d\n", __FILE__, __LINE__);
@@ -176,6 +176,9 @@ void * devPulseBlock ( void * threadArg ) {
     //
     for (int pulse=0; pulse<td->nPulses; pulse++){
         int pulseIndex = (tid * td->nPulses) + pulse ;
+        
+        // print out some useful progress information
+        //
         if ( td->devIndex == 0 ) {
             if( pulse % reportN == 0 && td->nPulses != 1){
                 pCentDone = 100.0*pulse/td->nPulses ;
@@ -195,32 +198,41 @@ void * devPulseBlock ( void * threadArg ) {
                 }
             }
         }
+        
         // Set correct parameters for beam to ray trace
         //
         TxPos = td->TxPositions[pulseIndex] ;
         RxPos = td->RxPositions[pulseIndex] ;
         
+        // generate a random gaussian distribution of rays and pass these to the openCL kernel
+        //
+        SPVector origin;
+        VECT_CREATE(0, 0, 0, origin);
+        Ray *rayArray;
+        rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
+        generate_gaussian_ray_distribution(100*td->beamMaxAz,100*td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
+        CL_CHECK(clEnqueueWriteBuffer(commandQ, dRays, CL_TRUE, 0, sizeof(Ray)*nAzBeam*nElBeam, rayArray,              0, NULL, NULL));
+        free(rayArray);
+
         // Set up the kernel arguments
         //
-        
         CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(int), &nAzBeam));
         CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(int), &nElBeam));
         CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(SPVector), &RxPos));
         CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(SPVector), &TxPos));
-        CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(double), &dAz));
-        CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double), &dEl));
-        CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(double), &raySolidAng));
-        CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(double), &TxPowPerRay));
-        CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(AABB), &SceneBoundingBox));
-        CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(double), &Aeff));
-        CL_CHECK(clSetKernelArg(kernel, 10,  sizeof(int), &bounceToShow));
-        CL_CHECK(clSetKernelArg(kernel, 11,  sizeof(cl_mem), &dTriangles));
-        CL_CHECK(clSetKernelArg(kernel, 12,  sizeof(cl_mem), &dTextures));
-        CL_CHECK(clSetKernelArg(kernel, 13,  sizeof(cl_mem), &dKdTree));
-        CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListData));
-        CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &dtriListPtrs));
-        CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(cl_mem), &drnp));
-        CL_CHECK(clSetKernelArg(kernel, 17,  sizeof(int), &pulseIndex));
+        CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(double), &raySolidAng));
+        CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double), &TxPowPerRay));
+        CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(AABB), &SceneBoundingBox));
+        CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(double), &Aeff));
+        CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(int), &bounceToShow));
+        CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(cl_mem), &dRays));
+        CL_CHECK(clSetKernelArg(kernel, 10,  sizeof(cl_mem), &dTriangles));
+        CL_CHECK(clSetKernelArg(kernel, 11,  sizeof(cl_mem), &dTextures));
+        CL_CHECK(clSetKernelArg(kernel, 12,  sizeof(cl_mem), &dKdTree));
+        CL_CHECK(clSetKernelArg(kernel, 13,  sizeof(cl_mem), &dtriListData));
+        CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListPtrs));
+        CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &drnp));
+        CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(int), &pulseIndex));
 
 
         // allocate buffer for answers and make sure its zeroed (using calloc)
@@ -263,14 +275,17 @@ void * devPulseBlock ( void * threadArg ) {
         derampRange = VECT_MAG(aimdir);
         
         cnt = 0;
+        double totpow = 0.0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0){
                 rnpData[cnt].power = rnp[i].power ;
                 rnpData[cnt].range = rnp[i].range ;
-                rnpData[cnt].rdiff = -1*(derampRange - rnp[i].range);
+                rnpData[cnt].rdiff = rnp[i].range - derampRange;
+                totpow += rnpData[cnt].power;
                 cnt++ ;
             }
         }
+        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(TxPowPerRay), TxPowPerRay);
         
         ////////// DEBUG CODE to inject a single point target
         
@@ -331,7 +346,7 @@ void * devPulseBlock ( void * threadArg ) {
         }
         
         im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
-        im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
+        im_fftw(&pulseLine, FFT_X_ONLY+FWD+SCALE_N, &status);
         im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
         im_destroy(&pulseLine, &status) ;
         
@@ -355,6 +370,7 @@ void * devPulseBlock ( void * threadArg ) {
     clReleaseMemObject(dtriListData);
     clReleaseMemObject(dtriListPtrs);
     clReleaseMemObject(drnp);
+    clReleaseMemObject(dRays);
     
     // return to parent thread
     //

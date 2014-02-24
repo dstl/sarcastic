@@ -23,6 +23,7 @@
 		95BA790D17BE57190061162F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95BA790C17BE57190061162F /* main.c */; };
 		95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95BA790E17BE57190061162F /* doublePrecisionTest.1 */; };
 		95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95D5E56C18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */; };
 		95DB871917A8267200180864 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95DB871817A8267200180864 /* getUserInput.c */; };
 		95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */; };
 		95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */; };
@@ -76,6 +77,7 @@
 		95BA790917BE57190061162F /* doublePrecisionTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = doublePrecisionTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95BA790C17BE57190061162F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		95BA790E17BE57190061162F /* doublePrecisionTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = doublePrecisionTest.1; sourceTree = "<group>"; };
+		95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = generate_gaussian_ray_distribution.c; sourceTree = "<group>"; };
 		95DB871817A8267200180864 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
 		95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
 		95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				9504214E17A4501A00A076FC /* GOSS.c */,
 				95693B5E17E4D07400834C3A /* threadBeamForm.c */,
 				95339DA517AAFCF00007466A /* threadCore.c */,
+				95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */,
 				9504215117A4502800A076FC /* GOSS.h */,
 				95DB871817A8267200180864 /* getUserInput.c */,
 				9504215617A453E300A076FC /* readKdTree.h */,
@@ -255,6 +258,7 @@
 			files = (
 				9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */,
 				9504214F17A4501A00A076FC /* GOSS.c in Sources */,
+				95D5E56C18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c in Sources */,
 				9504215817A453E300A076FC /* readKdTree.c in Sources */,
 				9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */,
 				9504216217A4543000A076FC /* banner.c in Sources */,
