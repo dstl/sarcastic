@@ -237,6 +237,36 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
 char * loadProgramSource(const char *filename);
 void * devPulseBlock ( void * threadArg ) ;
 void * beamForm ( void * threadArg ) ;
+void oclRayTrace(cl_context         context,            // OpenCL context - already instantiated
+                 cl_command_queue   Q,                  // OpenCl command Q - already instatiated
+                 cl_kernel          RTkernel,           // Ray Tracing kernel, already compiled and created from a program
+                 size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
+                 size_t             localWorkSize[2],   // Work dimensions for this device
+                 
+                 int                nTriangles,         // number of triangles in array 'triangles'
+                 Triangle *         triangles,          // Array of triangles of size nTriangles
+                 int                nTextures,          // number of textures in array 'textures'
+                 Texture *          textures,           // Array of textures of size nTextures
+                 int                nTreeNodes,         // number of nodes in KdTree
+                 KdData *           KdTree,             // SAH - KdTree to optimise ray traversal through volume
+                 int                triListDataSize,    // size of trianglelist data
+                 int *              triangleListData,   // array of triangle indices into Triangles
+                 int                nLeaves,            // number of leaves (nodes with triangles) in KdTree
+                 int *              triangleListPtrs,   // array of pointers into triangleListData for each KdTree node
+                 
+                 SPVector           RxPos,              // Receive position of radar (used to calculate range)
+                 double             raySolidAng,        // ray solid angle
+                 double             TxPowPerRay,        // TxPowerPerRay
+                 double             Aeff,               // Antenna efficiancy required
+                 AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
+                 
+                 int                bounceToShow,       // Useful for debugging
+                 int                pulseIndex,          // Useful for debugging
+                 
+                 Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
+                 rangeAndPower      *rnp                // output array of ranges and powers for each ray intersection
+);
+
 
 
 

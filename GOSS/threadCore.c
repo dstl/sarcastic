@@ -56,14 +56,12 @@ void * devPulseBlock ( void * threadArg ) {
     
     cl_device_id devId ;
     cl_context context ;
-    cl_program program ;
-    cl_kernel kernel ;
     cl_command_queue commandQ ;
+    cl_program RTprogram ;
+    cl_kernel RTkernel ;
     cl_int err ;
-    cl_mem dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, drnp, dRays ;
     rangeAndPower * rnp ;
     SPVector aimdir ;
-
     
     int nAzBeam             = td->nAzBeam ;
     int nElBeam             = td->nElBeam ;
@@ -90,7 +88,7 @@ void * devPulseBlock ( void * threadArg ) {
     tid   = td->devIndex ;
     devId = td->platform.device_ids[tid] ;
     context = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
-    program = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
+    RTprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
     
     char compilerOptions[255];
     sprintf(compilerOptions, "-Werror -D MAXBOUNCES=%d",MAXBOUNCES) ;
@@ -100,49 +98,31 @@ void * devPulseBlock ( void * threadArg ) {
         strcat(compilerOptions, dbgxy);
     }
     
-    err = clBuildProgram(program, 0, NULL, compilerOptions, NULL, NULL);
+    err = clBuildProgram(RTprogram, 0, NULL, compilerOptions, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
         char buffer[32768];
         printf("[thread:%d], Error: Failed to build program executable!\n",tid);
-        clGetProgramBuildInfo(program, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+        clGetProgramBuildInfo(RTprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
         printf("err: %d. Buffer:\n",err);
         printf("%s\n", buffer);
         exit(-3);
     }
     
-    kernel   = CL_CHECK_ERR(clCreateKernel(program, "rayTraceBeam", &_err));
+    RTkernel   = CL_CHECK_ERR(clCreateKernel(RTprogram, "rayTraceBeam", &_err));
     commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
     
     
     // Calculate global and local work sizes
     //
     int tx,ty ;
-    size_t localWorkSize [2] ;
-    size_t globalWorkSize[2] ;
-    globalWorkSize[0] = nAzBeam ;
-    globalWorkSize[1] = nElBeam ;
-    best2DWorkSize(kernel, devId, globalWorkSize[0], globalWorkSize[1], &tx, &ty, &td->status) ;
-    localWorkSize[0]  = tx ;
-    localWorkSize[1]  = ty ;
-    
-    // Create device buffers
-    //
-    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Triangle)*td->nTriangles, NULL, &_err));
-    dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Texture)*td->nTextures, NULL, &_err));
-    dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(KdData)*td->nTreeNodes, NULL, &_err));
-    dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, td->triListDataSize, NULL, &_err));
-    dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*td->nLeaves, NULL, &_err));
-    drnp         = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES, NULL, &_err));
-    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nAzBeam*nElBeam, NULL, &_err));
-
-    // Load the device buffers
-    //
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*td->nTriangles, td->Triangles,    0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTextures,    CL_TRUE, 0, sizeof(Texture)*td->nTextures,td->Textures,        0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*td->nTreeNodes, td->KdTree,         0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, td->triListDataSize, td->triListData,              0, NULL, NULL);
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*td->nLeaves, td->triPtrs,              0, NULL, NULL)));
+    size_t RTlocalWorkSize [2] ;
+    size_t RTglobalWorkSize[2] ;
+    RTglobalWorkSize[0] = nAzBeam ;
+    RTglobalWorkSize[1] = nElBeam ;
+    best2DWorkSize(RTkernel, devId, RTglobalWorkSize[0], RTglobalWorkSize[1], &tx, &ty, &td->status) ;
+    RTlocalWorkSize[0]  = tx ;
+    RTlocalWorkSize[1]  = ty ;
     
     Timer threadTimer ;
     SPStatus status;
@@ -170,7 +150,15 @@ void * devPulseBlock ( void * threadArg ) {
     }
 
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
-   
+    
+    
+    // generate a random gaussian distribution of rays and pass these to the openCL kernel
+    //
+    SPVector origin;
+    VECT_CREATE(0, 0, 0, origin);
+    Ray *rayArray;
+    rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
+    rnp      = (rangeAndPower *)malloc(sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES);
     
     // **** loop  start here
     //
@@ -204,52 +192,40 @@ void * devPulseBlock ( void * threadArg ) {
         TxPos = td->TxPositions[pulseIndex] ;
         RxPos = td->RxPositions[pulseIndex] ;
         
-        // generate a random gaussian distribution of rays and pass these to the openCL kernel
+        // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
+        // for the distribution
         //
-        SPVector origin;
-        VECT_CREATE(0, 0, 0, origin);
-        Ray *rayArray;
-        rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
-        generate_gaussian_ray_distribution(100*td->beamMaxAz,100*td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
-        CL_CHECK(clEnqueueWriteBuffer(commandQ, dRays, CL_TRUE, 0, sizeof(Ray)*nAzBeam*nElBeam, rayArray,              0, NULL, NULL));
-        free(rayArray);
-
-        // Set up the kernel arguments
-        //
-        CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(int), &nAzBeam));
-        CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(int), &nElBeam));
-        CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(SPVector), &RxPos));
-        CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(SPVector), &TxPos));
-        CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(double), &raySolidAng));
-        CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double), &TxPowPerRay));
-        CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(AABB), &SceneBoundingBox));
-        CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(double), &Aeff));
-        CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(int), &bounceToShow));
-        CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(cl_mem), &dRays));
-        CL_CHECK(clSetKernelArg(kernel, 10,  sizeof(cl_mem), &dTriangles));
-        CL_CHECK(clSetKernelArg(kernel, 11,  sizeof(cl_mem), &dTextures));
-        CL_CHECK(clSetKernelArg(kernel, 12,  sizeof(cl_mem), &dKdTree));
-        CL_CHECK(clSetKernelArg(kernel, 13,  sizeof(cl_mem), &dtriListData));
-        CL_CHECK(clSetKernelArg(kernel, 14,  sizeof(cl_mem), &dtriListPtrs));
-        CL_CHECK(clSetKernelArg(kernel, 15,  sizeof(cl_mem), &drnp));
-        CL_CHECK(clSetKernelArg(kernel, 16,  sizeof(int), &pulseIndex));
-
-
-        // allocate buffer for answers and make sure its zeroed (using calloc)
-        //
-        rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
-        if (rnp == NULL){
-            printf("Error : failed to malloc rangeAndPower array in thread %d (size %ld)\n"
-                   ,tid, sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES);
-            exit(-6);
-        }
+        generate_gaussian_ray_distribution(td->beamMaxAz,td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
         
-        CL_CHECK(clEnqueueWriteBuffer(commandQ,drnp,CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
-        CL_CHECK(clEnqueueNDRangeKernel(commandQ, kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
-
-        // Read results from device
+        // Now use OpenCl to cast the rays through the KdTree and return an array of intersections with values for teh range
+        // of each intersection and the power at that intersection (stored in array 'rnp'
         //
-        CL_CHECK(clEnqueueReadBuffer(commandQ,drnp, CL_TRUE,0,sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES,rnp,0,NULL,NULL));
+        oclRayTrace(context,
+                    commandQ,
+                    RTkernel,
+                    RTglobalWorkSize,
+                    RTlocalWorkSize,
+                    td->nTriangles,
+                    td->Triangles,
+                    td->nTextures,
+                    td->Textures,
+                    td->nTreeNodes,
+                    td->KdTree,
+                    td->triListDataSize,
+                    td->triListData,
+                    td->nLeaves,
+                    td->triPtrs,
+                    RxPos,
+                    raySolidAng,
+                    TxPowPerRay,
+                    Aeff,
+                    SceneBoundingBox,
+                    bounceToShow,
+                    pulseIndex,
+                    rayArray,
+                    rnp);
+        
+
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
@@ -350,27 +326,19 @@ void * devPulseBlock ( void * threadArg ) {
         im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
         im_destroy(&pulseLine, &status) ;
         
-        free(rnp);
         free(rnpData);
         
     } // end of pulse loop
-    
+    free(rayArray);
+    free(rnp);
     free(ikernel);
     
     // Clear down OpenCL allocations
     //
-
     clReleaseCommandQueue(commandQ);
     clReleaseContext(context);
-    clReleaseKernel(kernel);
-    clReleaseProgram(program);
-    clReleaseMemObject(dTriangles);
-    clReleaseMemObject(dTextures);
-    clReleaseMemObject(dKdTree);
-    clReleaseMemObject(dtriListData);
-    clReleaseMemObject(dtriListPtrs);
-    clReleaseMemObject(drnp);
-    clReleaseMemObject(dRays);
+    clReleaseKernel(RTkernel);
+    clReleaseProgram(RTprogram);
     
     // return to parent thread
     //

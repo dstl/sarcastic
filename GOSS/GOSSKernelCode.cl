@@ -267,7 +267,6 @@ VectorH vectRotateAxis(VectorH v, VectorH axis, double theta){
 __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth slices in beam
                             const int nElBeam,              // Number of elevation slices in beam
                             const VectorH RxPos,            // Receiver position for this pulse
-                            const VectorH TxPos,            // Transmitter position for this pulse
                             const double raySolidAng,       // Solid angle of a single ray
                             const double TxPowPerRay,       // Transmitter power per ray
                             const AABB SceneBoundingBox,    // Scene bounding box

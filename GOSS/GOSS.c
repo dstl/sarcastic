@@ -64,7 +64,7 @@ int main (int argc, char **argv){
     OCLPlatform platform;
     
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8] ;
-    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda ;
+    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl ;
     char *KdTreeFile, *inCPHDFile, *outCPHDFile ;
     int startPulse, nPulses, bounceToShow, nTriangles, nTextures, nLeaves, nTreeNodes ;
     int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
@@ -230,15 +230,15 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    dAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
-    dEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
     
     collectionGeom cGeom;
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
     printf("RayTracing beam (Az,El)     : %f deg x %f deg (%3.2f x %3.2f metres (ground plane))\n",
-           GeoConsts_RADTODEG*dAz,GeoConsts_RADTODEG*dEl,centreRange*dAz,centreRange*dEl/sin(cGeom.grazingRad));
-    dAz = dAz / nAzBeam;
-    dEl = dEl / nElBeam;
+           GeoConsts_RADTODEG*maxBeamUsedAz,GeoConsts_RADTODEG*maxBeamUsedEl,centreRange*maxBeamUsedAz,centreRange*maxBeamUsedEl/sin(cGeom.grazingRad));
+    dAz = maxBeamUsedAz / nAzBeam;
+    dEl = maxBeamUsedEl / nElBeam;
     lambda = SIPC_c / hdr.freq_centre ;
     printf("Ray density                 : %f rays per wavelength cell\n",
            (lambda / (centreRange * dAz))*(lambda/ (centreRange *dEl)));
@@ -361,8 +361,8 @@ int main (int argc, char **argv){
         threadDataArray[dev].nPulses                = pulsesPerDevice ;
         threadDataArray[dev].nAzBeam                = nAzBeam ;
         threadDataArray[dev].nElBeam                = nElBeam ;
-        threadDataArray[dev].beamMaxAz              = dAz ;
-        threadDataArray[dev].beamMaxEl              = dEl ;
+        threadDataArray[dev].beamMaxAz              = maxBeamUsedAz ;
+        threadDataArray[dev].beamMaxEl              = maxBeamUsedEl ;
         threadDataArray[dev].Aeff                   = Aeff ;            // The effective area of the Receive Antenna
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
