@@ -97,7 +97,7 @@ void * devPulseBlock ( void * threadArg ) {
     RTprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RTkernelCodePath, NULL, &_err));
     
     char RTcompilerOptions[255];
-    sprintf(RTcompilerOptions, "-Werror -D MAXBOUNCES=%d",MAXBOUNCES) ;
+    sprintf(RTcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/ -D MAXBOUNCES=%d",MAXBOUNCES) ;
     if (debug) {
         char dbgxy[128];
         sprintf(dbgxy, " -D DEBUG=%d -D DBGX=%d -D DBGY=%d",debug,debugX,debugY);
