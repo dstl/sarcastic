@@ -43,7 +43,9 @@
 #define NPOINTS (32)
 #define OVERSAMP (512)
 
-static char *kernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
+static char *RTkernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
+static char *RRkernelCodePath = "/Users/darren/Development/GOSS/GOSS/randomRays.cl" ;
+
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
@@ -87,18 +89,22 @@ void * devPulseBlock ( void * threadArg ) {
     int tid ;
     tid   = td->devIndex ;
     devId = td->platform.device_ids[tid] ;
-    context = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
-    RTprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
+    context  = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
+    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
+
+    // build and compile the Ray Tracing kernel
+    //
+    RTprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RTkernelCodePath, NULL, &_err));
     
-    char compilerOptions[255];
-    sprintf(compilerOptions, "-Werror -D MAXBOUNCES=%d",MAXBOUNCES) ;
+    char RTcompilerOptions[255];
+    sprintf(RTcompilerOptions, "-Werror -D MAXBOUNCES=%d",MAXBOUNCES) ;
     if (debug) {
         char dbgxy[128];
         sprintf(dbgxy, " -D DEBUG=%d -D DBGX=%d -D DBGY=%d",debug,debugX,debugY);
-        strcat(compilerOptions, dbgxy);
+        strcat(RTcompilerOptions, dbgxy);
     }
     
-    err = clBuildProgram(RTprogram, 0, NULL, compilerOptions, NULL, NULL);
+    err = clBuildProgram(RTprogram, 0, NULL, RTcompilerOptions, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
         char buffer[32768];
@@ -110,7 +116,25 @@ void * devPulseBlock ( void * threadArg ) {
     }
     
     RTkernel   = CL_CHECK_ERR(clCreateKernel(RTprogram, "rayTraceBeam", &_err));
-    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
+    
+    // build and compile the Random Ray Generation kernel
+    //
+   cl_program RRprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RRkernelCodePath, NULL, &_err));
+    
+    char RRcompilerOptions[255];
+    sprintf(RRcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/") ;
+    err = clBuildProgram(RRprogram, 0, NULL, RRcompilerOptions, NULL, NULL);
+    if (err != CL_SUCCESS){
+        size_t len;
+        char buffer[32768];
+        printf("[thread:%d], Error: Failed to build program executable!\n",tid);
+        clGetProgramBuildInfo(RRprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+        printf("err: %d. Buffer:\n",err);
+        printf("%s\n", buffer);
+        exit(-3);
+    }
+    
+    cl_kernel RRkernel   = CL_CHECK_ERR(clCreateKernel(RRprogram, "randomRays", &_err));
     
     
     // Calculate global and local work sizes
@@ -123,6 +147,14 @@ void * devPulseBlock ( void * threadArg ) {
     best2DWorkSize(RTkernel, devId, RTglobalWorkSize[0], RTglobalWorkSize[1], &tx, &ty, &td->status) ;
     RTlocalWorkSize[0]  = tx ;
     RTlocalWorkSize[1]  = ty ;
+    
+    size_t RRlocalWorkSize [2] ;
+    size_t RRglobalWorkSize[2] ;
+    RRglobalWorkSize[0] = nAzBeam ;
+    RRglobalWorkSize[1] = nElBeam ;
+    best2DWorkSize(RRkernel, devId, RRglobalWorkSize[0], RRglobalWorkSize[1], &tx, &ty, &td->status) ;
+    RRlocalWorkSize[0]  = tx ;
+    RRlocalWorkSize[1]  = ty ;
     
     Timer threadTimer ;
     SPStatus status;
@@ -195,7 +227,9 @@ void * devPulseBlock ( void * threadArg ) {
         // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
-        generate_gaussian_ray_distribution(td->beamMaxAz,td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
+        //        generate_gaussian_ray_distribution(td->beamMaxAz,td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
+        
+        oclRandomRays(context,commandQ,RRkernel,RRglobalWorkSize,RRlocalWorkSize,td->beamMaxAz,td->beamMaxEl,TxPos,origin, rayArray);
         
         // Now use OpenCl to cast the rays through the KdTree and return an array of intersections with values for teh range
         // of each intersection and the power at that intersection (stored in array 'rnp'

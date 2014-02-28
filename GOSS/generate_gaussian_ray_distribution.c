@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include "GOSS.h"
 #include <stdlib.h>
-#define BIGNUMBER ((int) 16384) //
+//#define BIGNUMBER ((int) 16384) //
 
 float ranf(){
     double rand = arc4random_uniform(16384) ;

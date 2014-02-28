@@ -267,7 +267,17 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
                  rangeAndPower      *rnp                // output array of ranges and powers for each ray intersection
 );
 
-
+void oclRandomRays(cl_context context,          // OpenCL context - alrready built
+                   cl_command_queue Q,          // OpenCl command Q - already instatiated
+                   cl_kernel RRkernel,          // OpenCl kernel for this routine to call
+                   size_t globalWorkSize[2],  // Global Worksize number of rays in az and el
+                   size_t localWorkSize[2],   // local work size for this device - prealculated
+                   double azStdDev,             // Az standard deviation of rays
+                   double elStdDev,             // El standard deviation of rays
+                   SPVector origin,             // Location of origin or rays
+                   SPVector aimpoint,           // Mean aimpoint for rays
+                   Ray *rayArray                // Array that will be returned
+);
 
 
 #endif
