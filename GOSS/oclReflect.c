@@ -1,16 +1,16 @@
 /***************************************************************************
  *
- *       Module:    oclRayTrace.c
+ *       Module:    oclReflect.c
  *      Program:    GOSS
  *   Created by:    Darren on 01/08/2013.
  *                  Copyright (c) 2013 Dstl. All rights reserved.
  *
  *   Description:
- *      Function to use opencl to ray trace a single pulse
+ *      Function to use opencl to reflect an array of rays
  *
  *
  *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  15/01/2014
+ *   Date of CLASSN        :  09/03/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -41,21 +41,9 @@
 
 
 
-void oclRayTrace(cl_context         context,            // OpenCL context - already instantiated
-                 cl_command_queue   Q,                  // OpenCl command Q - already instatiated
-                 cl_kernel          RTkernel,           // Ray Tracing kernel, already compiled and created from a program
-                 size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
-                 size_t             localWorkSize[2],   // Work dimensions for this device
-                 KdTreeStruct       KD,
-                 SPVector           RxPos,              // Receive position of radar (used to calculate range)
-                 double             gainRx,             // ray solid angle
-                 double             TxPowPerRay,        // TxPowerPerRay
-                 AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
-                 int                bounceToShow,       // Useful for debugging
-                 int                pulseIndex,         // Useful for debugging
-                 Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
-                 rangeAndPower      *rnp                // output array of ranges and powers for each ray intersection
-                )
+void oclReflect(Ray *rayArray,
+                Hit *hitArray, newRayArray, &newRayArraySize
+)
 {
     cl_mem dTriangles ;
     cl_mem dTextures ;
@@ -79,7 +67,7 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
     int nRays;
     int nAzBeam;            // Number of rays in 'rays' in azimuth direction
     int nElBeam;            // Number of rays in 'rays' in elevation direction
-
+    
     nAzBeam = (int)globalWorkSize[0];
     nElBeam = (int)globalWorkSize[1];
     nRays   = nAzBeam * nElBeam ;
@@ -90,7 +78,7 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-  
+    
     dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles,            NULL, &_err));
     dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,              NULL, &_err));
     dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,              NULL, &_err));
@@ -98,7 +86,7 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(int)*nLeaves,                    NULL, &_err));
     drnp         = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nRays*MAXBOUNCES, NULL, &_err));
     dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nRays,                      NULL, &_err));
-
+    
     // Add write buffer commands to the command queue ready for execution
     //
     CL_CHECK(clEnqueueWriteBuffer(Q, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
@@ -108,7 +96,7 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
     CL_CHECK(clEnqueueWriteBuffer(Q, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dRays,        CL_TRUE, 0, sizeof(Ray)*nRays,           rays,             0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, drnp,         CL_TRUE, 0, sizeof(rangeAndPower)*nRays*MAXBOUNCES,rnp,    0,NULL,NULL));
-
+    
     // Set up the kernel arguments
     //
     CL_CHECK(clSetKernelArg(RTkernel, 0,   sizeof(int), &nAzBeam));

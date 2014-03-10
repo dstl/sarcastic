@@ -13,22 +13,26 @@
 		9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */; };
 		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
 		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
-		952B7F011855C042003CF741 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 952B7EFF1855C042003CF741 /* libfftw3f.a */; };
 		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
 		9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 95693B5E17E4D07400834C3A /* threadBeamForm.c */; };
-		9583A9E818576F6000AA4C44 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 952B7EFE1855C042003CF741 /* libfftw3f_threads.a */; };
+		95A6429218CCD25D003A425B /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A6429118CCD25D003A425B /* oclReflect.c */; };
 		95BA790D17BE57190061162F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95BA790C17BE57190061162F /* main.c */; };
 		95BA790F17BE57190061162F /* doublePrecisionTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95BA790E17BE57190061162F /* doublePrecisionTest.1 */; };
 		95BA791317BE5AC40061162F /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */; };
+		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
+		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
+		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
+		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+		95C1709518C9D13600651D97 /* structures.cl in Sources */ = {isa = PBXBuildFile; fileRef = 95C1709418C9D13600651D97 /* structures.cl */; };
+		95C1709A18C9FD1400651D97 /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 95C1709918C9FD1400651D97 /* oclKdTreeHits.c */; };
 		95D5E56C18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */; };
-		95D5E56E18BC9A100015A7DC /* oclRayTrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E56D18BC9A100015A7DC /* oclRayTrace.c */; };
 		95D5E57118BDEF710015A7DC /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E57018BDEF710015A7DC /* oclRandomRays.c */; };
 		95DB871917A8267200180864 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95DB871817A8267200180864 /* getUserInput.c */; };
 		95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */; };
-		95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,18 +71,26 @@
 		9504216817A454AA00A076FC /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
-		952B7EFC1855BFE4003CF741 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3.a; sourceTree = "<group>"; };
-		952B7EFE1855C042003CF741 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
-		952B7EFF1855C042003CF741 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/Cellar/fftw/3.3.3/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		95693B5E17E4D07400834C3A /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		95A6429118CCD25D003A425B /* oclReflect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflect.c; sourceTree = "<group>"; };
 		95AC4958188730F9006A0981 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
 		95BA790917BE57190061162F /* doublePrecisionTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = doublePrecisionTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95BA790C17BE57190061162F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		95BA790E17BE57190061162F /* doublePrecisionTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = doublePrecisionTest.1; sourceTree = "<group>"; };
+		95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.1.a"; sourceTree = "<group>"; };
+		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
+		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
+		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
+		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		95C1709318C9CFCA00651D97 /* stacklessTraverse.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = stacklessTraverse.cl; sourceTree = "<group>"; };
+		95C1709418C9D13600651D97 /* structures.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = structures.cl; sourceTree = "<group>"; };
+		95C1709718C9EF4B00651D97 /* clipToAABB.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = clipToAABB.cl; sourceTree = "<group>"; };
+		95C1709818C9F24C00651D97 /* intersect.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = intersect.cl; sourceTree = "<group>"; };
+		95C1709918C9FD1400651D97 /* oclKdTreeHits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclKdTreeHits.c; sourceTree = "<group>"; };
 		95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = generate_gaussian_ray_distribution.c; sourceTree = "<group>"; };
 		95D5E56D18BC9A100015A7DC /* oclRayTrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclRayTrace.c; sourceTree = "<group>"; };
 		95D5E56F18BDE6F40015A7DC /* randomRays.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = randomRays.cl; sourceTree = "<group>"; };
@@ -88,7 +100,6 @@
 		95E3E50117A9A31F0094496B /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
 		95E3E50217A9A31F0094496B /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
 		95E3E50817AA58110094496B /* GOSSKernelCode.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = GOSSKernelCode.cl; sourceTree = "<group>"; };
-		95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.0.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,9 +107,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9583A9E818576F6000AA4C44 /* libfftw3f_threads.a in Frameworks */,
-				952B7F011855C042003CF741 /* libfftw3f.a in Frameworks */,
-				95EAB821183961F700FD9350 /* libSIlib-0.5.0.a in Frameworks */,
+				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
+				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
+				95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */,
+				95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */,
+				95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
@@ -119,10 +132,11 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
-				952B7EFE1855C042003CF741 /* libfftw3f_threads.a */,
-				952B7EFF1855C042003CF741 /* libfftw3f.a */,
-				952B7EFC1855BFE4003CF741 /* libfftw3.a */,
-				95EAB820183961F700FD9350 /* libSIlib-0.5.0.a */,
+				95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */,
+				95C1708F18C9CCC000651D97 /* libfftw3f.a */,
+				95C1708B18C9CC9800651D97 /* libfftw3_threads.a */,
+				95C1708C18C9CC9800651D97 /* libfftw3.a */,
+				95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */,
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
@@ -144,15 +158,15 @@
 		9504211617A24F9400A076FC /* GOSS */ = {
 			isa = PBXGroup;
 			children = (
-				95E3E50817AA58110094496B /* GOSSKernelCode.cl */,
-				95D5E56F18BDE6F40015A7DC /* randomRays.cl */,
-				95D5E57218BDFE7E0015A7DC /* SPVector.cl */,
+				95C1709618C9D1A300651D97 /* OpenCl */,
 				95D5E57018BDEF710015A7DC /* oclRandomRays.c */,
+				95C1709918C9FD1400651D97 /* oclKdTreeHits.c */,
 				95D5E56D18BC9A100015A7DC /* oclRayTrace.c */,
+				95A6429118CCD25D003A425B /* oclReflect.c */,
+				95339DA517AAFCF00007466A /* threadCore.c */,
 				9504216817A454AA00A076FC /* GenGitVersion.sh */,
 				9504214E17A4501A00A076FC /* GOSS.c */,
 				95693B5E17E4D07400834C3A /* threadBeamForm.c */,
-				95339DA517AAFCF00007466A /* threadCore.c */,
 				95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */,
 				9504215117A4502800A076FC /* GOSS.h */,
 				95DB871817A8267200180864 /* getUserInput.c */,
@@ -178,6 +192,20 @@
 				95BA790E17BE57190061162F /* doublePrecisionTest.1 */,
 			);
 			path = doublePrecisionTest;
+			sourceTree = "<group>";
+		};
+		95C1709618C9D1A300651D97 /* OpenCl */ = {
+			isa = PBXGroup;
+			children = (
+				95C1709318C9CFCA00651D97 /* stacklessTraverse.cl */,
+				95C1709718C9EF4B00651D97 /* clipToAABB.cl */,
+				95C1709418C9D13600651D97 /* structures.cl */,
+				95D5E57218BDFE7E0015A7DC /* SPVector.cl */,
+				95C1709818C9F24C00651D97 /* intersect.cl */,
+				95D5E56F18BDE6F40015A7DC /* randomRays.cl */,
+				95E3E50817AA58110094496B /* GOSSKernelCode.cl */,
+			);
+			name = OpenCl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,10 +295,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */,
-				95D5E56E18BC9A100015A7DC /* oclRayTrace.c in Sources */,
+				95C1709518C9D13600651D97 /* structures.cl in Sources */,
+				95C1709A18C9FD1400651D97 /* oclKdTreeHits.c in Sources */,
 				95D5E57118BDEF710015A7DC /* oclRandomRays.c in Sources */,
 				9504214F17A4501A00A076FC /* GOSS.c in Sources */,
 				95D5E56C18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c in Sources */,
+				95A6429218CCD25D003A425B /* oclReflect.c in Sources */,
 				9504215817A453E300A076FC /* readKdTree.c in Sources */,
 				9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */,
 				9504216217A4543000A076FC /* banner.c in Sources */,
@@ -363,7 +393,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
-					/usr/local/Cellar/fftw/3.3.3/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -375,7 +404,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
-					/usr/local/Cellar/fftw/3.3.3/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

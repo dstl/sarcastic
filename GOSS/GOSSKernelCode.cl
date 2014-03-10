@@ -195,10 +195,9 @@ OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max);
 __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth slices in beam
                             const int nElBeam,              // Number of elevation slices in beam
                             const SPVector RxPos,           // Receiver position for this pulse
-                            const double raySolidAng,       // Solid angle of a single ray
+                            const double gainRx,            // Gain of receiver
                             const double TxPowPerRay,       // Transmitter power per ray
                             const AABB SceneBoundingBox,    // Scene bounding box
-                            const double Aeff,              // The effective area of the Receive Antenna
                             const int bounceToShow,         // Which bounce to print out
                             __global Ray * rays,            // Array of ray to trace (dims are nAzBeam*nElBeam)
                             __global Triangle * Triangles,  // array - triangle data
@@ -251,8 +250,6 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
             // if here then we hit something
             //
             
-            // For power calculations we need the effective area of the triangle being hit
-            //
             Ray reflected = reflect(r, h, Triangles);
             srcPt = r.org;
             dstPt = reflected.org;
@@ -263,6 +260,13 @@ __kernel void rayTraceBeam (const int nAzBeam,              // Number of azimuth
 #endif
             totalDist = totalDist + dist ;
             RCSArea = r.san * totalDist * totalDist ;
+            // Should be:
+            // reflectedPowerAtReceiver = (Pt * Gt / (4 * Pi * (Range to point)^2) ) * Area * ScatteringPower * (1/ ( 4 * PI * (Range to receiver)^2) ) * Gr ;
+            // Area = rayAzAng * Range_to_point * rayElAng * Range_to_point
+            // so RayTxPow = Pt * Gt * (1/4PI) * rayAzAng * rayElAng
+            // Then calculate Scattering Power and multiply by it
+            // Then calculate Range to receiver and multiply by (Gr/4PI) * range_to_receiver^2
+            
             rayPow = RCSArea * TxPowPerRay / (4 * PI * totalDist * totalDist);  // pow at hitpoint
             
             VECT_SUB(rxp,reflected.org,returnVect);

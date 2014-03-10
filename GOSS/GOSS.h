@@ -145,8 +145,20 @@ typedef struct Triangle {
     int textureInd;
 } Triangle;
 
+typedef struct KdTreeStruct {
+    int                nTriangles;         // number of triangles in array 'triangles'
+    Triangle *         triangles;          // Array of triangles of size nTriangles
+    int                nTextures;          // number of textures in array 'textures'
+    Texture *          textures;           // Array of textures of size nTextures
+    int                nTreeNodes;         // number of nodes in KdTree
+    KdData *           KdTree;             // SAH - KdTree to optimise ray traversal through volume
+    int                triListDataSize;    // size of trianglelist data
+    int *              triangleListData;   // array of triangle indices into Triangles
+    int                nLeaves;            // number of leaves (nodes with triangles) in KdTree
+    int *              triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
+} KdTreeStruct ;
 
-void banner () ;
+
 
 /*typedef struct RadarParams {
     int nPulses;                    // radar parameter - pulses in output pulses
@@ -168,29 +180,18 @@ typedef struct threadData {
     int devIndex ;
     int nThreads ;
     OCLPlatform platform ;
-    int nTriangles ;
-    Triangle * Triangles ;
-    int nTextures ;
-    Texture * Textures ;
+    KdTreeStruct       KDT ;                // Structure containing all KDTree info
     AABB SceneBoundingBox ;
-    int nLeaves ;
-    int * triPtrs ;
-    int triListDataSize ;
-    int * triListData ;
-    int nTreeNodes ;
-    KdData * KdTree ;
     int startPulse ;
     int nPulses ;
     int nAzBeam ;
     int nElBeam ;
-    double Aeff ;               // The effective area of the Receive Antenna
     SPVector * TxPositions ;    // Pointer to beginning of TxPos data
     SPVector * RxPositions ;    // Pointer to beginning of RxPos data
     double * Fx0s ;             // Pointer to beginning of Fx0s data
     double * FxSteps ;          // Pointer to beginning of FxSteps data
     double * amp_sf0 ;          // Pointer to beginning of amp_sf0 data
-    double raySolidAng ;
-    double TxPowPerRay ;
+    double gainRx ;
     SPImage * phd ;             // Pointer to beginning of cphd data
     double chirpRate ;
     double ADRate ;
@@ -205,6 +206,7 @@ typedef struct threadData {
     int debugY;                 // Which ray in Y within the beam to debug
     double beamMaxAz;           // Maximum azimuth beamwidth to consider for scene
     double beamMaxEl;           // Maximum azimuth beamwidth to consider for scene
+    double TxPowPerRay ;
 
 } threadData ;
 
@@ -229,6 +231,7 @@ typedef struct threadDataBF {
     double B ;
 } threadDataBF ;
 
+
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
@@ -243,21 +246,11 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
                  size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
                  size_t             localWorkSize[2],   // Work dimensions for this device
                  
-                 int                nTriangles,         // number of triangles in array 'triangles'
-                 Triangle *         triangles,          // Array of triangles of size nTriangles
-                 int                nTextures,          // number of textures in array 'textures'
-                 Texture *          textures,           // Array of textures of size nTextures
-                 int                nTreeNodes,         // number of nodes in KdTree
-                 KdData *           KdTree,             // SAH - KdTree to optimise ray traversal through volume
-                 int                triListDataSize,    // size of trianglelist data
-                 int *              triangleListData,   // array of triangle indices into Triangles
-                 int                nLeaves,            // number of leaves (nodes with triangles) in KdTree
-                 int *              triangleListPtrs,   // array of pointers into triangleListData for each KdTree node
+                 KdTreeStruct       KDT,                // Structure containing all KDTree info
                  
                  SPVector           RxPos,              // Receive position of radar (used to calculate range)
-                 double             raySolidAng,        // ray solid angle
+                 double             gainRx,             // receive antenna gain
                  double             TxPowPerRay,        // TxPowerPerRay
-                 double             Aeff,               // Antenna efficiancy required
                  AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
                  
                  int                bounceToShow,       // Useful for debugging
@@ -279,5 +272,18 @@ void oclRandomRays(cl_context context,          // OpenCL context - alrready bui
                    Ray *rayArray                // Array that will be returned
 );
 
+void oclKdTreeHits(cl_context         context,            // OpenCL context - already instantiated
+                   cl_command_queue   Q,                  // OpenCl command Q - already instatiated
+                   cl_kernel          STkernel,           // stacklessTraverse kernel, already compiled and created from a program
+                   size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
+                   size_t             localWorkSize[2],   // Work dimensions for this device
+                   
+                   KdTreeStruct       KDT,                // Structure containing all KDTree info
+                   
+                   AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
+                   Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
+                   Hit *              hits                // output array of hit locations
+);
+void banner () ;
 
 #endif

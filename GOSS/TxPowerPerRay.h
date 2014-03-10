@@ -48,12 +48,18 @@
 #ifndef _GOSS_TxPowerPerRay_h_
 #define _GOSS_TxPowerPerRay_h_
 
-const double AntLen             = 11.0;         // Antenna Length in metres
-const double AntHei             = 11.0;         // Antenna height in metres
+const int monoStatic            = 1;            // 1 if monostatic, 0 if bistatic
+const int TxDishAntenna         = 1;            // Is Tx a dish ?
+const int RxDishAntenna         = 1;            // Is Rx a dish ?
+const double TxAntLen           = 11.0;         // Tx Antenna Length in metres. If Tx is dish just uses length
+const double TxAntHei           = 11.0;         // Tx Antenna height in metres. Ignored if Tx is dish
+const double RxAntLen           = 11.0;         // Antenna Length in metres. If Rx is dish just uses length
+const double RxAntHei           = 11.0;         // Antenna height in metres. Ignored if Rx is dish
 const double Pt                 = 150;          // Peak power in Watts
-const double ApEff              = 70.0;         // Aperture efficiency in %
+const double ApEffRx            = 70.0;         // Aperture efficiency in %
+const double ApEffTx            = 70.0;         // Aperture efficiency in %
 const double lambda             = 0.04;         // wavelength for gain purposes
 
-double TxPowerPerRay(int xRays, int yRays, double xBeamUsed, double yBeamUsed, double * raySolidAngle, double *effectiveArea);
+double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
 
 #endif

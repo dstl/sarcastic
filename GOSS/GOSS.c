@@ -54,8 +54,7 @@
 #include "BuildRopesAndBoxes.h"
 #include "ecef2SceneCoords.h"
 #include "colourCodes.h"
-
-double TxPowerPerRay(int xRays, int yRays, double xBeamUsed, double yBeamUsed, double * raySolidAngle, double *effectiveArea);
+double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
 
 int main (int argc, char **argv){
     
@@ -152,6 +151,18 @@ int main (int argc, char **argv){
     }
     free(triangleLists);
     
+    KdTreeStruct KDT ;
+    KDT.KdTree           = KdTree ;
+    KDT.nLeaves          = nLeaves ;
+    KDT.nTextures        = nTextures ;
+    KDT.nTreeNodes       = nTreeNodes ;
+    KDT.nTriangles       = nTriangles ;
+    KDT.textures         = textures ;
+    KDT.triangleListData = triListData ;
+    KDT.triangleListPtrs = triPtrs ;
+    KDT.triangles        = Triangles ;
+    KDT.triListDataSize  = triListDataSize ;
+    
     // Check the cphdfile
     //
     readCPHDHeader(inCPHDFile, &hdr, &status);
@@ -243,8 +254,8 @@ int main (int argc, char **argv){
     printf("Ray density                 : %f rays per wavelength cell\n",
            (lambda / (centreRange * dAz))*(lambda/ (centreRange *dEl)));
     
-    double raySolidAng,TxPowPerRay, Aeff ;
-    TxPowPerRay = TxPowerPerRay(nAzBeam, nElBeam, dAz, dEl,&raySolidAng, &Aeff);
+    double TxPowPerRay, gainRx ;
+    TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
 
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
@@ -340,36 +351,26 @@ int main (int argc, char **argv){
    
     while (nPulses % ndevs != 0) nPulses-- ;
     pulsesPerDevice = nPulses / ndevs ;
-
+    
     for (dev=0; dev<ndevs; dev++) {
         
         threadDataArray[dev].devIndex               = dev ;
         threadDataArray[dev].nThreads               = ndevs ;
         threadDataArray[dev].platform               = platform ;
-        threadDataArray[dev].nTriangles             = nTriangles ;
-        threadDataArray[dev].Triangles              = Triangles;
-        threadDataArray[dev].nTextures              = nTextures;
-        threadDataArray[dev].Textures               = textures;
+        threadDataArray[dev].KDT                    = KDT;
         threadDataArray[dev].SceneBoundingBox       = SceneBoundingBox;
-        threadDataArray[dev].nLeaves                = nLeaves ;
-        threadDataArray[dev].triPtrs                = triPtrs;
-        threadDataArray[dev].triListDataSize        = triListDataSize ;
-        threadDataArray[dev].triListData            = triListData ;
-        threadDataArray[dev].nTreeNodes             = nTreeNodes ;
-        threadDataArray[dev].KdTree                 = KdTree ;
-        threadDataArray[dev].startPulse             = startPulse + dev*pulsesPerDevice ; 
+        threadDataArray[dev].startPulse             = startPulse + dev*pulsesPerDevice ;
         threadDataArray[dev].nPulses                = pulsesPerDevice ;
         threadDataArray[dev].nAzBeam                = nAzBeam ;
         threadDataArray[dev].nElBeam                = nElBeam ;
         threadDataArray[dev].beamMaxAz              = maxBeamUsedAz ;
         threadDataArray[dev].beamMaxEl              = maxBeamUsedEl ;
-        threadDataArray[dev].Aeff                   = Aeff ;            // The effective area of the Receive Antenna
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
         threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
         threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
         threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
-        threadDataArray[dev].raySolidAng            = raySolidAng;
+        threadDataArray[dev].gainRx                 = gainRx;
         threadDataArray[dev].TxPowPerRay            = TxPowPerRay ;
         threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
         threadDataArray[dev].chirpRate              = hdr.chirp_gamma;

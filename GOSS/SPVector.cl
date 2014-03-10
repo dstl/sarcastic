@@ -38,6 +38,8 @@
 //
 //***************************************************************************
 
+#ifndef SPVECTOR_CL
+#define SPVECTOR_CL
 #define PROGEPSILON ((double)1.0e-8)
 /// defines the structure for a vector
 ///
@@ -208,3 +210,4 @@ void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector
     outVect->z = out.z ;
 }
 
+#endif

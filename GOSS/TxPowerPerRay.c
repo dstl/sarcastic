@@ -6,19 +6,11 @@
  *                  Copyright (c) 2013 [dstl]. All rights reserved.
  *
  *   Description:
- *     Calculate the power for a given ray when a radar beam is split  into
- *     xRays x yRays number of rays over a solid angle of xBeamUsed x yBeamUsed
- *     specified in radians.
+ *       Function to calculate the power density of a given ray.
+ *   The Transmit and receive antennae are defined in the header file.
  *
- *     Only part of the antenna beam is used to render the scene. The directivity
- *     and therefore gain however is always defined in terms of a ratio per unit
- *     solid angle.  This defines the power gain in any given direction. The beam
- *     is quantised however into discrete rays. The gain therefore needs to be 
- *     quantised into rays. Failure to do this results in higher power values for
- *     more rays which skews RCS values.
- *
- *   CLASSIFICATION        :  <PENDING>
- *   Date of CLASSN        :  14/03/2013
+ *   CLASSIFICATION        :  UNCLASSIFIED
+ *   Date of CLASSN        :  5/04/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -47,29 +39,42 @@
 #include <SIlib.h>
 #include "TxPowerPerRay.h"
 
-double TxPowerPerRay(int xRays, int yRays, double xBeamUsed, double yBeamUsed, double * raySolidAngle, double *effectiveArea){
+double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain){
     
-    double gain ;
-    double beamPowerDensity, rayPowerDensity ;
-    double antArea ;
-    double beamWidth, beamHeight, rayWidth, rayHeight;
-    double collanderFactor ;
-    antArea         = AntLen * AntHei ;
-    gain            = 4 * SIPC_pi * antArea * (ApEff/100.0) / (lambda * lambda);
-    beamPowerDensity        = Pt * gain ; // Watts per m^2
-    beamWidth       = lambda / AntLen ;
-    beamHeight      = lambda / AntHei ;
-    
-    rayWidth        = xBeamUsed / xRays ;
-    rayHeight       = yBeamUsed / yRays ;
-    
-    *raySolidAngle  = rayWidth * rayHeight ;
-    *effectiveArea  = lambda * lambda * gain / 4*M_PI;                          // Effective area of receiver
-    
-    // To calculate ray power we need to account for the total area of all rays
-    // compared to the total power of the beam.
-    //
-    collanderFactor = beamHeight*beamWidth / ( xRays*yRays*rayWidth*rayHeight );
-    rayPowerDensity = beamPowerDensity * collanderFactor ;
-    return rayPowerDensity ;
+    double txl,txh,rxl,rxh;
+    double gainTx, gainRx ;
+    double antAreaTx, antAreaRx ;
+    double Pray ;
+
+    if (TxDishAntenna) {
+        txh = txl = TxAntLen ;
+        antAreaTx = SIPC_pi * (txl/2) * (txl/2) ;
+    }else{
+        txh = TxAntHei ;
+        txl = TxAntLen ;
+        antAreaTx = txh * txl ;
+    }
+    gainTx   = 4.0 * SIPC_pi * antAreaTx * (ApEffTx/100.0) / (lambda * lambda);
+
+    if (monoStatic) {
+        rxl = txl ;
+        rxh = txh ;
+        gainRx = gainTx ;
+    }else{
+        if (RxDishAntenna) {
+            rxh = rxl = RxAntLen ;
+            antAreaRx = SIPC_pi * (rxl/2) * (rxl/2) ;
+        }else{
+            rxh = RxAntHei ;
+            rxl = RxAntLen ;
+            antAreaRx = rxh * rxl ;
+        }
+        gainRx   = 4.0 * SIPC_pi * antAreaRx * (ApEffRx/100.0) / (lambda * lambda);
+
+    }
+
+    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+    *receiverGain = gainRx ;
+    return (Pray) ;
+   
 }

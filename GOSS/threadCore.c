@@ -42,8 +42,9 @@
 #define FASTPULSEBUILD
 #define NPOINTS (32)
 #define OVERSAMP (512)
+#define NOINTERSECTION -1
 
-static char *RTkernelCodePath = "/Users/darren/Development/GOSS/GOSS/GOSSKernelCode.cl" ;
+static char *STkernelCodePath = "/Users/darren/Development/GOSS/GOSS/stacklessTraverse.cl" ;
 static char *RRkernelCodePath = "/Users/darren/Development/GOSS/GOSS/randomRays.cl" ;
 
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
@@ -59,8 +60,8 @@ void * devPulseBlock ( void * threadArg ) {
     cl_device_id devId ;
     cl_context context ;
     cl_command_queue commandQ ;
-    cl_program RTprogram ;
-    cl_kernel RTkernel ;
+    cl_program STprogram, RRprogram ;
+    cl_kernel STkernel, RRkernel ;
     cl_int err ;
     rangeAndPower * rnp ;
     SPVector aimdir ;
@@ -69,10 +70,9 @@ void * devPulseBlock ( void * threadArg ) {
     int nElBeam             = td->nElBeam ;
     SPVector RxPos;
     SPVector TxPos;
-    double raySolidAng      = td->raySolidAng ;
+    double gainRx           = td->gainRx ;
     double TxPowPerRay      = td->TxPowPerRay ;
     AABB SceneBoundingBox   = td->SceneBoundingBox ;
-    double Aeff             = td->Aeff ;
     int bounceToShow        = td->bounceToShow ;
     int debug               = td->debug;
     int debugX              = td->debugX;
@@ -94,32 +94,27 @@ void * devPulseBlock ( void * threadArg ) {
 
     // build and compile the Ray Tracing kernel
     //
-    RTprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RTkernelCodePath, NULL, &_err));
+    STprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &STkernelCodePath, NULL, &_err));
     
-    char RTcompilerOptions[255];
-    sprintf(RTcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/ -D MAXBOUNCES=%d",MAXBOUNCES) ;
-    if (debug) {
-        char dbgxy[128];
-        sprintf(dbgxy, " -D DEBUG=%d -D DBGX=%d -D DBGY=%d",debug,debugX,debugY);
-        strcat(RTcompilerOptions, dbgxy);
-    }
+    char STcompilerOptions[255];
+    sprintf(STcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/") ;
     
-    err = clBuildProgram(RTprogram, 0, NULL, RTcompilerOptions, NULL, NULL);
+    err = clBuildProgram(STprogram, 0, NULL, STcompilerOptions, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
         char buffer[32768];
         printf("[thread:%d], Error: Failed to build program executable!\n",tid);
-        clGetProgramBuildInfo(RTprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+        clGetProgramBuildInfo(STprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
         printf("err: %d. Buffer:\n",err);
         printf("%s\n", buffer);
         exit(-3);
     }
     
-    RTkernel   = CL_CHECK_ERR(clCreateKernel(RTprogram, "rayTraceBeam", &_err));
+    STkernel   = CL_CHECK_ERR(clCreateKernel(STprogram, "stackLessTraverse", &_err));
     
     // build and compile the Random Ray Generation kernel
     //
-   cl_program RRprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RRkernelCodePath, NULL, &_err));
+    RRprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RRkernelCodePath, NULL, &_err));
     
     char RRcompilerOptions[255];
     sprintf(RRcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/") ;
@@ -134,19 +129,19 @@ void * devPulseBlock ( void * threadArg ) {
         exit(-3);
     }
     
-    cl_kernel RRkernel   = CL_CHECK_ERR(clCreateKernel(RRprogram, "randomRays", &_err));
+    RRkernel   = CL_CHECK_ERR(clCreateKernel(RRprogram, "randomRays", &_err));
     
     
     // Calculate global and local work sizes
     //
     int tx,ty ;
-    size_t RTlocalWorkSize [2] ;
-    size_t RTglobalWorkSize[2] ;
-    RTglobalWorkSize[0] = nAzBeam ;
-    RTglobalWorkSize[1] = nElBeam ;
-    best2DWorkSize(RTkernel, devId, RTglobalWorkSize[0], RTglobalWorkSize[1], &tx, &ty, &td->status) ;
-    RTlocalWorkSize[0]  = tx ;
-    RTlocalWorkSize[1]  = ty ;
+    size_t STlocalWorkSize [2] ;
+    size_t STglobalWorkSize[2] ;
+    STglobalWorkSize[0] = nAzBeam ;
+    STglobalWorkSize[1] = nElBeam ;
+    best2DWorkSize(STkernel, devId, STglobalWorkSize[0], STglobalWorkSize[1], &tx, &ty, &td->status) ;
+    STlocalWorkSize[0]  = tx ;
+    STlocalWorkSize[1]  = ty ;
     
     size_t RRlocalWorkSize [2] ;
     size_t RRglobalWorkSize[2] ;
@@ -169,10 +164,8 @@ void * devPulseBlock ( void * threadArg ) {
     int nx;
     nx = (int)td->phd->nx ;
 
-
     // build a sinc kernel
     //
-    
     resolution  = SIPC_c / (2.0 * bandwidth ) ;
     sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
     ikernel = calloc((OVERSAMP * NPOINTS + 1), sizeof(double));
@@ -180,7 +173,6 @@ void * devPulseBlock ( void * threadArg ) {
         fprintf(stderr, "Failed to calloc ikernel %s:%d\n", __FILE__, __LINE__);
         exit(802);
     }
-
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
     
     
@@ -189,7 +181,11 @@ void * devPulseBlock ( void * threadArg ) {
     SPVector origin;
     VECT_CREATE(0, 0, 0, origin);
     Ray *rayArray;
-    rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
+    Hit *hitArray;
+    Ray *shadowRays;
+    double *distnces ;
+    double *tempDists ;
+    
     rnp      = (rangeAndPower *)malloc(sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES);
     
     // **** loop  start here
@@ -227,14 +223,85 @@ void * devPulseBlock ( void * threadArg ) {
         // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
-        //        generate_gaussian_ray_distribution(td->beamMaxAz,td->beamMaxEl, TxPos, origin, nAzBeam,nElBeam, rayArray);
+        rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
+        hitArray = (Hit *)malloc(sizeof(Hit)*nAzBeam*nElBeam);
+        distnces = (double *)malloc(sizeof(double)*nAzBeam*nElBeam);
         
         oclRandomRays(context,commandQ,RRkernel,RRglobalWorkSize,RRlocalWorkSize,td->beamMaxAz,td->beamMaxEl,TxPos,origin, rayArray);
+        
+        int nbounce = 0;
+        int nxRay   = nAzBeam ;
+        int nyRay   = nElBeam ;
+        int nRays   = nxRay*nyRay;
+        int hitcount ;
+        int iray;
+        SPVector hp,dir;
+
+        while ( nbounce < MAXBOUNCES &&  nRays != 0){
+            
+            
+            // Calculate work size of OpenCL
+            //
+            
+            
+            oclKdTreeHits(context, commandQ, STkernel, STglobalWorkSize, STlocalWorkSize, td->KDT, SceneBoundingBox, rayArray, hitArray) ;
+            
+            // Sort out hits
+            //
+            hitcount = 0;
+            iray = 0;
+            // How many hits occured on this ray cast
+            //
+            for(int i=0; i<nxRay*nyRay; i++) if ( hitArray[i].trinum != NOINTERSECTION ) hitcount++ ;
+            
+            // Malloc space for shadowRays (arrays form a hit going back to receiver
+            // Malloc space for tempDists (array to temporarily store distances for forward casted rays
+            //
+            shadowRays = (Ray *)malloc(sizeof(Ray)*hitcount) ;
+            tempDists  = (double *)malloc(sizeof(double)*hitcount) ;
+            
+            // Build Shadowrays and update distances
+            //
+            for (int i=0; i<nxRay*nyRay; i++) {
+                if ( hitArray[i].trinum != NOINTERSECTION ){
+                    VECT_SCMULT(rayArray[i].dir, hitArray[i].dist,hp);
+                    VECT_ADD(rayArray[i].org, hp, hp);
+                    shadowRays[iray].org   = hp ;
+                    VECT_SUB(RxPos, hp, dir);
+                    VECT_NORM(dir, shadowRays[iray].dir);
+                    tempDists[iray] = distnces[i] + hitArray[i].dist ;
+                    iray++ ;
+                }
+            }
+            
+            // Build forward scattering rays ready for next turn round the loop
+            //
+            
+            oclReflect(rayArray, hitArray, newRayArray, &newRayArraySize);
+            free(rayArray) ;
+            rayArray = newRayarray;
+
+            
+            // Work out which rays have a path back to receiver and calculate power vs range for the origin of each ray
+            //
+            
+            
+            
+            
+            
+            nbounce++;
+            free(shadowRays);
+            free(shadDists);
+        }
+        
+        free(rayArray);
+        free(hitArray);
+        free(distnces);
         
         // Now use OpenCl to cast the rays through the KdTree and return an array of intersections with values for teh range
         // of each intersection and the power at that intersection (stored in array 'rnp'
         //
-        oclRayTrace(context,
+        /*oclRayTrace(context,
                     commandQ,
                     RTkernel,
                     RTglobalWorkSize,
@@ -250,16 +317,38 @@ void * devPulseBlock ( void * threadArg ) {
                     td->nLeaves,
                     td->triPtrs,
                     RxPos,
-                    raySolidAng,
+                    gainRx,
                     TxPowPerRay,
-                    Aeff,
                     SceneBoundingBox,
                     bounceToShow,
                     pulseIndex,
                     rayArray,
-                    rnp);
+                    rnp);*/
         
-
+        // Some thoughts on how it should be
+        //
+        // generate random rays
+        //
+        // While bounces < max bounces and nRays > 0
+        // order random rays in some way
+        // stackless traversal for all rays in parallel - generates hit list
+        // each hit contains inbound ray and triangle
+        // In thread 1:
+        // Generate array of rays back to receiver
+        // sort rays in some way
+        // Ray cast arrays back to receiver to check for occlusion. If a ray is occluded
+        // then remove it. If it makes it back then calculate power from power at
+        // reflection point and range back to receiver
+        // (power is calculated using a nominal area for each ray, the phong properties
+        // of the scattering triangle and the phong equation)
+        // Add range and power to a linked list
+        //
+        // In thread 2:
+        // calculate all forward ray bounces
+        // store total range to ray origin and power of ray
+        // (power calculated from reflection)
+        // end while
+        // Build output pulse from RVP's
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
@@ -295,7 +384,7 @@ void * devPulseBlock ( void * threadArg ) {
                 cnt++ ;
             }
         }
-        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(TxPowPerRay), TxPowPerRay);
+//        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(TxPowPerRay), TxPowPerRay);
         
         ////////// DEBUG CODE to inject a single point target
         
