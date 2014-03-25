@@ -371,7 +371,7 @@ int main (int argc, char **argv){
         threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
         threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
         threadDataArray[dev].gainRx                 = gainRx;
-        threadDataArray[dev].TxPowPerRay            = TxPowPerRay ;
+        threadDataArray[dev].PowPerRay              = TxPowPerRay ;
         threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
         threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
         threadDataArray[dev].ADRate                 = hdr.clock_speed ;

@@ -43,32 +43,50 @@
 void oclRandomRays(cl_context context,          // OpenCL context - alrready built
                    cl_command_queue Q,          // OpenCl command Q - already instatiated
                    cl_kernel RRkernel,          // OpenCl kernel for this routine to call
-                   size_t globalWorkSize[2],  // Global Worksize number of rays in az and el
-                   size_t localWorkSize[2],   // local work size for this device - prealculated
+                   int nAzBeam,                 // Number of azimuth rays in beam
+                   int nElBeam,                 // Number of elevation rays in beam
+                   size_t localWorkSize[2],     // local work size for this device - prealculated
                    double azStdDev,             // Az standard deviation of rays
                    double elStdDev,             // El standard deviation of rays
                    SPVector origin,             // Location of origin or rays
                    SPVector aimpoint,           // Mean aimpoint for rays
+                   double raypow,               // Ray power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
                    Ray *rayArray                // Array that will be returned
 ){
     cl_mem dRays;
-    int nAzBeam, nElBeam, nRays;
+    size_t globalWorkSize[2];
+    int x,y,nRays ;
+    unsigned long seed ;
     
-    nAzBeam = (int)globalWorkSize[0];
-    nElBeam = (int)globalWorkSize[1];
+    x = nAzBeam ;
+    y = nElBeam ;
     nRays   = nAzBeam * nElBeam ;
+    
+    // Seed a random number with the coordinates of the Transmitter
+    //
+    srandom(origin.x+origin.y+origin.z);
+    seed = random() ;
+    
+    // grow globalworksize until its a multiple of the local workgroup size
+    //
+    while ( x % localWorkSize[0] )x++;
+    while ( y % localWorkSize[1] )y++;
+    globalWorkSize[0] = x ;
+    globalWorkSize[1] = y ;
     
     dRays = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nRays, NULL, &_err));
     
     // Set up the kernel arguments
     //
-    CL_CHECK(clSetKernelArg(RRkernel, 0,   sizeof(double), &azStdDev));
-    CL_CHECK(clSetKernelArg(RRkernel, 1,   sizeof(double), &elStdDev));
-    CL_CHECK(clSetKernelArg(RRkernel, 2,   sizeof(SPVector), &origin));
-    CL_CHECK(clSetKernelArg(RRkernel, 3,   sizeof(SPVector), &aimpoint));
-    CL_CHECK(clSetKernelArg(RRkernel, 4,   sizeof(int), &nAzBeam));
-    CL_CHECK(clSetKernelArg(RRkernel, 5,   sizeof(int), &nElBeam));
-    CL_CHECK(clSetKernelArg(RRkernel, 6,   sizeof(cl_mem), &dRays));
+    CL_CHECK(clSetKernelArg(RRkernel, 0,   sizeof(unsigned long), &seed));
+    CL_CHECK(clSetKernelArg(RRkernel, 1,   sizeof(double), &azStdDev));
+    CL_CHECK(clSetKernelArg(RRkernel, 2,   sizeof(double), &elStdDev));
+    CL_CHECK(clSetKernelArg(RRkernel, 3,   sizeof(SPVector), &origin));
+    CL_CHECK(clSetKernelArg(RRkernel, 4,   sizeof(SPVector), &aimpoint));
+    CL_CHECK(clSetKernelArg(RRkernel, 5,   sizeof(int), &nAzBeam));
+    CL_CHECK(clSetKernelArg(RRkernel, 6,   sizeof(int), &nElBeam));
+    CL_CHECK(clSetKernelArg(RRkernel, 7,   sizeof(double), &raypow));
+    CL_CHECK(clSetKernelArg(RRkernel, 8,   sizeof(cl_mem), &dRays));
 
     // Queue up the commands on the device to be executed as soon as possible
     //

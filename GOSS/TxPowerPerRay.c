@@ -57,8 +57,8 @@ double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *re
     gainTx   = 4.0 * SIPC_pi * antAreaTx * (ApEffTx/100.0) / (lambda * lambda);
 
     if (monoStatic) {
-        rxl = txl ;
-        rxh = txh ;
+//        rxl = txl ;
+//        rxh = txh ;
         gainRx = gainTx ;
     }else{
         if (RxDishAntenna) {
@@ -73,7 +73,7 @@ double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *re
 
     }
 
-    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+    Pray = 10000000 * Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
     *receiverGain = gainRx ;
     return (Pray) ;
    

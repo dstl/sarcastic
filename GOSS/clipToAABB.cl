@@ -55,6 +55,9 @@ typedef int OutCode;
 #define FARAABB     8   // 001000
 #define TOPAABB     16  // 010000
 #define BOTTOMAABB  32  // 100000
+#define NOINTERSECTION -1
+#define TRUE 1
+#define FALSE 0
 
 int     clipToAABB    (AABB boundingBox, SPVector *lineStart, SPVector *lineEnd);
 void    ClipToBox     (SPVector *p0,     SPVector *p1,        SPVector min, SPVector max, int *status);

@@ -40,12 +40,8 @@
 //***************************************************************************
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 #include "SPVector.cl"
+#include "structures.cl"
 
-typedef struct Ray {
-    SPVector org;    // Origin
-    SPVector dir;    // Direction
-    float   san;    // Solid Angle for Ray
-} Ray;
 
 //! Represents the state of a particular generator
 typedef struct{ uint x; uint c; } mwc64x_state_t;
@@ -53,17 +49,19 @@ typedef struct{ uint x; uint c; } mwc64x_state_t;
 enum{ MWC64X_A = 4294883355U };
 enum{ MWC64X_M = 18446383549859758079UL };
 
-float box_muller(float m, float s, float *y2, float *use_last);
+float box_muller(ulong seed, float m, float s, float *y2, float *use_last);
 float ranf(mwc64x_state_t *s);
 void MWC64X_Step(mwc64x_state_t *s);
 uint MWC64X_NextUint(mwc64x_state_t *s);
 
-__kernel void randomRays(const double xStdev,       // x standard deviation of ray distribution
+__kernel void randomRays(const ulong  seed,         // Random number generator seed
+                         const double xStdev,       // x standard deviation of ray distribution
                          const double yStdev,       // y standard deviation of ray distribution
                          const SPVector txPos,      // Transmit location of rays
                          const SPVector aimpoint,   // aimpoint (mean) of beam
                          const int nx,              // number of rays in x
                          const int ny,              // number of rays in y
+                         const double pow,          // Ray Power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
                          __global Ray *rayArray)    // output of rays
 {
     
@@ -83,22 +81,25 @@ __kernel void randomRays(const double xStdev,       // x standard deviation of r
         VECT_CREATE(0, 0, 1, zHat);
         VECT_CROSS(aimDir, zHat,   elAxis);
         VECT_CROSS(elAxis, aimDir, azAxis);
-        xang = box_muller(0, xStdev, &y2, &use_last);
-        yang = box_muller(0, yStdev, &y2, &use_last);
+        xang = box_muller(seed, 0, xStdev, &y2, &use_last);
+        yang = box_muller(seed, 0, yStdev, &y2, &use_last);
         vectRotateAxis(aimDir, azAxis, xang, &azRayDir);
         vectRotateAxis(azRayDir, elAxis, yang, &elRayDir);
-        VECT_NORM(elRayDir, rayDir)
+        VECT_NORM(elRayDir, rayDir) ;
         rayArray[yId*nx+xId].dir = rayDir;
         rayArray[yId*nx+xId].org = txPos ;
+        rayArray[yId*nx+xId].pow = pow ;
+        rayArray[yId*nx+xId].len = 0;
     }
+    return ;
 }
 
-float box_muller(float m, float s, float *y2, float *use_last)	/* normal random variate generator */
+float box_muller(ulong rand, float m, float s, float *y2, float *use_last)	/* normal random variate generator */
 {                                   /* mean m, standard deviation s */
 	float x1, x2, w, y1;
 //	static float y2;
 //	static int use_last = 0;
-    mwc64x_state_t seed={get_global_id(0)+1,get_global_id(1)};
+    mwc64x_state_t seed={get_global_id(0)+rand,get_global_id(1)+rand};
     
 	if (*use_last)		        /* use value from previous call */
 	{
@@ -122,6 +123,12 @@ float box_muller(float m, float s, float *y2, float *use_last)	/* normal random 
 	return( m + y1 * s );
 }
 
+//float ranf2(ulong randoms){
+//    ulong seed = randoms + get_global_id(1) * get_global_size(0) + get_global_id(0) ;
+//    seed = (seed * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1);
+//    uint iresult = seed >> 16 ;
+//    return (iresult  / 4294967296.0f);
+//}
 
 float ranf(mwc64x_state_t *s){
     float rn = (float)MWC64X_NextUint(s);

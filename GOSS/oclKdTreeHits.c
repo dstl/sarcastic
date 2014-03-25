@@ -45,11 +45,11 @@
 void oclKdTreeHits(cl_context         context,            // OpenCL context - already instantiated
                    cl_command_queue   Q,                  // OpenCl command Q - already instatiated
                    cl_kernel          STkernel,           // stacklessTraverse kernel, already compiled and created from a program
-                   size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
-                   size_t             localWorkSize[2],   // Work dimensions for this device
+                   int                nRays,              // Total number of rays to cast
+                   size_t             localWorkSize,      // Work dimensions for this device
                    KdTreeStruct       KDT,                // Structure containing all KDTree info
                    AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
-                   Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
+                   Ray *              rays,               // Array of rays (size nRays). Each ray will be cast through KdTree
                    Hit *              hits                // output array of hit locations
 )
 {
@@ -60,7 +60,8 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     cl_mem dtriListPtrs ;
     cl_mem dHits ;
     cl_mem dRays ;
-    
+    size_t globalWorkSize ;
+
     int                nTriangles       = KDT.nTriangles;         // number of triangles in array 'triangles'
     Triangle *         triangles        = KDT.triangles;          // Array of triangles of size nTriangles
     int                nTextures        = KDT.nTextures;          // number of textures in array 'textures'
@@ -71,14 +72,11 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     int *              triangleListData = KDT.triangleListData;   // array of triangle indices into Triangles
     int                nLeaves          = KDT.nLeaves;            // number of leaves (nodes with triangles) in KdTree
     int *              triangleListPtrs = KDT.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
-
-    int nRays;
-    int nxRays;            // Number of rays in 'rays' in azimuth direction
-    int nyRays;            // Number of rays in 'rays' in elevation direction
     
-    nxRays = (int)globalWorkSize[0];
-    nyRays = (int)globalWorkSize[1];
-    nRays   = nxRays * nyRays ;
+    // Make sure globalWorkSize is a multiple of localWorkSize
+    //
+    globalWorkSize = nRays ;
+    while (globalWorkSize % localWorkSize)globalWorkSize++;
     
     // zero hits array so that we can see which rays hit something
     //
@@ -86,7 +84,6 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-    
     dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles, NULL, &_err));
     dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,   NULL, &_err));
     dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,   NULL, &_err));
@@ -112,15 +109,14 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     CL_CHECK(clSetKernelArg(STkernel, 1,  sizeof(cl_mem), &dtriListData));
     CL_CHECK(clSetKernelArg(STkernel, 2,  sizeof(cl_mem), &dtriListPtrs));
     CL_CHECK(clSetKernelArg(STkernel, 3,  sizeof(cl_mem), &dTriangles));
-    CL_CHECK(clSetKernelArg(STkernel, 4,  sizeof(AABB), &SceneBoundingBox));
-    CL_CHECK(clSetKernelArg(STkernel, 5,  sizeof(int), &nxRays));
-    CL_CHECK(clSetKernelArg(STkernel, 6,  sizeof(int), &nyRays));
-    CL_CHECK(clSetKernelArg(STkernel, 7,  sizeof(cl_mem), &dRays));
-    CL_CHECK(clSetKernelArg(STkernel, 8,  sizeof(cl_mem), &dHits));
+    CL_CHECK(clSetKernelArg(STkernel, 4,  sizeof(AABB),   &SceneBoundingBox));
+    CL_CHECK(clSetKernelArg(STkernel, 5,  sizeof(int),    &nRays));
+    CL_CHECK(clSetKernelArg(STkernel, 6,  sizeof(cl_mem), &dRays));
+    CL_CHECK(clSetKernelArg(STkernel, 7,  sizeof(cl_mem), &dHits));
     
     // Queue up the commands on the device to be executed as soon as possible
     //
-    CL_CHECK(clEnqueueNDRangeKernel(Q, STkernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
+    CL_CHECK(clEnqueueNDRangeKernel(Q, STkernel, 1, NULL, &globalWorkSize, &localWorkSize, 0, NULL, NULL));
     
     // Read results from device
     //

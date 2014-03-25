@@ -83,8 +83,14 @@ typedef union {
 typedef struct Ray {
     SPVector org;    // Origin
     SPVector dir;    // Direction
-    float   san;    // Solid Angle for Ray
+    double   pow;    // Power for this ray
+    double   len;    // Distance travelled to this ray's origin from transmission
 } Ray;
+
+typedef struct rangeAndPower {
+    double range ;
+    double power ;
+} rangeAndPower ;
 
 typedef struct Hit {
     double dist;

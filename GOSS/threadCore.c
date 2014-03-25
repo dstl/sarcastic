@@ -44,8 +44,7 @@
 #define OVERSAMP (512)
 #define NOINTERSECTION -1
 
-static char *STkernelCodePath = "/Users/darren/Development/GOSS/GOSS/stacklessTraverse.cl" ;
-static char *RRkernelCodePath = "/Users/darren/Development/GOSS/GOSS/randomRays.cl" ;
+
 
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
@@ -60,8 +59,6 @@ void * devPulseBlock ( void * threadArg ) {
     cl_device_id devId ;
     cl_context context ;
     cl_command_queue commandQ ;
-    cl_program STprogram, RRprogram ;
-    cl_kernel STkernel, RRkernel ;
     cl_int err ;
     rangeAndPower * rnp ;
     SPVector aimdir ;
@@ -71,7 +68,7 @@ void * devPulseBlock ( void * threadArg ) {
     SPVector RxPos;
     SPVector TxPos;
     double gainRx           = td->gainRx ;
-    double TxPowPerRay      = td->TxPowPerRay ;
+    double PowPerRay        = td->PowPerRay ;
     AABB SceneBoundingBox   = td->SceneBoundingBox ;
     int bounceToShow        = td->bounceToShow ;
     int debug               = td->debug;
@@ -83,73 +80,6 @@ void * devPulseBlock ( void * threadArg ) {
     SPImage pulseLine ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel ;
     double bandwidth = td->chirpRate * td->pulseDuration ;
-    fftwf_init_threads();
-    printf("Using FAST pulse building routines...\n");
-
-    int tid ;
-    tid   = td->devIndex ;
-    devId = td->platform.device_ids[tid] ;
-    context  = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
-    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
-
-    // build and compile the Ray Tracing kernel
-    //
-    STprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &STkernelCodePath, NULL, &_err));
-    
-    char STcompilerOptions[255];
-    sprintf(STcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/") ;
-    
-    err = clBuildProgram(STprogram, 0, NULL, STcompilerOptions, NULL, NULL);
-    if (err != CL_SUCCESS){
-        size_t len;
-        char buffer[32768];
-        printf("[thread:%d], Error: Failed to build program executable!\n",tid);
-        clGetProgramBuildInfo(STprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        printf("err: %d. Buffer:\n",err);
-        printf("%s\n", buffer);
-        exit(-3);
-    }
-    
-    STkernel   = CL_CHECK_ERR(clCreateKernel(STprogram, "stackLessTraverse", &_err));
-    
-    // build and compile the Random Ray Generation kernel
-    //
-    RRprogram = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &RRkernelCodePath, NULL, &_err));
-    
-    char RRcompilerOptions[255];
-    sprintf(RRcompilerOptions, "-Werror -I/Users/darren/Development/GOSS/GOSS/") ;
-    err = clBuildProgram(RRprogram, 0, NULL, RRcompilerOptions, NULL, NULL);
-    if (err != CL_SUCCESS){
-        size_t len;
-        char buffer[32768];
-        printf("[thread:%d], Error: Failed to build program executable!\n",tid);
-        clGetProgramBuildInfo(RRprogram, devId, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        printf("err: %d. Buffer:\n",err);
-        printf("%s\n", buffer);
-        exit(-3);
-    }
-    
-    RRkernel   = CL_CHECK_ERR(clCreateKernel(RRprogram, "randomRays", &_err));
-    
-    
-    // Calculate global and local work sizes
-    //
-    int tx,ty ;
-    size_t STlocalWorkSize [2] ;
-    size_t STglobalWorkSize[2] ;
-    STglobalWorkSize[0] = nAzBeam ;
-    STglobalWorkSize[1] = nElBeam ;
-    best2DWorkSize(STkernel, devId, STglobalWorkSize[0], STglobalWorkSize[1], &tx, &ty, &td->status) ;
-    STlocalWorkSize[0]  = tx ;
-    STlocalWorkSize[1]  = ty ;
-    
-    size_t RRlocalWorkSize [2] ;
-    size_t RRglobalWorkSize[2] ;
-    RRglobalWorkSize[0] = nAzBeam ;
-    RRglobalWorkSize[1] = nElBeam ;
-    best2DWorkSize(RRkernel, devId, RRglobalWorkSize[0], RRglobalWorkSize[1], &tx, &ty, &td->status) ;
-    RRlocalWorkSize[0]  = tx ;
-    RRlocalWorkSize[1]  = ty ;
     
     Timer threadTimer ;
     SPStatus status;
@@ -162,7 +92,65 @@ void * devPulseBlock ( void * threadArg ) {
     double pCentDone ;
     double sexToGo ;
     int nx;
-    nx = (int)td->phd->nx ;
+
+    int nbounce = 0;
+    int nxRay   = nAzBeam ;
+    int nyRay   = nElBeam ;
+    int nRays   = nxRay*nyRay;
+    int reflectCount ;
+    int iray;
+    int nShadows ;
+    SPVector origin;
+    
+    VECT_CREATE(0, 0, 0, origin);
+    Ray *rayArray, *newRays, *reflectedRays;
+    Hit *hitArray, *newHits;
+    Ray *shadowRays, *LRays, *RRays;
+    Hit *shadowHits;
+    double *ranges ;
+    double *tempDists ;
+    int nShadowRays;
+    
+    fftwf_init_threads();
+    
+    printf("Using FAST pulse building routines...\n");
+
+    int tid ;
+    tid   = td->devIndex ;
+    devId = td->platform.device_ids[tid] ;
+    nx    = (int)td->phd->nx ;
+
+    // Create OpenCL context and command queue for this device
+    //
+    context  = CL_CHECK_ERR(clCreateContext(td->platform.props, 1, &devId, NULL, NULL, &_err));
+    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
+
+    // We have the following OpenCL kernels in this thread:
+    //  randomRays :  Generates a net of Gaussian distributed rays
+    //  stackLessTraverse : Performs a stackless traversal of a KdTree to find the intersection points for rays
+    //  reflect : Calculates the reflection ray for a net of rays hitting a surface
+    //  buildShadowRays : Calculates the net of rays from a hit point back to the receiver
+    //  ( we then call stackLessTraverse again to see which of the shadowRays we can exclude )
+    //  reflectPower : Calculates the amount of power, and range at the receiver for a net of rays
+    //
+    //  Build the kernels now and bail out if any fail to compile
+    //
+    cl_program randRaysPG,     stackTraversePG,  reflectPG,  buildShadowsPG,  reflectPowerPG ;
+    cl_kernel  randRaysKL,     stackTraverseKL,  reflectKL,  buildShadowsKL,  reflectPowerKL ;
+    size_t     randRaysLWS[2], stackTraverseLWS, reflectLWS, buildShadowsLWS, reflectPowerLWS ;
+
+    static char *randRaysCode      = "/Users/darren/Development/GOSS/GOSS/randomRays.cl" ;
+    static char *stackTraverseCode = "/Users/darren/Development/GOSS/GOSS/stacklessTraverse.cl" ;
+    static char *reflectCode       = "/Users/darren/Development/GOSS/GOSS/reflectRays.cl" ;
+    static char *buildShadowsCode  = "/Users/darren/Development/GOSS/GOSS/buildShadowRays.cl" ;
+    static char *reflectPowCode    = "/Users/darren/Development/GOSS/GOSS/reflectionPower.cl" ;
+    
+    CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
+    CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
+    CL_CHECK(buildKernel(context, reflectCode,       "reflect",           devId, 1, &reflectPG,       &reflectKL,       &reflectLWS));
+    CL_CHECK(buildKernel(context, buildShadowsCode,  "buildShadowRays",   devId, 1, &buildShadowsPG,  &buildShadowsKL,  &buildShadowsLWS));
+    CL_CHECK(buildKernel(context, reflectPowCode,    "reflectPower",      devId, 1, &reflectPowerPG,  &reflectPowerKL,  &reflectPowerLWS));
+  
 
     // build a sinc kernel
     //
@@ -175,18 +163,9 @@ void * devPulseBlock ( void * threadArg ) {
     }
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
     
-    
-    // generate a random gaussian distribution of rays and pass these to the openCL kernel
+    // Use Calloc for rnp as we will be testing for zeroes later on
     //
-    SPVector origin;
-    VECT_CREATE(0, 0, 0, origin);
-    Ray *rayArray;
-    Hit *hitArray;
-    Ray *shadowRays;
-    double *distnces ;
-    double *tempDists ;
-    
-    rnp      = (rangeAndPower *)malloc(sizeof(rangeAndPower)*nAzBeam*nElBeam*MAXBOUNCES);
+    rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES,sizeof(rangeAndPower)) ;
     
     // **** loop  start here
     //
@@ -224,131 +203,134 @@ void * devPulseBlock ( void * threadArg ) {
         // for the distribution
         //
         rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
-        hitArray = (Hit *)malloc(sizeof(Hit)*nAzBeam*nElBeam);
-        distnces = (double *)malloc(sizeof(double)*nAzBeam*nElBeam);
         
-        oclRandomRays(context,commandQ,RRkernel,RRglobalWorkSize,RRlocalWorkSize,td->beamMaxAz,td->beamMaxEl,TxPos,origin, rayArray);
+        oclRandomRays(context,commandQ,randRaysKL,nAzBeam,nElBeam,randRaysLWS,td->beamMaxAz,td->beamMaxEl,TxPos, origin, PowPerRay, rayArray);
         
-        int nbounce = 0;
-        int nxRay   = nAzBeam ;
-        int nyRay   = nElBeam ;
-        int nRays   = nxRay*nyRay;
-        int hitcount ;
-        int iray;
-        SPVector hp,dir;
-
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
-            
-            // Calculate work size of OpenCL
+            // Malloc space for hits for this bounce
             //
-            
-            
-            oclKdTreeHits(context, commandQ, STkernel, STglobalWorkSize, STlocalWorkSize, td->KDT, SceneBoundingBox, rayArray, hitArray) ;
+            hitArray = (Hit *)malloc(sizeof(Hit)*nRays);
+            if(hitArray == NULL){ printf("MALLOC ERROR \n");exit(-42);}
+
+            // Cast the rays in rayArray through the KdTree using a stackless traversal technique
+            // return the hit locations in hitArray
+            //
+            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, td->KDT, SceneBoundingBox, rayArray, hitArray) ;
             
             // Sort out hits
             //
-            hitcount = 0;
-            iray = 0;
+            reflectCount = 0 ;
+            iray         = 0 ;
+            
             // How many hits occured on this ray cast
             //
-            for(int i=0; i<nxRay*nyRay; i++) if ( hitArray[i].trinum != NOINTERSECTION ) hitcount++ ;
+            for(int i=0; i<nRays; i++) if ( hitArray[i].trinum != NOINTERSECTION ) reflectCount++ ;
             
-            // Malloc space for shadowRays (arrays form a hit going back to receiver
-            // Malloc space for tempDists (array to temporarily store distances for forward casted rays
-            //
-            shadowRays = (Ray *)malloc(sizeof(Ray)*hitcount) ;
-            tempDists  = (double *)malloc(sizeof(double)*hitcount) ;
+            if( reflectCount != 0 ){
             
-            // Build Shadowrays and update distances
-            //
-            for (int i=0; i<nxRay*nyRay; i++) {
-                if ( hitArray[i].trinum != NOINTERSECTION ){
-                    VECT_SCMULT(rayArray[i].dir, hitArray[i].dist,hp);
-                    VECT_ADD(rayArray[i].org, hp, hp);
-                    shadowRays[iray].org   = hp ;
-                    VECT_SUB(RxPos, hp, dir);
-                    VECT_NORM(dir, shadowRays[iray].dir);
-                    tempDists[iray] = distnces[i] + hitArray[i].dist ;
-                    iray++ ;
-                }
-            }
-            
-            // Build forward scattering rays ready for next turn round the loop
-            //
-            
-            oclReflect(rayArray, hitArray, newRayArray, &newRayArraySize);
-            free(rayArray) ;
-            rayArray = newRayarray;
+                // shrink rayArray and hitArray to get rid of misses
+                //
+                newRays       = (Ray *)malloc(sizeof(Ray) * reflectCount) ;
+                newHits       = (Hit *)malloc(sizeof(Hit) * reflectCount) ;
+                reflectedRays = (Ray *)malloc(sizeof(Ray) * reflectCount) ;
 
+                for (int i=0; i<nRays; i++) {
+                    if ( hitArray[i].trinum != NOINTERSECTION ){
+                        newRays[iray] = rayArray[i] ;
+                        newHits[iray] = hitArray[i] ;
+                        iray++ ;
+                    }
+                }
+                free(rayArray) ;
+                free(hitArray) ;
+                rayArray = newRays ;
+                hitArray = newHits ;
+                nRays    = reflectCount ;
             
-            // Work out which rays have a path back to receiver and calculate power vs range for the origin of each ray
+                // Build forward scattering rays ready for next turn round the loop
+                //
+                oclReflect(context, commandQ, reflectKL, td->KDT, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+            
+                // If debug out is required then capturing here using the origins of the Reflected rays
+                // which will save us having to calculate the hit locations again
+                //
+                if(bounceToShow == nbounce){
+                    printf("Scene Intersection points for rays on bounce %d\n",nbounce);
+                    printf("------------------------------------------------\n");
+                    for (int i=0; i<nRays; i++){
+                        printf("%f,%f,%f\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z);
+                    }
+                }
+            
+                // Malloc space for shadowRays (arrays from a hit going back to receiver)
+                //
+                shadowRays =    (Ray *)malloc(sizeof(Ray)    * reflectCount) ;
+                shadowHits =    (Hit *)malloc(sizeof(Hit)    * reflectCount) ;
+                ranges     = (double *)malloc(sizeof(double) * reflectCount) ;
+                
+                // Build Shadowrays
+                //
+                oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, reflectCount, RxPos, reflectedRays, shadowRays, ranges);
+            
+            
+                // Work out which rays have a path back to receiver using stackless traverse kernel
+                //
+                oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, td->KDT, SceneBoundingBox, shadowRays, shadowHits) ;
+            
+                // Shrink the shadowRays to only include those that made it back to the sensor
+                // in order to calculate power at sensor we also need the Illumination or LRays
+                //
+                nShadows = 0 ;
+                iray     = 0 ;
+                for(int i= 0 ; i<nRays; i++) if ( shadowHits[i].trinum == NOINTERSECTION ) nShadows++ ;
+            
+                if( nShadows != 0){
+                    
+                    newRays       = (Ray *)malloc(sizeof(Ray) * nShadows) ;
+                    newHits       = (Hit *)malloc(sizeof(Hit) * nShadows) ;
+                    LRays         = (Ray *)malloc(sizeof(Ray) * nShadows) ;
+                    RRays         = (Ray *)malloc(sizeof(Ray) * nShadows) ;
+                    
+                    for (int i=0; i<nRays; i++) {
+                        if ( shadowHits[i].trinum == NOINTERSECTION ){
+                            newRays[iray] = shadowRays[i] ;
+                            newHits[iray] = hitArray[i] ;
+                            LRays[iray]   = rayArray[i] ;
+                            RRays[iray]   = reflectedRays[i] ;
+                            iray++ ;
+                        }
+                    }
+                    free(shadowRays) ;
+                    free(hitArray) ;
+                    shadowRays  = newRays  ;
+                    hitArray    = newHits  ;
+                    nShadowRays = nShadows ;
+                
+                    // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
+                    //
+                    oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, td->KDT, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
+                    
+                    free(LRays);
+                    free(RRays);
+                }
+                
+                free(shadowRays);
+                free(shadowHits);
+                free(ranges);
+                
+                memcpy(rayArray, reflectedRays, sizeof(Ray)*reflectCount);
+                free(reflectedRays);
+
+            }
+            // Reset rayArrays and nRays for next time round loop
             //
-            
-            
-            
-            
+            nRays = reflectCount ;
             
             nbounce++;
-            free(shadowRays);
-            free(shadDists);
+            
+            free(hitArray);
         }
-        
-        free(rayArray);
-        free(hitArray);
-        free(distnces);
-        
-        // Now use OpenCl to cast the rays through the KdTree and return an array of intersections with values for teh range
-        // of each intersection and the power at that intersection (stored in array 'rnp'
-        //
-        /*oclRayTrace(context,
-                    commandQ,
-                    RTkernel,
-                    RTglobalWorkSize,
-                    RTlocalWorkSize,
-                    td->nTriangles,
-                    td->Triangles,
-                    td->nTextures,
-                    td->Textures,
-                    td->nTreeNodes,
-                    td->KdTree,
-                    td->triListDataSize,
-                    td->triListData,
-                    td->nLeaves,
-                    td->triPtrs,
-                    RxPos,
-                    gainRx,
-                    TxPowPerRay,
-                    SceneBoundingBox,
-                    bounceToShow,
-                    pulseIndex,
-                    rayArray,
-                    rnp);*/
-        
-        // Some thoughts on how it should be
-        //
-        // generate random rays
-        //
-        // While bounces < max bounces and nRays > 0
-        // order random rays in some way
-        // stackless traversal for all rays in parallel - generates hit list
-        // each hit contains inbound ray and triangle
-        // In thread 1:
-        // Generate array of rays back to receiver
-        // sort rays in some way
-        // Ray cast arrays back to receiver to check for occlusion. If a ray is occluded
-        // then remove it. If it makes it back then calculate power from power at
-        // reflection point and range back to receiver
-        // (power is calculated using a nominal area for each ray, the phong properties
-        // of the scattering triangle and the phong equation)
-        // Add range and power to a linked list
-        //
-        // In thread 2:
-        // calculate all forward ray bounces
-        // store total range to ray origin and power of ray
-        // (power calculated from reflection)
-        // end while
-        // Build output pulse from RVP's
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
@@ -378,10 +360,12 @@ void * devPulseBlock ( void * threadArg ) {
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
             if (rnp[i].power != 0 && rnp[i].range !=0){
                 rnpData[cnt].power = rnp[i].power ;
-                rnpData[cnt].range = rnp[i].range ;
+                rnpData[cnt].range = rnp[i].range ; 
                 rnpData[cnt].rdiff = rnp[i].range - derampRange;
                 totpow += rnpData[cnt].power;
                 cnt++ ;
+                printf("[%d], range: %5.2f, pow %e\n",i,rnp[i].range,rnp[i].power);
+
             }
         }
 //        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(TxPowPerRay), TxPowPerRay);
@@ -452,16 +436,23 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnpData);
         
     } // end of pulse loop
-    free(rayArray);
     free(rnp);
     free(ikernel);
     
     // Clear down OpenCL allocations
     //
+    clReleaseKernel(randRaysKL);
+    clReleaseKernel(stackTraverseKL);
+    clReleaseKernel(reflectKL);
+    clReleaseKernel(buildShadowsKL);
+    clReleaseKernel(reflectPowerKL);
+    clReleaseProgram(randRaysPG) ;
+    clReleaseProgram(stackTraversePG) ;
+    clReleaseProgram(reflectPG) ;
+    clReleaseProgram(buildShadowsPG) ;
+    clReleaseProgram(reflectPowerPG) ;
     clReleaseCommandQueue(commandQ);
     clReleaseContext(context);
-    clReleaseKernel(RTkernel);
-    clReleaseProgram(RTprogram);
     
     // return to parent thread
     //

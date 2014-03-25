@@ -13,7 +13,10 @@
 		9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504215A17A453F100A076FC /* BuildRopesAndBoxes.c */; };
 		9504216217A4543000A076FC /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216117A4543000A076FC /* banner.c */; };
 		9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9504216A17A4654D00A076FC /* TxPowerPerRay.c */; };
+		950A64B818E01DD9000D9CC3 /* oclBuildShadowRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 950A64B718E01DD9000D9CC3 /* oclBuildShadowRays.c */; };
+		950A64BA18E0433E000D9CC3 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 950A64B918E0433E000D9CC3 /* buildKernel.c */; };
 		95339DA617AAFCF00007466A /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95339DA517AAFCF00007466A /* threadCore.c */; };
+		9557963518DB5084009C4AFE /* oclReflectionPower.c in Sources */ = {isa = PBXBuildFile; fileRef = 9557963418DB5084009C4AFE /* oclReflectionPower.c */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
@@ -27,7 +30,6 @@
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
-		95C1709518C9D13600651D97 /* structures.cl in Sources */ = {isa = PBXBuildFile; fileRef = 95C1709418C9D13600651D97 /* structures.cl */; };
 		95C1709A18C9FD1400651D97 /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 95C1709918C9FD1400651D97 /* oclKdTreeHits.c */; };
 		95D5E56C18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E56B18B8CD3D0015A7DC /* generate_gaussian_ray_distribution.c */; };
 		95D5E57118BDEF710015A7DC /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E57018BDEF710015A7DC /* oclRandomRays.c */; };
@@ -71,7 +73,13 @@
 		9504216817A454AA00A076FC /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		9504216A17A4654D00A076FC /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		9504216B17A4654D00A076FC /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		950A64B618E01511000D9CC3 /* buildShadowRays.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = buildShadowRays.cl; sourceTree = "<group>"; };
+		950A64B718E01DD9000D9CC3 /* oclBuildShadowRays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclBuildShadowRays.c; sourceTree = "<group>"; };
+		950A64B918E0433E000D9CC3 /* buildKernel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buildKernel.c; sourceTree = "<group>"; };
 		95339DA517AAFCF00007466A /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
+		953FB7EF18DB1B7F0029A5C3 /* reflectRays.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = reflectRays.cl; sourceTree = "<group>"; };
+		9557963418DB5084009C4AFE /* oclReflectionPower.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflectionPower.c; sourceTree = "<group>"; };
+		9557963618DB50B5009C4AFE /* reflectionPower.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = reflectionPower.cl; sourceTree = "<group>"; };
 		95693B5E17E4D07400834C3A /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
@@ -159,11 +167,14 @@
 			isa = PBXGroup;
 			children = (
 				95C1709618C9D1A300651D97 /* OpenCl */,
+				9557963418DB5084009C4AFE /* oclReflectionPower.c */,
+				950A64B718E01DD9000D9CC3 /* oclBuildShadowRays.c */,
+				95A6429118CCD25D003A425B /* oclReflect.c */,
 				95D5E57018BDEF710015A7DC /* oclRandomRays.c */,
 				95C1709918C9FD1400651D97 /* oclKdTreeHits.c */,
 				95D5E56D18BC9A100015A7DC /* oclRayTrace.c */,
-				95A6429118CCD25D003A425B /* oclReflect.c */,
 				95339DA517AAFCF00007466A /* threadCore.c */,
+				950A64B918E0433E000D9CC3 /* buildKernel.c */,
 				9504216817A454AA00A076FC /* GenGitVersion.sh */,
 				9504214E17A4501A00A076FC /* GOSS.c */,
 				95693B5E17E4D07400834C3A /* threadBeamForm.c */,
@@ -204,6 +215,9 @@
 				95C1709818C9F24C00651D97 /* intersect.cl */,
 				95D5E56F18BDE6F40015A7DC /* randomRays.cl */,
 				95E3E50817AA58110094496B /* GOSSKernelCode.cl */,
+				953FB7EF18DB1B7F0029A5C3 /* reflectRays.cl */,
+				9557963618DB50B5009C4AFE /* reflectionPower.cl */,
+				950A64B618E01511000D9CC3 /* buildShadowRays.cl */,
 			);
 			name = OpenCl;
 			sourceTree = "<group>";
@@ -295,7 +309,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9583A9E71857219600AA4C44 /* threadBeamForm.c in Sources */,
-				95C1709518C9D13600651D97 /* structures.cl in Sources */,
 				95C1709A18C9FD1400651D97 /* oclKdTreeHits.c in Sources */,
 				95D5E57118BDEF710015A7DC /* oclRandomRays.c in Sources */,
 				9504214F17A4501A00A076FC /* GOSS.c in Sources */,
@@ -305,9 +318,12 @@
 				9504215B17A453F100A076FC /* BuildRopesAndBoxes.c in Sources */,
 				9504216217A4543000A076FC /* banner.c in Sources */,
 				9504216C17A4654D00A076FC /* TxPowerPerRay.c in Sources */,
+				950A64B818E01DD9000D9CC3 /* oclBuildShadowRays.c in Sources */,
 				95DB871917A8267200180864 /* getUserInput.c in Sources */,
+				9557963518DB5084009C4AFE /* oclReflectionPower.c in Sources */,
 				95E3E50317A9A31F0094496B /* ecef2SceneCoords.c in Sources */,
 				95339DA617AAFCF00007466A /* threadCore.c in Sources */,
+				950A64BA18E0433E000D9CC3 /* buildKernel.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

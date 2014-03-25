@@ -53,34 +53,31 @@
 #define KDT_OFFSET(n)    ((n->leaf.flagDimAndOffset & (0x7FFFFFFC))>>2)
 #define NILROPE          ((int) -666666 )
 #define NOINTERSECTION -1
+#define MAXTRAVERSAL 1000           // Maximum kdTree traversal steps before we blow up
 
-__kernel void stackLessTraverse(__global KdData * KdTree,
+__kernel void stacklessTraverse(__global KdData * KdTree,
                                 __global int * triangleListData,
                                 __global int * triangleListPtrs,
                                 __global Triangle * Triangles,
-                                AABB SceneBoundingBox,
-                                
-                                int nxRays, int nyRays,             // Number of rays
+                                const    AABB SceneBoundingBox,
+                                const    int nRays,                 // Number of rays
                                 __global Ray * rays,                // array of rays to process.
-                                Hit *hits                           // Location of ray hits
+                                __global Hit *hits                  // Location of ray hits
                                 
                                 
 ){
-    int x = get_global_id(0) ;
-    int y = get_global_id(1) ;
-    int ind ;
+    int ind = get_global_id(0) ;
     int dimToUse ;
-    int cnt ;
+    int cnt, i ;
     int trisInLeaf ;
-    
+    float t1,t2,xinv,yinv,zinv;
     float t_entry, t_exit ;
     
     SPVector volumeEntry, volumeExit, PEntry, hp, dirInverse, v ;
     
     __global KdData * node ;
     
-    if (x >=0 && x< nxRays && y >=0 && y < nyRays) {
-        ind = y * nxRays + x ;
+    if (ind >=0 && ind < nRays ) {
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -101,8 +98,8 @@ __kernel void stackLessTraverse(__global KdData * KdTree,
         // Calc inverse direction so only multiplies (not divides) in loop (cheaper)
         //
         xinv = (rays[ind].dir.x == 0) ? 0 : 1./rays[ind].dir.x;
-        yinv = (ray.dir.y == 0) ? 0 : 1./rays[ind].dir.y;
-        zinv = (ray.dir.z == 0) ? 0 : 1./rays[ind].dir.z;
+        yinv = (rays[ind].dir.y == 0) ? 0 : 1./rays[ind].dir.y;
+        zinv = (rays[ind].dir.z == 0) ? 0 : 1./rays[ind].dir.z;
         VECT_CREATE(xinv, yinv, zinv, dirInverse);
 
         // initialise the root of the tree
@@ -122,7 +119,7 @@ __kernel void stackLessTraverse(__global KdData * KdTree,
         
         cnt = 0 ;
         while ((t_entry <= t_exit) && (cnt++ <= MAXTRAVERSAL)) {
-            VECT_SCMULT(rays[i].dir, t_entry, v);
+            VECT_SCMULT(rays[ind].dir, t_entry, v);
             VECT_ADD(volumeEntry, v, PEntry);
             
             while (!KDT_ISLEAF(node)){  // Branch node

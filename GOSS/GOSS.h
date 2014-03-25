@@ -116,8 +116,9 @@ typedef struct Hit {
 typedef struct Ray {
     SPVector org;    // Origin
     SPVector dir;    // Direction
-    float  san;      // Solid Angle for Ray
-    
+    double   pow;    // Power for this ray
+    double   len;    // Distance travelled to this ray's origin from transmission
+
 } Ray;
 
 typedef struct rangeAndPower {
@@ -206,7 +207,7 @@ typedef struct threadData {
     int debugY;                 // Which ray in Y within the beam to debug
     double beamMaxAz;           // Maximum azimuth beamwidth to consider for scene
     double beamMaxEl;           // Maximum azimuth beamwidth to consider for scene
-    double TxPowPerRay ;
+    double PowPerRay ;          // Ray Power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
 
 } threadData ;
 
@@ -263,20 +264,22 @@ void oclRayTrace(cl_context         context,            // OpenCL context - alre
 void oclRandomRays(cl_context context,          // OpenCL context - alrready built
                    cl_command_queue Q,          // OpenCl command Q - already instatiated
                    cl_kernel RRkernel,          // OpenCl kernel for this routine to call
-                   size_t globalWorkSize[2],  // Global Worksize number of rays in az and el
-                   size_t localWorkSize[2],   // local work size for this device - prealculated
+                   int nAzBeam,                 // Number of azimuth rays in beam
+                   int nElBeam,                 // Number of elevation rays in beam
+                   size_t localWorkSize[2],     // local work size for this device - prealculated
                    double azStdDev,             // Az standard deviation of rays
                    double elStdDev,             // El standard deviation of rays
                    SPVector origin,             // Location of origin or rays
                    SPVector aimpoint,           // Mean aimpoint for rays
+                   double raypow,               // Ray power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
                    Ray *rayArray                // Array that will be returned
 );
 
 void oclKdTreeHits(cl_context         context,            // OpenCL context - already instantiated
                    cl_command_queue   Q,                  // OpenCl command Q - already instatiated
                    cl_kernel          STkernel,           // stacklessTraverse kernel, already compiled and created from a program
-                   size_t             globalWorkSize[2],  // Total number of rays in each dimension to cast
-                   size_t             localWorkSize[2],   // Work dimensions for this device
+                   int                nRays,              // Total number of rays to cast
+                   size_t             localWorkSize,      // Work dimensions for this device
                    
                    KdTreeStruct       KDT,                // Structure containing all KDTree info
                    
@@ -284,6 +287,54 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
                    Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
                    Hit *              hits                // output array of hit locations
 );
+
+void oclReflect(cl_context          context,            // OpenCL context - alrready built
+                cl_command_queue    Q,                  // OpenCl command Q - already instatiated
+                cl_kernel           kernel,             // OpenCl kernel for this routine to call
+                KdTreeStruct        KDT,                // Structure containing all KDTree info
+                int                 nRays,              // Number of rays to reflect
+                size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
+                Ray                 *rays,              // Array of rays to consider
+                Hit                 *hits,              // Array of hit points for each ray
+                Ray                 *reflectedRays      // output array of reflected rays
+);
+
+void oclBuildShadowRays(cl_context          context,            // OpenCL context - alrready built
+                        cl_command_queue    Q,                  // OpenCl command Q - already instatiated
+                        cl_kernel           kernel,             // OpenCl kernel for this routine to call
+                        size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
+                        int                 nRays,              // The number of reflected rays being considered
+                        SPVector            RxPos,              // The Receiver location in x,y,z
+                        Ray                 *reflectedRays,     // Array of reflected rays - used for their origin as its the reflection point to Rx
+                        Ray                 *shadowRays,        // Output - shadow rays to be tested for occlusion later
+                        double              *ranges             // Output - the range to the receiver for each shadowray. Calculated here to save calcs later
+);
+
+void oclReflectPower(cl_context          context,            // OpenCL context - alrready built
+                     cl_command_queue    Q,                  // OpenCl command Q - already instatiated
+                     cl_kernel           kernel,             // OpenCl kernel for this routine to call
+                     size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
+                     KdTreeStruct        KDT,                // Structure containing all KDTree info
+                     Hit                 *hits,              // Array of hit locations to x-ref with triangles (and then Textures) for material props
+                     SPVector            RxPos,              // Location of Receiver in x,y,z
+                     double              GrxOverFourPi,      // Receiver antenna gain / 4Pi.
+                     int                 nRays,              // The number of reflected rays being considered
+                     Ray                 *rays,              // unit vector rays arriving at hitpoint
+                     Ray                 *reflectedRays,     // Array of reflected rays - used for their origin as its the reflection point to Rx
+                     Ray                 *shadowRays,        // Viewpoint unit vector. The vector direction to calculate power for (usually to receiver)
+                     double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
+                     rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
+);
+int buildKernel(cl_context context,             // OpenCL Context. Already created
+                const char *kernelCodePath,     // String defining FQPN for kernel code
+                const char *kernelCodeName,     // OpenCL kernel name for kernel code
+                cl_device_id devID,             // Device Id on this platform to compile for
+                int        workDims,            // WorkDimensions to optimise localWorkSize for
+                cl_program *program,            // Output - Compiled OCL programme
+                cl_kernel  *kernel,             // Output - OpenCL Kernel
+                size_t     *localWorkSize       // Output - Prefered local worksize for kernel
+);
+
 void banner () ;
 
 #endif

@@ -39,98 +39,76 @@
 
 #include "GOSS.h"
 
+void oclReflect(cl_context          context,            // OpenCL context - alrready built
+                cl_command_queue    Q,                  // OpenCl command Q - already instatiated
+                cl_kernel           kernel,             // OpenCl kernel for this routine to call
+                KdTreeStruct        KDT,                // Structure containing all KDTree info
+                int                 nRays,              // Number of rays to reflect
+                size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
+                Ray                 *rays,              // Array of rays to consider
+                Hit                 *hits,              // Array of hit points for each ray
+                Ray                 *reflectedRays      // output array of reflected rays
+                )
 
-
-void oclReflect(Ray *rayArray,
-                Hit *hitArray, newRayArray, &newRayArraySize
-)
 {
     cl_mem dTriangles ;
     cl_mem dTextures ;
-    cl_mem dKdTree ;
-    cl_mem dtriListData ;
-    cl_mem dtriListPtrs ;
-    cl_mem drnp ;
     cl_mem dRays ;
+    cl_mem dHits ;
+    cl_mem dReflected ;
     
-    int                nTriangles       = KD.nTriangles;         // number of triangles in array 'triangles'
-    Triangle *         triangles        = KD.triangles;          // Array of triangles of size nTriangles
-    int                nTextures        = KD.nTextures;          // number of textures in array 'textures'
-    Texture *          textures         = KD.textures;           // Array of textures of size nTextures
-    int                nTreeNodes       = KD.nTreeNodes;         // number of nodes in KdTree
-    KdData *           KdTree           = KD.KdTree;             // SAH - KdTree to optimise ray traversal through volume
-    int                triListDataSize  = KD.triListDataSize;    // size of trianglelist data
-    int *              triangleListData = KD.triangleListData;   // array of triangle indices into Triangles
-    int                nLeaves          = KD.nLeaves;            // number of leaves (nodes with triangles) in KdTree
-    int *              triangleListPtrs = KD.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
+    size_t globalWorkSize ;
     
-    int nRays;
-    int nAzBeam;            // Number of rays in 'rays' in azimuth direction
-    int nElBeam;            // Number of rays in 'rays' in elevation direction
+    int                nTriangles       = KDT.nTriangles;         // number of triangles in array 'triangles'
+    Triangle *         triangles        = KDT.triangles;          // Array of triangles of size nTriangles
+    Texture  *         textures         = KDT.textures;           // Array of textures
+    int                nTextures        = KDT.nTextures;          // number of textures in texture array
     
-    nAzBeam = (int)globalWorkSize[0];
-    nElBeam = (int)globalWorkSize[1];
-    nRays   = nAzBeam * nElBeam ;
-    
-    // zero rnp array so that we can see which rays hit something
+    // Make sure globalWorkSize is a multiple of localWorkSize
     //
-    memset(rnp, 0, sizeof(rangeAndPower)*nRays*MAXBOUNCES);
+    globalWorkSize = nRays ;
+    while (globalWorkSize % localWorkSize)globalWorkSize++;
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
     
     dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles,            NULL, &_err));
     dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,              NULL, &_err));
-    dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,              NULL, &_err));
-    dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  triListDataSize,                        NULL, &_err));
-    dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(int)*nLeaves,                    NULL, &_err));
-    drnp         = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rangeAndPower)*nRays*MAXBOUNCES, NULL, &_err));
-    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nRays,                      NULL, &_err));
+    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,                      NULL, &_err));
+    dHits        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Hit)*nRays,                      NULL, &_err));
+    dReflected   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nRays,                      NULL, &_err));
     
     // Add write buffer commands to the command queue ready for execution
     //
     CL_CHECK(clEnqueueWriteBuffer(Q, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dTextures,    CL_TRUE, 0, sizeof(Texture)*nTextures,   textures,         0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dKdTree,      CL_TRUE, 0, sizeof(KdData)*nTreeNodes,   KdTree,           0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dtriListData, CL_TRUE, 0, triListDataSize,             triangleListData, 0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dRays,        CL_TRUE, 0, sizeof(Ray)*nRays,           rays,             0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, drnp,         CL_TRUE, 0, sizeof(rangeAndPower)*nRays*MAXBOUNCES,rnp,    0,NULL,NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dHits,        CL_TRUE, 0, sizeof(Hit)*nRays,           hits,             0, NULL, NULL));
     
     // Set up the kernel arguments
     //
-    CL_CHECK(clSetKernelArg(RTkernel, 0,   sizeof(int), &nAzBeam));
-    CL_CHECK(clSetKernelArg(RTkernel, 1,   sizeof(int), &nElBeam));
-    CL_CHECK(clSetKernelArg(RTkernel, 2,   sizeof(SPVector), &RxPos));
-    CL_CHECK(clSetKernelArg(RTkernel, 3,   sizeof(double), &gainRx));
-    CL_CHECK(clSetKernelArg(RTkernel, 4,   sizeof(double), &TxPowPerRay));
-    CL_CHECK(clSetKernelArg(RTkernel, 5,   sizeof(AABB), &SceneBoundingBox));
-    CL_CHECK(clSetKernelArg(RTkernel, 6,   sizeof(int), &bounceToShow));
-    CL_CHECK(clSetKernelArg(RTkernel, 7,   sizeof(cl_mem), &dRays));
-    CL_CHECK(clSetKernelArg(RTkernel, 8,   sizeof(cl_mem), &dTriangles));
-    CL_CHECK(clSetKernelArg(RTkernel, 9,  sizeof(cl_mem), &dTextures));
-    CL_CHECK(clSetKernelArg(RTkernel, 10,  sizeof(cl_mem), &dKdTree));
-    CL_CHECK(clSetKernelArg(RTkernel, 11,  sizeof(cl_mem), &dtriListData));
-    CL_CHECK(clSetKernelArg(RTkernel, 12,  sizeof(cl_mem), &dtriListPtrs));
-    CL_CHECK(clSetKernelArg(RTkernel, 13,  sizeof(cl_mem), &drnp));
-    CL_CHECK(clSetKernelArg(RTkernel, 14,  sizeof(int), &pulseIndex));
+    CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(cl_mem), &dTriangles));
+    CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem), &dTextures));
+    CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(int),    &nTextures));
+    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(cl_mem), &dRays));
+    CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(cl_mem), &dHits));
+    CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(cl_mem), &dReflected));
+    CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(int),    &nRays));
+
     
     // Queue up the commands on the device to be executed as soon as possible
     //
-    CL_CHECK(clEnqueueNDRangeKernel(Q, RTkernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL));
+    CL_CHECK(clEnqueueNDRangeKernel(Q, kernel, 1, NULL, &globalWorkSize, &localWorkSize, 0, NULL, NULL));
     
     // Read results from device
     //
-    CL_CHECK(clEnqueueReadBuffer(Q,drnp, CL_TRUE,0,sizeof(rangeAndPower)*nRays*MAXBOUNCES,rnp,0,NULL,NULL));
+    CL_CHECK(clEnqueueReadBuffer(Q,dReflected, CL_TRUE,0,sizeof(Ray)*nRays,reflectedRays,0,NULL,NULL));
     
     // Clear down OpenCL allocations
     //
     clReleaseMemObject(dTriangles);
-    clReleaseMemObject(dTextures);
-    clReleaseMemObject(dKdTree);
-    clReleaseMemObject(dtriListData);
-    clReleaseMemObject(dtriListPtrs);
     clReleaseMemObject(dRays);
-    clReleaseMemObject(drnp);
+    clReleaseMemObject(dHits);
+    clReleaseMemObject(dReflected);
     return ;
 }
