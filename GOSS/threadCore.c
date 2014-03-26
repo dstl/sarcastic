@@ -93,7 +93,7 @@ void * devPulseBlock ( void * threadArg ) {
     double sexToGo ;
     int nx;
 
-    int nbounce = 0;
+    int nbounce ;
     int nxRay   = nAzBeam ;
     int nyRay   = nElBeam ;
     int nRays   = nxRay*nyRay;
@@ -163,10 +163,6 @@ void * devPulseBlock ( void * threadArg ) {
     }
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
     
-    // Use Calloc for rnp as we will be testing for zeroes later on
-    //
-    rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES,sizeof(rangeAndPower)) ;
-    
     // **** loop  start here
     //
     for (int pulse=0; pulse<td->nPulses; pulse++){
@@ -205,6 +201,15 @@ void * devPulseBlock ( void * threadArg ) {
         rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
         
         oclRandomRays(context,commandQ,randRaysKL,nAzBeam,nElBeam,randRaysLWS,td->beamMaxAz,td->beamMaxEl,TxPos, origin, PowPerRay, rayArray);
+        
+        nbounce = 0;
+        nxRay   = nAzBeam ;
+        nyRay   = nElBeam ;
+        nRays   = nxRay*nyRay;
+        
+        // Use Calloc for rnp as we will be testing for zeroes later on
+        //
+        rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES,sizeof(rangeAndPower)) ;
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
@@ -339,7 +344,7 @@ void * devPulseBlock ( void * threadArg ) {
         if(cnt > 0){
             nrnpItems = cnt;
         }else{
-            printf("ERROR: No intersections on device %d\n",tid);
+            printf("ERROR: No intersections on device %d for pulse %d\n",tid, pulseIndex);
             exit(-1);
         }
         
@@ -352,7 +357,7 @@ void * devPulseBlock ( void * threadArg ) {
             exit(-15);
         }
         
-        VECT_MINUS(td->RxPositions[pulseIndex], aimdir) ;
+        VECT_MINUS(TxPos, aimdir) ;
         derampRange = VECT_MAG(aimdir);
         
         cnt = 0;
@@ -364,11 +369,9 @@ void * devPulseBlock ( void * threadArg ) {
                 rnpData[cnt].rdiff = rnp[i].range - derampRange;
                 totpow += rnpData[cnt].power;
                 cnt++ ;
-                printf("[%d], range: %5.2f, pow %e\n",i,rnp[i].range,rnp[i].power);
-
             }
         }
-//        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(TxPowPerRay), TxPowPerRay);
+//        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
         
         ////////// DEBUG CODE to inject a single point target
         
@@ -434,9 +437,9 @@ void * devPulseBlock ( void * threadArg ) {
         im_destroy(&pulseLine, &status) ;
         
         free(rnpData);
-        
+        free(rnp);
+
     } // end of pulse loop
-    free(rnp);
     free(ikernel);
     
     // Clear down OpenCL allocations

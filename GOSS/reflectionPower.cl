@@ -112,7 +112,7 @@ __kernel void reflectPower(__global Triangle * Triangles,       // Array of Tria
         //
         rng = ranges[ind] ;
         rnp[ind].power = pow * GrxOverFourPi / (rng * rng) ;
-        rnp[ind].range = rng ;
+        rnp[ind].range = (rng + Vrays[ind].len) * 0.5 ;
     }
     return ;
 }
