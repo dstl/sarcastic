@@ -50,7 +50,10 @@ void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacin
 static void ham1dx(double * data, int nx);
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
 void generate_gaussian_ray_distribution(double xStdev,double yStdev, SPVector txPos, SPVector GRP, int nx,int ny, Ray *rayArray);
+void * safeCalloc(int numItems, int sizeofItems);
+void * safeMalloc(int numItems, int sizeofItems);
 
+    
 void * devPulseBlock ( void * threadArg ) {
     
     struct threadData *td;
@@ -59,66 +62,51 @@ void * devPulseBlock ( void * threadArg ) {
     cl_device_id devId ;
     cl_context context ;
     cl_command_queue commandQ ;
-    cl_int err ;
+
+    int nAzBeam, nElBeam, bounceToShow, nrnpItems, nx, nShadowRays, tid ;
+//    int debug, debugX, debugY ;
+    int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows ;
+    int hrs,min,sec;
+    int reportN = 500 ;
+
+    double gainRx, PowPerRay, derampRange, pCentDone, sexToGo ;
+    double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
+    double *ranges ;
+
+    AABB SceneBoundingBox ;
     rangeAndPower * rnp ;
-    SPVector aimdir ;
+    Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
+    Hit *hitArray, *newHits, *shadowHits;
     
-    int nAzBeam             = td->nAzBeam ;
-    int nElBeam             = td->nElBeam ;
-    SPVector RxPos;
-    SPVector TxPos;
-    double gainRx           = td->gainRx ;
-    double PowPerRay        = td->PowPerRay ;
-    AABB SceneBoundingBox   = td->SceneBoundingBox ;
-    int bounceToShow        = td->bounceToShow ;
-    int debug               = td->debug;
-    int debugX              = td->debugX;
-    int debugY              = td->debugY;
-    int nrnpItems;
-    double derampRange ;
+    SPVector aimdir, RxPos, TxPos, origin;
     SPCmplx targ, pcorr, tmp;
     SPImage pulseLine ;
-    double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel ;
-    double bandwidth = td->chirpRate * td->pulseDuration ;
-    
-    Timer threadTimer ;
     SPStatus status;
-    startTimer(&threadTimer, &status) ;
-    int hrs,min,sec;
-    time_t current,complete;
+   
     struct tm *p;
-    int reportN = 500 ;
+    Timer threadTimer ;
+    time_t current,complete;
     char ct[1000];
-    double pCentDone ;
-    double sexToGo ;
-    int nx;
 
-    int nbounce ;
-    int nxRay   = nAzBeam ;
-    int nyRay   = nElBeam ;
-    int nRays   = nxRay*nyRay;
-    int reflectCount ;
-    int iray;
-    int nShadows ;
-    SPVector origin;
-    
+    gainRx           = td->gainRx ;
+    PowPerRay        = td->PowPerRay ;
+    bounceToShow     = td->bounceToShow ;
+    nAzBeam          = td->nAzBeam ;
+    nElBeam          = td->nElBeam ;
+    SceneBoundingBox = td->SceneBoundingBox ;
+    bandwidth        = td->chirpRate * td->pulseDuration ;
+    tid              = td->devIndex ;
+    devId            = td->platform.device_ids[tid] ;
+    nx               = (int)td->phd->nx ;
+//    debug            = td->debug ;
+//    debugX           = td->debugX ;
+//    debugY           = td->debugY ;
+
     VECT_CREATE(0, 0, 0, origin);
-    Ray *rayArray, *newRays, *reflectedRays;
-    Hit *hitArray, *newHits;
-    Ray *shadowRays, *LRays, *RRays;
-    Hit *shadowHits;
-    double *ranges ;
-    double *tempDists ;
-    int nShadowRays;
-    
+
     fftwf_init_threads();
     
     printf("Using FAST pulse building routines...\n");
-
-    int tid ;
-    tid   = td->devIndex ;
-    devId = td->platform.device_ids[tid] ;
-    nx    = (int)td->phd->nx ;
 
     // Create OpenCL context and command queue for this device
     //
@@ -156,15 +144,15 @@ void * devPulseBlock ( void * threadArg ) {
     //
     resolution  = SIPC_c / (2.0 * bandwidth ) ;
     sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
-    ikernel = calloc((OVERSAMP * NPOINTS + 1), sizeof(double));
-    if (ikernel == NULL){
-        fprintf(stderr, "Failed to calloc ikernel %s:%d\n", __FILE__, __LINE__);
-        exit(802);
-    }
+    ikernel     = safeCalloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
+
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
     
     // **** loop  start here
     //
+    
+    startTimer(&threadTimer, &status) ;
+
     for (int pulse=0; pulse<td->nPulses; pulse++){
         int pulseIndex = (tid * td->nPulses) + pulse ;
         
@@ -198,7 +186,7 @@ void * devPulseBlock ( void * threadArg ) {
         // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
-        rayArray = (Ray *)malloc(sizeof(Ray)*nAzBeam*nElBeam);
+        rayArray = (Ray *)safeMalloc(nAzBeam*nElBeam, sizeof(Ray));
         
         oclRandomRays(context,commandQ,randRaysKL,nAzBeam,nElBeam,randRaysLWS,td->beamMaxAz,td->beamMaxEl,TxPos, origin, PowPerRay, rayArray);
         
@@ -209,14 +197,13 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
-        rnp = (rangeAndPower *)calloc(nAzBeam*nElBeam*MAXBOUNCES,sizeof(rangeAndPower)) ;
+        rnp = (rangeAndPower *)safeCalloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
             // Malloc space for hits for this bounce
             //
-            hitArray = (Hit *)malloc(sizeof(Hit)*nRays);
-            if(hitArray == NULL){ printf("MALLOC ERROR \n");exit(-42);}
+            hitArray = (Hit *)safeMalloc(nRays,sizeof(Hit));
 
             // Cast the rays in rayArray through the KdTree using a stackless traversal technique
             // return the hit locations in hitArray
@@ -236,9 +223,9 @@ void * devPulseBlock ( void * threadArg ) {
             
                 // shrink rayArray and hitArray to get rid of misses
                 //
-                newRays       = (Ray *)malloc(sizeof(Ray) * reflectCount) ;
-                newHits       = (Hit *)malloc(sizeof(Hit) * reflectCount) ;
-                reflectedRays = (Ray *)malloc(sizeof(Ray) * reflectCount) ;
+                newRays       = (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
+                newHits       = (Hit *)safeMalloc(reflectCount, sizeof(Hit)) ;
+                reflectedRays = (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
 
                 for (int i=0; i<nRays; i++) {
                     if ( hitArray[i].trinum != NOINTERSECTION ){
@@ -252,7 +239,7 @@ void * devPulseBlock ( void * threadArg ) {
                 rayArray = newRays ;
                 hitArray = newHits ;
                 nRays    = reflectCount ;
-            
+
                 // Build forward scattering rays ready for next turn round the loop
                 //
                 oclReflect(context, commandQ, reflectKL, td->KDT, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
@@ -270,9 +257,9 @@ void * devPulseBlock ( void * threadArg ) {
             
                 // Malloc space for shadowRays (arrays from a hit going back to receiver)
                 //
-                shadowRays =    (Ray *)malloc(sizeof(Ray)    * reflectCount) ;
-                shadowHits =    (Hit *)malloc(sizeof(Hit)    * reflectCount) ;
-                ranges     = (double *)malloc(sizeof(double) * reflectCount) ;
+                shadowRays =    (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
+                shadowHits =    (Hit *)safeMalloc(reflectCount, sizeof(Hit)) ;
+                ranges     = (double *)safeMalloc(reflectCount, sizeof(double)) ;
                 
                 // Build Shadowrays
                 //
@@ -292,10 +279,10 @@ void * devPulseBlock ( void * threadArg ) {
             
                 if( nShadows != 0){
                     
-                    newRays       = (Ray *)malloc(sizeof(Ray) * nShadows) ;
-                    newHits       = (Hit *)malloc(sizeof(Hit) * nShadows) ;
-                    LRays         = (Ray *)malloc(sizeof(Ray) * nShadows) ;
-                    RRays         = (Ray *)malloc(sizeof(Ray) * nShadows) ;
+                    newRays       = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
+                    newHits       = (Hit *)safeMalloc(nShadows, sizeof(Hit)) ;
+                    LRays         = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
+                    RRays         = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
                     
                     for (int i=0; i<nRays; i++) {
                         if ( shadowHits[i].trinum == NOINTERSECTION ){
@@ -326,8 +313,10 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 memcpy(rayArray, reflectedRays, sizeof(Ray)*reflectCount);
                 free(reflectedRays);
-
+            }else{
+                
             }
+            
             // Reset rayArrays and nRays for next time round loop
             //
             nRays = reflectCount ;
@@ -336,6 +325,8 @@ void * devPulseBlock ( void * threadArg ) {
             
             free(hitArray);
         }
+        
+        free(rayArray) ;
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
@@ -351,11 +342,7 @@ void * devPulseBlock ( void * threadArg ) {
 // DEBUG
 //        nrnpItems = 1;
 // DEBUG
-        rnpData_t * rnpData = (rnpData_t *)malloc(sizeof(rnpData_t)*nrnpItems) ;
-        if(rnpData == NULL){
-            printf("Error : malloc fail for rnpData on device %d. request data for %d items\n",tid,nrnpItems) ;
-            exit(-15);
-        }
+        rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
         
         VECT_MINUS(TxPos, aimdir) ;
         derampRange = VECT_MAG(aimdir);
@@ -529,3 +516,24 @@ ham1dx(double * data, int nx)
     }
 }
 
+void * safeCalloc(int numItems, int sizeofItems){
+    void * ret ;
+    ret = calloc(numItems, sizeofItems);
+    if (ret == NULL) {
+        printf("*** Failed to safeCalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
+        exit(-98);
+    }
+    return ret ;
+}
+
+void * safeMalloc(int numItems, int sizeofItems){
+    void * ret ;
+    ret = malloc(sizeofItems*numItems);
+    if (ret == NULL){
+        printf("*** Failed to safeMalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
+        exit(-99);
+    }
+//    printf(" ++++ Malloced %d bytes (pointer %p)\n",sizeofItems*numItems,ret);
+
+    return ret ;
+}

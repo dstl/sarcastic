@@ -130,7 +130,8 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     clReleaseMemObject(dKdTree);
     clReleaseMemObject(dtriListData);
     clReleaseMemObject(dtriListPtrs);
-    clReleaseMemObject(dRays);
     clReleaseMemObject(dHits);
+    clReleaseMemObject(dRays);
+    
     return ;
 }

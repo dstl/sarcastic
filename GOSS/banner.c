@@ -43,7 +43,7 @@
 
 void banner (){
     printf(" \n");
-    printf(DARK GREEN "              Geometrical Optics SAR Simulator (GOSS) [Magdalen]\n" NORMAL);
+    printf(DARK GREEN "              Geometrical Optics SAR Simulator (GOSS) [SARCASTIC]\n" NORMAL);
     printf(BLUE "                          Version :"RED" %s \n", FULL_VERSION);
     printf(BLUE "                    Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
     printf(BLUE "               Copyright (c) 2013 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);

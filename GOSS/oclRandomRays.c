@@ -96,6 +96,8 @@ void oclRandomRays(cl_context context,          // OpenCL context - alrready bui
     //
     CL_CHECK(clEnqueueReadBuffer(Q,dRays, CL_TRUE,0,sizeof(Ray)*nRays,rayArray,0,NULL,NULL));
     
+    clReleaseMemObject(dRays) ;
+    
     return ;
     
 }

@@ -90,10 +90,6 @@ int main (int argc, char **argv){
     im_init_lib(&status, (char *)"GOSS", argc, (char **)argv);
 	CHECK_STATUS_NON_PTR(status);
     
-    KdTreeFile = (char *)malloc(sizeof(char)*256);
-    inCPHDFile = (char *)malloc(sizeof(char)*256);
-    outCPHDFile = (char *)malloc(sizeof(char)*256);
-    
     banner() ;
     
     getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &debug, &debugX, &debugY,&status) ;
@@ -137,7 +133,7 @@ int main (int argc, char **argv){
     //      triPtrs     : array containing index in triIndices that matches node. - size=nLeaves
     //
     int * triPtrs = (int *)malloc(sizeof(int)*nLeaves);
-    int nt=0;
+    int nt=0; // Number of triangles
     for (int n=0; n<nLeaves; n++)nt += triangleLists[n][0];
     int triListDataSize = sizeof(int)*(nt+nLeaves);
     int * triListData = (int *)malloc(triListDataSize);
@@ -149,6 +145,9 @@ int main (int argc, char **argv){
         triPtrs[n] = indCnt++;
         for(int m=0; m<trisInNode; m++)triListData[indCnt++] = triangleLists[n][m+1];
     }
+    // clear down triangle lists
+    //
+    for (int i=0; i<nLeaves; i++) { free(triangleLists[i]); }
     free(triangleLists);
     
     KdTreeStruct KDT ;
@@ -433,6 +432,13 @@ int main (int argc, char **argv){
     free ( FxSteps ) ;
     free ( amp_sf0 ) ;
     
+    // Clear down the KdTree
+    //
+    free(Triangles);
+    free(textures);
+    free(KdTree);
+    free(tricos);
+
     return 0;
 
 }

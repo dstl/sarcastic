@@ -107,6 +107,7 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
     // Clear down OpenCL allocations
     //
     clReleaseMemObject(dTriangles);
+    clReleaseMemObject(dTextures);
     clReleaseMemObject(dRays);
     clReleaseMemObject(dHits);
     clReleaseMemObject(dReflected);
