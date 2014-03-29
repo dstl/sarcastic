@@ -280,18 +280,22 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
                    cl_kernel          STkernel,           // stacklessTraverse kernel, already compiled and created from a program
                    int                nRays,              // Total number of rays to cast
                    size_t             localWorkSize,      // Work dimensions for this device
-                   
-                   KdTreeStruct       KDT,                // Structure containing all KDTree info
-                   
+                   cl_mem             dTriangles,
+                   cl_mem             dTextures,
+                   cl_mem             dKdTree,
+                   cl_mem             dtriListData,
+                   cl_mem             dtriListPtrs,
                    AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
-                   Ray *              rays,               // Array of rays (size nAzBeam*nElBeam). Each ray will be cast through KdTree
+                   Ray *              rays,               // Array of rays (size nRays). Each ray will be cast through KdTree
                    Hit *              hits                // output array of hit locations
 );
 
 void oclReflect(cl_context          context,            // OpenCL context - alrready built
                 cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                 cl_kernel           kernel,             // OpenCl kernel for this routine to call
-                KdTreeStruct        KDT,                // Structure containing all KDTree info
+                cl_mem              dTriangles,
+                cl_mem              dTextures,
+                int                 nTextures,
                 int                 nRays,              // Number of rays to reflect
                 size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
                 Ray                 *rays,              // Array of rays to consider
@@ -314,7 +318,8 @@ void oclReflectPower(cl_context          context,            // OpenCL context -
                      cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                      cl_kernel           kernel,             // OpenCl kernel for this routine to call
                      size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
-                     KdTreeStruct        KDT,                // Structure containing all KDTree info
+                     cl_mem              dTriangles,
+                     cl_mem              dTextures,
                      Hit                 *hits,              // Array of hit locations to x-ref with triangles (and then Textures) for material props
                      SPVector            RxPos,              // Location of Receiver in x,y,z
                      double              GrxOverFourPi,      // Receiver antenna gain / 4Pi.
@@ -325,6 +330,7 @@ void oclReflectPower(cl_context          context,            // OpenCL context -
                      double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                      rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 );
+
 int buildKernel(cl_context context,             // OpenCL Context. Already created
                 const char *kernelCodePath,     // String defining FQPN for kernel code
                 const char *kernelCodeName,     // OpenCL kernel name for kernel code

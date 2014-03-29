@@ -66,7 +66,6 @@ void oclBuildShadowRays(cl_context          context,            // OpenCL contex
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-    
     dReflectedRays = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,    NULL, &_err));
     dShadowRays    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,    NULL, &_err));
     dRanges        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(double)*nRays, NULL, &_err));

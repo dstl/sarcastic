@@ -42,7 +42,9 @@
 void oclReflect(cl_context          context,            // OpenCL context - alrready built
                 cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                 cl_kernel           kernel,             // OpenCl kernel for this routine to call
-                KdTreeStruct        KDT,                // Structure containing all KDTree info
+                cl_mem              dTriangles,
+                cl_mem              dTextures,
+                int                 nTextures,
                 int                 nRays,              // Number of rays to reflect
                 size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
                 Ray                 *rays,              // Array of rays to consider
@@ -51,18 +53,11 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
                 )
 
 {
-    cl_mem dTriangles ;
-    cl_mem dTextures ;
     cl_mem dRays ;
     cl_mem dHits ;
     cl_mem dReflected ;
     
     size_t globalWorkSize ;
-    
-    int                nTriangles       = KDT.nTriangles;         // number of triangles in array 'triangles'
-    Triangle *         triangles        = KDT.triangles;          // Array of triangles of size nTriangles
-    Texture  *         textures         = KDT.textures;           // Array of textures
-    int                nTextures        = KDT.nTextures;          // number of textures in texture array
     
     // Make sure globalWorkSize is a multiple of localWorkSize
     //
@@ -71,17 +66,12 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-    
-    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles,            NULL, &_err));
-    dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,              NULL, &_err));
     dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,                      NULL, &_err));
     dHits        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Hit)*nRays,                      NULL, &_err));
     dReflected   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Ray)*nRays,                      NULL, &_err));
     
     // Add write buffer commands to the command queue ready for execution
     //
-    CL_CHECK(clEnqueueWriteBuffer(Q, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dTextures,    CL_TRUE, 0, sizeof(Texture)*nTextures,   textures,         0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dRays,        CL_TRUE, 0, sizeof(Ray)*nRays,           rays,             0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dHits,        CL_TRUE, 0, sizeof(Hit)*nRays,           hits,             0, NULL, NULL));
     
@@ -106,8 +96,6 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
     
     // Clear down OpenCL allocations
     //
-    clReleaseMemObject(dTriangles);
-    clReleaseMemObject(dTextures);
     clReleaseMemObject(dRays);
     clReleaseMemObject(dHits);
     clReleaseMemObject(dReflected);

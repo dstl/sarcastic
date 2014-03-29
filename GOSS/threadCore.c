@@ -139,7 +139,33 @@ void * devPulseBlock ( void * threadArg ) {
     CL_CHECK(buildKernel(context, buildShadowsCode,  "buildShadowRays",   devId, 1, &buildShadowsPG,  &buildShadowsKL,  &buildShadowsLWS));
     CL_CHECK(buildKernel(context, reflectPowCode,    "reflectPower",      devId, 1, &reflectPowerPG,  &reflectPowerKL,  &reflectPowerLWS));
   
+    // Allocate memory for items that are needed in all kernels
+    //
+    int                nTriangles       = td->KDT.nTriangles;         // number of triangles in array 'triangles'
+    Triangle *         triangles        = td->KDT.triangles;          // Array of triangles of size nTriangles
+    int                nTextures        = td->KDT.nTextures;          // number of textures in array 'textures'
+    Texture *          textures         = td->KDT.textures;           // Array of textures of size nTextures
+    int                nTreeNodes       = td->KDT.nTreeNodes;         // number of nodes in KdTree
+    KdData *           KdTree           = td->KDT.KdTree;             // SAH - KdTree to optimise ray traversal through volume
+    int                triListDataSize  = td->KDT.triListDataSize;    // size of trianglelist data
+    int *              triangleListData = td->KDT.triangleListData;   // array of triangle indices into Triangles
+    int                nLeaves          = td->KDT.nLeaves;            // number of leaves (nodes with triangles) in KdTree
+    int *              triangleListPtrs = td->KDT.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
 
+    
+    cl_mem dTriangles, dTextures,dKdTree, dtriListData,dtriListPtrs;
+    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles, NULL, &_err));
+    dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,   NULL, &_err));
+    dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,   NULL, &_err));
+    dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  triListDataSize,             NULL, &_err));
+    dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(int)*nLeaves,         NULL, &_err));
+
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTextures,    CL_TRUE, 0, sizeof(Texture)*nTextures,   textures,         0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*nTreeNodes,   KdTree,           0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, triListDataSize,             triangleListData, 0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
+    
     // build a sinc kernel
     //
     resolution  = SIPC_c / (2.0 * bandwidth ) ;
@@ -208,7 +234,7 @@ void * devPulseBlock ( void * threadArg ) {
             // Cast the rays in rayArray through the KdTree using a stackless traversal technique
             // return the hit locations in hitArray
             //
-            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, td->KDT, SceneBoundingBox, rayArray, hitArray) ;
+            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
             
             // Sort out hits
             //
@@ -242,7 +268,7 @@ void * devPulseBlock ( void * threadArg ) {
 
                 // Build forward scattering rays ready for next turn round the loop
                 //
-                oclReflect(context, commandQ, reflectKL, td->KDT, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+                oclReflect(context, commandQ, reflectKL, dTriangles, dTextures, nTextures, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
             
                 // If debug out is required then capturing here using the origins of the Reflected rays
                 // which will save us having to calculate the hit locations again
@@ -268,7 +294,7 @@ void * devPulseBlock ( void * threadArg ) {
             
                 // Work out which rays have a path back to receiver using stackless traverse kernel
                 //
-                oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, td->KDT, SceneBoundingBox, shadowRays, shadowHits) ;
+                oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
             
                 // Shrink the shadowRays to only include those that made it back to the sensor
                 // in order to calculate power at sensor we also need the Illumination or LRays
@@ -301,7 +327,7 @@ void * devPulseBlock ( void * threadArg ) {
                 
                     // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                     //
-                    oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, td->KDT, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
+                    oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
                     
                     free(LRays);
                     free(RRays);
