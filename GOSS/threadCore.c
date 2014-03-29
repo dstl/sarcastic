@@ -106,7 +106,7 @@ void * devPulseBlock ( void * threadArg ) {
 
     fftwf_init_threads();
     
-    printf("Using FAST pulse building routines...\n");
+    printf("Compiling OpenCL Kernels...");
 
     // Create OpenCL context and command queue for this device
     //
@@ -174,6 +174,8 @@ void * devPulseBlock ( void * threadArg ) {
 
     sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
     
+    printf("...Done\n");
+    
     // **** loop  start here
     //
     
@@ -187,7 +189,7 @@ void * devPulseBlock ( void * threadArg ) {
         if ( td->devIndex == 0 ) {
             if( pulse % reportN == 0 && td->nPulses != 1){
                 pCentDone = 100.0*pulse/td->nPulses ;
-                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+reportN)*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
+                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN))*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
                 if(pulse != 0 ){
                     current  = time(NULL);
                     sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
