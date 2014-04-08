@@ -1,0 +1,397 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		953FA1E618F4289400EAD4F3 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1BF18F4289400EAD4F3 /* banner.c */; };
+		953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
+		953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
+		953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */; };
+		953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C718F4289400EAD4F3 /* generate_gaussian_ray_distribution.c */; };
+		953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C918F4289400EAD4F3 /* getUserInput.c */; };
+		953FA1F618F4289400EAD4F3 /* oclBuildShadowRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D718F4289400EAD4F3 /* oclBuildShadowRays.c */; };
+		953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
+		953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
+		953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */; };
+		953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
+		953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */; };
+		953FA1FC18F4289400EAD4F3 /* readKdTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DD18F4289400EAD4F3 /* readKdTree.c */; };
+		953FA1FD18F4289400EAD4F3 /* sarcastic.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DF18F4289400EAD4F3 /* sarcastic.c */; };
+		953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E118F4289400EAD4F3 /* threadBeamForm.c */; };
+		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
+		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
+		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
+		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */; };
+		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
+		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
+		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
+		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9504211117A24F9400A076FC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		953FA1BF18F4289400EAD4F3 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = banner.c; sourceTree = "<group>"; };
+		953FA1C018F4289400EAD4F3 /* buildKernel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buildKernel.c; sourceTree = "<group>"; };
+		953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BuildRopesAndBoxes.c; sourceTree = "<group>"; };
+		953FA1C218F4289400EAD4F3 /* BuildRopesAndBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildRopesAndBoxes.h; sourceTree = "<group>"; };
+		953FA1C318F4289400EAD4F3 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
+		953FA1C418F4289400EAD4F3 /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.csh; path = configure; sourceTree = "<group>"; };
+		953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
+		953FA1C618F4289400EAD4F3 /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
+		953FA1C718F4289400EAD4F3 /* generate_gaussian_ray_distribution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = generate_gaussian_ray_distribution.c; sourceTree = "<group>"; };
+		953FA1C818F4289400EAD4F3 /* GenGitVersion.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		953FA1C918F4289400EAD4F3 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
+		953FA1CA18F4289400EAD4F3 /* sarcastic.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = sarcastic.1; sourceTree = "<group>"; };
+		953FA1CC18F4289400EAD4F3 /* buildShadowRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = buildShadowRays.cl; sourceTree = "<group>"; };
+		953FA1CD18F4289400EAD4F3 /* clipToAABB.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = clipToAABB.cl; sourceTree = "<group>"; };
+		953FA1CE18F4289400EAD4F3 /* GOSSKernelCode.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = GOSSKernelCode.cl; sourceTree = "<group>"; };
+		953FA1CF18F4289400EAD4F3 /* intersect.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = intersect.cl; sourceTree = "<group>"; };
+		953FA1D018F4289400EAD4F3 /* randomRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = randomRays.cl; sourceTree = "<group>"; };
+		953FA1D118F4289400EAD4F3 /* reflectionPower.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectionPower.cl; sourceTree = "<group>"; };
+		953FA1D218F4289400EAD4F3 /* reflectRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectRays.cl; sourceTree = "<group>"; };
+		953FA1D318F4289400EAD4F3 /* SPVector.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = SPVector.cl; sourceTree = "<group>"; };
+		953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = stacklessTraverse.cl; sourceTree = "<group>"; };
+		953FA1D518F4289400EAD4F3 /* structures.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = structures.cl; sourceTree = "<group>"; };
+		953FA1D618F4289400EAD4F3 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		953FA1D718F4289400EAD4F3 /* oclBuildShadowRays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclBuildShadowRays.c; sourceTree = "<group>"; };
+		953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclKdTreeHits.c; sourceTree = "<group>"; };
+		953FA1D918F4289400EAD4F3 /* oclRandomRays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclRandomRays.c; sourceTree = "<group>"; };
+		953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclRayTrace.c; sourceTree = "<group>"; };
+		953FA1DB18F4289400EAD4F3 /* oclReflect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflect.c; sourceTree = "<group>"; };
+		953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflectionPower.c; sourceTree = "<group>"; };
+		953FA1DD18F4289400EAD4F3 /* readKdTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readKdTree.c; sourceTree = "<group>"; };
+		953FA1DE18F4289400EAD4F3 /* readKdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readKdTree.h; sourceTree = "<group>"; };
+		953FA1DF18F4289400EAD4F3 /* sarcastic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sarcastic.c; sourceTree = "<group>"; };
+		953FA1E018F4289400EAD4F3 /* sarcastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sarcastic.h; sourceTree = "<group>"; };
+		953FA1E118F4289400EAD4F3 /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
+		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
+		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
+		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		953FA1E518F4289400EAD4F3 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
+		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
+		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.1.a"; sourceTree = "<group>"; };
+		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
+		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
+		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
+		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9504211017A24F9400A076FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
+				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
+				95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */,
+				95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */,
+				95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */,
+				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
+				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
+				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9504210817A24F9400A076FC = {
+			isa = PBXGroup;
+			children = (
+				953FA1BE18F4289400EAD4F3 /* sarcastic */,
+				95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */,
+				95C1708F18C9CCC000651D97 /* libfftw3f.a */,
+				95C1708B18C9CC9800651D97 /* libfftw3_threads.a */,
+				95C1708C18C9CC9800651D97 /* libfftw3.a */,
+				95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */,
+				957B840917AD25DA00B963DE /* OpenCL.framework */,
+				957B840717AD25C600B963DE /* libreadline.dylib */,
+				957B840517AD255E00B963DE /* libexpat.dylib */,
+				9504211417A24F9400A076FC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9504211417A24F9400A076FC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9504211317A24F9400A076FC /* sarcastic */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		953FA1BE18F4289400EAD4F3 /* sarcastic */ = {
+			isa = PBXGroup;
+			children = (
+				953FA1CB18F4289400EAD4F3 /* kernels */,
+				953FA1BF18F4289400EAD4F3 /* banner.c */,
+				953FA1C018F4289400EAD4F3 /* buildKernel.c */,
+				953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */,
+				953FA1C218F4289400EAD4F3 /* BuildRopesAndBoxes.h */,
+				953FA1C318F4289400EAD4F3 /* colourCodes.h */,
+				953FA1C418F4289400EAD4F3 /* configure */,
+				953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */,
+				953FA1C618F4289400EAD4F3 /* ecef2SceneCoords.h */,
+				953FA1C718F4289400EAD4F3 /* generate_gaussian_ray_distribution.c */,
+				953FA1C818F4289400EAD4F3 /* GenGitVersion.sh */,
+				953FA1C918F4289400EAD4F3 /* getUserInput.c */,
+				953FA1CA18F4289400EAD4F3 /* sarcastic.1 */,
+				953FA1D618F4289400EAD4F3 /* Makefile.in */,
+				953FA1D718F4289400EAD4F3 /* oclBuildShadowRays.c */,
+				953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */,
+				953FA1D918F4289400EAD4F3 /* oclRandomRays.c */,
+				953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */,
+				953FA1DB18F4289400EAD4F3 /* oclReflect.c */,
+				953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */,
+				953FA1DD18F4289400EAD4F3 /* readKdTree.c */,
+				953FA1DE18F4289400EAD4F3 /* readKdTree.h */,
+				953FA1DF18F4289400EAD4F3 /* sarcastic.c */,
+				953FA1E018F4289400EAD4F3 /* sarcastic.h */,
+				953FA1E118F4289400EAD4F3 /* threadBeamForm.c */,
+				953FA1E218F4289400EAD4F3 /* threadCore.c */,
+				953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */,
+				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
+				953FA1E518F4289400EAD4F3 /* Version.h */,
+			);
+			path = sarcastic;
+			sourceTree = "<group>";
+		};
+		953FA1CB18F4289400EAD4F3 /* kernels */ = {
+			isa = PBXGroup;
+			children = (
+				953FA1CC18F4289400EAD4F3 /* buildShadowRays.cl */,
+				953FA1CD18F4289400EAD4F3 /* clipToAABB.cl */,
+				953FA1CE18F4289400EAD4F3 /* GOSSKernelCode.cl */,
+				953FA1CF18F4289400EAD4F3 /* intersect.cl */,
+				953FA1D018F4289400EAD4F3 /* randomRays.cl */,
+				953FA1D118F4289400EAD4F3 /* reflectionPower.cl */,
+				953FA1D218F4289400EAD4F3 /* reflectRays.cl */,
+				953FA1D318F4289400EAD4F3 /* SPVector.cl */,
+				953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */,
+				953FA1D518F4289400EAD4F3 /* structures.cl */,
+			);
+			path = kernels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9504211217A24F9400A076FC /* sarcastic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9504211D17A24F9400A076FC /* Build configuration list for PBXNativeTarget "sarcastic" */;
+			buildPhases = (
+				9504216917A454D000A076FC /* ShellScript */,
+				9504210F17A24F9400A076FC /* Sources */,
+				9504211017A24F9400A076FC /* Frameworks */,
+				9504211117A24F9400A076FC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = sarcastic;
+			productName = GOSS;
+			productReference = 9504211317A24F9400A076FC /* sarcastic */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9504210A17A24F9400A076FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = Dstl;
+			};
+			buildConfigurationList = 9504210D17A24F9400A076FC /* Build configuration list for PBXProject "sarcastic" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9504210817A24F9400A076FC;
+			productRefGroup = 9504211417A24F9400A076FC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9504211217A24F9400A076FC /* sarcastic */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9504216917A454D000A076FC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${PROJECT_DIR}/sarcastic ; ./GenGitVersion.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9504210F17A24F9400A076FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953FA1F618F4289400EAD4F3 /* oclBuildShadowRays.c in Sources */,
+				953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */,
+				953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */,
+				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
+				953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */,
+				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
+				953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */,
+				953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */,
+				953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */,
+				953FA1FC18F4289400EAD4F3 /* readKdTree.c in Sources */,
+				953FA1E618F4289400EAD4F3 /* banner.c in Sources */,
+				953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */,
+				953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */,
+				953FA1FD18F4289400EAD4F3 /* sarcastic.c in Sources */,
+				953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */,
+				953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */,
+				953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9504211B17A24F9400A076FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include/SIlib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9504211C17A24F9400A076FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include/SIlib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9504211E17A24F9400A076FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				PRODUCT_NAME = sarcastic;
+			};
+			name = Debug;
+		};
+		9504211F17A24F9400A076FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				PRODUCT_NAME = sarcastic;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9504210D17A24F9400A076FC /* Build configuration list for PBXProject "sarcastic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9504211B17A24F9400A076FC /* Debug */,
+				9504211C17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9504211D17A24F9400A076FC /* Build configuration list for PBXNativeTarget "sarcastic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9504211E17A24F9400A076FC /* Debug */,
+				9504211F17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9504210A17A24F9400A076FC /* Project object */;
+}
