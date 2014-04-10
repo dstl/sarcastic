@@ -45,11 +45,12 @@ static char *rootpath = "/local_storage/DGM" ;
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
-                 int *debug, int *debugX, int *debugY,
-                 SPStatus *status){
+                 int *debug, int *debugX, int *debugY, int *interrogate, SPVector *interogPt, double *interogRad,
+                 FILE **interrogateFP, SPStatus *status){
     
     char * prompt;
     char * file ;
+    char * interrogFname ;
     SPStatus fileStat ;
     FILE *fp;
     
@@ -162,10 +163,69 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
             }while (*debugY < 0 || *debugY >= *nElBeam);
         }
     }
-    if(*bounceToShow == 0)
-        *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
-                              (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);
+    
+    // Ask the user if he would like to interrogate a scattering point in a previously ray traced
+    // image. If so, ask for surface file and image coords of point in image so that we can convert the
+    // image point to a scene coord vector.
+    //
+    char *surfaceFile ;
+    int  interogX, interogY ;
+    
+    *interrogate = 0;
+    *interrogate = input_yesno((char *)"Interrogate a point in scene?", (char *)"interogPt",
+                               (char *)"Interrogate a point in the scene to find out which scattering primitives made it.",*interrogate);
+    
+    if(*interrogate){
+        sprintf(prompt, "/local_storage/DGM/surface.dat");
+        do {
+            im_init_status(fileStat, 0) ;
+            surfaceFile = input_string((char *)"Name of surface file", (char *)"surfaceFile",
+                                       (char *)"The name of a surface file to read from",
+                                       prompt);
+            if ( (fp = fopen(surfaceFile, "r")) == NULL){
+                printf(RED "Cannot access file %s\n" RESETCOLOR,surfaceFile);
+                fileStat.status = BAD_FILE ;
+            }else fclose(fp) ;
+            
+        } while(fileStat.status != NO_ERROR);
+        
+        SPImage surface ;
+        im_load(&surface, surfaceFile, &fileStat) ;
+        
+        interogX  = (int)surface.nx / 2 ;
+        interogY  = (int)surface.ny / 2;
+        
+        interogX  = input_int((char *)"X coordinate of image pixel to interrogate", (char *)"interogX",
+                              (char *)"location in x direction of the point in the SAR image to interrogate", interogX) ;
+        interogY  = input_int((char *)"Y coordinate of image pixel to interrogate", (char *)"interogY",
+                              (char *)"location in y direction of the point in the SAR image to interrogate", interogY) ;
+        
+        *interogRad = 1.0;
+        *interogRad = input_dbl((char *)"Radius of region around point to interrogate", (char *)"interogRad",
+                                (char *)"Radius of region around point to interrogate", *interogRad);
+        
+        do {
+            sprintf(prompt, "/local_storage/DGM/interrogate.txt");
 
+            im_init_status(fileStat, 0) ;
+            interrogFname = input_string((char *)"Name of file for interrogation output", (char *)"interrogFname",
+                                       (char *)"Name of file for interrogation output",
+                                       prompt);
+            if ( (*interrogateFP = fopen(interrogFname, "w")) == NULL){
+                printf(RED "Cannot access file %s\n" RESETCOLOR,interrogFname);
+                fileStat.status = BAD_FILE ;
+            }
+            
+        } while(fileStat.status != NO_ERROR);
+        
+        *interogPt = surface.data.vect[interogY*surface.nx+interogX] ;
+        
+        im_destroy(&surface, &fileStat);
+    }
+    
+    if(*bounceToShow == 0 && *interrogate == 0)
+        *useGPU = input_yesno((char *)"USE GPU?", (char *)"USEGPU",
+                              (char *)"USE GPU if its available. If it isnt then use the CPU.",*useGPU);    
     
     free(prompt);
 

@@ -41,7 +41,7 @@
 #define GOSS_GOSS_h
 
 #include <SIlib.h>
-
+#include "SarcasticVersion.h"
 #include <string.h>
 #include <sys/time.h>
 #if defined (__APPLE__) || defined(MACOSX)
@@ -208,7 +208,11 @@ typedef struct threadData {
     double beamMaxAz;           // Maximum azimuth beamwidth to consider for scene
     double beamMaxEl;           // Maximum azimuth beamwidth to consider for scene
     double PowPerRay ;          // Ray Power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
-
+    int interrogate ;           // Do we want to write out details about an interrogation point in the scene?
+    SPVector interogPt ;        // Position in scene coordinates of a point to be interogated
+    double interogRad ;         // Radius in metres around interrogation point to calculate scattering for
+    FILE ** interogFP ;          // File pointer to dump out interrogation data
+    
 } threadData ;
 
 typedef struct rnpData_t {
@@ -236,8 +240,9 @@ typedef struct threadDataBF {
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
-                 int *debug, int *debugX, int *debugY,
-                 SPStatus *status) ;
+                 int *debug, int *debugX, int *debugY, int *interrogate, SPVector *interogPt, double *interograd,
+                 FILE **interogateFP, SPStatus *status) ;
+
 char * loadProgramSource(const char *filename);
 void * devPulseBlock ( void * threadArg ) ;
 void * beamForm ( void * threadArg ) ;

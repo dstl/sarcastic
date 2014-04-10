@@ -65,23 +65,25 @@ void * devPulseBlock ( void * threadArg ) {
 
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nx, nShadowRays, tid ;
 //    int debug, debugX, debugY ;
-    int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows ;
+    int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
     int hrs,min,sec;
     int reportN = 500 ;
 
     double gainRx, PowPerRay, derampRange, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
-    double *ranges ;
+    double *ranges, interogRad, intMinR, intMaxR ;
 
     AABB SceneBoundingBox ;
-    rangeAndPower * rnp ;
+    rangeAndPower * rnp, irp ;
     Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
     Hit *hitArray, *newHits, *shadowHits;
     
-    SPVector aimdir, RxPos, TxPos, origin;
+    SPVector aimdir, RxPos, TxPos, origin, interogPt;
     SPCmplx targ, pcorr, tmp;
     SPImage pulseLine ;
     SPStatus status;
+    
+    FILE *interogFP ;
    
     struct tm *p;
     Timer threadTimer ;
@@ -98,10 +100,15 @@ void * devPulseBlock ( void * threadArg ) {
     tid              = td->devIndex ;
     devId            = td->platform.device_ids[tid] ;
     nx               = (int)td->phd->nx ;
+    interrogate      = td->interrogate ;
+    interogPt        = td->interogPt ;
+    interogRad       = td->interogRad ;
+    interogFP        = *(td->interogFP) ;
+    
 //    debug            = td->debug ;
 //    debugX           = td->debugX ;
 //    debugY           = td->debugY ;
-
+    
     VECT_CREATE(0, 0, 0, origin);
 
     fftwf_init_threads();
@@ -223,6 +230,11 @@ void * devPulseBlock ( void * threadArg ) {
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
         
+        // Set up deramp range for this pulse
+        //
+        VECT_MINUS(TxPos, aimdir) ;
+        derampRange = VECT_MAG(aimdir);
+        
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
         rnp = (rangeAndPower *)safeCalloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
@@ -331,6 +343,30 @@ void * devPulseBlock ( void * threadArg ) {
                 //
                 oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
                 
+                
+                // If we are going to interrogate a point then we need to work out the min and max ranges for
+                // the point and then check to see if any scatterers are from that range
+                //
+                if (interrogate) {
+                    SPVector intOutRg, intRetRg ;
+                    double intRg ;
+                    
+                    VECT_SUB(interogPt, TxPos, intOutRg);
+                    VECT_SUB(RxPos, interogPt, intRetRg);
+                    intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
+                    intMinR = intRg - interogRad ;
+                    intMaxR = intRg + interogRad ;
+                    
+                    for ( int i=0; i<nAzBeam*nElBeam; i++){
+                        
+                        irp = rnp[(nAzBeam*nElBeam*nbounce)+i] ;
+                        
+                        if ( irp.range > intMinR && irp.range < intMaxR ) {
+                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,irp.power,nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
+                        }
+                    }
+                }
+                
                 free(LRays);
                 free(RRays);
             }
@@ -369,9 +405,6 @@ void * devPulseBlock ( void * threadArg ) {
 //        nrnpItems = 1;
 // DEBUG
         rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
-        
-        VECT_MINUS(TxPos, aimdir) ;
-        derampRange = VECT_MAG(aimdir);
         
         cnt = 0;
         double totpow = 0.0;

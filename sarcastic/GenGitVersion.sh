@@ -57,8 +57,20 @@ REVISION=$(git rev-list master | wc -l | awk '{print $1}')
 # Also print the version date
 VERSION_DATE=$(git show --format="%ci" | head -1)
 
-echo "#define REVISION \"${REVISION}\""            > Version.h
-echo "#define SHORT_VERSION \"${SHORT_VERSION}\""  >>Version.h
-echo "#define FULL_VERSION \"${FULL_VERSION}\""    >>Version.h
-echo "#define VERSION_DATE \"${VERSION_DATE}\""    >>Version.h
+echo "#ifdef REVISION"                             > SarcasticVersion.h
+echo "#undef REVISION"                             >>SarcasticVersion.h
+echo "#endif"                                      >>SarcasticVersion.h
+echo "#ifdef SHORT_VERSION"                        >>SarcasticVersion.h
+echo "#undef SHORT_VERSION"                        >>SarcasticVersion.h
+echo "#endif"                                      >>SarcasticVersion.h
+echo "#ifdef FULL_VERSION"                         >>SarcasticVersion.h
+echo "#undef FULL_VERSION"                         >>SarcasticVersion.h
+echo "#endif"                                      >>SarcasticVersion.h
+echo "#ifdef VERSION_DATE"                         >>SarcasticVersion.h
+echo "#undef VERSION_DATE"                         >>SarcasticVersion.h
+echo "#endif"                                      >>SarcasticVersion.h
+echo "#define REVISION \"${REVISION}\""            >>SarcasticVersion.h
+echo "#define SHORT_VERSION \"${SHORT_VERSION}\""  >>SarcasticVersion.h
+echo "#define FULL_VERSION \"${FULL_VERSION}\""    >>SarcasticVersion.h
+echo "#define VERSION_DATE \"${VERSION_DATE}\""    >>SarcasticVersion.h
 echo "${FULL_VERSION}"

@@ -54,6 +54,8 @@
 #include "BuildRopesAndBoxes.h"
 #include "ecef2SceneCoords.h"
 #include "colourCodes.h"
+#include "SarcasticVersion.h"
+
 double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
 
 int main (int argc, char **argv){
@@ -62,14 +64,15 @@ int main (int argc, char **argv){
     AABB        SceneBoundingBox;
     OCLPlatform platform;
     
-    SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8] ;
-    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl ;
+    SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8], interogPt ;
+    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
     char *KdTreeFile, *inCPHDFile, *outCPHDFile ;
-    int startPulse, nPulses, bounceToShow, nTriangles, nTextures, nLeaves, nTreeNodes ;
+    int startPulse, nPulses, bounceToShow, nTriangles, nTextures, nLeaves, nTreeNodes, interrogate ;
     int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
     SPImage cphd ;
     int debug, debugX=0, debugY=0;
-
+    FILE *interrogateFP = NULL ;
+    
     cl_int      err;
     cl_uint     ndevs;
     cl_ulong    memSizeTmp,devMemSize;
@@ -87,12 +90,13 @@ int main (int argc, char **argv){
 
     SPStatus status ;
     im_init_status(status, 0) ;
-    im_init_lib(&status, (char *)"SARCASTIC", argc, (char **)argv);
+    im_init_lib(&status, (char *)"sarcastic", argc, (char **)argv);
 	CHECK_STATUS_NON_PTR(status);
     
     banner() ;
     
-    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &debug, &debugX, &debugY,&status) ;
+    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &debug, &debugX, &debugY,
+                 &interrogate, &interogPt, &interogRad, &interrogateFP, &status) ;
     
     // Start timing after user input
     //
@@ -209,6 +213,7 @@ int main (int argc, char **argv){
 
     ecef2SceneCoords(nPulses, RxPos, SRP);
     ecef2SceneCoords(nPulses, TxPos, SRP);
+    ecef2SceneCoords(1,  &interogPt, SRP);
 
     // Calculate azbeamwidth from scene
     // Calculate elbeamwidth from scene
@@ -383,8 +388,20 @@ int main (int argc, char **argv){
         threadDataArray[dev].debug                  = debug ;
         threadDataArray[dev].debugX                 = debugX ;
         threadDataArray[dev].debugY                 = debugY ;
+        threadDataArray[dev].interrogate            = interrogate ;
+        threadDataArray[dev].interogPt              = interogPt ;
+        threadDataArray[dev].interogRad             = interogRad ;
+        threadDataArray[dev].interogFP              = &interrogateFP ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
+        if (interrogate){
+            fprintf(interrogateFP, "\tInterroagte Output (Sarcastic %s)\n",FULL_VERSION);
+            fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
+            fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
+            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);
+            fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
+            fprintf(interrogateFP, "-----------------------------------------------------------------\n");
+        }
         // Create thread data for each device
         //
         rc = pthread_create(&threads[dev], NULL, devPulseBlock, (void *) &threadDataArray[dev]) ;
@@ -404,6 +421,10 @@ int main (int argc, char **argv){
         }
     }
     if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
+    if (interrogate){
+        fprintf(interrogateFP, "-----------------------------------------------------------------\n");
+        fclose(interrogateFP);
+    }
 
     FILE *fp;
     fp = fopen(outCPHDFile, "w") ;

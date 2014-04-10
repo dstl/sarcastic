@@ -6,7 +6,7 @@
 # Ignore specific files
 .DS_Store
 ._*
-Version.h
+SarcasticVersion.h
 Makefile
 # Ignore user specific Xcode files
 GOSS.xcodeproj/project.xcworkspace

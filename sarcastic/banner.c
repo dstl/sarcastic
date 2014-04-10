@@ -38,7 +38,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
-#include "Version.h"
+#include "SarcasticVersion.h"
 #include "colourCodes.h"
 
 void banner (){
