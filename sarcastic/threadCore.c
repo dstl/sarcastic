@@ -473,12 +473,17 @@ void * devPulseBlock ( void * threadArg ) {
             pcorr.r = td->amp_sf0[pulseIndex] * cos(phasecorr * (x - pulseLine.nx/2)) ;
             pcorr.i = td->amp_sf0[pulseIndex] * sin(phasecorr * (x - pulseLine.nx/2)) ;
             
-            CMPLX_MULT(pulseLine.data.cmpl_f[x], pcorr, tmp);
+            if(CMPLX_MAG(pulseLine.data.cmpl_f[x]) == 0.0 ){
+                tmp.r = tmp.i = 0.0 ;
+            }else{
+                CMPLX_MULT(pulseLine.data.cmpl_f[x], pcorr, tmp);
+            }
+
             pulseLine.data.cmpl_f[x] = tmp;
         }
         
         im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
-        im_fftw(&pulseLine, FFT_X_ONLY+FWD+SCALE_N, &status);
+        im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
         im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
         im_destroy(&pulseLine, &status) ;
         

@@ -395,7 +395,7 @@ int main (int argc, char **argv){
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
-            fprintf(interrogateFP, "\tInterroagte Output (Sarcastic %s)\n",FULL_VERSION);
+            fprintf(interrogateFP, "\tInterrogate Output (Sarcastic %s)\n",FULL_VERSION);
             fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
             fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
             fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);

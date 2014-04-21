@@ -73,7 +73,7 @@ double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *re
 
     }
 
-    Pray = 10000000000000 * Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
     *receiverGain = gainRx ;
     return (Pray) ;
    
