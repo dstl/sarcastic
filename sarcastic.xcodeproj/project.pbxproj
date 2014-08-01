@@ -32,6 +32,8 @@
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+		95D5E16B192CA57E001ABC11 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E16A192CA57E001ABC11 /* main.c */; };
+		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +43,16 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		95D5E166192CA57E001ABC11 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -93,6 +105,9 @@
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		95D5E16A192CA57E001ABC11 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +126,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		95D5E165192CA57E001ABC11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -126,6 +148,7 @@
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
+				95D5E169192CA57E001ABC11 /* POTest */,
 				9504211417A24F9400A076FC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -134,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				9504211317A24F9400A076FC /* sarcastic */,
+				95D5E168192CA57E001ABC11 /* POTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,6 +214,15 @@
 			path = kernels;
 			sourceTree = "<group>";
 		};
+		95D5E169192CA57E001ABC11 /* POTest */ = {
+			isa = PBXGroup;
+			children = (
+				95D5E16A192CA57E001ABC11 /* main.c */,
+				95D5E16C192CA57E001ABC11 /* POTest.1 */,
+			);
+			path = POTest;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -209,6 +242,23 @@
 			name = sarcastic;
 			productName = GOSS;
 			productReference = 9504211317A24F9400A076FC /* sarcastic */;
+			productType = "com.apple.product-type.tool";
+		};
+		95D5E167192CA57E001ABC11 /* POTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 95D5E170192CA57E001ABC11 /* Build configuration list for PBXNativeTarget "POTest" */;
+			buildPhases = (
+				95D5E164192CA57E001ABC11 /* Sources */,
+				95D5E165192CA57E001ABC11 /* Frameworks */,
+				95D5E166192CA57E001ABC11 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = POTest;
+			productName = POTest;
+			productReference = 95D5E168192CA57E001ABC11 /* POTest */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -233,6 +283,7 @@
 			projectRoot = "";
 			targets = (
 				9504211217A24F9400A076FC /* sarcastic */,
+				95D5E167192CA57E001ABC11 /* POTest */,
 			);
 		};
 /* End PBXProject section */
@@ -275,6 +326,14 @@
 				953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */,
 				953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */,
 				953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		95D5E164192CA57E001ABC11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95D5E16B192CA57E001ABC11 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,6 +427,51 @@
 			};
 			name = Release;
 		};
+		95D5E16E192CA57E001ABC11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		95D5E16F192CA57E001ABC11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -388,6 +492,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		95D5E170192CA57E001ABC11 /* Build configuration list for PBXNativeTarget "POTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95D5E16E192CA57E001ABC11 /* Debug */,
+				95D5E16F192CA57E001ABC11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
