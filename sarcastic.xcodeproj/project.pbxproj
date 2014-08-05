@@ -34,6 +34,9 @@
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
 		95D5E16B192CA57E001ABC11 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E16A192CA57E001ABC11 /* main.c */; };
 		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
+		95D8333D199113620026D4C3 /* POCalculaton.c in Sources */ = {isa = PBXBuildFile; fileRef = 95EA69EA198E0FD80013A07D /* POCalculaton.c */; };
+		95D8333F199113820026D4C3 /* libSIlib-0.5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95D8333E199113820026D4C3 /* libSIlib-0.5.3.a */; };
+		95EA69EB198E0FD80013A07D /* POCalculaton.c in Sources */ = {isa = PBXBuildFile; fileRef = 95EA69EA198E0FD80013A07D /* POCalculaton.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -108,6 +111,8 @@
 		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D5E16A192CA57E001ABC11 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
+		95D8333E199113820026D4C3 /* libSIlib-0.5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.3.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.3.a"; sourceTree = "<group>"; };
+		95EA69EA198E0FD80013A07D /* POCalculaton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POCalculaton.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95D8333F199113820026D4C3 /* libSIlib-0.5.3.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +145,7 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
+				95D8333E199113820026D4C3 /* libSIlib-0.5.3.a */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
 				95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */,
 				95C1708F18C9CCC000651D97 /* libfftw3f.a */,
@@ -185,6 +192,7 @@
 				953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */,
 				953FA1DB18F4289400EAD4F3 /* oclReflect.c */,
 				953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */,
+				95EA69EA198E0FD80013A07D /* POCalculaton.c */,
 				953FA1DD18F4289400EAD4F3 /* readKdTree.c */,
 				953FA1DE18F4289400EAD4F3 /* readKdTree.h */,
 				953FA1DF18F4289400EAD4F3 /* sarcastic.c */,
@@ -315,6 +323,7 @@
 				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
 				953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */,
 				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
+				95EA69EB198E0FD80013A07D /* POCalculaton.c in Sources */,
 				953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */,
 				953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */,
 				953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */,
@@ -333,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95D8333D199113620026D4C3 /* POCalculaton.c in Sources */,
 				95D5E16B192CA57E001ABC11 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -446,6 +456,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -467,6 +481,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -500,6 +518,7 @@
 				95D5E16F192CA57E001ABC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
