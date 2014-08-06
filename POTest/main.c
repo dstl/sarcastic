@@ -16,6 +16,15 @@
 // For each position print out a point where R is teh Es field magnitude
 //
 
+void POCalculation(TriCoords tri,
+                   Ray Ri_bar,      // Incident Ray
+                   SPVector p,      // Global coordinates of scattered point
+                   SPVector RxPnt,  // Observation point
+                   SPCmplx Ei,      // incident E field at point P
+                   SPCmplx *Es      // Scattered E field
+
+);
+
 int main(int argc, const char * argv[])
 {
     
@@ -25,72 +34,57 @@ int main(int argc, const char * argv[])
     VECT_CREATE(10, 10, 0, AA);
     VECT_CREATE(5, 10, 0, BB);
     VECT_CREATE(10, 5, 0, CC);
-    
+    TriCoords triCoords ;
+    triCoords.A=AA ;
+    triCoords.B=BB ;
+    triCoords.Cc=CC ;
+
     // Create a ray
     //
     Ray r ;
-    SPVector hp,dir;
-    VECT_CREATE(0, 0, 20, r.o);
-    VECT_CREATE(7, 7, 0, hp);
-    VECT_SUB(hp, r.o, dir);
-    VECT_NORM(dir, r.d);
-    r.p = 1.0;
+    SPVector hp, dir;
+    VECT_CREATE(0.0, 0.0, 20.0, r.org);
+    VECT_CREATE(7.0, 7.0, 0.0, hp);
+    VECT_SUB(hp, r.org, dir);
+    r.len = VECT_MAG(dir);
+    VECT_NORM(dir, r.dir);
+    r.pow = 1.0;
     
-    // Create observation point
-    //
-    SPVector op;
-    float u,v,w ;
-    float theta_s, phi_s ; // Scattering azimuth, elevation
-    VECT_CREATE(-10, -10, -10, op);
-    theta_s = atan2f(op.y, op.x);
-    phi_s   = atan2f(op.z, sqrt(op.x*op.x+op.y*op.y));
-    u     = cosf(phi_s) * cosf(theta_s);
-    v     = cosf(phi_s) * sinf(theta_s);
-    w     = sinf(phi_s);
+    int iphi, niphis;
+    int itheta, nitheta;
+    niphis = 360 ;
+    nitheta = 180 ;
     
-    // Set up the problem parameters
-    float Dp,Dq,D0;
-    float Cp,Cq,C0;
-    float k;
-    float lambda = 0.04 ;
-    float Z0 ;
-    float r = 1000.0;
-    float A ; // Area of triangle
+    float deltaiphi, deltaitheta;
+    deltaiphi = 2*SIPC_pi / niphis ;
+    deltaitheta = SIPC_pi / nitheta ;
     
+    float phi_s, theta_s;
+    SPVector RxPnt, op ;
+    float obsDist = 1000 ;
+    SPCmplx Ei, Es;
     
-    // First calculate Ic
-    //
-    k = 2 * SIPC_pi / lambda ;
-    Cp = Cq = 0;
-    C0 = 1;
-    
-    Dp = k * ( (AA.x - CC.x) * u + (AA.y - CC.y) * v + (AA.z - CC.z) * w) ;
-    Dq = k * ( (BB.x - CC.x) * u + (BB.y - CC.y) * v + (BB.z - CC.z) * w) ;
-    D0 = k * ( CC.x * u + CC.y * v + CC.z * w ) ;
-    
-    SPVector l1,l3,Av,triN;
-    float a,modl1,modl3;
-    VECT_SUB(BB, AA, l1) ;
-    VECT_SUB(AA, CC, l3) ;
-    VECT_CROSS(l1, l3, Av) ;
-    A = 0.5 * VECT_MAG(Av) ;
-    modl1 = VECT_MOD(l1);
-    modl3 = VECT_MOD(l3);
-    VECT_SCMULT(Av, (1.0/(modl1*modl3)), triN);
-    
-    float Lt = 0.05 ;  // Length of Taylor series region
-    float magDp = fabs(Dp) ;
-    float magDq = fabs(Dq) ;
-    SPCmplx e_jDp, e_jDq, e_jD0 ;
-    e_jD0.r = cosf(D0); e_jD0.i = sinf(D0) ;
-    e_jDp.r = cosf(Dp); e_jDp.i = sinf(Dp) ;
-    e_jDq.r = cosf(Dq); e_jDq.i = sinf(Dq) ;
-    SPCmplx jDp, jD0, jDq;
-    jDp.r = 0; jDp.i = Dp ;
-    jD0.r = 0; jD0.i = D0 ;
-    jDq.r = 0; jDq.i = Dq ;
-    
-    
+    for(iphi=0; iphi < niphis; iphi++){
+        phi_s = iphi * deltaiphi ;
+        
+        for(itheta=0; itheta< nitheta; itheta++){
+            theta_s = nitheta * deltaitheta ;
+            
+            RxPnt.x = obsDist * sinf(theta_s) * cosf(phi_s);
+            RxPnt.y = obsDist * sinf(theta_s) * sinf(phi_s);
+            RxPnt.z = obsDist * cosf(theta_s);
+            CMPLX_F_MAKE(r.pow, 0.0, Ei);
+            
+            POCalculation(triCoords, r, hp, RxPnt, Ei, &Es);
+            
+            op.x = CMPLX_MAG(Es) * sinf(theta_s) * cosf(phi_s) ;
+            op.y = CMPLX_MAG(Es) * sinf(theta_s) * sinf(phi_s) ;
+            op.x = CMPLX_MAG(Es) * cosf(theta_s) ;
+            
+            printf("%f, %f, %f \n",op.x,op.y,op.z);
+            
+        }
+    }
     
     return 0;
 }
