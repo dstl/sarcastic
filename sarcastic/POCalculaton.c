@@ -100,8 +100,8 @@ void POCalculation(TriCoords tri,
     // Assuming that the direction of the ray has been normalised
     //
     uvw_ig[0] = Ri_bar.dir.x;
-    uvw_ig[0] = Ri_bar.dir.y;
-    uvw_ig[0] = Ri_bar.dir.z;
+    uvw_ig[1] = Ri_bar.dir.y;
+    uvw_ig[2] = Ri_bar.dir.z;
     
     matmul(Glob2LocMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
@@ -123,7 +123,7 @@ void POCalculation(TriCoords tri,
     // Calculate X and Y, SINCX and SINCY
     //
     float X = 0.5 * Beta*(uvw_sl[0]+uvw_il[0])*a ;
-    float Y = 0.5 * Beta*(uvw_sl[1]+uvw_sl[1])*b ;
+    float Y = 0.5 * Beta*(uvw_sl[1]+uvw_il[1])*b ;
     float sincX = (X != 0 ? sin(X)/X : 1);
     float sincY = (Y != 0 ? sin(Y)/Y : 1);
     
@@ -164,14 +164,12 @@ void setupTriangle(TriCoords tri, SPVector *normal, float *matrix_gtol, float *m
     // Calculate triangle Normal
     //
     SPVector l1,l3,Av,triN;
-    float modl1,modl3,Area;
+    float Area;
     VECT_SUB(tri.B, tri.A, l1) ;
     VECT_SUB(tri.A, tri.Cc, l3) ;
-    VECT_CROSS(l1, l3, Av) ;
+    VECT_CROSS(l3, l1, Av) ;
     Area = 0.5 * VECT_MAG(Av) ;
-    modl1 = VECT_MOD(l1);
-    modl3 = VECT_MOD(l3);
-    VECT_SCMULT(Av, (1.0/(modl1*modl3)), triN);
+    VECT_NORM(Av, triN);
     normal->x = triN.x ; normal->y = triN.y; normal->z = triN.z ;
     
     // Calculate rotation matrices
@@ -245,7 +243,7 @@ void matmul(float *A,float *B, float *O, int Ax, int Ay,int Bx, int By)
             
             O[i*Bx+j] = 0;
             for(k=0;k<Ax;k++)
-                O[i*Bx+j] += A[i*Bx+k] * B[k*Bx+j];
+                O[i*Bx+j] += A[i*Ax+k] * B[k*Bx+j];
         }
     }
     return ;
@@ -263,7 +261,7 @@ void mat3by3inv(float *A, float *O){
     for(y=0;y<3;y++){    // Append Unit Matrix
         for(x=0;x<6;x++){
             if(x<3){
-                a[y][x] = A[y*6+x] ;
+                a[y][x] = A[y*3+x] ;
             }else if(x==y+3){
                 a[y][x]=1;
             }else{
