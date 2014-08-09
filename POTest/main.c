@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
     //
     Ray r ;
     SPVector hp, dir;
-    VECT_CREATE(0.0, 20.0, 20.0, r.org);
+    VECT_CREATE(0.0, 0.0, 20.0, r.org);
     VECT_CREATE(0.0, 0.0, 0.0, hp);
     VECT_SUB(hp, r.org, dir);
     r.len = VECT_MAG(dir);
@@ -61,45 +61,45 @@ int main(int argc, const char * argv[])
     int iphi, niphis;
     int itheta, nitheta;
     niphis = 360 ;
-    nitheta = 180 ;
+    nitheta = 100 ;
     
-    float deltaiphi, deltaitheta;
+    double deltaiphi, deltaitheta;
     deltaiphi = 2*SIPC_pi / niphis ;
-    deltaitheta = SIPC_pi / nitheta ;
+    deltaitheta = SIPC_pi / (2*nitheta) ;
     
-    float phi_s, theta_s;
+    double phi_s, theta_s;
     SPVector RxPnt, op ;
-    float obsDist = 1000 ;
+    double obsDist = 1000 ;
     SPCmplx Ei, Es;
     
-//    for(itheta=0; itheta<nitheta; itheta++){
-//        theta_s = itheta * deltaitheta +1 ;
+    for(itheta=0; itheta<nitheta; itheta++){
+        theta_s = itheta * deltaitheta ;
 
-    theta_s = DEG2RAD(45) ;
-    printf("Observation Elevation Angle : %f deg\n", RAD2DEG(theta_s));
+//    theta_s = DEG2RAD(0) ;
+//    printf("Observation Elevation Angle : %f deg\n", RAD2DEG(theta_s));
         
-//        for(iphi=0; iphi < niphis; iphi++){
-//            phi_s = iphi * deltaiphi ;
+        for(iphi=0; iphi < niphis; iphi++){
+            phi_s = iphi * deltaiphi ;
 
-    phi_s = DEG2RAD(0);
-    printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
+//    phi_s = DEG2RAD(0);
+//    printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
     
     
-    RxPnt.x = obsDist * sinf(theta_s) * cosf(phi_s);
-    RxPnt.y = obsDist * sinf(theta_s) * sinf(phi_s);
-    RxPnt.z = obsDist * cosf(theta_s);
+    RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
+    RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
+    RxPnt.z = obsDist * cos(theta_s);
     CMPLX_F_MAKE(r.pow, 0.0, Ei);
     
     POCalculation(triCoords, r, hp, RxPnt, Ei, &Es);
     
-    op.x = CMPLX_MAG(Es) * sinf(theta_s) * cosf(phi_s) ;
-    op.y = CMPLX_MAG(Es) * sinf(theta_s) * sinf(phi_s) ;
-    op.x = CMPLX_MAG(Es) * cosf(theta_s) ;
+    op.x = CMPLX_MAG(Es) * sin(theta_s) * cos(phi_s) ;
+    op.y = CMPLX_MAG(Es) * sin(theta_s) * sin(phi_s) ;
+    op.z = CMPLX_MAG(Es) * cos(theta_s) ;
     
-    printf("\t%e, %e, %e \n",op.x,op.y,op.z);
+    printf("%f, %f, %f \n",10*log(CMPLX_MAG(Es)),phi_s,theta_s);
     
-//        }
-//    }
+        }
+    }
 
     return 0;
 }

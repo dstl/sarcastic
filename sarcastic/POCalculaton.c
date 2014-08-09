@@ -51,10 +51,10 @@
 
 */
 
-void setupTriangle(TriCoords tri, SPVector *normal, float *matrix_gtol, float *matrix_ltog, float *Rs);
-void matmul(float *A,float *B, float *O, int Ax, int Ay,int Bx, int By);
-void mat3by3inv(float *A, float *O);
-void reduction(float a[][6],int size,int pivot ,int col);
+void setupTriangle(TriCoords tri, SPVector *normal, double *matrix_gtol, double *matrix_ltog, double *Rs);
+void matmul(double *A,double *B, double *O, int Ax, int Ay,int Bx, int By);
+void mat3by3inv(double *A, double *O);
+void reduction(double a[][6],int size,int pivot ,int col);
 
 void POCalculation(TriCoords tri,
                    Ray Ri_bar,      // Incident Ray
@@ -65,18 +65,18 @@ void POCalculation(TriCoords tri,
 
 ){
     
-    float Beta ;
+    double Beta ;
     double lambda = 0.04 ;
     Beta = 2*SIPC_pi / lambda ;
-    float b = 0.01 ;
-    float a = 0.01 ;
+    double b = 10 ;
+    double a = 10 ;
     
     // setup triangle associated parameters such as the normal and rotation matrix
     // These can be performed when the triangles are built
     //
     SPVector triNormal ;
-    float Glob2LocMat[9], Loc2GlobMat[9] ;
-    float Rs ; // resistivity
+    double Glob2LocMat[9], Loc2GlobMat[9] ;
+    double Rs ; // resistivity
     setupTriangle(tri, &triNormal, Glob2LocMat, Loc2GlobMat, &Rs);
     
     
@@ -93,9 +93,9 @@ void POCalculation(TriCoords tri,
     // world coordinates
     //
     
-    float theta_il, theta_sl ; // angle to Z axis
-    float phi_il, phi_sl ;
-    float uvw_ig[3], uvw_il[3], uvw_sg[3], uvw_sl[3] ; // Direction cosines for incident and scattered Ray
+    double theta_il, theta_sl ; // angle to Z axis
+    double phi_il, phi_sl ;
+    double uvw_ig[3], uvw_il[3], uvw_sg[3], uvw_sl[3] ; // Direction cosines for incident and scattered Ray
     
     // Assuming that the direction of the ray has been normalised
     //
@@ -106,8 +106,7 @@ void POCalculation(TriCoords tri,
     matmul(Glob2LocMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
     theta_il = acos(uvw_il[2]) ;
-    phi_il   = acos(uvw_il[0] / sin(theta_il)) ;
-    
+    phi_il   = atan2(uvw_il[1], uvw_il[0]);
     
     // Now calculate the direction to the viewpoint (along the scattered ray)
     //
@@ -118,18 +117,18 @@ void POCalculation(TriCoords tri,
     matmul(Glob2LocMat, uvw_sg, uvw_sl, 3, 3, 1, 3);
     
     theta_sl = acos(uvw_sl[2]) ;
-    phi_sl   = acos(uvw_sl[0] / sin(theta_sl)) ;
+    phi_sl   = atan2(uvw_sl[1],uvw_sl[0]);
     
     // Calculate X and Y, SINCX and SINCY
     //
-    float X = 0.5 * Beta*(uvw_sl[0]+uvw_il[0])*a ;
-    float Y = 0.5 * Beta*(uvw_sl[1]+uvw_il[1])*b ;
-    float sincX = (X != 0 ? sin(X)/X : 1);
-    float sincY = (Y != 0 ? sin(Y)/Y : 1);
+    double X = 0.5 * Beta*(uvw_sl[0]+uvw_il[0])*a ;
+    double Y = 0.5 * Beta*(uvw_sl[1]+uvw_il[1])*b ;
+    double sincX = (X != 0 ? sin(X)/X : 1);
+    double sincY = (Y != 0 ? sin(Y)/Y : 1);
     
     // Calculate C0
     //
-    float Z0 = 120 * SIPC_pi ; // Impedence of free space
+    double Z0 = 120 * SIPC_pi ; // Impedence of free space
     SPCmplx tmp,tmp1 ;
     SPCmplx j ;
     SPCmplx C0 ;
@@ -147,9 +146,9 @@ void POCalculation(TriCoords tri,
     
     // Now calculate Es
     //
-    float rtmp;
-    float costheta_il = uvw_il[2] ;
-    float costheta_sl = uvw_sl[2] ;
+    double rtmp;
+    double costheta_il = uvw_il[2] ;
+    double costheta_sl = uvw_sl[2] ;
     rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * sin(phi_sl)) + cos(phi_sl)) ;
     CMPLX_SCMULT(rtmp, Ei, tmp);
     CMPLX_MULT(tmp, C0, tmp1);
@@ -159,12 +158,12 @@ void POCalculation(TriCoords tri,
     return ;
 }
 
-void setupTriangle(TriCoords tri, SPVector *normal, float *matrix_gtol, float *matrix_ltog, float *Rs){
+void setupTriangle(TriCoords tri, SPVector *normal, double *matrix_gtol, double *matrix_ltog, double *Rs){
     
     // Calculate triangle Normal
     //
     SPVector l1,l3,Av,triN;
-    float Area;
+    double Area;
     VECT_SUB(tri.B, tri.A, l1) ;
     VECT_SUB(tri.A, tri.Cc, l3) ;
     VECT_CROSS(l3, l1, Av) ;
@@ -174,13 +173,13 @@ void setupTriangle(TriCoords tri, SPVector *normal, float *matrix_gtol, float *m
     
     // Calculate rotation matrices
     //
-    float T_dash[9];
-    float T_dashdash[9];
-    float alpha,beta ;
+    double T_dash[9];
+    double T_dashdash[9];
+    double alpha,beta ;
     SPVector zhat;
     VECT_CREATE(0, 0, 1, zhat);
     
-    alpha = atan2f(triN.y, triN.x);
+    alpha = atan2(triN.y, triN.x);
     beta  = acos(VECT_DOT(zhat, triN));
     
     T_dash[0] = cos(alpha);
@@ -219,15 +218,15 @@ void setupTriangle(TriCoords tri, SPVector *normal, float *matrix_gtol, float *m
 // Note : in order to remove the test for incompatable dimensions (for speed)
 // it is essential that Ax = By
 // Also the output matrix *O must have been allocated to the correct dimensions
-//  float *A - matrix A
-//  float *B - matrix B. By must equal Ax
-//  float *O - output matrix. Dimensions must be Ay x Bx
+//  double *A - matrix A
+//  double *B - matrix B. By must equal Ax
+//  double *O - output matrix. Dimensions must be Ay x Bx
 //  int Ax  - Number of columns in A
 //  int Ay  - Number of rows in A
 //  int Bx  - number of columns in B
 //  int By  - number of rows in B
 //
-void matmul(float *A,float *B, float *O, int Ax, int Ay,int Bx, int By)
+void matmul(double *A,double *B, double *O, int Ax, int Ay,int Bx, int By)
 {
     // Ax must be equal to By !!!
     //
@@ -252,11 +251,11 @@ void matmul(float *A,float *B, float *O, int Ax, int Ay,int Bx, int By)
 // 3x3 matrix inversion taken from
 // http://www.c4learn.com/c-programs/c-program-to-find-inverse-of-3-x-3.html
 // which has a very good graphical description
-// float *A - pointer to an array of 9 floats arranged {{c0r0, c1r0, c2r0},{c0r1,c1r1,c2r1},{c0r2,c1r2,c2r2}} c=column; r=row
-// float *O - pointer to output array of 9 floats arranged {{c0r0, c1r0, c2r0},{c0r1,c1r1,c2r1},{c0r2,c1r2,c2r2}} c=column; r=row
+// double *A - pointer to an array of 9 doubles arranged {{c0r0, c1r0, c2r0},{c0r1,c1r1,c2r1},{c0r2,c1r2,c2r2}} c=column; r=row
+// double *O - pointer to output array of 9 doubles arranged {{c0r0, c1r0, c2r0},{c0r1,c1r1,c2r1},{c0r2,c1r2,c2r2}} c=column; r=row
 //
-void mat3by3inv(float *A, float *O){
-    float a[3][6];
+void mat3by3inv(double *A, double *O){
+    double a[3][6];
     int y,x,i,j;
     for(y=0;y<3;y++){    // Append Unit Matrix
         for(x=0;x<6;x++){
@@ -282,10 +281,10 @@ void mat3by3inv(float *A, float *O){
 }
 
 //                   a         3        i          i
-void reduction(float a[][6],int size,int pivot ,int col)
+void reduction(double a[][6],int size,int pivot ,int col)
 {
     int i,j;
-    float factor;
+    double factor;
     
     factor=a[pivot][col];
     
