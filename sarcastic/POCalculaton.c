@@ -61,6 +61,8 @@ void POCalculation(TriCoords tri,
                    SPVector p,      // Global coordinates of scattered point
                    SPVector RxPnt,  // Observation point
                    SPCmplx Ei,      // incident E field at point P
+                   double a,        // Ray size x-dimension
+                   double b,        // Ray size y-dimension
                    SPCmplx *Es      // Scattered E field
 
 ){
@@ -68,8 +70,6 @@ void POCalculation(TriCoords tri,
     double Beta ;
     double lambda = 0.04 ;
     Beta = 2*SIPC_pi / lambda ;
-    double b = 10 ;
-    double a = 10 ;
     
     // setup triangle associated parameters such as the normal and rotation matrix
     // These can be performed when the triangles are built
@@ -149,9 +149,37 @@ void POCalculation(TriCoords tri,
     double rtmp;
     double costheta_il = uvw_il[2] ;
     double costheta_sl = uvw_sl[2] ;
-    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * sin(phi_sl)) + cos(phi_sl)) ;
+//    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * sin(phi_sl)) + cos(phi_sl)) ;
+//    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * cos(phi_sl-phi_il)) + sin(phi_il-phi_sl)) ;
+    SPCmplx E_theta_theta;
+    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (costheta_sl*cos(phi_sl-phi_sl)) ; // E_theta_theta
+    // Assume Ei is theta polarised (ie in the plane of incidence)
+    //
     CMPLX_SCMULT(rtmp, Ei, tmp);
-    CMPLX_MULT(tmp, C0, tmp1);
+
+    CMPLX_MULT(tmp, C0, E_theta_theta);
+    
+    SPCmplx E_phi_theta;
+    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (sin(phi_il-phi_sl)) ; // E_phi_theta
+    // Assume Ei is theta polarised (ie in the plane of incidence)
+    //
+    CMPLX_SCMULT(rtmp, Ei, tmp);
+    CMPLX_MULT(tmp, C0, E_phi_theta);
+
+    // To find Es we need to find the magnitude of the Es vector
+    // from the parallel E field (E_theta) and the perpendicular E_s
+    // field (E_phi)
+    ///
+    
+//    SPVector V_E_theta_theta_l, V_E_phi_theta_l ;
+//    VECT_CROSS(RscatDir, Z_DIR, V_E_phi_theta_l);
+//    VECT_NORM(V_E_phi_theta_l, V_E_phi_theta_l);
+//    VECT_CROSS(V_E_phi_theta_l, RscatDir, V_E_theta_theta_l);
+//    VECT_NORM(V_E_theta_theta_l, V_E_theta_theta_l);
+    
+    // Now rotate the local vectors to global vectors
+    //
+    
     Es->r = tmp1.r ;
     Es->i = tmp1.i ;
     

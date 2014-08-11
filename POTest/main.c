@@ -21,6 +21,8 @@ void POCalculation(TriCoords tri,
                    SPVector p,      // Global coordinates of scattered point
                    SPVector RxPnt,  // Observation point
                    SPCmplx Ei,      // incident E field at point P
+                   double a,        // Ray size x-dimension
+                   double b,        // Ray size y-dimension
                    SPCmplx *Es      // Scattered E field
 );
 
@@ -47,7 +49,7 @@ int main(int argc, const char * argv[])
     VECT_SUB(hp, r.org, dir);
     r.len = VECT_MAG(dir);
     VECT_NORM(dir, r.dir);
-    r.pow = 1000.0;
+    r.pow = 10000.0;
     
     printf("Transmit location %f,%f,%f\n", r.org.x,r.org.y,r.org.z);
     printf("Hipoint location  %f,%f,%f\n", hp.x,hp.y,hp.z);
@@ -81,7 +83,7 @@ int main(int argc, const char * argv[])
         for(iphi=0; iphi < niphis; iphi++){
             phi_s = iphi * deltaiphi ;
 
-//    phi_s = DEG2RAD(0);
+//    phi_s = DEG2RAD(90);
 //    printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
     
     
@@ -90,13 +92,18 @@ int main(int argc, const char * argv[])
     RxPnt.z = obsDist * cos(theta_s);
     CMPLX_F_MAKE(r.pow, 0.0, Ei);
     
-    POCalculation(triCoords, r, hp, RxPnt, Ei, &Es);
+    POCalculation(triCoords, r, hp, RxPnt, Ei, 1.01, 1.01, &Es);
     
     op.x = CMPLX_MAG(Es) * sin(theta_s) * cos(phi_s) ;
     op.y = CMPLX_MAG(Es) * sin(theta_s) * sin(phi_s) ;
     op.z = CMPLX_MAG(Es) * cos(theta_s) ;
     
-    printf("%f, %f, %f \n",10*log(CMPLX_MAG(Es)),phi_s,theta_s);
+            if(CMPLX_MAG(Es) == 0){
+                printf("%f, %f, %f \n",(CMPLX_MAG(Es)),phi_s,theta_s);
+
+            }else{
+                printf("%f, %f, %f \n",10*log(CMPLX_MAG(Es)),phi_s,theta_s);
+            }
     
         }
     }
