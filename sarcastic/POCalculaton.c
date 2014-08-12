@@ -184,8 +184,10 @@ void POCalculation(TriCoords tri,
     // Now rotate the local vectors to global vectors
     //
     
-    Es->r = E_theta_theta.r ;
-    Es->i = E_theta_theta.i ;
+    Es->r = E_phi_theta.r ;
+    Es->i = E_phi_theta.i ;
+//    Es->r = E_theta_theta.r ;
+//    Es->i = E_theta_theta.i ;
     
     return ;
 }

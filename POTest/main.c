@@ -44,12 +44,12 @@ int main(int argc, const char * argv[])
     //
     Ray r ;
     SPVector hp, dir;
-    VECT_CREATE(0.0, 20.0, 20.0, r.org);
+    VECT_CREATE(20.0, 20.0, 20.0, r.org);
     VECT_CREATE(0.0, 0.0, 0.0, hp);
     VECT_SUB(hp, r.org, dir);
     r.len = VECT_MAG(dir);
     VECT_NORM(dir, r.dir);
-    r.pow = 1000.0;
+    r.pow = 1000000.0;
     
     printf("Transmit location %f,%f,%f\n", r.org.x,r.org.y,r.org.z);
     printf("Hipoint location  %f,%f,%f\n", hp.x,hp.y,hp.z);
@@ -92,7 +92,7 @@ int main(int argc, const char * argv[])
     RxPnt.z = obsDist * cos(theta_s);
     CMPLX_F_MAKE(r.pow, 0.0, Ei);
     
-    POCalculation(triCoords, r, hp, RxPnt, Ei, 0.8, 0.8, &Es);
+    POCalculation(triCoords, r, hp, RxPnt, Ei, 0.1, 0.1, &Es);
     
     op.x = CMPLX_MAG(Es) * sin(theta_s) * cos(phi_s) ;
     op.y = CMPLX_MAG(Es) * sin(theta_s) * sin(phi_s) ;
