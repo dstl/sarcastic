@@ -99,9 +99,9 @@ void POCalculation(TriCoords tri,
     
     // Assuming that the direction of the ray has been normalised
     //
-    uvw_ig[0] = Ri_bar.dir.x;
-    uvw_ig[1] = Ri_bar.dir.y;
-    uvw_ig[2] = Ri_bar.dir.z;
+    uvw_ig[0] = -Ri_bar.dir.x;
+    uvw_ig[1] = -Ri_bar.dir.y;
+    uvw_ig[2] = -Ri_bar.dir.z;
     
     matmul(Glob2LocMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
@@ -152,11 +152,10 @@ void POCalculation(TriCoords tri,
 //    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * sin(phi_sl)) + cos(phi_sl)) ;
 //    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * ((costheta_sl * cos(phi_sl-phi_il)) + sin(phi_il-phi_sl)) ;
     SPCmplx E_theta_theta;
-    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (costheta_sl*cos(phi_sl-phi_sl)) ; // E_theta_theta
+    rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (costheta_sl*cos(phi_sl-phi_il)) ; // E_theta_theta
     // Assume Ei is theta polarised (ie in the plane of incidence)
     //
     CMPLX_SCMULT(rtmp, Ei, tmp);
-
     CMPLX_MULT(tmp, C0, E_theta_theta);
     
     SPCmplx E_phi_theta;
@@ -171,6 +170,11 @@ void POCalculation(TriCoords tri,
     // field (E_phi)
     ///
     
+    SPCmplx Es_bar_phi, Es_bar_theta; // r,phi,theta
+    
+    
+
+    
 //    SPVector V_E_theta_theta_l, V_E_phi_theta_l ;
 //    VECT_CROSS(RscatDir, Z_DIR, V_E_phi_theta_l);
 //    VECT_NORM(V_E_phi_theta_l, V_E_phi_theta_l);
@@ -180,8 +184,8 @@ void POCalculation(TriCoords tri,
     // Now rotate the local vectors to global vectors
     //
     
-    Es->r = tmp1.r ;
-    Es->i = tmp1.i ;
+    Es->r = E_theta_theta.r ;
+    Es->i = E_theta_theta.i ;
     
     return ;
 }
