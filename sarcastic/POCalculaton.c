@@ -135,14 +135,13 @@ void POCalculation(TriCoords tri,
     SPCmplxPol e_jbeta_r;
     SPCmplx e_jBeta_r_cart ;
     
-    CMPLX_F_MAKE(0, -1, j);
+    CMPLX_F_MAKE(0, 1, j);
     e_jbeta_r.pabs = 1.0f;
     e_jbeta_r.parg = -1*Beta*r ;
     CMPLX_POL2CART(e_jbeta_r, e_jBeta_r_cart);
-    
+
     CMPLX_SCMULT((Z0*Beta*a*b*sincX*sincY / (2*SIPC_pi*r)), j, tmp);
-    CMPLX_MULT(tmp, j, tmp1);
-    CMPLX_MULT(tmp1, e_jBeta_r_cart, C0);
+    CMPLX_MULT(tmp, e_jBeta_r_cart, C0);
     
     // Now calculate Es
     //
@@ -155,15 +154,15 @@ void POCalculation(TriCoords tri,
     rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (costheta_sl*cos(phi_sl-phi_il)) ; // E_theta_theta
     // Assume Ei is theta polarised (ie in the plane of incidence)
     //
-    CMPLX_SCMULT(rtmp, Ei, tmp);
-    CMPLX_MULT(tmp, C0, E_theta_theta);
+    CMPLX_SCMULT(rtmp, C0, tmp);
+    CMPLX_MULT(tmp, Ei, E_theta_theta);
     
     SPCmplx E_phi_theta;
     rtmp = (-1 * costheta_il / ((Z0 * costheta_il) + (2*Rs))) * (sin(phi_il-phi_sl)) ; // E_phi_theta
     // Assume Ei is theta polarised (ie in the plane of incidence)
     //
-    CMPLX_SCMULT(rtmp, Ei, tmp);
-    CMPLX_MULT(tmp, C0, E_phi_theta);
+    CMPLX_SCMULT(rtmp, C0, tmp);
+    CMPLX_MULT(tmp, Ei, E_phi_theta);
 
     // To find Es we need to find the magnitude of the Es vector
     // from the parallel E field (E_theta) and the perpendicular E_s
@@ -171,9 +170,6 @@ void POCalculation(TriCoords tri,
     ///
     
     SPCmplx Es_bar_phi, Es_bar_theta; // r,phi,theta
-    
-    
-
     
 //    SPVector V_E_theta_theta_l, V_E_phi_theta_l ;
 //    VECT_CROSS(RscatDir, Z_DIR, V_E_phi_theta_l);
@@ -184,10 +180,10 @@ void POCalculation(TriCoords tri,
     // Now rotate the local vectors to global vectors
     //
     
-    Es->r = E_phi_theta.r ;
-    Es->i = E_phi_theta.i ;
-//    Es->r = E_theta_theta.r ;
-//    Es->i = E_theta_theta.i ;
+//    Es->r = E_phi_theta.r ;
+//    Es->i = E_phi_theta.i ;
+    Es->r = E_theta_theta.r ;
+    Es->i = E_theta_theta.i ;
     
     return ;
 }

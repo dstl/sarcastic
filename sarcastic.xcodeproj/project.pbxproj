@@ -37,6 +37,8 @@
 		95D8333D199113620026D4C3 /* POCalculaton.c in Sources */ = {isa = PBXBuildFile; fileRef = 95EA69EA198E0FD80013A07D /* POCalculaton.c */; };
 		95D8333F199113820026D4C3 /* libSIlib-0.5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95D8333E199113820026D4C3 /* libSIlib-0.5.3.a */; };
 		95EA69EB198E0FD80013A07D /* POCalculaton.c in Sources */ = {isa = PBXBuildFile; fileRef = 95EA69EA198E0FD80013A07D /* POCalculaton.c */; };
+		95F8854919AA400A0079805B /* POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F8854819AA400A0079805B /* POTriangle.c */; };
+		95F8854A19AA400A0079805B /* POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F8854819AA400A0079805B /* POTriangle.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -113,6 +115,7 @@
 		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
 		95D8333E199113820026D4C3 /* libSIlib-0.5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.3.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.3.a"; sourceTree = "<group>"; };
 		95EA69EA198E0FD80013A07D /* POCalculaton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POCalculaton.c; sourceTree = "<group>"; };
+		95F8854819AA400A0079805B /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +204,7 @@
 				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */,
 				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
+				95F8854819AA400A0079805B /* POTriangle.c */,
 			);
 			path = sarcastic;
 			sourceTree = "<group>";
@@ -335,6 +339,7 @@
 				953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */,
 				953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */,
 				953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */,
+				95F8854919AA400A0079805B /* POTriangle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +347,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F8854A19AA400A0079805B /* POTriangle.c in Sources */,
 				95D8333D199113620026D4C3 /* POCalculaton.c in Sources */,
 				95D5E16B192CA57E001ABC11 /* main.c in Sources */,
 			);
