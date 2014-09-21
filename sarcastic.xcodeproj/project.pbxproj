@@ -168,8 +168,8 @@
 		953FA1BE18F4289400EAD4F3 /* sarcastic */ = {
 			isa = PBXGroup;
 			children = (
-				955F772B19CF0FA500BF3039 /* Utils */,
-				953FA1CB18F4289400EAD4F3 /* kernels */,
+				953FA1DF18F4289400EAD4F3 /* sarcastic.c */,
+				953FA1E018F4289400EAD4F3 /* sarcastic.h */,
 				953FA1BF18F4289400EAD4F3 /* banner.c */,
 				953FA1C018F4289400EAD4F3 /* buildKernel.c */,
 				953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */,
@@ -191,12 +191,12 @@
 				953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */,
 				953FA1DD18F4289400EAD4F3 /* readKdTree.c */,
 				953FA1DE18F4289400EAD4F3 /* readKdTree.h */,
-				953FA1DF18F4289400EAD4F3 /* sarcastic.c */,
-				953FA1E018F4289400EAD4F3 /* sarcastic.h */,
 				953FA1E118F4289400EAD4F3 /* threadBeamForm.c */,
 				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */,
 				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
+				955F772B19CF0FA500BF3039 /* Utils */,
+				953FA1CB18F4289400EAD4F3 /* kernels */,
 			);
 			path = sarcastic;
 			sourceTree = "<group>";
