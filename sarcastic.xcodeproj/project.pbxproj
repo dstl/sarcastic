@@ -24,10 +24,11 @@
 		953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E118F4289400EAD4F3 /* threadBeamForm.c */; };
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
+		955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
+		955F773019CF0FDE00BF3039 /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
-		95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */; };
 		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
@@ -97,10 +98,12 @@
 		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
+		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
+		955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-0.5.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-0.5.1.a"; sourceTree = "<group>"; };
 		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
@@ -115,11 +118,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				955F773019CF0FDE00BF3039 /* libSIlib-1.1.a in Frameworks */,
 				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
 				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
 				95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */,
 				95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */,
-				95C1708A18C9CBBF00651D97 /* libSIlib-0.5.1.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
@@ -139,15 +142,15 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
-				953FA1BE18F4289400EAD4F3 /* sarcastic */,
+				957B840917AD25DA00B963DE /* OpenCL.framework */,
+				955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */,
 				95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */,
 				95C1708F18C9CCC000651D97 /* libfftw3f.a */,
 				95C1708B18C9CC9800651D97 /* libfftw3_threads.a */,
 				95C1708C18C9CC9800651D97 /* libfftw3.a */,
-				95C1708918C9CBBF00651D97 /* libSIlib-0.5.1.a */,
-				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
+				953FA1BE18F4289400EAD4F3 /* sarcastic */,
 				95D5E169192CA57E001ABC11 /* POTest */,
 				9504211417A24F9400A076FC /* Products */,
 			);
@@ -165,6 +168,7 @@
 		953FA1BE18F4289400EAD4F3 /* sarcastic */ = {
 			isa = PBXGroup;
 			children = (
+				955F772B19CF0FA500BF3039 /* Utils */,
 				953FA1CB18F4289400EAD4F3 /* kernels */,
 				953FA1BF18F4289400EAD4F3 /* banner.c */,
 				953FA1C018F4289400EAD4F3 /* buildKernel.c */,
@@ -212,6 +216,15 @@
 				953FA1D518F4289400EAD4F3 /* structures.cl */,
 			);
 			path = kernels;
+			sourceTree = "<group>";
+		};
+		955F772B19CF0FA500BF3039 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */,
+				955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 		95D5E169192CA57E001ABC11 /* POTest */ = {
@@ -313,6 +326,7 @@
 				953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */,
 				953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */,
 				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
+				955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */,
 				953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */,
 				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
 				953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */,
@@ -500,6 +514,7 @@
 				95D5E16F192CA57E001ABC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
