@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
+		953C58F519D33056006D5866 /* libSIlib-1.1-2-5e675ac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */; };
+		953C58F619D3305E006D5866 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		953C58F719D3C944006D5866 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
 		953FA1E618F4289400EAD4F3 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1BF18F4289400EAD4F3 /* banner.c */; };
 		953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 		953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
@@ -26,6 +30,14 @@
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
 		955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
 		955F773019CF0FDE00BF3039 /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */; };
+		955F773819CF1D4700BF3039 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
+		955F773B19CF1D4700BF3039 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F773A19CF1D4700BF3039 /* main.m */; };
+		955F773F19CF1D4700BF3039 /* colladaToTriFile.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */; };
+		955F774319CF408D00BF3039 /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */; };
+		955F774419CF40A300BF3039 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		955F774719CF40E000BF3039 /* COLScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774619CF40E000BF3039 /* COLScene.m */; };
+		955F774A19CF410100BF3039 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774919CF410100BF3039 /* radarMaterial.m */; };
+		955F775019CF417800BF3039 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
@@ -47,6 +59,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		953C58DA19D32D1D006D5866 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		955F773319CF1D4700BF3039 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				955F773F19CF1D4700BF3039 /* colladaToTriFile.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		95D5E166192CA57E001ABC11 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -61,6 +92,10 @@
 
 /* Begin PBXFileReference section */
 		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		953C58D519D316CF006D5866 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
+		953C58D619D316CF006D5866 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Triangle.m; sourceTree = "<group>"; };
+		953C58DC19D32D1D006D5866 /* testImport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testImport; sourceTree = BUILT_PRODUCTS_DIR; };
+		953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-2-5e675ac.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-2-5e675ac.a"; sourceTree = "<group>"; };
 		953FA1BF18F4289400EAD4F3 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = banner.c; sourceTree = "<group>"; };
 		953FA1C018F4289400EAD4F3 /* buildKernel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buildKernel.c; sourceTree = "<group>"; };
 		953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BuildRopesAndBoxes.c; sourceTree = "<group>"; };
@@ -101,6 +136,17 @@
 		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
 		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
 		955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
+		955F773519CF1D4700BF3039 /* colladaToTriFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToTriFile; sourceTree = BUILT_PRODUCTS_DIR; };
+		955F773719CF1D4700BF3039 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		955F773A19CF1D4700BF3039 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		955F773D19CF1D4700BF3039 /* colladaToTriFile-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "colladaToTriFile-Prefix.pch"; sourceTree = "<group>"; };
+		955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = colladaToTriFile.1; sourceTree = "<group>"; };
+		955F774519CF40E000BF3039 /* COLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COLScene.h; sourceTree = "<group>"; };
+		955F774619CF40E000BF3039 /* COLScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COLScene.m; sourceTree = "<group>"; };
+		955F774819CF410100BF3039 /* radarMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = radarMaterial.h; sourceTree = "<group>"; };
+		955F774919CF410100BF3039 /* radarMaterial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = radarMaterial.m; sourceTree = "<group>"; };
+		955F774E19CF417800BF3039 /* MVectorObjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVectorObjc.h; sourceTree = "<group>"; };
+		955F774F19CF417800BF3039 /* MVectorObjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVectorObjc.m; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -129,6 +175,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		953C58D919D32D1D006D5866 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953C58F619D3305E006D5866 /* libreadline.dylib in Frameworks */,
+				953C58F519D33056006D5866 /* libSIlib-1.1-2-5e675ac.a in Frameworks */,
+				953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		955F773219CF1D4700BF3039 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				955F774419CF40A300BF3039 /* libreadline.dylib in Frameworks */,
+				955F774319CF408D00BF3039 /* libSIlib-1.1.a in Frameworks */,
+				955F773819CF1D4700BF3039 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		95D5E165192CA57E001ABC11 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,6 +218,8 @@
 				957B840517AD255E00B963DE /* libexpat.dylib */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
 				95D5E169192CA57E001ABC11 /* POTest */,
+				955F773919CF1D4700BF3039 /* colladaToTriFile */,
+				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -161,6 +229,8 @@
 			children = (
 				9504211317A24F9400A076FC /* sarcastic */,
 				95D5E168192CA57E001ABC11 /* POTest */,
+				955F773519CF1D4700BF3039 /* colladaToTriFile */,
+				953C58DC19D32D1D006D5866 /* testImport */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -227,6 +297,41 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		955F773619CF1D4700BF3039 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */,
+				955F773719CF1D4700BF3039 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		955F773919CF1D4700BF3039 /* colladaToTriFile */ = {
+			isa = PBXGroup;
+			children = (
+				955F773A19CF1D4700BF3039 /* main.m */,
+				953C58D519D316CF006D5866 /* Triangle.h */,
+				953C58D619D316CF006D5866 /* Triangle.m */,
+				955F774519CF40E000BF3039 /* COLScene.h */,
+				955F774619CF40E000BF3039 /* COLScene.m */,
+				955F774819CF410100BF3039 /* radarMaterial.h */,
+				955F774919CF410100BF3039 /* radarMaterial.m */,
+				955F774E19CF417800BF3039 /* MVectorObjc.h */,
+				955F774F19CF417800BF3039 /* MVectorObjc.m */,
+				955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */,
+				955F773C19CF1D4700BF3039 /* Supporting Files */,
+			);
+			path = colladaToTriFile;
+			sourceTree = "<group>";
+		};
+		955F773C19CF1D4700BF3039 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				955F773D19CF1D4700BF3039 /* colladaToTriFile-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		95D5E169192CA57E001ABC11 /* POTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -255,6 +360,40 @@
 			name = sarcastic;
 			productName = GOSS;
 			productReference = 9504211317A24F9400A076FC /* sarcastic */;
+			productType = "com.apple.product-type.tool";
+		};
+		953C58DB19D32D1D006D5866 /* testImport */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 953C58E519D32D1D006D5866 /* Build configuration list for PBXNativeTarget "testImport" */;
+			buildPhases = (
+				953C58D819D32D1D006D5866 /* Sources */,
+				953C58D919D32D1D006D5866 /* Frameworks */,
+				953C58DA19D32D1D006D5866 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = testImport;
+			productName = testImport;
+			productReference = 953C58DC19D32D1D006D5866 /* testImport */;
+			productType = "com.apple.product-type.tool";
+		};
+		955F773419CF1D4700BF3039 /* colladaToTriFile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 955F774019CF1D4700BF3039 /* Build configuration list for PBXNativeTarget "colladaToTriFile" */;
+			buildPhases = (
+				955F773119CF1D4700BF3039 /* Sources */,
+				955F773219CF1D4700BF3039 /* Frameworks */,
+				955F773319CF1D4700BF3039 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = colladaToTriFile;
+			productName = colladaToTriFile;
+			productReference = 955F773519CF1D4700BF3039 /* colladaToTriFile */;
 			productType = "com.apple.product-type.tool";
 		};
 		95D5E167192CA57E001ABC11 /* POTest */ = {
@@ -297,6 +436,8 @@
 			targets = (
 				9504211217A24F9400A076FC /* sarcastic */,
 				95D5E167192CA57E001ABC11 /* POTest */,
+				955F773419CF1D4700BF3039 /* colladaToTriFile */,
+				953C58DB19D32D1D006D5866 /* testImport */,
 			);
 		};
 /* End PBXProject section */
@@ -340,6 +481,25 @@
 				953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */,
 				953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */,
 				953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		953C58D819D32D1D006D5866 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		955F773119CF1D4700BF3039 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953C58F719D3C944006D5866 /* Triangle.m in Sources */,
+				955F774A19CF410100BF3039 /* radarMaterial.m in Sources */,
+				955F775019CF417800BF3039 /* MVectorObjc.m in Sources */,
+				955F774719CF40E000BF3039 /* COLScene.m in Sources */,
+				955F773B19CF1D4700BF3039 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +601,120 @@
 			};
 			name = Release;
 		};
+		953C58E619D32D1D006D5866 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testImport/testImport-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		953C58E719D32D1D006D5866 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testImport/testImport-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		955F774119CF1D4700BF3039 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "colladaToTriFile/colladaToTriFile-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		955F774219CF1D4700BF3039 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "colladaToTriFile/colladaToTriFile-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		95D5E16E192CA57E001ABC11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -503,6 +777,23 @@
 			buildConfigurations = (
 				9504211E17A24F9400A076FC /* Debug */,
 				9504211F17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		953C58E519D32D1D006D5866 /* Build configuration list for PBXNativeTarget "testImport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				953C58E619D32D1D006D5866 /* Debug */,
+				953C58E719D32D1D006D5866 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		955F774019CF1D4700BF3039 /* Build configuration list for PBXNativeTarget "colladaToTriFile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				955F774119CF1D4700BF3039 /* Debug */,
+				955F774219CF1D4700BF3039 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
