@@ -21,6 +21,15 @@
                    Explanation of this triangulation function
       ---------------------------------------------------------------------
 
+I, Darren Muff, took this code pretty much as is from Eric Hufshmid. You will see
+Eric's notes below and I have tried to maintain his orignal implementation (as he
+did an excellent job). Eric was mainly aiming to use this code on a microsoft platform
+and had to wrestle with various MS wierdness. I have therefore modified this to work
+with gcc (actually clang) in order to make it more generic. As you see from Eric's notes
+the logic comes from Ken Clarkson.
+I will had a further note though. This algorithm does not for points (2D or 3D) that are
+not distributed in a single plane and fails with a segmentation fault
+ 
 I, Eric Hufschmid, extracted the triangulation function from the standalone program
 that Ken Clarkson created. The result is this triangulation routine. The logic comes
 from Ken Clarkson. All I did is extract it from his convex hull program.  Clarkson's
@@ -131,6 +140,15 @@ static void triangleList_out (int v0, int v1, int v2, int v3);
 
 static point site_blocks[MAXBLOCKS];
 static int   num_blocks;
+
+// Forward decalarion of Functions
+// I put these here from the header file so that the header can be included
+// directly within your code without warnings about unused functions
+//
+static int sees(site, simplex *);
+static void buildhull(simplex *);
+static simplex *facets_print(simplex *s, void *p);
+static simplex *visit_triang_gen(simplex *s, visit_func *visit, test_func *test);
 
 // The next block of variables were static variables within functions that I moved
 // outside of the function.  I prepended each of the variables with the name of the function.
@@ -729,7 +747,7 @@ static simplex *visit_triang_gen(simplex *s, visit_func *visit, test_func *test)
       popv(t);
       if (!t || t->visit == visit_triang_gen_vnum) continue;
       t->visit = visit_triang_gen_vnum;
-      if (v=(*visit)(t,0)) {return (simplex*)v;}
+      if ((v=(*visit)(t,0))) {return (simplex*)v;}
       for (i=-1,sn = t->neigh-1;i<cdim;i++,sn++)
          if ((sn->simp->visit != visit_triang_gen_vnum) && sn->simp && test(t,i,0))
             pushv(sn->simp);
@@ -1027,7 +1045,7 @@ static void buildhull (simplex *root) {
       else
          connect(make_facets(search(root)));
    }
-   while (p = get_another_site())
+   while ((p = get_another_site()))
       connect(make_facets(search(root)));
 }
 
@@ -1039,8 +1057,8 @@ static simplex *facets_print(simplex *s, void *p) {
 
 for (j=0;j<cdim;j++) v[j] = s->neigh[j].vert;
 
-triangleList_out ( site_numm(v[0]), site_numm(v[1]), site_numm(v[2]),
-                   (pdim == 3) ? site_numm(v[3]) : 0 );
+triangleList_out ( (int)site_numm(v[0]), (int)site_numm(v[1]), (int)site_numm(v[2]),
+                   (pdim == 3) ? (int)site_numm(v[3]) : 0 );
 return NULL;
 }
 
@@ -1067,8 +1085,12 @@ static void triangleList_out (int v0, int v1, int v2, int v3) {
    // but what is what is the v3 value used for, aside from becoming -1 once in
    // a while to identify points on the convex hull?
 
-//    if (v0 >= 0 && v1 >= 0 && v2 >= 0 && v3 >= 0)  {
-    if (v0 >= 0 && v1 >= 0 && v2 >= 0 )  {
+   // DGM - I  Therefore removed in order to make 3D points work. The original line
+   // was :
+   //     if (v0 >= 0 && v1 >= 0 && v2 >= 0 && v3 >= 0)  {
+   //
+
+    if (v0 >= 0 && v1 >= 0 && v2 >= 0)  {
       // set the direction of the triangles to clockwise
       // v0, v1, v2 are indexes to triangle vertexes, an x and y, in listOfIntsToIndex, so,
       // v0 is index to the first vertex: ie, listOfIntsToIndex[v0*2], listOfIntsToIndex[v0*2+1]

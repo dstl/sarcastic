@@ -50,7 +50,7 @@
 #include "Clarkson-Delaunay.h"
 #define ROOTPATH "/Users/Darren/Development"
 #define MATBYTES 128
-#define DUMP 1
+#define SHOWOUTPUT 0
 
 typedef struct triangle{
     int        id ;
@@ -76,7 +76,7 @@ scatProps materialProperties[NMATERIALS] = {
 //   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
     {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },
     {"BRICK",       0.1,        0.001,      1.0e18,     0.7,        0.3,        20.0        },
-    {"CONCRETE",    0.3,        0.01,       120.0,      0.3,        0.7,        10.0        },
+    {"CONCRETE",    0.2,        0.01,       120.0,      0.3,        0.7,        10.0        },
     {"METAL",       100.0,      0.0,        1.0e-8,     1.0,        0.0,        50.0        },
     {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
     {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
@@ -85,28 +85,10 @@ scatProps materialProperties[NMATERIALS] = {
     {"WOOD",        0.1,        0.001,      1.0e14,     0.6,        0.4,        10.0        }
 } ;
 
-/*
- Triangle File Structure
- int number_of_triangles
- int sizeof_vertex_information
- int length_of_material_names
- foreach triangle{
- int triangle_number
- <sizeof_vertex_information> vertexA.x
- <sizeof_vertex_information> vertexA.y
- <sizeof_vertex_information> vertexA.z
- <sizeof_vertex_information> vertexB.x
- <sizeof_vertex_information> vertexB.y
- <sizeof_vertex_information> vertexB.z
- <sizeof_vertex_information> vertexC.x
- <sizeof_vertex_information> vertexC.y
- <sizeof_vertex_information> vertexC.z
- <sizeof_vertex_information> normal.x
- <sizeof_vertex_information> normal.y
- <sizeof_vertex_information> normal.z
- char[<length_of_material_names>] Material_name
- }
- */
+struct triListNode{
+    triangle tri   ;
+    struct triListNode *next ;
+};
 
 int main(int argc, const char * argv[])
 {
@@ -114,15 +96,31 @@ int main(int argc, const char * argv[])
     im_init_status(status, 0);
     im_init_lib(&status, "triDecomp", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status) ;
-
-    char *str = input_string((char *)"triangle filename", (char *)"filename",
+    struct triListNode * triList ;
+    struct triListNode * triAccessor ;
+    triList       = sp_malloc(sizeof(struct triListNode)) ;
+    triList->next = NULL ;
+    triAccessor   = triList ;
+    
+    char *instr = input_string((char *)"Input triangle filename", (char *)"infilename",
                        (char *)"The name of a triangle file created with 'colladaToTriFile'",
                        (char *) ROOTPATH"/DATA/triangles.tri");
     
     FILE *fpin ;
-    fpin = fopen(str, "r");
+    fpin = fopen(instr, "r");
     if (fpin == NULL) {
-        printf("Error : failed to open input triangle file %s\n",str);
+        printf("Error : failed to open input triangle file %s\n",instr);
+        exit(1);
+    }
+    
+    char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
+                             (char *)"The name of the triangle file to be created",
+                             (char *) ROOTPATH"/DATA/triangles_Delauney.tri");
+    
+    FILE *fpout ;
+    fpout = fopen(oustr, "w");
+    if (fpout == NULL) {
+        printf("Error : failed to open input triangle file %s\n",oustr);
         exit(1);
     }
     
@@ -161,7 +159,7 @@ int main(int argc, const char * argv[])
         fread(&(triArray[itri].mat) , sizeof(char), materialBytes, fpin) ;
     }
     
-    if (DUMP) {
+    if (SHOWOUTPUT) {
         for (int itri=0; itri < ntri; itri++ ) {
             printf("Triangle %d\n", triArray[itri].id);
             printf("  AA       : %3.6f,%3.6f,%3.6f\n", triArray[itri].AA.x,triArray[itri].AA.y,triArray[itri].AA.z);
@@ -173,9 +171,14 @@ int main(int argc, const char * argv[])
     }
     
     fclose(fpin);
+    srand((unsigned int)time(NULL));
     
+    int triDone ;
+    int newTriCnt = 0;
+
     for (int itri=0; itri < ntri; itri++ ) {
         triangle tri = triArray[itri] ;
+        triDone = 0;
         char *mat = tri.mat ;
         int n=0;
         while (mat[n]) {
@@ -184,9 +187,8 @@ int main(int argc, const char * argv[])
         }
         
         for(int i=0; i<NMATERIALS; i++){
-            if( strstr(mat, materialProperties[i].matname)!=NULL){
-                printf(" Triangle %d (%s) is of type %s\n", itri, mat, materialProperties[i].matname);
-                
+            if( strstr(mat, materialProperties[i].matname)!=NULL && materialProperties[i].diffuse != 0.0){
+                triDone = 1 ;
                 // workout number of additional points
                 //
                 double corrPatch = SIPC_pi * materialProperties[i].corlen * materialProperties[i].corlen ;
@@ -204,8 +206,9 @@ int main(int argc, const char * argv[])
                 // which provides:
                 //          P = (1 - sqrt(r1)) * A + (sqrt(r1) * (1 - r2)) * B + (sqrt(r1) * r2) * C
                 //
-                printf("%d Random points:\n",np);
-                srand((unsigned int)time(NULL));
+                if(SHOWOUTPUT){
+                    printf("Triangle %d requires %d internal random points\n",itri,np);
+                }
                 float *pointList ;
                 pointList = (float *)sp_malloc(sizeof(float) * (np+3) * 3);
                 
@@ -213,22 +216,23 @@ int main(int argc, const char * argv[])
                     double r1 =  ((double)(rand() % 65536)) / 65536.0 ;
                     double r2 =  ((double)(rand() % 65536)) / 65536.0 ;
                     SPVector V1,V2,V3,V ;
-                    VECT_SCMULT(tri.AA, (1 - sqrt(r1)), V1);
+                    VECT_SCMULT(tri.AA, (1.0 - sqrt(r1)), V1);
                     VECT_SCMULT(tri.BB, (sqrt(r1) * (1-r2)), V2);
                     VECT_SCMULT(tri.CC, (sqrt(r1) * r2), V3);
                     VECT_ADD(V1, V2, V) ;
                     VECT_ADD(V, V3, V) ;
                     
-                    printf("  %f,%f,%f\n",V.x,V.y,V.z);
+//                    if (SHOWOUTPUT) {
+//                        printf("  %f,%f,%f\n",V.x,V.y,V.z);
+//                    }
                     
                     for(int p=0; p<3; p++){
                         pointList[n*3+p] = V.cell[p] ;
                     }
                 }
                 
-                // Delauney triangulation of points
+                // Add original triangle points to end of array
                 //
-                int nTriVerts ;
                 pointList[np*3+0] = tri.AA.x ;
                 pointList[np*3+1] = tri.AA.y ;
                 pointList[np*3+2] = tri.AA.z ;
@@ -238,15 +242,27 @@ int main(int argc, const char * argv[])
                 pointList[np*3+6] = tri.CC.x ;
                 pointList[np*3+7] = tri.CC.y ;
                 pointList[np*3+8] = tri.CC.z ;
-                
-                for(int p=0; p<(np+3)*3; p++){
-                    printf("Pointlist[%d] = %f\n",p,pointList[p]);
-                }
 
+                // Delauney triangulation of points
+                //
                 WORD * triangleIndexList ;
-                
+                int nTriVerts ;
                 triangleIndexList = BuildTriangleIndexList((void *)pointList, 10000.0f, np+3, 3, 0, &nTriVerts) ;
                 
+                // Adjust interior points by roughness
+                // Only do interior points
+                //
+                for (int n = 0; n<np; n++) {
+                    SPVector N = tri.NN ;
+                    SPVector V ;
+                    double r3 =  (((double)(rand() % 65536)) / 65536.0) - 0.5 ; // Random number between -0.5 & 0.5
+                    float dist = materialProperties[i].roughness * r3 ;
+                    VECT_SCMULT(N, dist, V);
+                    pointList[n*3]   = pointList[n*3]   + V.x ;
+                    pointList[n*3+1] = pointList[n*3+1] + V.y ;
+                    pointList[n*3+2] = pointList[n*3+2] + V.z ;
+                }
+
                 int newNtri = nTriVerts / 3 ;
                 triangle * newTriArray = (triangle *)sp_malloc(sizeof(triangle) * newNtri);
                 for (int v=0; v<newNtri; v++) {
@@ -273,35 +289,133 @@ int main(int argc, const char * argv[])
                     newTriArray[v].CC = vecC ;
                 }
                 free(triangleIndexList);
-                
-                for (int v=0; v<newNtri; v++) {
-//                    printf(" Delauney Triangle %d\n",v);
-                    printf(" %f,%f,%f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
-                    printf(" %f,%f,%f\n",newTriArray[v].BB.x,newTriArray[v].BB.y,newTriArray[v].BB.z);
-                    printf(" %f,%f,%f\n",newTriArray[v].CC.x,newTriArray[v].CC.y,newTriArray[v].CC.z);
-                    printf(" %f,%f,%f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
+                free(pointList);
 
+                if (SHOWOUTPUT) {
+                    printf("Delauney Triangles for tringle %d are :\n",itri);
+                    for (int v=0; v<newNtri; v++) {
+                        printf("    %8.5f,%10.5f,%10.5f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
+                        printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].BB.x,newTriArray[v].BB.y,newTriArray[v].BB.z);
+                        printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].CC.x,newTriArray[v].CC.y,newTriArray[v].CC.z);
+                        printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
+                    }
                 }
                 
-                // Adjust interior points by roughness
                 
                 // Calculate new triangle normals
+                //
+                for (int v=0; v<newNtri; v++) {
+                    SPVector AB,AC, triCross;
+                    VECT_SUB(newTriArray[v].BB, newTriArray[v].AA, AB);
+                    VECT_SUB(newTriArray[v].CC, newTriArray[v].AA, AC);
+                    VECT_CROSS(AB, AC, triCross);
+                    VECT_NORM(triCross, newTriArray[v].NN);
+                    if(VECT_DOT(tri.NN, newTriArray[v].NN) < 0 ){
+                        VECT_SCMULT(newTriArray[v].NN, -1.0, newTriArray[v].NN);
+                    }
+                    strcpy(newTriArray[v].mat, materialProperties[i].matname) ;
+                }
                 
-                // Add each triangle to linked list of triangles
+                // Write out triangles
+                //
+                for (int v=0; v<newNtri; v++) {
+                    if ( triAccessor != NULL ){
+                        while (triAccessor->next != NULL) {
+                            triAccessor = triAccessor->next ;
+                        }
+                    }
+                    triAccessor->next = sp_malloc(sizeof(struct triListNode));
+                    triAccessor = triAccessor->next ;
+                    if( triAccessor == NULL){
+                        printf("Error out of memory for linked list\n");
+                        exit(1);
+                    }
+                    triAccessor->next = NULL ;
+                    triAccessor->tri  = newTriArray[v] ;
+                    newTriCnt++;
+                }
                 
-                // increase triangle count
-                
-            } else {
-                // Add triangle to linked list of triangles
-                
-                // increase triangle count
+                // As we have found a material dont search through the material list for
+                // any more
+                //
+                i = NMATERIALS-1;
             }
+        }
+        
+        if (!triDone) {
+            if ( triAccessor != NULL ){
+                while (triAccessor->next != NULL) {
+                    triAccessor = triAccessor->next ;
+                }
+            }
+            triAccessor->next = sp_malloc(sizeof(struct triListNode));
+            triAccessor = triAccessor->next ;
+            if( triAccessor == NULL){
+                printf("Error out of memory for linked list\n");
+                exit(1);
+            }
+            triAccessor->next = NULL ;
+            triAccessor->tri  = tri ;
+            newTriCnt++;
         }
     }
     
-    // Write out triangles to file
+    /*
+     Triangle File Structure
+     int number_of_triangles
+     int sizeof_vertex_information
+     int length_of_material_names
+     foreach triangle{
+     int triangle_number
+     <sizeof_vertex_information> vertexA.x
+     <sizeof_vertex_information> vertexA.y
+     <sizeof_vertex_information> vertexA.z
+     <sizeof_vertex_information> vertexB.x
+     <sizeof_vertex_information> vertexB.y
+     <sizeof_vertex_information> vertexB.z
+     <sizeof_vertex_information> vertexC.x
+     <sizeof_vertex_information> vertexC.y
+     <sizeof_vertex_information> vertexC.z
+     <sizeof_vertex_information> normal.x
+     <sizeof_vertex_information> normal.y
+     <sizeof_vertex_information> normal.z
+     char[<length_of_material_names>] Material_name
+     }
+     */
+
+    fwrite(&newTriCnt, sizeof(int),     1, fpout);
+    fwrite(&vertexBytes,sizeof(int),    1, fpout);
+    fwrite(&materialBytes, sizeof(int), 1, fpout);
+    triAccessor = triList ;
+
+    int itri = 0;
+    triangle tri;
+    while (triAccessor->next != NULL) {
+        triAccessor = triAccessor->next ;
+        tri = triAccessor->tri ;
+        fwrite(&(itri), sizeof(int), 1, fpout) ;
+        fwrite(&(tri.AA.x), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.AA.y), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.AA.z), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.BB.x), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.BB.y), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.BB.z), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.CC.x), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.CC.y), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.CC.z), sizeof(double), 1, fpout) ;
+        fwrite(tri.mat, sizeof(char), materialBytes, fpout);
+        itri++;
+    }
+    printf("Written %d triangles\n",itri);
     
-    // close files
+    triAccessor = triList ;
+    while( triAccessor->next != NULL ) {
+        struct triListNode *node ;
+        node = triAccessor ;
+        triAccessor = triAccessor->next;
+        free(node);
+    }
+    fclose(fpout);
     
     return 0;
 }
