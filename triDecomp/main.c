@@ -42,15 +42,16 @@
  * IRELAND.
  ***************************************************************************/
 
-
 #include <stdio.h>
 #include <SIlib.h>
 #include <ctype.h>
 #include <math.h>
 #include "Clarkson-Delaunay.h"
+#include "ranf.h"
+#include "boxMullerRandom.h"
+#include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
-#define MATBYTES 128
-#define SHOWOUTPUT 0
+#define SHOWOUTPUT 1
 
 typedef struct triangle{
     int        id ;
@@ -60,30 +61,6 @@ typedef struct triangle{
     SPVector   NN ;
     char mat[MATBYTES] ;
 } triangle;
-
-typedef struct scatProps {
-    char   matname[MATBYTES] ;
-    float  corlen      ;
-    float  roughness   ;
-    float  resistivity ;
-    float  specular    ;
-    float  diffuse     ;
-    float  shinyness   ;
-} scatProps ;
-
-#define NMATERIALS 9
-scatProps materialProperties[NMATERIALS] = {
-//   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
-    {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },
-    {"BRICK",       0.1,        0.001,      1.0e18,     0.7,        0.3,        20.0        },
-    {"CONCRETE",    0.2,        0.01,       120.0,      0.3,        0.7,        10.0        },
-    {"METAL",       100.0,      0.0,        1.0e-8,     1.0,        0.0,        50.0        },
-    {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
-    {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
-    {"VEGETATION",  0.01,       0.1,        2000.0,     0.2,        0.8,        5.0         },
-    {"WATER",       0.01,       0.1,        2.0e1,      1.0,        0.0,        50.0        },
-    {"WOOD",        0.1,        0.001,      1.0e14,     0.6,        0.4,        10.0        }
-} ;
 
 struct triListNode{
     triangle tri   ;
@@ -213,8 +190,10 @@ int main(int argc, const char * argv[])
                 pointList = (float *)sp_malloc(sizeof(float) * (np+3) * 3);
                 
                 for (int n = 0; n<np; n++) {
-                    double r1 =  ((double)(rand() % 65536)) / 65536.0 ;
-                    double r2 =  ((double)(rand() % 65536)) / 65536.0 ;
+//                    double r1 =  ((double)(rand() % 65536)) / 65536.0 ;
+//                    double r2 =  ((double)(rand() % 65536)) / 65536.0 ;
+                    double r1 = Ranf() ;
+                    double r2 = Ranf() ;
                     SPVector V1,V2,V3,V ;
                     VECT_SCMULT(tri.AA, (1.0 - sqrt(r1)), V1);
                     VECT_SCMULT(tri.BB, (sqrt(r1) * (1-r2)), V2);
@@ -222,9 +201,9 @@ int main(int argc, const char * argv[])
                     VECT_ADD(V1, V2, V) ;
                     VECT_ADD(V, V3, V) ;
                     
-//                    if (SHOWOUTPUT) {
-//                        printf("  %f,%f,%f\n",V.x,V.y,V.z);
-//                    }
+                    if (SHOWOUTPUT) {
+                        printf("  %f,%f,%f\n",V.x,V.y,V.z);
+                    }
                     
                     for(int p=0; p<3; p++){
                         pointList[n*3+p] = V.cell[p] ;
@@ -255,8 +234,10 @@ int main(int argc, const char * argv[])
                 for (int n = 0; n<np; n++) {
                     SPVector N = tri.NN ;
                     SPVector V ;
-                    double r3 =  (((double)(rand() % 65536)) / 65536.0) - 0.5 ; // Random number between -0.5 & 0.5
-                    float dist = materialProperties[i].roughness * r3 ;
+//                    double r3 =  (((double)(rand() % 65536)) / 65536.0) - 0.5 ; // Random number between -0.5 & 0.5
+                    float dist = box_muller(0.0, materialProperties[i].roughness) ;
+                    
+//                    float dist = materialProperties[i].roughness * r3 ;
                     VECT_SCMULT(N, dist, V);
                     pointList[n*3]   = pointList[n*3]   + V.x ;
                     pointList[n*3+1] = pointList[n*3+1] + V.y ;

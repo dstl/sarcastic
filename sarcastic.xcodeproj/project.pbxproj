@@ -16,6 +16,9 @@
 		953C590619D42955006D5866 /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F772F19CF0FDE00BF3039 /* libSIlib-1.1.a */; };
 		953C590719D42966006D5866 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		953C590A19D4638D006D5866 /* Clarkson-Delaunay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953C590819D4638D006D5866 /* Clarkson-Delaunay.c */; };
+		953C590C19D6BC08006D5866 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 953C590B19D6BC08006D5866 /* boxMullerRandom.c */; };
+		953C590F19D72734006D5866 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 953C590E19D72734006D5866 /* ranf.c */; };
+		953C591219D72865006D5866 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953C591119D72865006D5866 /* pmath_rng.c */; };
 		953FA1E618F4289400EAD4F3 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1BF18F4289400EAD4F3 /* banner.c */; };
 		953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 		953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
@@ -116,6 +119,12 @@
 		953C590019D41F5B006D5866 /* triDecomp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = triDecomp.1; sourceTree = "<group>"; };
 		953C590819D4638D006D5866 /* Clarkson-Delaunay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "Clarkson-Delaunay.c"; sourceTree = "<group>"; };
 		953C590919D4638D006D5866 /* Clarkson-Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Clarkson-Delaunay.h"; sourceTree = "<group>"; };
+		953C590B19D6BC08006D5866 /* boxMullerRandom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boxMullerRandom.c; sourceTree = "<group>"; };
+		953C590D19D6BCB8006D5866 /* boxMullerRandom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boxMullerRandom.h; sourceTree = "<group>"; };
+		953C590E19D72734006D5866 /* ranf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ranf.c; sourceTree = "<group>"; };
+		953C591019D72794006D5866 /* ranf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ranf.h; sourceTree = "<group>"; };
+		953C591119D72865006D5866 /* pmath_rng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pmath_rng.c; path = ../pmath_rng.c; sourceTree = "<group>"; };
+		953C591319D7EC43006D5866 /* materialProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialProperties.h; sourceTree = "<group>"; };
 		953FA1BF18F4289400EAD4F3 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = banner.c; sourceTree = "<group>"; };
 		953FA1C018F4289400EAD4F3 /* buildKernel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buildKernel.c; sourceTree = "<group>"; };
 		953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BuildRopesAndBoxes.c; sourceTree = "<group>"; };
@@ -269,10 +278,16 @@
 		953C58FD19D41F5B006D5866 /* triDecomp */ = {
 			isa = PBXGroup;
 			children = (
+				953C591319D7EC43006D5866 /* materialProperties.h */,
 				953C58FE19D41F5B006D5866 /* main.c */,
-				953C590019D41F5B006D5866 /* triDecomp.1 */,
+				953C590D19D6BCB8006D5866 /* boxMullerRandom.h */,
+				953C590B19D6BC08006D5866 /* boxMullerRandom.c */,
+				953C591019D72794006D5866 /* ranf.h */,
+				953C590E19D72734006D5866 /* ranf.c */,
+				953C591119D72865006D5866 /* pmath_rng.c */,
 				953C590919D4638D006D5866 /* Clarkson-Delaunay.h */,
 				953C590819D4638D006D5866 /* Clarkson-Delaunay.c */,
+				953C590019D41F5B006D5866 /* triDecomp.1 */,
 			);
 			path = triDecomp;
 			sourceTree = "<group>";
@@ -555,8 +570,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				953C590C19D6BC08006D5866 /* boxMullerRandom.c in Sources */,
 				953C58FF19D41F5B006D5866 /* main.c in Sources */,
+				953C590F19D72734006D5866 /* ranf.c in Sources */,
 				953C590A19D4638D006D5866 /* Clarkson-Delaunay.c in Sources */,
+				953C591219D72865006D5866 /* pmath_rng.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
