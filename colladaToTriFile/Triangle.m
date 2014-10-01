@@ -39,7 +39,7 @@
     MVector * _vertices[3];
     MVector * _normal;
 }
-@synthesize texture=_texture;
+@synthesize materialName=_materialName;
 @synthesize triId=_triId;
 
 - (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c{
@@ -99,7 +99,7 @@
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat: @"<%p>[%d]A:%@,B:%@,C:%@ material:%d",self, _triId , [self vertexAt:0],[self vertexAt:1],[self vertexAt:2],[self texture]];
+    return [NSString stringWithFormat: @"<%p>[%d]A:%@,B:%@,C:%@ material:%@",self, _triId , [self vertexAt:0],[self vertexAt:1],[self vertexAt:2],[self materialName]];
 }
 
 - (id) copyWithZone: (NSZone *) zone {

@@ -35,7 +35,7 @@
 #import "MVectorObjc.h"
 
 @interface Triangle : NSObject
-@property int texture ;
+@property NSString *materialName ;
 @property int triId ;
 - (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c;
 - (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andId: (int) val;
@@ -50,7 +50,6 @@
 - (NSComparisonResult) compareTriangle: (Triangle *) t ;
 - (double) minInDim: (unsigned int) k ;
 - (double) maxInDim: (unsigned int) k ;
-- (void) setTexture: (int) texInd ;
 - (BOOL) isEqual:(id)object ;
 - (NSUInteger) hash ;
 

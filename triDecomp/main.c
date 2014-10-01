@@ -51,7 +51,8 @@
 #include "boxMullerRandom.h"
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
-#define SHOWOUTPUT 1
+#define SHOWOUTPUT 0
+#define TRIDECOMP  0
 
 typedef struct triangle{
     int        id ;
@@ -137,6 +138,7 @@ int main(int argc, const char * argv[])
     }
     
     if (SHOWOUTPUT) {
+        printf("Triangle file contains the following triangles:\n");
         for (int itri=0; itri < ntri; itri++ ) {
             printf("Triangle %d\n", triArray[itri].id);
             printf("  AA       : %3.6f,%3.6f,%3.6f\n", triArray[itri].AA.x,triArray[itri].AA.y,triArray[itri].AA.z);
@@ -183,7 +185,7 @@ int main(int argc, const char * argv[])
                 // which provides:
                 //          P = (1 - sqrt(r1)) * A + (sqrt(r1) * (1 - r2)) * B + (sqrt(r1) * r2) * C
                 //
-                if(SHOWOUTPUT){
+                if(SHOWOUTPUT && itri == TRIDECOMP){
                     printf("Triangle %d requires %d internal random points\n",itri,np);
                 }
                 float *pointList ;
@@ -201,7 +203,7 @@ int main(int argc, const char * argv[])
                     VECT_ADD(V1, V2, V) ;
                     VECT_ADD(V, V3, V) ;
                     
-                    if (SHOWOUTPUT) {
+                    if (SHOWOUTPUT && itri == TRIDECOMP) {
                         printf("  %f,%f,%f\n",V.x,V.y,V.z);
                     }
                     
@@ -272,7 +274,7 @@ int main(int argc, const char * argv[])
                 free(triangleIndexList);
                 free(pointList);
 
-                if (SHOWOUTPUT) {
+                if (SHOWOUTPUT && itri == TRIDECOMP) {
                     printf("Delauney Triangles for tringle %d are :\n",itri);
                     for (int v=0; v<newNtri; v++) {
                         printf("    %8.5f,%10.5f,%10.5f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
@@ -387,7 +389,7 @@ int main(int argc, const char * argv[])
         fwrite(tri.mat, sizeof(char), materialBytes, fpout);
         itri++;
     }
-    printf("Written %d triangles\n",itri);
+    printf("Written %d triangles to file %s\n",itri,oustr);
     
     triAccessor = triList ;
     while( triAccessor->next != NULL ) {

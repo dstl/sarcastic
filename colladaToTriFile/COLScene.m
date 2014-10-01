@@ -254,7 +254,7 @@
                                 }
                             }
                         }
-                        [tri setTexture:    [mat materialID]];
+                        [tri setMaterialName: [[materials objectAtIndex:0] name]];
                         [_triangles         addObject:tri];
                         
                         // Check to see if material is already in the list
@@ -431,7 +431,7 @@
                                 }
                                 free(indices);
                                 int matind = tmpi % [materials count];
-                                printf("   Triangle material : %s\n", [[[materials objectAtIndex:matind] name] UTF8String]);
+                                printf("   Triangle material : %s (ind: %d)\n", [[[materials objectAtIndex:matind] name] UTF8String], matind);
                             }
                             break;
                             
@@ -527,7 +527,7 @@
         printf("-------------------------------\n");
         for(int i=0; i<[[self triangles] count]; i++){
             tri = [[self triangles] objectAtIndex:i];
-            if ([tri texture] == material) {
+            if (!strcmp([[tri materialName] UTF8String], [[[self triangleMaterials] objectAtIndex:material] UTF8String]) ) {
                 printf("    %f,%f,%f\n",[[tri vertexAt:0] X],[[tri vertexAt:0] Y],[[tri vertexAt:0] Z]);
                 printf("    %f,%f,%f\n",[[tri vertexAt:1] X],[[tri vertexAt:1] Y],[[tri vertexAt:1] Z]);
                 printf("    %f,%f,%f\n",[[tri vertexAt:2] X],[[tri vertexAt:2] Y],[[tri vertexAt:2] Z]);

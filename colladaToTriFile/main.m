@@ -123,10 +123,7 @@ int main(int argc, const char * argv[])
             printf("    Normal : %3.6f,%3.6f,%3.6f\n",x,y,z);
             
             char matname[MAXMATNAME];
-            int matind = i % nmat;
-            radarMaterial *material;
-            material = [[scene triangleMaterials] objectAtIndex:matind] ;
-            strcpy(matname, [[material materialName] UTF8String]);
+            strcpy(matname,[[tri materialName] UTF8String]);
             fwrite(matname, sizeof(char), MAXMATNAME, fp);
             printf("  Material : %s\n",matname);
 
