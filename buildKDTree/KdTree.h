@@ -47,9 +47,22 @@
 #define INTERSECTIONCOST ((float)(20.0))
 #define MAXDEPTH 32
 
-void eventCheck(NSArray * events);
-float cost(float ProbLeft, float ProbRight, NSUInteger NLeft, NSUInteger NRight, BOOL maxSpace);
-NSMutableArray * calculateEventsForTris( NSArray * tris, AABB * V) ;
+static const unsigned int quickmodulo[] = {0,1,2,0,1};
+
+typedef struct triDataStruct {
+    float d;        // Constant of plane equation
+    float nd_u;     // Normal.u / normal.k
+    float nd_v;     // normal.v / normal.k
+    int   k;        // projection dimension
+    float kbu;
+    float kbv;
+    float kbd;
+    float kcu;
+    float kcv;
+    float kcd;
+    int texture;
+    
+} triDataStruct;
 
 typedef union {
     struct KdTreeLeaf {
@@ -69,17 +82,45 @@ typedef union {
 } KdData ;
 
 
+// Forward declaration of functions
+//
+void eventCheck(NSArray * events);
+float cost(float ProbLeft, float ProbRight, NSUInteger NLeft, NSUInteger NRight, BOOL maxSpace);
+NSMutableArray * calculateEventsForTris( NSArray * tris, AABB * V) ;
+
+
+@class KdTreeNode  ;
+@class KdTreeEvent ;
+@class TriAccel    ;
+
+
+@interface KdTree : NSObject {
+    KdTreeNode * _root;
+    triDataStruct * _triangleData;
+}
+@property (copy, nonatomic) NSMutableArray * packArray;
+@property (copy, nonatomic) NSArray * textures ;
+- (id) initWithTriangles:   (NSArray *) triangles ;
+//- (id) initWithScene: (COLScene *) scene ;
+- (void) Build ;
+- (void) setRoot: (KdTreeNode *) n ;
+- (void) PacktoFile: (NSString *) filename ;
+- (void) printBoxes ;
+- (void) printSummary ;
+@end
+
+
 @interface KdTreeEvent : NSObject <NSCopying>
 @property unsigned int ptype;     // 0 ending event; 1 planar event; 2 starting event
 @property unsigned int dim;       // dimension for this event
 @property (assign, nonatomic) Triangle * tri; // Pointer to triangle associated with this event
 @property float pos;    // position for this event
-
 - (void) setType: (unsigned int) type Dim: (unsigned int) d Tri: (Triangle *) t Pos: (float) p ;
 - (NSComparisonResult) compareEvents: (KdTreeEvent *) e;
 - (BOOL) isEqual:(id)object ;
 - (NSUInteger) hash ;
 @end
+
 
 @interface KdTreeNode : NSObject <NSCopying> {
     AABB * aabb;
@@ -107,22 +148,18 @@ typedef union {
 - (void) PackNode: (KdTreeNode *) node inArray: (NSMutableArray *) array ;
 @end
 
-@interface KdTree : NSObject {
-    KdTreeNode * _root;
-    triDataStruct * _triangleData;
-}
-@property (copy, nonatomic) NSMutableArray * packArray;
-@property (copy, nonatomic) NSArray * textures;
-- (id) initWithScene: (COLScene *) scene ;
-- (void) Build ;
-- (void) setRoot: (KdTreeNode *) n ;
-- (void) PacktoFile: (NSString *) filename ;
-- (void) printBoxes ;
-- (void) printSummary ;
+
+@interface TriAccel : NSObject
+@property   float d;        // Constant of plane equation
+@property   float nd_u;     // Normal.u / normal.k
+@property   float nd_v;     // normal.v / normal.k
+@property   int   k;        // projection dimension
+@property   float kbu;
+@property   float kbv;
+@property   float kbd;
+@property   float kcu;
+@property   float kcv;
+@property   float kcd;
+@property   int   texture;
+- (id) initWithTriangle: (Triangle *) triangle ;
 @end
-
-
-//
-//#define KDTREE_ISLEAF(n)    (n->flagDimAndOffset & (unsigned int)1<<31)
-//#define KDTREE_DIMENSION(n) (n->flagDimAndOffset & 0x3)
-//#define KDTREE_OFFSET(n)    (n->flagDimAndOffset & 0x7FFFFFFC)

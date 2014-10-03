@@ -10,15 +10,14 @@
 		9516174A19DAB8240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
 		9516174C19DABA240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
 		9516174D19DABA400004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
+		9516174E19DD3AA60004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
+		9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		9516175019DD81B30004C4F0 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
+		9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
+		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
 		953375E219D927C100DE1C46 /* KdTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E019D927C100DE1C46 /* KdTree.m */; };
 		953375E419D927DA00DE1C46 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E319D927DA00DE1C46 /* main.m */; };
-		953375E719D928F100DE1C46 /* Timer.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E619D928F100DE1C46 /* Timer.m */; };
 		953375EC19D9293200DE1C46 /* AABB.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E919D9293200DE1C46 /* AABB.m */; };
-		953375ED19D9293200DE1C46 /* ClipToRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953375EB19D9293200DE1C46 /* ClipToRect.cpp */; };
-		953375F019D9294500DE1C46 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
-		953375F319D9297600DE1C46 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375F219D9297600DE1C46 /* Triangle.m */; };
-		953375F819D9299800DE1C46 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375F519D9299800DE1C46 /* MVectorObjc.m */; };
-		953375F919D9299800DE1C46 /* COLScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375F719D9299800DE1C46 /* COLScene.m */; };
 		953375FC19D929B100DE1C46 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375FB19D929B100DE1C46 /* radarMaterial.m */; };
 		953375FE19D929C400DE1C46 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375FD19D929C400DE1C46 /* banner.c */; };
 		953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
@@ -184,18 +183,12 @@
 		953375E019D927C100DE1C46 /* KdTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KdTree.m; sourceTree = "<group>"; };
 		953375E119D927C100DE1C46 /* KdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KdTree.h; sourceTree = "<group>"; };
 		953375E319D927DA00DE1C46 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		953375E519D928F100DE1C46 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
-		953375E619D928F100DE1C46 /* Timer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Timer.m; sourceTree = "<group>"; };
 		953375E819D9293200DE1C46 /* AABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AABB.h; sourceTree = "<group>"; };
 		953375E919D9293200DE1C46 /* AABB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AABB.m; sourceTree = "<group>"; };
 		953375EA19D9293200DE1C46 /* ClipToRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipToRect.h; sourceTree = "<group>"; };
 		953375EB19D9293200DE1C46 /* ClipToRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipToRect.cpp; sourceTree = "<group>"; };
 		953375EE19D9294500DE1C46 /* PolyClip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PolyClip.c; sourceTree = "<group>"; };
 		953375EF19D9294500DE1C46 /* PolyClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolyClip.h; sourceTree = "<group>"; };
-		953375F119D9297600DE1C46 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
-		953375F219D9297600DE1C46 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Triangle.m; sourceTree = "<group>"; };
-		953375F419D9299800DE1C46 /* MVectorObjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVectorObjc.h; sourceTree = "<group>"; };
-		953375F519D9299800DE1C46 /* MVectorObjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVectorObjc.m; sourceTree = "<group>"; };
 		953375F619D9299800DE1C46 /* COLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COLScene.h; sourceTree = "<group>"; };
 		953375F719D9299800DE1C46 /* COLScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COLScene.m; sourceTree = "<group>"; };
 		953375FA19D929B100DE1C46 /* radarMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = radarMaterial.h; sourceTree = "<group>"; };
@@ -322,6 +315,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */,
+				9516174E19DD3AA60004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */,
 				953C591919D7F8C9006D5866 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,17 +471,11 @@
 				953375E919D9293200DE1C46 /* AABB.m */,
 				953375EA19D9293200DE1C46 /* ClipToRect.h */,
 				953375EB19D9293200DE1C46 /* ClipToRect.cpp */,
-				953375E019D927C100DE1C46 /* KdTree.m */,
 				953375E119D927C100DE1C46 /* KdTree.h */,
-				953375E519D928F100DE1C46 /* Timer.h */,
-				953375E619D928F100DE1C46 /* Timer.m */,
+				953375E019D927C100DE1C46 /* KdTree.m */,
 				953375EE19D9294500DE1C46 /* PolyClip.c */,
 				953375EF19D9294500DE1C46 /* PolyClip.h */,
 				953C591F19D7F8C9006D5866 /* buildKDTree.1 */,
-				953375F119D9297600DE1C46 /* Triangle.h */,
-				953375F219D9297600DE1C46 /* Triangle.m */,
-				953375F419D9299800DE1C46 /* MVectorObjc.h */,
-				953375F519D9299800DE1C46 /* MVectorObjc.m */,
 				953375F619D9299800DE1C46 /* COLScene.h */,
 				953375F719D9299800DE1C46 /* COLScene.m */,
 				953375FA19D929B100DE1C46 /* radarMaterial.h */,
@@ -583,9 +572,9 @@
 		955F773919CF1D4700BF3039 /* colladaToTriFile */ = {
 			isa = PBXGroup;
 			children = (
-				955F773A19CF1D4700BF3039 /* main.m */,
 				953C58D519D316CF006D5866 /* Triangle.h */,
 				953C58D619D316CF006D5866 /* Triangle.m */,
+				955F773A19CF1D4700BF3039 /* main.m */,
 				955F774519CF40E000BF3039 /* COLScene.h */,
 				955F774619CF40E000BF3039 /* COLScene.m */,
 				955F774819CF410100BF3039 /* radarMaterial.h */,
@@ -831,17 +820,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				953375F319D9297600DE1C46 /* Triangle.m in Sources */,
-				953375E719D928F100DE1C46 /* Timer.m in Sources */,
-				953375ED19D9293200DE1C46 /* ClipToRect.cpp in Sources */,
+				9516175219DD83070004C4F0 /* PolyClip.c in Sources */,
+				9516175019DD81B30004C4F0 /* Triangle.m in Sources */,
+				9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */,
 				953375FC19D929B100DE1C46 /* radarMaterial.m in Sources */,
 				953375E419D927DA00DE1C46 /* main.m in Sources */,
 				953375E219D927C100DE1C46 /* KdTree.m in Sources */,
-				953375F919D9299800DE1C46 /* COLScene.m in Sources */,
 				953375FE19D929C400DE1C46 /* banner.c in Sources */,
 				953375EC19D9293200DE1C46 /* AABB.m in Sources */,
-				953375F819D9299800DE1C46 /* MVectorObjc.m in Sources */,
-				953375F019D9294500DE1C46 /* PolyClip.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1086,6 +1072,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1109,6 +1099,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

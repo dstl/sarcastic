@@ -195,7 +195,7 @@
                                                                        Z:([norma Z]+[normb Z]+[normc Z])/3.0] ;
                             [normal normalise];
 
-                            tri = [Triangle TriangleWithVerticesA:a B:b C:c andNormal: normal ];
+                            tri = [Triangle TriangleWithVerticesAa:a Bb:b Cc:c andNormal: normal ];
                             
                             free(indices);
                             
@@ -230,7 +230,7 @@
                                                                        Z:([norma Z]+[normb Z]+[normc Z])/3.0] ;
                             [normal normalise];
 
-                            tri = [Triangle TriangleWithVerticesA:a B:b C:c andNormal: normal ];
+                            tri = [Triangle TriangleWithVerticesAa:a Bb:b Cc:c andNormal: normal ];
                             
                             free(indices);
 

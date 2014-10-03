@@ -36,13 +36,14 @@
 
 @interface Triangle : NSObject
 @property NSString *materialName ;
+@property int matId ;
 @property int triId ;
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c;
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andId: (int) val;
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andNormal:(MVector *)normal;
-+ (id) TriangleWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c;
-+ (id) TriangleWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andId: (int) val;
-+ (id) TriangleWithVerticesA:(MVector *)a B:(MVector *)b C:(MVector *)c andNormal:(MVector *)normal ;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andNormal:(MVector *)N;
++ (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c;
++ (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val;
++ (id) TriangleWithVerticesAa:(MVector *)a Bb:(MVector *)b Cc:(MVector *)c andNormal:(MVector *) N;
 - (void) setVertex: (int) index toValue: (MVector *) coordinate;
 - (BOOL) isPlanarInDimension: (unsigned int) k ;
 - (MVector *) vertexAt: (int) index;

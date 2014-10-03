@@ -138,14 +138,14 @@
 - (id) initWithTriangleArray: (NSArray *) theTris andAABB: (AABB *) v{
     self = [super init];
     if ( self ){
-        aabb = [v copy];
-        _isLeaf = NO;
-        _splitPosition = 0.0;
-        _leftNode = nil;
-        _rightNode = nil;
-        _axis = 0;
-        _depth = 0;
-        _triangles = [NSArray arrayWithArray:theTris];
+        aabb           = [v copy] ;
+        _isLeaf        = NO ;
+        _splitPosition = 0.0 ;
+        _leftNode      = nil ;
+        _rightNode     = nil ;
+        _axis          = 0 ;
+        _depth         = 0 ;
+        _triangles     = [NSArray arrayWithArray:theTris] ;
         for( int t=0; t<[_triangles count]; t++){
             [[_triangles objectAtIndex:t] setTriId:t];
         }
@@ -477,28 +477,22 @@
 @implementation KdTree;
 @synthesize packArray=_packArray;
 //@synthesize textures=_textures;
-- (id) initWithScene: ( COLScene * ) scene {
+- (id) initWithTriangles: ( NSArray * ) triangles {
     self = [super init];
     if( self ){
-        
-        NSArray * triarray = [[scene triangles] array];
-        
-        AABB * v = [[AABB alloc] initWithTriangleArray:triarray];   
-        
-        _root = [[KdTreeNode alloc] initWithTriangleArray:triarray andAABB:v];
-        _packArray = [NSMutableArray array];
-        
-        _triangleData = (triDataStruct *)malloc(sizeof(triDataStruct)*[triarray count]);
+
+        AABB * v      = [[AABB alloc] initWithTriangleArray:triangles];
+        _root         = [[KdTreeNode alloc] initWithTriangleArray:triangles andAABB:v];
+        _packArray    = [NSMutableArray array];
+        _triangleData = (triDataStruct *)malloc(sizeof(triDataStruct)*[triangles count]);
         if(_triangleData == NULL){
             NSLog(@"Error: ran out of memory for Triangles");
             exit(1);
         }
-        
-        _textures = [[scene triangleMaterials] array];
-        
     }
     return self;
 }
+
 - (void) Build {
     NSArray * tris = [_root triangles];
     AABB * V = [_root Aabb]; 
@@ -514,7 +508,21 @@
     printf("  Starting tree subdivision...");
     [_root subDivide];
     for(int i=0; i<[tris count]; i++){
-        _triangleData[i] = [[tris objectAtIndex:i] returnAsData];
+        triDataStruct data;
+        Triangle * tri   = [tris objectAtIndex:i] ;
+        TriAccel * acc   = [[TriAccel alloc] initWithTriangle:tri] ;
+        data.d           = [acc d];
+        data.nd_u        = [acc nd_u];
+        data.nd_v        = [acc nd_v];
+        data.k           = [acc k];
+        data.kbu         = [acc kbu];
+        data.kbv         = [acc kbv];
+        data.kbd         = [acc kbd];
+        data.kcu         = [acc kcu];
+        data.kcv         = [acc kcv];
+        data.kcd         = [acc kcd];
+        data.texture     = [acc texture];
+        _triangleData[i] = data ;
     }
     printf("\n");
     
@@ -596,8 +604,6 @@
     nleaves = 0;
     Triangle *t;
     
-    Timer * timer = [[Timer alloc] init];
-    [timer startTimer];
     printf("Packing %ld triangles\n",ntri);
     for (t in [_root triangles]){
                
@@ -632,8 +638,6 @@
         fwrite(&kcd,sizeof(double),1,fp);
         fwrite(&tex, sizeof(int), 1, fp);
     }
-    [timer stopTimer];
-    printf("packed in %f ms\n",[timer timeElapsedInMilliseconds]);
     
     // Write triangle texture data
     //
@@ -661,7 +665,6 @@
     for (node in _packArray)if( [node isLeaf] )nleaves++;
     fwrite(&nleaves,sizeof(int),1,fp);
     printf("Packing %ld Leaves\n",nleaves);
-    [timer startTimer];
     NSMapTable * KVCtriangles = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsObjectPointerPersonality
                                                       valueOptions:NSPointerFunctionsObjectPointerPersonality];
     unsigned int index=0;
@@ -677,8 +680,6 @@
             }
         }
     }
-    [timer stopTimer];
-    printf("packed in %f ms\n",[timer timeElapsedInMilliseconds]);
 
     // Now write the kdTree node info
     
@@ -686,7 +687,6 @@
     fwrite(&nnodes,sizeof(int),1,fp);
     
     printf("Packing %ld Nodes\n",nnodes);
-    [timer startTimer];
     NSMapTable * KVCPackArray = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsObjectPointerPersonality
                                                       valueOptions:NSPointerFunctionsObjectPointerPersonality];
     index=0;
@@ -737,8 +737,6 @@
         fwrite(&Cz,sizeof(double),1,fp);
     }
 
-    [timer stopTimer];
-    printf("packed in %f ms\n",[timer timeElapsedInMilliseconds]);
     fclose(fp);
 
 }
@@ -906,4 +904,63 @@ NSMutableArray * calculateEventsForTris( NSArray * tris, AABB * V) {
     }
     return events;
 }
+
+@implementation TriAccel
+@synthesize d=_d;
+@synthesize nd_u=_nd_u;
+@synthesize nd_v=_nd_v;
+@synthesize k=_k;
+@synthesize kbu=_kbu;
+@synthesize kbv=_kbv;
+@synthesize kbd=_kbd;
+@synthesize kcu=_kcu;
+@synthesize kcv=_kcv;
+@synthesize kcd=_kcd;
+@synthesize texture=_texture;
+- (id) initWithTriangle: (Triangle *) triangle {
+    
+    self = [super init];
+    if (self){
+        
+        MVector * Aa = [triangle vertexAt:0];
+        MVector * Bb = [triangle vertexAt:1];
+        MVector * Cc = [triangle vertexAt:2];
+        MVector * N  = [triangle normal];
+
+        // calculate the projection dimension
+        float nx = [N X];
+        float ny = [N Y];
+        float nz = [N Z];
+        float anx = ABS(nx);
+        float any = ABS(ny);
+        float anz = ABS(nz);
+        if( anx > any )
+        if (anx > anz) _k = 0; /* X */ else _k=2; /* Z */
+        else
+        if ( any > anz) _k=1; /* Y */ else _k=2; /* Z */
+        int u = quickmodulo[_k+1];
+        int v = quickmodulo[_k+2];
+        
+        _nd_u = [N cell:u] / [N cell:_k];
+        _nd_v = [N cell:v] / [N cell:_k];
+        _d = [Aa dot:[N divide:[N cell:_k]]];
+        
+        MVector * b = [Cc subtract:Aa];
+        MVector * c = [Bb subtract:Aa];
+        
+        float denom = 1./(([b cell:u]*[c cell:v]) - ([b cell:v]*[c cell:u]));
+        
+        _kbu     = -[b cell:v] * denom;
+        _kbv     =  [b cell:u] * denom;
+        _kbd     =  (([b cell:v] * [Aa cell:u]) - ([b cell:u] * [Aa cell:v])) * denom;
+        _kcu     =  [c cell:v] * denom;
+        _kcv     = -[c cell:u] * denom;
+        _kcd     =  (([c cell:u] * [Aa cell:v]) - ([c cell:v] * [Aa cell:u])) * denom;
+        _texture = [triangle matId];
+        
+    }
+    return self;
+}
+
+@end
 

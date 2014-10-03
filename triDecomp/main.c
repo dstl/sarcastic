@@ -51,7 +51,7 @@
 #include "boxMullerRandom.h"
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
-#define SHOWOUTPUT 0
+#define SHOWOUTPUT 1
 #define TRIDECOMP  0
 
 typedef struct triangle{
@@ -192,8 +192,6 @@ int main(int argc, const char * argv[])
                 pointList = (float *)sp_malloc(sizeof(float) * (np+3) * 3);
                 
                 for (int n = 0; n<np; n++) {
-//                    double r1 =  ((double)(rand() % 65536)) / 65536.0 ;
-//                    double r2 =  ((double)(rand() % 65536)) / 65536.0 ;
                     double r1 = Ranf() ;
                     double r2 = Ranf() ;
                     SPVector V1,V2,V3,V ;
@@ -236,10 +234,7 @@ int main(int argc, const char * argv[])
                 for (int n = 0; n<np; n++) {
                     SPVector N = tri.NN ;
                     SPVector V ;
-//                    double r3 =  (((double)(rand() % 65536)) / 65536.0) - 0.5 ; // Random number between -0.5 & 0.5
                     float dist = box_muller(0.0, materialProperties[i].roughness) ;
-                    
-//                    float dist = materialProperties[i].roughness * r3 ;
                     VECT_SCMULT(N, dist, V);
                     pointList[n*3]   = pointList[n*3]   + V.x ;
                     pointList[n*3+1] = pointList[n*3+1] + V.y ;
@@ -255,15 +250,15 @@ int main(int argc, const char * argv[])
                     pntA = triangleIndexList[v*3];
                     pntB = triangleIndexList[v*3+1];
                     pntC = triangleIndexList[v*3+2];
-                    Ax = pointList[pntA*3+0];
-                    Ay = pointList[pntA*3+1];
-                    Az = pointList[pntA*3+2];
-                    Bx = pointList[pntB*3+0];
-                    By = pointList[pntB*3+1];
-                    Bz = pointList[pntB*3+2];
-                    Cx = pointList[pntC*3+0];
-                    Cy = pointList[pntC*3+1];
-                    Cz = pointList[pntC*3+2];
+                    Ax   = pointList[pntA*3+0];
+                    Ay   = pointList[pntA*3+1];
+                    Az   = pointList[pntA*3+2];
+                    Bx   = pointList[pntB*3+0];
+                    By   = pointList[pntB*3+1];
+                    Bz   = pointList[pntB*3+2];
+                    Cx   = pointList[pntC*3+0];
+                    Cy   = pointList[pntC*3+1];
+                    Cz   = pointList[pntC*3+2];
                     VECT_CREATE(Ax, Ay, Az, vecA);
                     VECT_CREATE(Bx, By, Bz, vecB);
                     VECT_CREATE(Cx, Cy, Cz, vecC);
@@ -277,13 +272,12 @@ int main(int argc, const char * argv[])
                 if (SHOWOUTPUT && itri == TRIDECOMP) {
                     printf("Delauney Triangles for tringle %d are :\n",itri);
                     for (int v=0; v<newNtri; v++) {
-                        printf("    %8.5f,%10.5f,%10.5f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
+                        printf("    %8.5f,%10.5f,%10.5f\n" ,newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
                         printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].BB.x,newTriArray[v].BB.y,newTriArray[v].BB.z);
                         printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].CC.x,newTriArray[v].CC.y,newTriArray[v].CC.z);
                         printf("    %10.5f,%10.5f,%10.5f\n",newTriArray[v].AA.x,newTriArray[v].AA.y,newTriArray[v].AA.z);
                     }
                 }
-                
                 
                 // Calculate new triangle normals
                 //
@@ -302,19 +296,11 @@ int main(int argc, const char * argv[])
                 // Write out triangles
                 //
                 for (int v=0; v<newNtri; v++) {
-                    if ( triAccessor != NULL ){
-                        while (triAccessor->next != NULL) {
-                            triAccessor = triAccessor->next ;
-                        }
-                    }
-                    triAccessor->next = sp_malloc(sizeof(struct triListNode));
-                    triAccessor = triAccessor->next ;
-                    if( triAccessor == NULL){
-                        printf("Error out of memory for linked list\n");
-                        exit(1);
-                    }
-                    triAccessor->next = NULL ;
                     triAccessor->tri  = newTriArray[v] ;
+                    triAccessor->next = sp_malloc(sizeof(struct triListNode));
+                    triAccessor       = triAccessor->next ;
+                    triAccessor->next = NULL ;
+
                     newTriCnt++;
                 }
                 
@@ -326,20 +312,12 @@ int main(int argc, const char * argv[])
         }
         
         if (!triDone) {
-            if ( triAccessor != NULL ){
-                while (triAccessor->next != NULL) {
-                    triAccessor = triAccessor->next ;
-                }
-            }
-            triAccessor->next = sp_malloc(sizeof(struct triListNode));
-            triAccessor = triAccessor->next ;
-            if( triAccessor == NULL){
-                printf("Error out of memory for linked list\n");
-                exit(1);
-            }
-            triAccessor->next = NULL ;
             triAccessor->tri  = tri ;
+            triAccessor->next = sp_malloc(sizeof(struct triListNode));
+            triAccessor       = triAccessor->next ;
+            triAccessor->next = NULL ;
             newTriCnt++;
+
         }
     }
     
@@ -366,17 +344,16 @@ int main(int argc, const char * argv[])
      }
      */
 
-    fwrite(&newTriCnt, sizeof(int),     1, fpout);
-    fwrite(&vertexBytes,sizeof(int),    1, fpout);
+    fwrite(&newTriCnt,     sizeof(int), 1, fpout);
+    fwrite(&vertexBytes,   sizeof(int), 1, fpout);
     fwrite(&materialBytes, sizeof(int), 1, fpout);
     triAccessor = triList ;
 
     int itri = 0;
     triangle tri;
     while (triAccessor->next != NULL) {
-        triAccessor = triAccessor->next ;
         tri = triAccessor->tri ;
-        fwrite(&(itri), sizeof(int), 1, fpout) ;
+        fwrite(&(itri),     sizeof(int),    1, fpout) ;
         fwrite(&(tri.AA.x), sizeof(double), 1, fpout) ;
         fwrite(&(tri.AA.y), sizeof(double), 1, fpout) ;
         fwrite(&(tri.AA.z), sizeof(double), 1, fpout) ;
@@ -386,7 +363,12 @@ int main(int argc, const char * argv[])
         fwrite(&(tri.CC.x), sizeof(double), 1, fpout) ;
         fwrite(&(tri.CC.y), sizeof(double), 1, fpout) ;
         fwrite(&(tri.CC.z), sizeof(double), 1, fpout) ;
-        fwrite(tri.mat, sizeof(char), materialBytes, fpout);
+        fwrite(&(tri.NN.x), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.NN.y), sizeof(double), 1, fpout) ;
+        fwrite(&(tri.NN.z), sizeof(double), 1, fpout) ;
+        printf("Normal is %f,%f,%f\n",tri.NN.x,tri.NN.y,tri.NN.z) ;
+        fwrite(tri.mat,     sizeof(char),   materialBytes, fpout);
+        triAccessor = triAccessor->next ;
         itri++;
     }
     printf("Written %d triangles to file %s\n",itri,oustr);

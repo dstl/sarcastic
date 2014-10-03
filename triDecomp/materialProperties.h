@@ -52,11 +52,11 @@ typedef struct scatProps {
 #define NMATERIALS 9
 scatProps materialProperties[NMATERIALS] = {
 //   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
+    {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
     {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },
     {"BRICK",       0.1,        0.001,      1.0e18,     0.7,        0.3,        20.0        },
     {"CONCRETE",    0.2,        0.01,       120.0,      0.3,        0.7,        10.0        },
     {"METAL",       100.0,      0.0,        1.0e-8,     1.0,        0.0,        50.0        },
-    {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
     {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
     {"VEGETATION",  0.01,       0.1,        2000.0,     0.2,        0.8,        5.0         },
     {"WATER",       0.01,       0.1,        2.0e1,      1.0,        0.0,        50.0        },

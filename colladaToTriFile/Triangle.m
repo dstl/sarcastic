@@ -41,46 +41,56 @@
 }
 @synthesize materialName=_materialName;
 @synthesize triId=_triId;
-
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c{
+@synthesize matId=_matId;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c{
     self = [super init];
     if (self) {
-        _vertices[0] = [[MVector alloc] initWithMVector:a];
-        _vertices[1] = [[MVector alloc] initWithMVector:b];
-        _vertices[2] = [[MVector alloc] initWithMVector:c];
+        _vertices[0]  = [[MVector alloc] initWithMVector:a];
+        _vertices[1]  = [[MVector alloc] initWithMVector:b];
+        _vertices[2]  = [[MVector alloc] initWithMVector:c];
+        _normal       = [[[b subtract:a] cross:[c subtract:a]] norm] ;
+        _triId        = 0 ;
+        _materialName = @"MATERIAL" ;
+        _matId        = 0 ;
     }
     return self;
 }
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andId:(int)val{
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val{
     self = [super init];
     if (self) {
-        _vertices[0] = [[MVector alloc] initWithMVector:a];
-        _vertices[1] = [[MVector alloc] initWithMVector:b];
-        _vertices[2] = [[MVector alloc] initWithMVector:c];
+        _vertices[0]  = [[MVector alloc] initWithMVector:a];
+        _vertices[1]  = [[MVector alloc] initWithMVector:b];
+        _vertices[2]  = [[MVector alloc] initWithMVector:c];
+        _normal       = [[[b subtract:a] cross:[c subtract:a]] norm] ;
         [self setTriId:val];
+        _materialName = @"MATERIAL" ;
+        _matId        = 0 ;
     }
     return self;
 }
-- (id) initWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c andNormal:(MVector *)normal{
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andNormal: (MVector *) N{
     self = [super init];
     if (self) {
-        _vertices[0] = [[MVector alloc] initWithMVector:a];
-        _vertices[1] = [[MVector alloc] initWithMVector:b];
-        _vertices[2] = [[MVector alloc] initWithMVector:c];
-        _normal      = [[MVector alloc] initWithMVector:normal];
+        _vertices[0]  = [[MVector alloc] initWithMVector:a];
+        _vertices[1]  = [[MVector alloc] initWithMVector:b];
+        _vertices[2]  = [[MVector alloc] initWithMVector:c];
+        _normal       = [[MVector alloc] initWithMVector:N];
+        _triId        = 0 ;
+        _materialName = @"MATERIAL" ;
+        _matId        = 0 ;
     }
     return self;
 }
 
-+ (id) TriangleWithVerticesA: (MVector *) a B: (MVector *) b C: (MVector *) c{
-    return [[Triangle alloc] initWithVerticesA:a B:b C:c];
++ (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c{
+    return [[Triangle alloc] initWithVerticesAa:a Bb:b Cc:c];
 }
 
-+ (id) TriangleWithVerticesA:(MVector *)a B:(MVector *)b C:(MVector *)c andId:(int)val {
-    return [[Triangle alloc] initWithVerticesA:a B:b C:c andId:val];
++ (id) TriangleWithVerticesAa:(MVector *)a Bb:(MVector *)b Cc:(MVector *)c andId:(int)val {
+    return [[Triangle alloc] initWithVerticesAa:a Bb:b Cc:c andId:val];
 }
-+ (id) TriangleWithVerticesA:(MVector *)a B:(MVector *)b C:(MVector *)c andNormal:(MVector *)normal {
-    return [[Triangle alloc] initWithVerticesA:a B:b C:c andNormal:normal];
++ (id) TriangleWithVerticesAa:(MVector *)a Bb:(MVector *)b Cc:(MVector *)c andNormal:(MVector *) N {
+    return [[Triangle alloc] initWithVerticesAa:a Bb:b Cc:c andNormal: N];
 }
 - (MVector *) vertexAt: (int) index {
     return _vertices[index];

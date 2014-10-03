@@ -45,11 +45,10 @@ void banner(void);
 
 void banner (){
     printf("\n");
-    printf(DARK GREEN "                  S A D I L A C [Cobalt Crow] \n" );
-    printf("         Synthetic Aperture DOM Illiminator (Accelerated Version)\n" NORMAL) ;
+    printf(DARK GREEN "                          buildKDTree \n" );
     printf(BLUE "                       Version : "RED" %s\n", FULL_VERSION);
     printf(BLUE "                    Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
-    printf(BLUE "               Copyright (c) 2013 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);
+    printf(BLUE "               Copyright (c) 2014 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);
     return ;
 }
 
