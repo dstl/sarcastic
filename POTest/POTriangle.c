@@ -8,109 +8,175 @@
 
 #include <stdio.h>
 #include <SIlib.h>
-#include "sarcastic.h"
+#include <math.h>
+#include "POTriangle.h"
+#include "matrixMultiplication.h"
 
-SPCmplx G0_func(double gamma);
-SPCmplx G1_func(double gamma);
-SPCmplx G2_func(double gamma);
-SPCmplx G3_func(double gamma);
-int factorial(int n);
-void matmul(double *A,double *B, double **O, int Ay,int Ax,int By,int Bx);
-void reduction(double a[][6],int size,int pivot ,int col) ;
-void mat3by3inv(double A[3][3], double O[3][3]);
 
-int POTriangle(TriCoords triCart, Triangle tri, Ray ray, SPVector HitPoint, SPVector ObservationPoint, double lambda, SPCmplx Es){
+int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector ObservationPoint, double lambda, SPCmplx *Es){
 
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // In this first section we'll calculate all the details associated with the triangle
-    //
-    
-    
-    // Find normal and area for triangle
-    //
+
     SPVector l1,l3,Av,triN,tmp1,tmp2;
     double a,k,modl1,modl3, Area;
     double baryLambda_1,baryLambda_2,baryLambda_3;
-    double Dp,Dq,D0;
-    double Cp,Cq,C0;
-    
-    VECT_SUB(triCart.B, triCart.A, l1) ;
-    VECT_SUB(triCart.A, triCart.Cc, l3) ;
-    VECT_CROSS(l1, l3, Av) ;
-    Area = 0.5 * VECT_MAG(Av) ;
-    modl1 = VECT_MOD(l1);
-    modl3 = VECT_MOD(l3);
-    VECT_SCMULT(Av, (1.0/(modl1*modl3)), triN);
+
 
     k = 2 * SIPC_pi / lambda ;
-    Cp = Cq = 0;
-    C0 = 1;
-    
-    // find barycentric coords for triangle
-    //
-    
-    
-    Dp = k * ( (triCart.A.x - triCart.Cc.x) * baryLambda_1 + (triCart.A.y - triCart.Cc.y) * baryLambda_2 + (triCart.A.z - triCart.Cc.z) * baryLambda_3) ;
-    Dq = k * ( (BB.x - CC.x) * baryLambda_1 + (BB.y - CC.y) * baryLambda_2 + (BB.z - Cc.z) * baryLambda_3) ;
-    D0 = k * ( CC.x * baryLambda_1 + CC.y * baryLambda_2 + CC.z * baryLambda_3 ) ;
-    
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
     
     // Sort out the direction cosines for this ray, hitpoint and observation point
     //
-  
-    double u_i,v_i,w_i ;    // Direction cosines for incident ray (ray origin to HitPoint)
-    double u_s,v_s,w_s ;    // Direction cosines for scattering ray (HitPoint  to observation point)
-    double theta_i, phi_i ; // incident azimuth, elevation
-    double theta_s, phi_s ; // Scattering azimuth, elevation
+    
+    SPVector uvw_i ; // Direction cosines for incident ray (ray origin to HitPoint)
+    SPVector uvw_s ; // Direction cosines for scattering ray (HitPoint  to observation point)
+    double u_i,v_i,w_i ;
+    double u_s,v_s,w_s ;
+    double theta_i, phi_i ; // incident elevation, azimuth
+    double theta_s, phi_s ; // Scattering elevation, azimuth
+    
     VECT_SUB(HitPoint, ray.org, tmp1);
+    
     phi_i     = atan2(tmp1.y,tmp1.x);
     theta_i   = atan2(sqrt(tmp1.x*tmp1.x+tmp1.y*tmp1.y),tmp1.z);
-    u_i       = sin(theta_i)*cos(phi_i) ;
-    v_i       = sin(theta_i)*sin(phi_i) ;
-    w_i       = cos(theta_i) ;
+    VECT_CREATE(sin(theta_i)*cos(phi_i), sin(theta_i)*sin(phi_i), cos(theta_i), uvw_i) ;
     
-    
-    theta_s = atan2(ObservationPoint.y, ObservationPoint.x);
-    phi_s   = atan2(ObservationPoint.z, sqrt(ObservationPoint.x*ObservationPoint.x+ObservationPoint.y*ObservationPoint.y));
-    u_s     = cos(phi_s) * cos(theta_s);
-    v_s     = cos(phi_s) * sin(theta_s);
-    w_s     = sin(phi_s);
+    phi_s   = atan2(ObservationPoint.y, ObservationPoint.x);
+    theta_s = atan2(sqrt(ObservationPoint.x*ObservationPoint.x+ObservationPoint.y*ObservationPoint.y),ObservationPoint.z);
+    VECT_CREATE(sin(theta_s) * cos(phi_s), sin(theta_s) * sin(phi_s), cos(theta_s), uvw_s) ;
 
-    
-    // Set up the problem parameters
-   
-    double k;
-    double Z0 ;
-    double A ; // Area of triangle
-    
-    
-    // First calculate Ic
 
+    // Now need toperform two seperate calculations:
+    // 1) The surface current over the triangle in terms of Jx & Jy
+    // 2) The surface integral over triangle 'c' called Ic
+    //
+    
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //
+    // 1) Find the surface current over the triangle in terms of Jx & Jy
+    //
+    
+    double Jxdd, Jydd ;             // Jx'' & Jy''
+    surfaceCurrent(&Jxdd, &Jydd) ;
+    
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //
+    // 2) Find the value of Ic
+    //
+    
+    SPCmplx Ic = surfaceIntegral(k, tri, uvw_i, uvw_s ) ;
+    
+    return 0;
+}
+
+
+void surfaceCurrent(triangle tri, Ray ray, double * Jx_dashdash, double * Jy_dashdash){
     
     
-    double Lt = 0.05 ;  // Length of Taylor series region
-    double magDp = fabs(Dp) ;
-    double magDq = fabs(Dq) ;
+    SPVector Eig = ray.pol ;
+    SPVector dir = ray.dir ;
+    SPVector Eil ;
+    
+    
+    // Convert the incident ray into the coordinate system of the triangle
+    // use _l for coordinates in local frame of facet and _g or nothing for global
+    // world coordinates
+    //
+    
+    double theta_il, theta_sl ; // angle to Z axis
+    double phi_il, phi_sl ;
+    double dir_ig[3], dir_il[3], dir_sg[3], dir_sl[3] ; // Direction cosines for incident and scattered Ray
+    
+    // Assuming that the direction of the ray has been normalised
+    //
+    dir_ig[0] = -dir.x;
+    dir_ig[1] = -dir.y;
+    dir_ig[2] = -dir.z;
+    
+    matmul(tri.globalToLocalMat, dir_ig, dir_il, 3, 3, 1, 3);
+    
+    theta_il = acos(dir_il[2]) ;
+    phi_il   = atan2(dir_il[1], dir_il[0]);
+    
+    // Also convert the direction of the E field into the coordinate system
+    // of the triangle
+    //
+    
+    double E_ig[3], E_il[3] ;
+    E_ig[0] = Eig.x ;
+    E_ig[1] = Eig.y ;
+    E_ig[2] = Eig.z ;
+    
+    matmul(tr.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
+    VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
+    SPVector theta_l_hat, phi_l_hat, z_l_hat ;
+    VECT_CREATE(0, 0, 1, z_l_hat) ;
+    VECT_CROSS(ray.dir, z_l_hat, phi_l_hat) ;
+    VECT_CROSS(phi_l_hat, ray.dir, theta_l_hat) ;
+    VECT_NORM(phi_l_hat, phi_l_hat);
+    VECT_NORM(theta_l_hat, theta_l_hat) ;
+    
+    double Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
+    double Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
+    
+    double Rs, Z0, GamParr, GamPerp ;
+    Rs = tri.Rs ;
+    Z0 = 120 * SIPC_pi ; // Impedence of free space
+    
+    GamParr = -1.0 * Z0 * cos(theta_il) / (2*Rs + Z0*cos(theta_il));
+    GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos(theta_il) + Z0);
+    
+    
+    
+    // Need E_itheta_dashdash
+    //
+    
+
+}
+
+
+SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_s){
+    
+    double Dp,Dq,D0;
+    double Cp,Cq,C0;
+    double u = uvw_s.x ;
+    double v = uvw_s.y ;
+    double w = uvw_s.z ;
+    double x1 = tri.AA.x ;
+    double y1 = tri.AA.y ;
+    double z1 = tri.AA.z ;
+    double x2 = tri.BB.x ;
+    double y2 = tri.BB.y ;
+    double z2 = tri.BB.z ;
+    double x3 = tri.CC.x ;
+    double y3 = tri.CC.y ;
+    double z3 = tri.CC.z ;
+    double A  = tri.area ;
+    
+    Cp = Cq = 0;
+    C0 = 1;
+    Dp = k * ( ((x1 - x3) * u) + ((y1 - y3) * v) + ((z1 - z3) * w) ) ;
+    Dq = k * ( ((x2 - x3) * u) + ((y2 - y3) * v) + ((z2 - z3) * w) ) ;
+    D0 = k * ( (x3 * u) + (y3 * v) + (z3 * w) ) ;
+
+    double Lt      = 0.05 ;  // Length of Taylor series region
+    double magDp   = fabs(Dp) ;
+    double magDq   = fabs(Dq) ;
+    int    TaylorN = 3;
+    int    TaylorM = 3;
+    
     SPCmplx e_jDp, e_jDq, e_jD0 ;
+    SPCmplx jDp, jD0, jDq;
+    SPCmplx Ic ;
+
     e_jD0.r = cosf(D0); e_jD0.i = sinf(D0) ;
     e_jDp.r = cosf(Dp); e_jDp.i = sinf(Dp) ;
     e_jDq.r = cosf(Dq); e_jDq.i = sinf(Dq) ;
-    SPCmplx jDp, jD0, jDq;
-    jDp.r = 0; jDp.i = Dp ;
-    jD0.r = 0; jD0.i = D0 ;
-    jDq.r = 0; jDq.i = Dq ;
+      jDp.r = 0;          jDp.i = Dp ;
+      jD0.r = 0;          jD0.i = D0 ;
+      jDq.r = 0;          jDq.i = Dq ;
     
-    SPCmplx Ic ;
-    // The following is designed to calculate Ic - the scattered field
-    //
-    
-    int TaylorN = 3;
-    int TaylorM = 3;
     SPCmplx G;
     
-    if ( magDp < Lt and magDq >= Lt ){  // Case 1
+    if ( magDp < Lt && magDq >= Lt ){  // Case 1
         SPCmplx sum;
         sum.r = sum.i = 0;
         SPCmplx tmp, tmp1;
@@ -141,7 +207,7 @@ int POTriangle(TriCoords triCart, Triangle tri, Ray ray, SPVector HitPoint, SPVe
         tmp = mult_numer ;
         CMPLX_MULT(tmp, jDp, mult_numer);
         CMPLX_SCMULT(1, mult_denom, mult_denom);
-        CMPLX_DIV(mult_numer, mult_denom, multipler);
+        CMPLX_DIV(mult_numer, mult_denom, multiplier);
         CMPLX_MULT(multiplier, braces, tmp);
         CMPLX_ADD(tmp, sum, sum);
         
@@ -154,7 +220,7 @@ int POTriangle(TriCoords triCart, Triangle tri, Ray ray, SPVector HitPoint, SPVe
         tmp = mult_numer ;
         CMPLX_MULT(tmp, jDp, mult_numer);
         CMPLX_SCMULT(2, mult_denom, mult_denom);
-        CMPLX_DIV(mult_numer, mult_denom, multipler);
+        CMPLX_DIV(mult_numer, mult_denom, multiplier);
         CMPLX_MULT(multiplier, braces, tmp);
         CMPLX_ADD(tmp, sum, sum);
         
@@ -167,7 +233,7 @@ int POTriangle(TriCoords triCart, Triangle tri, Ray ray, SPVector HitPoint, SPVe
         tmp = mult_numer ;
         CMPLX_MULT(tmp, jDp, mult_numer);
         CMPLX_SCMULT(3, mult_denom, mult_denom);
-        CMPLX_DIV(mult_numer, mult_denom, multipler);
+        CMPLX_DIV(mult_numer, mult_denom, multiplier);
         CMPLX_MULT(multiplier, braces, tmp);
         CMPLX_ADD(tmp, sum, sum);
         
@@ -313,155 +379,7 @@ int POTriangle(TriCoords triCart, Triangle tri, Ray ray, SPVector HitPoint, SPVe
         CMPLX_MULT(tmp, braces, Ic);
     }
     
-    // Now have Ic
-    //
-    
-    // Calculate the surface current from the incident ray
-    //
-    
-    // First calculate the rotation matrices from Global coordinates to local (this triangle) coordinates)
-    //
-    
-    double alpha, beta;
-    SPVector zhat;
-    VECT_CREATE(0, 0, 1, zhat);
-    
-    alpha = atan2f(triN.y, triN.x);
-    beta  = acos(VECT_DOT(zhat, triN));
-    
-    double T_dash[9];
-    double T_dashdash[9];
-    
-    T_dash[0] = cos(alpha);
-    T_dash[1] = sin(alpha);
-    T_dash[2] = 0;
-    T_dash[3] = -sin(alpha);
-    T_dash[4] = cos(alpha);
-    T_dash[5] = 0;
-    T_dash[6] = 0;
-    T_dash[7] = 0;
-    T_dash[8] = 1;
-    
-    T_dashdash[0] = cos(beta);
-    T_dashdash[1] = 0;
-    T_dashdash[2] = -sin(beta);
-    T_dashdash[3] = 0;
-    T_dashdash[4] = 1;
-    T_dashdash[5] = 0;
-    T_dashdash[6] = sin(beta);
-    T_dashdash[7] = 0;
-    T_dashdash[8] = cos(beta);
-    
-    double globalToLocalMat[3][3];
-    double localToGlobalMat[3][3];
-    
-    matmul(T_dashdash, T_dash, &globalToLocalMat, 3, 3, 3, 3);
-    mat3by3inv(globalToLocalMat, localToGlobalMat);
-    
-    double u_dashdash,v_dashdash;
-    double uvw_dashdash_arr[3][1] ;
-    double uvw_arr[3][1] ;
-    uvw_arr[0][0] = u;
-    uvw_arr[1][0] = v;
-    uvw_arr[2][0] = w;
-    
-    matmul(globalToLocalMat, uvw_arr, uvw_dashdash_arr, 3, 3, 3, 1);
-    
-    double u_dashdash, v_dashdash, w_dashdash ;
-    u_dashdash = uvw_dashdash_arr[0][0] ;
-    v_dashdash = uvw_dashdash_arr[1][0] ;
-    w_dashdash = uvw_dashdash_arr[2][0] ;
-    
-    double sin_theta_dashdash, cos_theta_dash_dash, tan_phi_dashdash ;
-    sin_theta_dashdash  = sqrt( u_dashdash*u_dashdash + v_dashdash*v_dashdash) ;
-    cos_theta_dash_dash = sqrt(1-(u_dashdash*u_dashdash)+(v_dashdash*v_dashdash)) ;
-    tan_phi_dashdash    = atan2f(v_dashdash, u_dashdash);
-    
-    double Rs, Z0, Gamma_TM, Gamma_TE ;
-    Rs = 0 ; // Surface resistivity = 0 = perfect electric conductor
-    Z0 = 120 * SIPC_pi ; // Impedence of free space
-    
-    Gamma_TM = -1.0 * Z0 * cos_theta_dash_dash / (2*Rs + Z0*cos_theta_dash_dash);
-    Gamma_TE = -1.0 * Z0 / ( 2.0*Rs*cos_theta_dash_dash + Z0);
-    
-    // Need E_itheta_dashdash
-    //
-    
-    
-    return 0;
-}
-
-// 3x3 matrix inversion taken from
-// http://www.c4learn.com/c-programs/c-program-to-find-inverse-of-3-x-3.html
-// which has a very good graphical description
-//
-void mat3by3inv(double A[3][3], double O[3][3]){
-    double a[3][6];
-    int y,x;
-    for(y=0;y<3;y++){    // Append Unit Matrix
-        for(x=0;x<6;x++){
-            if(x<3){
-                a[y][x] = A[y][x] ;
-            }else if(x==y+3){
-                a[y][x]=1;
-            }else{
-                a[y][x]=0;
-            }
-        }
-    }
-    for(i=0;i<3;i++){
-        reduction(a,3,i,i);
-    }
-    
-    for (i=0;i<3; i++){
-        for(j=0; j<3; j++){
-            O[i][j] = a[i][j+3] ;
-        }
-    }
-    return ;
-}
-
-//                   a         3        i          i
-void reduction(double a[][6],int size,int pivot ,int col)
-{
-    int i,j;
-    double factor;
-    
-    factor=a[pivot][col];
-    
-    for(i=0;i<2*size;i++){
-        a[pivot][i]/=factor;
-    }
-    
-    for(i=0;i<size;i++){
-        if(i!=pivot){
-            factor=a[i][col];
-            for(j=0;j<2*size;j++)
-                a[i][j]=a[i][j]-a[pivot][j]*factor;
-        }
-    }
-    return ;
-}
-
-void matmul(double *A,double *B, double **O, int Ay,int Ax,int By,int Bx)
-{
-    // Ax must be equal to By !!!
-    //
-    if (Ax != By) {
-        printf("Error : Multiplication by incompatable matrices\n");
-        exit(1);
-    }
-    // O must be allocated
-    //
-    for (i=0;i<Ay;i++){
-        for(j=0;j<Bx;j++){
-            
-            *O[i][j]=0;
-            for(int k=0;k<Ax;k++)
-                *O[i][j]+= A[i][k]*B[k][j];
-        }
-    }
-    return ;
+    return Ic ;
 }
 
 int factorial(int n)
