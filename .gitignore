@@ -20,3 +20,5 @@ sarcastic.xcodeproj/project.xcworkspace/xcuserdata/darren.xcuserdatad/WorkspaceS
 sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
 sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcschemes/sarcastic.xcscheme
 sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcschemes/xcschememanagement.plist
+*.xcscheme
+Version.h

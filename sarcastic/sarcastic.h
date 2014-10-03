@@ -49,6 +49,7 @@
 #else
 #include <CL/opencl.h>
 #endif
+#include "OpenCLUtils.h"
 
 #define EPSILON ((double)(0.00000001))  // Small number
 #define NILROPE ((int) -666666 )
@@ -243,7 +244,6 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *debug, int *debugX, int *debugY, int *interrogate, SPVector *interogPt, double *interograd,
                  FILE **interogateFP, SPStatus *status) ;
 
-char * loadProgramSource(const char *filename);
 void * devPulseBlock ( void * threadArg ) ;
 void * beamForm ( void * threadArg ) ;
 void oclRayTrace(cl_context         context,            // OpenCL context - already instantiated
