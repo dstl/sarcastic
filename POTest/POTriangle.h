@@ -33,6 +33,7 @@ typedef struct Ray {
 } Ray ;
 
 SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_s) ;
+void surfaceCurrent(triangle tri, Ray ray, double * Jx_dashdash, double * Jy_dashdash) ;
 
 SPCmplx G0_func(double gamma);
 SPCmplx G1_func(double gamma);

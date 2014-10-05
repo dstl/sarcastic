@@ -189,6 +189,15 @@
 		9516175A19DED0550004C4F0 /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
 		9516175C19DED74F0004C4F0 /* matrixMultiplication.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrixMultiplication.c; path = ../matrixMultiplication.c; sourceTree = "<group>"; };
 		9516175E19DED7690004C4F0 /* matrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = matrixMultiplication.h; path = ../matrixMultiplication.h; sourceTree = "<group>"; };
+		9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Chatzigeorgiadis - PO RCS Prediction.pdf"; sourceTree = "<group>"; };
+		9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DosSantos-Ludwig with barycentrics.pdf"; sourceTree = "<group>"; };
+		9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Efficient Evaluation of Radiation Integrals.pdf"; sourceTree = "<group>"; };
+		9526A0BD19E1DAF5003675FB /* Garrido - PO RCS Code.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Garrido - PO RCS Code.pdf"; sourceTree = "<group>"; };
+		9526A0BE19E1DAF5003675FB /* Levins PO Integration.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Levins PO Integration.pdf"; sourceTree = "<group>"; };
+		9526A0BF19E1DAF5003675FB /* Ludwig integral evaluation.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Ludwig integral evaluation.pdf"; sourceTree = "<group>"; };
+		9526A0C019E1DAF5003675FB /* Nikolaos Faros-RCS for planar surfaces.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Nikolaos Faros-RCS for planar surfaces.pdf"; sourceTree = "<group>"; };
+		9526A0C119E1DAF5003675FB /* pogorzelski - Ludwig with triangles.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pogorzelski - Ludwig with triangles.pdf"; sourceTree = "<group>"; };
+		9526A0C219E1DAF5003675FB /* Waddell- Rough Surface Scattering.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Waddell- Rough Surface Scattering.pdf"; sourceTree = "<group>"; };
 		953375E019D927C100DE1C46 /* KdTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KdTree.m; sourceTree = "<group>"; };
 		953375E119D927C100DE1C46 /* KdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KdTree.h; sourceTree = "<group>"; };
 		953375E319D927DA00DE1C46 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -368,6 +377,7 @@
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
+				9526A0B919E1DAF5003675FB /* Documents */,
 			);
 			sourceTree = "<group>";
 		};
@@ -454,6 +464,23 @@
 				9516174919DAB7FA0004C4F0 /* fftw3f.pc */,
 			);
 			path = pkgconfig;
+			sourceTree = "<group>";
+		};
+		9526A0B919E1DAF5003675FB /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */,
+				9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */,
+				9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */,
+				9526A0BD19E1DAF5003675FB /* Garrido - PO RCS Code.pdf */,
+				9526A0BE19E1DAF5003675FB /* Levins PO Integration.pdf */,
+				9526A0BF19E1DAF5003675FB /* Ludwig integral evaluation.pdf */,
+				9526A0C019E1DAF5003675FB /* Nikolaos Faros-RCS for planar surfaces.pdf */,
+				9526A0C119E1DAF5003675FB /* pogorzelski - Ludwig with triangles.pdf */,
+				9526A0C219E1DAF5003675FB /* Waddell- Rough Surface Scattering.pdf */,
+			);
+			name = Documents;
+			path = sarcastic/Documents;
 			sourceTree = "<group>";
 		};
 		953C58FD19D41F5B006D5866 /* triDecomp */ = {

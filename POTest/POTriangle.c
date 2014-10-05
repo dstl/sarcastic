@@ -8,138 +8,131 @@
 
 #include <stdio.h>
 #include <SIlib.h>
-#include <math.h>
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 
 
-int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector ObservationPoint, double lambda, SPCmplx *Es){
+int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsDir, double lambda, SPCmplx *Es, SPVector *Epol){
 
 
     SPVector l1,l3,Av,triN,tmp1,tmp2;
     double a,k,modl1,modl3, Area;
     double baryLambda_1,baryLambda_2,baryLambda_3;
 
-
     k = 2 * SIPC_pi / lambda ;
     
     // Sort out the direction cosines for this ray, hitpoint and observation point
     //
-    
-    SPVector uvw_i ; // Direction cosines for incident ray (ray origin to HitPoint)
-    SPVector uvw_s ; // Direction cosines for scattering ray (HitPoint  to observation point)
+    SPVector uvw_ig ; // Direction cosines for incident ray (ray origin to HitPoint)
+    SPVector uvw_sg ; // Direction cosines for scattering ray (HitPoint  to observation point)
     double u_i,v_i,w_i ;
     double u_s,v_s,w_s ;
     double theta_i, phi_i ; // incident elevation, azimuth
     double theta_s, phi_s ; // Scattering elevation, azimuth
     
-    VECT_SUB(HitPoint, ray.org, tmp1);
-    
-    phi_i     = atan2(tmp1.y,tmp1.x);
-    theta_i   = atan2(sqrt(tmp1.x*tmp1.x+tmp1.y*tmp1.y),tmp1.z);
-    VECT_CREATE(sin(theta_i)*cos(phi_i), sin(theta_i)*sin(phi_i), cos(theta_i), uvw_i) ;
-    
-    phi_s   = atan2(ObservationPoint.y, ObservationPoint.x);
-    theta_s = atan2(sqrt(ObservationPoint.x*ObservationPoint.x+ObservationPoint.y*ObservationPoint.y),ObservationPoint.z);
-    VECT_CREATE(sin(theta_s) * cos(phi_s), sin(theta_s) * sin(phi_s), cos(theta_s), uvw_s) ;
-
-
-    // Now need toperform two seperate calculations:
-    // 1) The surface current over the triangle in terms of Jx & Jy
-    // 2) The surface integral over triangle 'c' called Ic
+    // Assuming that the direction of the ray has been normalised then
+    // the direction cosine is just the componet of direction
     //
+    uvw_sg.x = obsDir.x ;
+    uvw_sg.y = obsDir.y ;
+    uvw_sg.z = obsDir.z ;
+    
+    
+    // Now need to perform two seperate calculations:
+    // 1) The surface integral over triangle 'c' called Ic
+    // 2) The surface current over the triangle in terms of Jx & Jy
+    //
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //
+    // 1) Find the value of Ic
+    //
+    SPCmplx Ic = surfaceIntegral(k, tri, obsPnt, uvw_sg) ;
     
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //
-    // 1) Find the surface current over the triangle in terms of Jx & Jy
+    // 2) Find the surface current over the triangle in terms of Jx & Jy. Multiply it
+    // by the surfaceIntergral Ic and return the Electric field E (Cmplx amp & phase)
+    // also return the polarisation direction of the Efield (in global coordinates)
     //
+    Efield(k, tri, ray, Ic, Es, Epol) ;
     
-    double Jxdd, Jydd ;             // Jx'' & Jy''
-    surfaceCurrent(&Jxdd, &Jydd) ;
+
     
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    //
-    // 2) Find the value of Ic
-    //
-    
-    SPCmplx Ic = surfaceIntegral(k, tri, uvw_i, uvw_s ) ;
     
     return 0;
 }
 
 
-void surfaceCurrent(triangle tri, Ray ray, double * Jx_dashdash, double * Jy_dashdash){
-    
+void EField(triangle tri, Ray ray, SPCmplx Ic, SPCmplx Es, SPVector *Epol){
     
     SPVector Eig = ray.pol ;
-    SPVector dir = ray.dir ;
-    SPVector Eil ;
     
+    double theta_il ; // angle to Z axis
+    double phi_il ;
+    double uvw_ig[3], uvw_il[3]; // Direction cosines for incident Ray
     
-    // Convert the incident ray into the coordinate system of the triangle
-    // use _l for coordinates in local frame of facet and _g or nothing for global
-    // world coordinates
+    // Assuming that the direction of the ray has been normalised then
+    // the direction cosine is just the componet of direction
     //
+    uvw_ig[0] = -ray.dir.x;
+    uvw_ig[1] = -ray.dir.y;
+    uvw_ig[2] = -ray.dir.z;
     
-    double theta_il, theta_sl ; // angle to Z axis
-    double phi_il, phi_sl ;
-    double dir_ig[3], dir_il[3], dir_sg[3], dir_sl[3] ; // Direction cosines for incident and scattered Ray
+    matmul(tri.globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
-    // Assuming that the direction of the ray has been normalised
-    //
-    dir_ig[0] = -dir.x;
-    dir_ig[1] = -dir.y;
-    dir_ig[2] = -dir.z;
-    
-    matmul(tri.globalToLocalMat, dir_ig, dir_il, 3, 3, 1, 3);
-    
-    theta_il = acos(dir_il[2]) ;
-    phi_il   = atan2(dir_il[1], dir_il[0]);
+    double sin_theta_il, cos_theta_il, tan_phi_il, sin_phi_il, cos_phi_il ;
+    sin_theta_il = sqrt(uvw_il[0] * uvw_il[0] ) ;
+    cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
+    tan_phi_il   = atan(uvw_il[1] / uvw_il[0]) ;
+    sin_phi_il   = uvw_il[1] / sin_theta_il ;
+    cos_phi_il   = uvw_il[0] / sin_theta_il ;
     
     // Also convert the direction of the E field into the coordinate system
     // of the triangle
     //
-    
     double E_ig[3], E_il[3] ;
+    SPVector Eil, theta_l_hat, phi_l_hat, z_l_hat ;
+
     E_ig[0] = Eig.x ;
     E_ig[1] = Eig.y ;
     E_ig[2] = Eig.z ;
-    
-    matmul(tr.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
+    matmul(tri.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
     VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
-    SPVector theta_l_hat, phi_l_hat, z_l_hat ;
     VECT_CREATE(0, 0, 1, z_l_hat) ;
-    VECT_CROSS(ray.dir, z_l_hat, phi_l_hat) ;
-    VECT_CROSS(phi_l_hat, ray.dir, theta_l_hat) ;
-    VECT_NORM(phi_l_hat, phi_l_hat);
-    VECT_NORM(theta_l_hat, theta_l_hat) ;
-    
+    VECT_CROSS (ray.dir, z_l_hat, phi_l_hat) ;
+    VECT_CROSS (phi_l_hat, ray.dir, theta_l_hat) ;
+    VECT_NORM  (phi_l_hat, phi_l_hat);
+    VECT_NORM  (theta_l_hat, theta_l_hat) ;
     double Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
     double Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
     
-    double Rs, Z0, GamParr, GamPerp ;
-    Rs = tri.Rs ;
-    Z0 = 120 * SIPC_pi ; // Impedence of free space
-    
-    GamParr = -1.0 * Z0 * cos(theta_il) / (2*Rs + Z0*cos(theta_il));
-    GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos(theta_il) + Z0);
-    
-    
-    
-    // Need E_itheta_dashdash
+    // Calculate Gamma_parallel and Gamma_perpendicular
     //
+    double Rs, Z0, GamParr, GamPerp ;
+    Rs      = tri.Rs ;
+    Z0      = 120 * SIPC_pi ; // Impedence of free space
+    GamParr = -1.0 * Z0 * cos_theta_il / (2*Rs + Z0*cos_theta_il) ;
+    GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos_theta_il + Z0);
     
-
+    // Now calculate Jx_local and Jy_local
+    //
+    double Jx_l, Jy_l ;
+    Jx_l = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * cos_theta_il ;
+    Jy_l = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * cos_theta_il ;
+    
+    
+    
+    return ;
 }
 
 
-SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_s){
+SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
     
     double Dp,Dq,D0;
     double Cp,Cq,C0;
-    double u = uvw_s.x ;
-    double v = uvw_s.y ;
-    double w = uvw_s.z ;
+    double u = uvw_sg.x ;
+    double v = uvw_sg.y ;
+    double w = uvw_sg.z ;
     double x1 = tri.AA.x ;
     double y1 = tri.AA.y ;
     double z1 = tri.AA.z ;
