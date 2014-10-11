@@ -11,24 +11,28 @@
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 
+SPCmplx G0_func(double gamma) ;
+SPCmplx G1_func(double gamma) ;
+SPCmplx G2_func(double gamma) ;
+SPCmplx G3_func(double gamma) ;
+SPCmplx G4_func(double gamma) ;
+int factorial(int n) ;
 
-int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsDir, double lambda, SPCmplx *Es, SPVector *Epol){
 
+void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, double lambda, SPCmplx *EsV, SPCmplx *EsH){
 
-    SPVector l1,l3,Av,triN,tmp1,tmp2;
-    double a,k,modl1,modl3, Area;
-    double baryLambda_1,baryLambda_2,baryLambda_3;
-
+    double k;
+    
     k = 2 * SIPC_pi / lambda ;
     
     // Sort out the direction cosines for this ray, hitpoint and observation point
     //
-    SPVector uvw_ig ; // Direction cosines for incident ray (ray origin to HitPoint)
     SPVector uvw_sg ; // Direction cosines for scattering ray (HitPoint  to observation point)
-    double u_i,v_i,w_i ;
-    double u_s,v_s,w_s ;
-    double theta_i, phi_i ; // incident elevation, azimuth
-    double theta_s, phi_s ; // Scattering elevation, azimuth
+    
+    SPVector obsDir ;
+    VECT_SUB(obsPnt, HitPoint, obsDir);
+    double r = VECT_MAG(obsDir);
+    VECT_SCMULT(obsDir, 1/r, obsDir) ;
     
     // Assuming that the direction of the ray has been normalised then
     // the direction cosine is just the componet of direction
@@ -36,6 +40,15 @@ int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsDir, double
     uvw_sg.x = obsDir.x ;
     uvw_sg.y = obsDir.y ;
     uvw_sg.z = obsDir.z ;
+    
+    // Define unit vectors for V & H fields
+    //
+    SPVector Es_parrdir, Es_perpdir, z_hat ;
+    VECT_CREATE(0, 0, 1, z_hat) ;
+    VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
+    VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
+    VECT_NORM(Es_parrdir, Es_parrdir) ;
+    VECT_NORM(Es_perpdir, Es_perpdir) ;
     
     
     // Now need to perform two seperate calculations:
@@ -46,7 +59,7 @@ int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsDir, double
     //
     // 1) Find the value of Ic
     //
-    SPCmplx Ic = surfaceIntegral(k, tri, obsPnt, uvw_sg) ;
+    SPCmplx Ic = surfaceIntegral(k, tri, uvw_sg) ;
     
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //
@@ -54,25 +67,21 @@ int POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsDir, double
     // by the surfaceIntergral Ic and return the Electric field E (Cmplx amp & phase)
     // also return the polarisation direction of the Efield (in global coordinates)
     //
-    Efield(k, tri, ray, Ic, Es, Epol) ;
-    
-
-    
-    
-    return 0;
+    SPCmplx Es_parr, Es_perp ;
+    EField(k, r, tri, ray, Ic, Es_parrdir, Es_perpdir, &Es_parr, &Es_perp) ;
+    *EsV = Es_parr ;
+    *EsH = Es_perp ;
+    return ;
 }
 
 
-void EField(triangle tri, Ray ray, SPCmplx Ic, SPCmplx Es, SPVector *Epol){
+void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_parrdir, SPVector Es_perpdir, SPCmplx *Es_parr, SPCmplx *Es_perp ){
     
     SPVector Eig = ray.pol ;
-    
-    double theta_il ; // angle to Z axis
-    double phi_il ;
     double uvw_ig[3], uvw_il[3]; // Direction cosines for incident Ray
     
     // Assuming that the direction of the ray has been normalised then
-    // the direction cosine is just the componet of direction
+    // the direction cosine is just the component of direction
     //
     uvw_ig[0] = -ray.dir.x;
     uvw_ig[1] = -ray.dir.y;
@@ -81,7 +90,7 @@ void EField(triangle tri, Ray ray, SPCmplx Ic, SPCmplx Es, SPVector *Epol){
     matmul(tri.globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
     double sin_theta_il, cos_theta_il, tan_phi_il, sin_phi_il, cos_phi_il ;
-    sin_theta_il = sqrt(uvw_il[0] * uvw_il[0] ) ;
+    sin_theta_il = sqrt(uvw_il[0] * uvw_il[1] ) ;
     cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
     tan_phi_il   = atan(uvw_il[1] / uvw_il[0]) ;
     sin_phi_il   = uvw_il[1] / sin_theta_il ;
@@ -91,15 +100,15 @@ void EField(triangle tri, Ray ray, SPCmplx Ic, SPCmplx Es, SPVector *Epol){
     // of the triangle
     //
     double E_ig[3], E_il[3] ;
-    SPVector Eil, theta_l_hat, phi_l_hat, z_l_hat ;
+    SPVector Eil, theta_l_hat, phi_l_hat, z_hat ;
 
     E_ig[0] = Eig.x ;
     E_ig[1] = Eig.y ;
     E_ig[2] = Eig.z ;
     matmul(tri.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
     VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
-    VECT_CREATE(0, 0, 1, z_l_hat) ;
-    VECT_CROSS (ray.dir, z_l_hat, phi_l_hat) ;
+    VECT_CREATE(0, 0, 1, z_hat) ;
+    VECT_CROSS (ray.dir, z_hat, phi_l_hat) ;
     VECT_CROSS (phi_l_hat, ray.dir, theta_l_hat) ;
     VECT_NORM  (phi_l_hat, phi_l_hat);
     VECT_NORM  (theta_l_hat, theta_l_hat) ;
@@ -120,8 +129,31 @@ void EField(triangle tri, Ray ray, SPCmplx Ic, SPCmplx Es, SPVector *Epol){
     Jx_l = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * cos_theta_il ;
     Jy_l = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * cos_theta_il ;
     
+    // Convert the current vector to global coordinates
+    //
+    double J_l[3], J_g[3] ;
+    J_l[0] = Jx_l ;
+    J_l[1] = Jy_l ;
+    J_l[2] = 0.0  ;
+    matmul(tri.localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;
+    SPVector Jg;
+    VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
+    double A = VECT_DOT(Es_parrdir, Jg);
+    double B = VECT_DOT(Es_perpdir, Jg);
     
-    
+    // Work out scaler (complex) component of E field
+    //
+    SPCmplx jkZ0_o_4PIr, tmp1, scaler, e_jkr;
+    CMPLX_F_MAKE(0, -k*Z0/(4*SIPC_pi*r), jkZ0_o_4PIr) ;
+    e_jkr.r = cos(-k*r);
+    e_jkr.i = sin(-k*r);
+    CMPLX_MULT(jkZ0_o_4PIr, e_jkr, tmp1);
+    CMPLX_MULT(tmp1, Ic, scaler);
+    SPCmplx par,per ;
+    CMPLX_SCMULT(A, scaler, par) ;
+    CMPLX_SCMULT(B, scaler, per) ;
+    Es_parr->r = par.r ; Es_parr->i = par.i ;
+    Es_perp->r = per.r ; Es_perp->i = per.i ;
     return ;
 }
 
@@ -153,8 +185,6 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
     double Lt      = 0.05 ;  // Length of Taylor series region
     double magDp   = fabs(Dp) ;
     double magDq   = fabs(Dq) ;
-    int    TaylorN = 3;
-    int    TaylorM = 3;
     
     SPCmplx e_jDp, e_jDq, e_jD0 ;
     SPCmplx jDp, jD0, jDq;
@@ -172,7 +202,7 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
     if ( magDp < Lt && magDq >= Lt ){  // Case 1
         SPCmplx sum;
         sum.r = sum.i = 0;
-        SPCmplx tmp, tmp1;
+        SPCmplx t, t1;
         SPCmplx C0_over_nplus1 ;
         SPCmplx braces ;
         SPCmplx mult_numer, mult_denom, multiplier ;
@@ -186,8 +216,8 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         G = G0_func(-Dq);
         C0_over_nplus1.r = -C0 ;
         C0_over_nplus1.i = 0 ;
-        CMPLX_MULT(e_jDq, G, tmp);
-        CMPLX_ADD(C0_over_nplus1, tmp, sum);
+        CMPLX_MULT(e_jDq, G, t);
+        CMPLX_ADD(C0_over_nplus1, t, sum);
         mult_numer.r = 1; mult_numer.i = 0;
         mult_denom.r = 1; mult_denom.i = 0;
         
@@ -195,53 +225,54 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         //
         G = G1_func(-Dq);
         C0_over_nplus1.r = -C0 / 2;
-        CMPLX_MULT(e_jDq, G, tmp);
-        CMPLX_ADD(C0_over_nplus1, tmp, braces);
-        tmp = mult_numer ;
-        CMPLX_MULT(tmp, jDp, mult_numer);
+        CMPLX_MULT(e_jDq, G, t);
+        CMPLX_ADD(C0_over_nplus1, t, braces);
+        t = mult_numer ;
+        CMPLX_MULT(t, jDp, mult_numer);
         CMPLX_SCMULT(1, mult_denom, mult_denom);
         CMPLX_DIV(mult_numer, mult_denom, multiplier);
-        CMPLX_MULT(multiplier, braces, tmp);
-        CMPLX_ADD(tmp, sum, sum);
+        CMPLX_MULT(multiplier, braces, t);
+        CMPLX_ADD(t, sum, sum);
         
         // n = 2
         //
         G = G2_func(-Dq);
         C0_over_nplus1.r = -C0 / 3;
-        CMPLX_MULT(e_jDq, G, tmp);
-        CMPLX_ADD(C0_over_nplus1, tmp, braces);
-        tmp = mult_numer ;
-        CMPLX_MULT(tmp, jDp, mult_numer);
+        CMPLX_MULT(e_jDq, G, t);
+        CMPLX_ADD(C0_over_nplus1, t, braces);
+        t = mult_numer ;
+        CMPLX_MULT(t, jDp, mult_numer);
         CMPLX_SCMULT(2, mult_denom, mult_denom);
         CMPLX_DIV(mult_numer, mult_denom, multiplier);
-        CMPLX_MULT(multiplier, braces, tmp);
-        CMPLX_ADD(tmp, sum, sum);
+        CMPLX_MULT(multiplier, braces, t);
+        CMPLX_ADD(t, sum, sum);
         
         // n = 3
         //
         G = G3_func(-Dq);
         C0_over_nplus1.r = -C0 / 4;
-        CMPLX_MULT(e_jDq, G, tmp);
-        CMPLX_ADD(C0_over_nplus1, tmp, braces);
-        tmp = mult_numer ;
-        CMPLX_MULT(tmp, jDp, mult_numer);
+        CMPLX_MULT(e_jDq, G, t);
+        CMPLX_ADD(C0_over_nplus1, t, braces);
+        t = mult_numer ;
+        CMPLX_MULT(t, jDp, mult_numer);
         CMPLX_SCMULT(3, mult_denom, mult_denom);
         CMPLX_DIV(mult_numer, mult_denom, multiplier);
-        CMPLX_MULT(multiplier, braces, tmp);
-        CMPLX_ADD(tmp, sum, sum);
+        CMPLX_MULT(multiplier, braces, t);
+        CMPLX_ADD(t, sum, sum);
         
         // Finished summation
         //
-        CMPLX_SCMULT(2*A, e_jD0, tmp);
-        CMPLX_DIV(tmp, jDq, tmp1);
-        CMPLX_MULT(tmp1, sum, Ic);
+        CMPLX_SCMULT(2*A, e_jD0, t);
+        CMPLX_DIV(t, jDq, t1);
+        CMPLX_MULT(t1, sum, Ic);
         
     }else if ( magDp < Lt && magDq < Lt ){  // Case 2
         
         SPCmplx jDp_a[4] ;
         SPCmplx jDq_a[4] ;
-        SPCmplx sum;
-        sum.r = sum.i = 0;
+        SPCmplx sum; sum.r = sum.i = 0;
+        SPCmplx tmp, tmp1;
+        
         
         jDp_a[0].r = 1 ; jDp_a[0].i = 0 ;
         CMPLX_MULT(jDp_a[0], jDp, jDp_a[1]);
@@ -267,7 +298,7 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         CMPLX_MULT(tmp, sum, Ic);
         
     } else if ( magDp >= Lt && magDq < Lt ){    // Case 3
-        
+        SPCmplx sum; sum.r = sum.i = 0;
         SPCmplx tmp, tmp1, jDq_pow;
         
         // n = 0
@@ -310,8 +341,9 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         
     } else if ( magDp >= Lt && magDq >= Lt && fabs(magDp - magDq) < Lt ){   // Case 4
         
-        SPCmplx tmp, tmp1,tmp2, jDp_min_jDq, jD_subs_pow;
-        
+        SPCmplx t, t1,t2, jDp_min_jDq, jD_subs_pow;
+        SPCmplx sum; sum.r = sum.i = 0;
+
         CMPLX_SUB(jDp, jDq, jDp_min_jDq);
         jD_subs_pow = jDp_min_jDq ;
         
@@ -324,37 +356,37 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         // n=1
         G = G1_func(Dq);
         CMPLX_SCMULT(-1, G, G);
-        CMPLX_SCMULT(0.5, e_jDq, tmp);
-        CMPLX_ADD(G, tmp, tmp1);
-        CMPLX_MULT(jD_subs_pow, tmp1, tmp);
-        CMPLX_ADD(tmp, sum, sum);
+        CMPLX_SCMULT(0.5, e_jDq, t);
+        CMPLX_ADD(G, t, t1);
+        CMPLX_MULT(jD_subs_pow, t1, t);
+        CMPLX_ADD(t, sum, sum);
         
         // n=2
         G = G2_func(Dq);
         CMPLX_SCMULT(-1, G, G);
-        CMPLX_SCMULT((1.0/3.0), e_jDq, tmp);
-        CMPLX_ADD(G, tmp, tmp1);
-        tmp = jD_subs_pow ;
-        CMPLX_MULT(tmp, jDp_min_jDq, jD_subs_pow);
-        CMPLX_SCMULT(0.5, jD_subs_pow, tmp);
-        CMPLX_MULT(tmp, tmp1, tmp2);
-        CMPLX_ADD(tmp2, sum, sum);
+        CMPLX_SCMULT((1.0/3.0), e_jDq, t);
+        CMPLX_ADD(G, t, t1);
+        t = jD_subs_pow ;
+        CMPLX_MULT(t, jDp_min_jDq, jD_subs_pow);
+        CMPLX_SCMULT(0.5, jD_subs_pow, t);
+        CMPLX_MULT(t, t1, t2);
+        CMPLX_ADD(t2, sum, sum);
         
         // n=3
         G=G3_func(Dq);
         CMPLX_SCMULT(-1, G, G);
-        CMPLX_SCMULT(0.25, e_jDq, tmp);
-        CMPLX_ADD(G, tmp, tmp1);
-        tmp = jD_subs_pow ;
-        CMPLX_MULT(tmp, jDp_min_jDq, jD_subs_pow);
-        CMPLX_SCMULT((1.0/6.0), jD_subs_pow, tmp);
-        CMPLX_MULT(tmp, tmp1, tmp2);
-        CMPLX_ADD(tmp2, sum, sum);
+        CMPLX_SCMULT(0.25, e_jDq, t);
+        CMPLX_ADD(G, t, t1);
+        t = jD_subs_pow ;
+        CMPLX_MULT(t, jDp_min_jDq, jD_subs_pow);
+        CMPLX_SCMULT((1.0/6.0), jD_subs_pow, t);
+        CMPLX_MULT(t, t1, t2);
+        CMPLX_ADD(t2, sum, sum);
         
         // End of summation
-        CMPLX_SCMULT(2*A, e_jD0, tmp);
-        CMPLX_DIV(tmp, jDq, tmp1);
-        CMPLX_MULT(tmp1, sum, Ic);
+        CMPLX_SCMULT(2*A, e_jD0, t);
+        CMPLX_DIV(t, jDq, t1);
+        CMPLX_MULT(t1, sum, Ic);
         
         
     } else {
@@ -366,10 +398,9 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         SPCmplx braces ;
         CMPLX_SUB(term1, term2,braces);
         CMPLX_SUB(braces, term3, braces) ;
-        Ic.r = cosf(e_jD0) ; Ic.i = sinf(e_jD0) ;
-        SPCmplx tmp ;
-        CMPLX_SCMULT(2*A, Ic, tmp) ;
-        CMPLX_MULT(tmp, braces, Ic);
+        SPCmplx t ;
+        CMPLX_SCMULT(2*A, e_jD0, t) ;
+        CMPLX_MULT(t, braces, Ic);
     }
     
     return Ic ;
@@ -389,7 +420,7 @@ int factorial(int n)
 SPCmplx G4_func(double gamma){
     SPCmplx denominator;
     SPCmplx e_jgamma;
-    SPCmplx tmp,ans;
+    SPCmplx t,ans;
     
     denominator.r = 0 ; denominator.i = gamma ;
     e_jgamma.r = cosf(gamma) ;
@@ -399,8 +430,8 @@ SPCmplx G4_func(double gamma){
     
     CMPLX_SCMULT(4, G3, G3);
     
-    CMPLX_SUB(e_jgamma, G3, tmp);
-    CMPLX_DIV(tmp, denominator, ans);
+    CMPLX_SUB(e_jgamma, G3, t);
+    CMPLX_DIV(t, denominator, ans);
     return ans ;
     
 }
@@ -408,7 +439,7 @@ SPCmplx G4_func(double gamma){
 SPCmplx G3_func(double gamma){
     SPCmplx denominator;
     SPCmplx e_jgamma;
-    SPCmplx tmp,ans;
+    SPCmplx t,ans;
     
     denominator.r = 0 ; denominator.i = gamma ;
     e_jgamma.r = cosf(gamma) ;
@@ -418,8 +449,8 @@ SPCmplx G3_func(double gamma){
     
     CMPLX_SCMULT(3, G2, G2);
     
-    CMPLX_SUB(e_jgamma, G2, tmp);
-    CMPLX_DIV(tmp, denominator, ans);
+    CMPLX_SUB(e_jgamma, G2, t);
+    CMPLX_DIV(t, denominator, ans);
     return ans ;
     
 }
@@ -427,7 +458,7 @@ SPCmplx G3_func(double gamma){
 SPCmplx G2_func(double gamma){
     SPCmplx denominator;
     SPCmplx e_jgamma;
-    SPCmplx tmp,ans;
+    SPCmplx t,ans;
     
     denominator.r = 0 ; denominator.i = gamma ;
     e_jgamma.r = cosf(gamma) ;
@@ -437,8 +468,8 @@ SPCmplx G2_func(double gamma){
     
     CMPLX_SCMULT(2, G1, G1);
     
-    CMPLX_SUB(e_jgamma, G1, tmp);
-    CMPLX_DIV(tmp, denominator, ans);
+    CMPLX_SUB(e_jgamma, G1, t);
+    CMPLX_DIV(t, denominator, ans);
     return ans ;
     
 }
@@ -446,7 +477,7 @@ SPCmplx G2_func(double gamma){
 SPCmplx G1_func(double gamma){
     SPCmplx denominator;
     SPCmplx e_jgamma;
-    SPCmplx tmp,ans;
+    SPCmplx t,ans;
     
     denominator.r = 0 ; denominator.i = gamma ;
     e_jgamma.r = cosf(gamma) ;
@@ -454,8 +485,8 @@ SPCmplx G1_func(double gamma){
     
     SPCmplx G0 = G0_func(gamma);
     
-    CMPLX_SUB(e_jgamma, G0, tmp);
-    CMPLX_DIV(tmp, denominator, ans);
+    CMPLX_SUB(e_jgamma, G0, t);
+    CMPLX_DIV(t, denominator, ans);
     return ans ;
     
 }
@@ -467,10 +498,10 @@ SPCmplx G0_func(double gamma){
     one.i = 0;
     
     SPCmplx e_jgamma;
-    SPCmplx tmp ;
+    SPCmplx t ;
     e_jgamma.r = cosf(gamma) ;
     e_jgamma.i = sinf(gamma) ;
-    CMPLX_SUB(e_jgamma, one, tmp) ;
-    CMPLX_DIV(tmp, e_jgamma, ans) ;
+    CMPLX_SUB(e_jgamma, one, t) ;
+    CMPLX_DIV(t, e_jgamma, ans) ;
     return ans ;
 }

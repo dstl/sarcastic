@@ -50,7 +50,7 @@ typedef struct scatProps {
 } scatProps ;
 
 #define NMATERIALS 9
-scatProps materialProperties[NMATERIALS] = {
+static scatProps materialProperties[NMATERIALS] = {
 //   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
     {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
     {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },

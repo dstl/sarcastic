@@ -10,6 +10,7 @@
 #include <SIlib.h>
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
+#define LAMBDA 0.04
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 
@@ -46,8 +47,39 @@ int main(int argc, const char * argv[])
     printf("    %f%f%f\n",BB.x,BB.y,BB.z);
     printf("    %f%f%f\n",CC.x,CC.y,CC.z);
     printf("    %f%f%f\n",AA.x,AA.y,AA.z);
-
-    POTriangle(tri, ray) ;
+    
+    int iphi, niphis;
+    int itheta, nitheta;
+    niphis = 360 ;
+    nitheta = 100 ;
+    
+    double deltaiphi, deltaitheta;
+    deltaiphi = 2*SIPC_pi / niphis ;
+    deltaitheta = SIPC_pi / (2*nitheta) ;
+    double phi_s, theta_s;
+    SPVector RxPnt ;
+    double obsDist = 10000 ;
+    
+    for(itheta=0; itheta<nitheta; itheta++){
+        theta_s = itheta * deltaitheta ;
+        
+        //    theta_s = DEG2RAD(45) ;
+        //    printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
+        
+        for(iphi=0; iphi < niphis; iphi++){
+            phi_s = iphi * deltaiphi ;
+            
+            //    phi_s = DEG2RAD(270);
+            //    printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
+            
+            RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
+            RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
+            RxPnt.z = obsDist * cos(theta_s);
+            
+            SPCmplx EsV, EsH ;
+            POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
+        }
+    }
     
     return 0;
 }
