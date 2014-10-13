@@ -63,14 +63,14 @@ int main(int argc, const char * argv[])
     for(itheta=0; itheta<nitheta; itheta++){
         theta_s = itheta * deltaitheta ;
         
-        //    theta_s = DEG2RAD(45) ;
-        //    printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
+//        theta_s = DEG2RAD(45) ;
+//        printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
         
         for(iphi=0; iphi < niphis; iphi++){
             phi_s = iphi * deltaiphi ;
             
-            //    phi_s = DEG2RAD(270);
-            //    printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
+//            phi_s = DEG2RAD(0);
+//            printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
             
             RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
             RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
@@ -78,6 +78,9 @@ int main(int argc, const char * argv[])
             
             SPCmplx EsV, EsH ;
             POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
+            
+            printf("%f, %f, %f \n",(CMPLX_MAG(EsV)),phi_s,theta_s);
+
         }
     }
     
@@ -105,8 +108,8 @@ void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri){
     strcpy (tri->mat, "MATERIAL") ;
     
     VECT_CREATE(0, 0, 1, zhat);
-    alpha = atan2(NN.y, NN.x);
-    beta  = acos(VECT_DOT(zhat, NN));
+    alpha = atan2(tri->NN.y, tri->NN.x);
+    beta  = acos(VECT_DOT(zhat, tri->NN));
     T_dash[0] = cos(alpha);
     T_dash[1] = sin(alpha);
     T_dash[2] = 0;

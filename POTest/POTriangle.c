@@ -41,16 +41,6 @@ void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, doubl
     uvw_sg.y = obsDir.y ;
     uvw_sg.z = obsDir.z ;
     
-    // Define unit vectors for V & H fields
-    //
-    SPVector Es_parrdir, Es_perpdir, z_hat ;
-    VECT_CREATE(0, 0, 1, z_hat) ;
-    VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
-    VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
-    VECT_NORM(Es_parrdir, Es_parrdir) ;
-    VECT_NORM(Es_perpdir, Es_perpdir) ;
-    
-    
     // Now need to perform two seperate calculations:
     // 1) The surface integral over triangle 'c' called Ic
     // 2) The surface current over the triangle in terms of Jx & Jy
@@ -68,6 +58,15 @@ void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, doubl
     // also return the polarisation direction of the Efield (in global coordinates)
     //
     SPCmplx Es_parr, Es_perp ;
+    // Define unit vectors for V & H fields
+    //
+    SPVector Es_parrdir, Es_perpdir, z_hat ;
+    VECT_CREATE(0, 0, 1, z_hat) ;
+    VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
+    VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
+    VECT_NORM(Es_parrdir, Es_parrdir) ;
+    VECT_NORM(Es_perpdir, Es_perpdir) ;
+    
     EField(k, r, tri, ray, Ic, Es_parrdir, Es_perpdir, &Es_parr, &Es_perp) ;
     *EsV = Es_parr ;
     *EsH = Es_perp ;
