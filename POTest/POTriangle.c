@@ -89,7 +89,7 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     matmul(tri.globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
     
     double sin_theta_il, cos_theta_il, tan_phi_il, sin_phi_il, cos_phi_il ;
-    sin_theta_il = sqrt(uvw_il[0] * uvw_il[1] ) ;
+    sin_theta_il = sqrt(uvw_il[0]*uvw_il[0] +  uvw_il[1] * uvw_il[1] ) ;
     cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
     tan_phi_il   = atan(uvw_il[1] / uvw_il[0]) ;
     sin_phi_il   = uvw_il[1] / sin_theta_il ;
@@ -338,7 +338,7 @@ SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg){
         CMPLX_MULT(tmp1, sum, Ic);
         
         
-    } else if ( magDp >= Lt && magDq >= Lt && fabs(magDp - magDq) < Lt ){   // Case 4
+    } else if ( magDp >= Lt && magDq >= Lt && fabs(Dp - Dq) < Lt ){   // Case 4
         
         SPCmplx t, t1,t2, jDp_min_jDq, jD_subs_pow;
         SPCmplx sum; sum.r = sum.i = 0;

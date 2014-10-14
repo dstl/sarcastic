@@ -37,16 +37,17 @@ int main(int argc, const char * argv[])
     SPVector zhat, Hpol, Vpol ;
     VECT_CREATE(0, 0, 1, zhat);
     VECT_CROSS(r.dir, zhat, Hpol) ;
+    VECT_NORM(Hpol, Hpol) ;
     VECT_CROSS(Hpol, r.dir, Vpol) ;
     r.pol = Vpol ;
     
     printf("Transmit location %f,%f,%f\n", r.org.x,r.org.y,r.org.z);
     printf("Hipoint location  %f,%f,%f\n", hp.x,hp.y,hp.z);
     printf(" Facet:\n");
-    printf("    %f%f%f\n",AA.x,AA.y,AA.z);
-    printf("    %f%f%f\n",BB.x,BB.y,BB.z);
-    printf("    %f%f%f\n",CC.x,CC.y,CC.z);
-    printf("    %f%f%f\n",AA.x,AA.y,AA.z);
+    printf("    %8.2f %8.2f %8.2f\n",AA.x,AA.y,AA.z);
+    printf("    %8.2f %8.2f %8.2f\n",BB.x,BB.y,BB.z);
+    printf("    %8.2f %8.2f %8.2f\n",CC.x,CC.y,CC.z);
+    printf("    %8.2f %8.2f %8.2f\n",AA.x,AA.y,AA.z);
     
     int iphi, niphis;
     int itheta, nitheta;
@@ -59,31 +60,46 @@ int main(int argc, const char * argv[])
     double phi_s, theta_s;
     SPVector RxPnt ;
     double obsDist = 10000 ;
+ 
+    int singlePoint = 0;
+    double obsTheta, obsPhi;
+    obsTheta = RAD2DEG(0.785) ;
+    obsPhi   = RAD2DEG(2.356194)  ;
     
-    for(itheta=0; itheta<nitheta; itheta++){
-        theta_s = itheta * deltaitheta ;
+    if (singlePoint){
+        theta_s = DEG2RAD(obsTheta) ;
+        printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
+        phi_s = DEG2RAD(obsPhi);
+        printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
+        RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
+        RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
+        RxPnt.z = obsDist * cos(theta_s);
         
-//        theta_s = DEG2RAD(45) ;
-//        printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
+        SPCmplx EsV, EsH ;
+        POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
         
-        for(iphi=0; iphi < niphis; iphi++){
-            phi_s = iphi * deltaiphi ;
+        printf("%f, %f, %f \n",(CMPLX_MAG(EsV)),phi_s,theta_s);
+    }else{
+        
+        for(itheta=0; itheta<nitheta; itheta++){
+            theta_s = itheta * deltaitheta ;
             
-//            phi_s = DEG2RAD(0);
-//            printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
-            
-            RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
-            RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
-            RxPnt.z = obsDist * cos(theta_s);
-            
-            SPCmplx EsV, EsH ;
-            POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
-            
-            printf("%f, %f, %f \n",(CMPLX_MAG(EsV)),phi_s,theta_s);
-
+            for(iphi=0; iphi < niphis; iphi++){
+                phi_s = iphi * deltaiphi ;
+                                
+                RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
+                RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
+                RxPnt.z = obsDist * cos(theta_s);
+                
+                SPCmplx EsV, EsH ;
+                POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
+                
+                printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsH)),phi_s,theta_s);
+                
+            }
         }
     }
-    
+
     return 0;
 }
 
