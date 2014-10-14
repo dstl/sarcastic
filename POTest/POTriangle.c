@@ -62,8 +62,16 @@ void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, doubl
     //
     SPVector Es_parrdir, Es_perpdir, z_hat ;
     VECT_CREATE(0, 0, 1, z_hat) ;
-    VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
-    VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
+    if(VECT_DOT(z_hat, obsDir) == 1.0){
+        // Ie looking from above - for diagnostic purposes - remove from SAR
+        // simulation as this never occurs.
+        //
+        VECT_CREATE(ray.pol.x, ray.pol.y, 0, Es_parrdir) ;
+        VECT_CROSS(Es_parrdir, z_hat, Es_perpdir) ;
+    }else{
+        VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
+        VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
+    }
     VECT_NORM(Es_parrdir, Es_parrdir) ;
     VECT_NORM(Es_perpdir, Es_perpdir) ;
     
@@ -76,7 +84,8 @@ void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, doubl
 
 void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_parrdir, SPVector Es_perpdir, SPCmplx *Es_parr, SPCmplx *Es_perp ){
     
-    SPVector Eig = ray.pol ;
+    SPVector Eig ;
+    VECT_SCMULT(ray.pol, ray.pow, Eig) ;
     double uvw_ig[3], uvw_il[3]; // Direction cosines for incident Ray
     
     // Assuming that the direction of the ray has been normalised then

@@ -19,21 +19,22 @@ int main(int argc, const char * argv[])
     
     triangle tri ;
     SPVector AA,BB,CC ;
-    VECT_CREATE( 10,   0,  0, AA);
-    VECT_CREATE(  0,  10,  0, BB);
-    VECT_CREATE(-10, -10,  0, CC);
+    VECT_CREATE( 10.0,   0,  0, AA);
+    VECT_CREATE(  0,  10.0,  0, BB);
+    VECT_CREATE(-10.0, -10.0,  0, CC);
     buildTriangle(AA, BB, CC, &tri) ;
     
     // Create a ray
     //
     Ray r ;
     SPVector hp, dir;
-    VECT_CREATE(20.0, 20.0, 20.0, r.org);
+    VECT_CREATE(0.0, -20.0, 20.0, r.org);
     VECT_CREATE(0.0, 0.0, 0.0, hp);
     VECT_SUB(hp, r.org, dir);
     r.len = 0.0;
+    r.pow = 100000000.0;
+    r.pow = r.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
     VECT_NORM(dir, r.dir);
-    r.pow = 1000000.0;
     SPVector zhat, Hpol, Vpol ;
     VECT_CREATE(0, 0, 1, zhat);
     VECT_CROSS(r.dir, zhat, Hpol) ;
@@ -63,8 +64,8 @@ int main(int argc, const char * argv[])
  
     int singlePoint = 0;
     double obsTheta, obsPhi;
-    obsTheta = RAD2DEG(0.785) ;
-    obsPhi   = RAD2DEG(2.356194)  ;
+    obsPhi   = RAD2DEG(0.0)  ;
+    obsTheta = RAD2DEG(0.015708) ;
     
     if (singlePoint){
         theta_s = DEG2RAD(obsTheta) ;
@@ -78,7 +79,11 @@ int main(int argc, const char * argv[])
         SPCmplx EsV, EsH ;
         POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
         
-        printf("%f, %f, %f \n",(CMPLX_MAG(EsV)),phi_s,theta_s);
+        if(CMPLX_MAG(EsV) != 0){
+            printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+        }else{
+            printf("%f, %f, %f \n",-1000.0,phi_s,theta_s);
+        }
     }else{
         
         for(itheta=0; itheta<nitheta; itheta++){
@@ -94,7 +99,11 @@ int main(int argc, const char * argv[])
                 SPCmplx EsV, EsH ;
                 POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
                 
-                printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsH)),phi_s,theta_s);
+                if(CMPLX_MAG(EsV) != 0){
+                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                }else{
+                    printf("%f, %f, %f \n",-1000.0,phi_s,theta_s);
+                }
                 
             }
         }
