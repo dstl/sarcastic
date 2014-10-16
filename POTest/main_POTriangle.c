@@ -86,7 +86,7 @@ int main(int argc, const char * argv[])
         RxPnt.z = obsDist * cos(theta_s);
         
         SPCmplx EsV, EsH ;
-        POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
+        POTriangle(tri, r, RxPnt, LAMBDA, &EsV, &EsH) ;
 
         if(CMPLX_MAG(EsV) < 1.0e-4){
             printf("%f, %f, %f \n",0.0,phi_s,theta_s);
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[])
                 RxPnt.z = obsDist * cos(theta_s);
                 
                 SPCmplx EsV, EsH ;
-                POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
+                POTriangle(tri, r, RxPnt, LAMBDA, &EsV, &EsH) ;
                 
                 if(CMPLX_MAG(EsV) < 1.0e-4){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);
@@ -152,6 +152,9 @@ void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri){
         printf("ERROR : Triangle material %s not found\n",tri->mat);
         exit (-1);
     }
+    tri->MP.x = (AA.x+BB.x+CC.x) / 3.0 ;
+    tri->MP.y = (AA.y+BB.y+CC.y) / 3.0 ;
+    tri->MP.z = (AA.z+BB.z+CC.z) / 3.0 ;
     
     VECT_CREATE(0, 0, 1, zhat);
     alpha = atan2(tri->NN.y, tri->NN.x);

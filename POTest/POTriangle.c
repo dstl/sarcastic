@@ -17,7 +17,7 @@ SPCmplx G_func(int n, double gamma) ;
 
 int factorial(int n) ;
 
-void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, double lambda, SPCmplx *EsV, SPCmplx *EsH){
+void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *EsV, SPCmplx *EsH){
 
     double k;
     
@@ -28,9 +28,10 @@ void POTriangle(triangle tri, Ray ray, SPVector HitPoint, SPVector obsPnt, doubl
     SPVector uvw_sg ; // Direction cosines for scattering ray (HitPoint  to observation point)
     
     SPVector obsDir ;
-    VECT_SUB(obsPnt, HitPoint, obsDir);
+    VECT_SUB(obsPnt, tri.MP, obsDir);
     double r = VECT_MAG(obsDir);
     VECT_SCMULT(obsDir, 1/r, obsDir) ;
+    
     
     // Assuming that the direction of the ray has been normalised then
     // the direction cosine is just the componet of direction
