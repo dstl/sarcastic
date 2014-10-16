@@ -20,8 +20,8 @@ int main(int argc, const char * argv[])
     triangle tri ;
     SPVector AA,BB,CC ;
     VECT_CREATE( 0.1, -0.1,  0, AA);
-    VECT_CREATE( -0.1, 0.1,  0, BB);
-    VECT_CREATE( -0.1, -0.1,  0, CC);
+    VECT_CREATE( -0.1, 0.1,  0.1, BB);
+    VECT_CREATE( -0.1, -0.1,  0.1, CC);
     buildTriangle(AA, BB, CC, &tri) ;
     
     // Create a ray
@@ -140,7 +140,18 @@ void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri){
     VECT_CROSS(l1, l2, NN) ;
     tri->area = VECT_MAG(NN) * 0.5 ;
     VECT_NORM(NN, tri->NN) ;
-    strcpy (tri->mat, "MATERIAL") ;
+    strcpy (tri->mat, "METAL") ;
+    tri->Rs = -66.0;
+    for(int imat=0; imat < NMATERIALS; imat++){
+        scatProps m = materialProperties[imat] ;
+        if( !strcmp(tri->mat, m.matname)){
+            tri->Rs = m.resistivity ;
+        }
+    }
+    if(tri->Rs < 0){
+        printf("ERROR : Triangle material %s not found\n",tri->mat);
+        exit (-1);
+    }
     
     VECT_CREATE(0, 0, 1, zhat);
     alpha = atan2(tri->NN.y, tri->NN.x);
