@@ -19,9 +19,9 @@ int main(int argc, const char * argv[])
     
     triangle tri ;
     SPVector AA,BB,CC ;
-    VECT_CREATE( 10.0,   0,  0, AA);
-    VECT_CREATE(  0,  10.0,  0, BB);
-    VECT_CREATE(-10.0, -10.0,  0, CC);
+    VECT_CREATE( 0.1, -0.1,  0, AA);
+    VECT_CREATE( -0.1, 0.1,  0, BB);
+    VECT_CREATE( -0.1, -0.1,  0, CC);
     buildTriangle(AA, BB, CC, &tri) ;
     
     // Create a ray
@@ -32,13 +32,17 @@ int main(int argc, const char * argv[])
     VECT_CREATE(0.0, 0.0, 0.0, hp);
     VECT_SUB(hp, r.org, dir);
     r.len = 0.0;
-    r.pow = 100000000.0;
+    r.pow = 1.0e12 ;
     r.pow = r.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
     VECT_NORM(dir, r.dir);
     SPVector zhat, Hpol, Vpol ;
     VECT_CREATE(0, 0, 1, zhat);
-    VECT_CROSS(r.dir, zhat, Hpol) ;
-    VECT_NORM(Hpol, Hpol) ;
+    if(fabs(VECT_DOT(r.dir, zhat)) == 1.0){
+        VECT_CREATE(1, 0, 0, Hpol);
+    }else{
+        VECT_CROSS(r.dir, zhat, Hpol) ;
+        VECT_NORM(Hpol, Hpol) ;
+    }
     VECT_CROSS(Hpol, r.dir, Vpol) ;
     r.pol = Vpol ;
     
@@ -52,20 +56,25 @@ int main(int argc, const char * argv[])
     
     int iphi, niphis;
     int itheta, nitheta;
-    niphis = 360 ;
-    nitheta = 100 ;
+    double startPhi,endPhi,startTheta,endTheta;
+    niphis     = 360 ;
+    nitheta    = 180 ;
+    startPhi   = 0;
+    endPhi     = DEG2RAD(360.0) ;
+    startTheta = DEG2RAD(0) ;
+    endTheta   = SIPC_pi ;
     
     double deltaiphi, deltaitheta;
-    deltaiphi = 2*SIPC_pi / niphis ;
-    deltaitheta = SIPC_pi / (2*nitheta) ;
+    deltaiphi = (endPhi-startPhi) / niphis ;
+    deltaitheta = (endTheta-startTheta) / (2*nitheta) ;
     double phi_s, theta_s;
     SPVector RxPnt ;
     double obsDist = 10000 ;
  
     int singlePoint = 0;
     double obsTheta, obsPhi;
-    obsPhi   = RAD2DEG(0.0)  ;
-    obsTheta = RAD2DEG(0.015708) ;
+    obsPhi   = RAD2DEG(0.427606) ;
+    obsTheta = RAD2DEG(0.785398) ;
     
     if (singlePoint){
         theta_s = DEG2RAD(obsTheta) ;
@@ -78,19 +87,19 @@ int main(int argc, const char * argv[])
         
         SPCmplx EsV, EsH ;
         POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
-        
-        if(CMPLX_MAG(EsV) != 0){
-            printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+
+        if(CMPLX_MAG(EsV) < 1.0e-4){
+            printf("%f, %f, %f \n",0.0,phi_s,theta_s);
         }else{
-            printf("%f, %f, %f \n",-1000.0,phi_s,theta_s);
+            printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
         }
     }else{
         
         for(itheta=0; itheta<nitheta; itheta++){
-            theta_s = itheta * deltaitheta ;
+            theta_s = startTheta + itheta * deltaitheta ;
             
             for(iphi=0; iphi < niphis; iphi++){
-                phi_s = iphi * deltaiphi ;
+                phi_s = startPhi + iphi * deltaiphi ;
                                 
                 RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
                 RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
@@ -99,10 +108,11 @@ int main(int argc, const char * argv[])
                 SPCmplx EsV, EsH ;
                 POTriangle(tri, r, hp, RxPnt, LAMBDA, &EsV, &EsH) ;
                 
-                if(CMPLX_MAG(EsV) != 0){
-                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                if(CMPLX_MAG(EsV) < 1.0e-4){
+                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+
                 }else{
-                    printf("%f, %f, %f \n",-1000.0,phi_s,theta_s);
+                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
                 }
                 
             }
