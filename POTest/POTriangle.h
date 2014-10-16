@@ -33,7 +33,7 @@ typedef struct Ray {
     SPVector pol ;               // unit vector of direction of E field of ray
 } Ray ;
 
-void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *EsV, SPCmplx *EsH) ;
+void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPVector RXVdir, SPVector RXHdir, SPCmplx *EsV, SPCmplx *EsH) ;
 
 SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg) ;
 void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_parrdir, SPVector Es_perpdir, SPCmplx *Es_parr, SPCmplx *Es_perp );

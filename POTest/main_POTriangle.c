@@ -68,54 +68,50 @@ int main(int argc, const char * argv[])
     deltaiphi = (endPhi-startPhi) / niphis ;
     deltaitheta = (endTheta-startTheta) / (2*nitheta) ;
     double phi_s, theta_s;
-    SPVector RxPnt ;
+    SPVector RxPnt, obsDir ;
     double obsDist = 10000 ;
- 
-    int singlePoint = 0;
-    double obsTheta, obsPhi;
-    obsPhi   = RAD2DEG(0.427606) ;
-    obsTheta = RAD2DEG(0.785398) ;
     
-    if (singlePoint){
-        theta_s = DEG2RAD(obsTheta) ;
-        printf("Observation Incidence Angle : %f deg\n", RAD2DEG(theta_s));
-        phi_s = DEG2RAD(obsPhi);
-        printf("Observation  Azimuth Angle : %f deg\n", RAD2DEG(phi_s));
-        RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
-        RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
-        RxPnt.z = obsDist * cos(theta_s);
+    for(itheta=0; itheta<nitheta; itheta++){
+        theta_s = startTheta + itheta * deltaitheta ;
         
-        SPCmplx EsV, EsH ;
-        POTriangle(tri, r, RxPnt, LAMBDA, &EsV, &EsH) ;
-
-        if(CMPLX_MAG(EsV) < 1.0e-4){
-            printf("%f, %f, %f \n",0.0,phi_s,theta_s);
-        }else{
-            printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
-        }
-    }else{
-        
-        for(itheta=0; itheta<nitheta; itheta++){
-            theta_s = startTheta + itheta * deltaitheta ;
+        for(iphi=0; iphi < niphis; iphi++){
+            phi_s = startPhi + iphi * deltaiphi ;
             
-            for(iphi=0; iphi < niphis; iphi++){
-                phi_s = startPhi + iphi * deltaiphi ;
-                                
-                RxPnt.x = obsDist * sin(theta_s) * cos(phi_s);
-                RxPnt.y = obsDist * sin(theta_s) * sin(phi_s);
-                RxPnt.z = obsDist * cos(theta_s);
-                
-                SPCmplx EsV, EsH ;
-                POTriangle(tri, r, RxPnt, LAMBDA, &EsV, &EsH) ;
-                
-                if(CMPLX_MAG(EsV) < 1.0e-4){
-                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
-
-                }else{
-                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
-                }
-                
+            obsDir.x = sin(theta_s) * cos(phi_s);
+            obsDir.y = sin(theta_s) * sin(phi_s);
+            obsDir.z = cos(theta_s);
+            VECT_SCMULT(obsDir, obsDist, RxPnt) ;
+            
+            // Define unit vectors for V & H fields
+            // We do this as the definition of H and V from the sensor may not be truly horizontal
+            // or vertical from the sensor. By allowing us to define the V & H directions we can
+            // accurately model the V & H at the sensor.
+            // We also do it here as we dont want POTriangle() calculating this each time it is called
+            //
+            SPVector RXVdir, RXHdir, z_hat ;
+            VECT_CREATE(0, 0, 1, z_hat) ;
+            if(VECT_DOT(z_hat, obsDir) == 1.0){
+                // Ie looking from above - for diagnostic purposes - remove from SAR
+                // simulation as this never occurs.
+                //
+                VECT_CREATE(r.pol.x, r.pol.y, 0, RXVdir) ;
+                VECT_CROSS(RXVdir, z_hat, RXHdir) ;
+            }else{
+                VECT_CROSS(z_hat, obsDir, RXHdir) ;
+                VECT_CROSS(obsDir, RXHdir, RXVdir) ;
             }
+            VECT_NORM(RXVdir, RXVdir) ;
+            VECT_NORM(RXHdir, RXHdir) ;
+            
+            SPCmplx EsV, EsH ;
+            POTriangle(tri, r, RxPnt, LAMBDA, RXVdir, RXHdir, &EsV, &EsH) ;
+            
+            if(CMPLX_MAG(EsV) < 1.0e-4){
+                printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+            }else{
+                printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+            }
+            
         }
     }
 

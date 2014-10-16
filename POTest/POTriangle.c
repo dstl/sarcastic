@@ -17,7 +17,7 @@ SPCmplx G_func(int n, double gamma) ;
 
 int factorial(int n) ;
 
-void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *EsV, SPCmplx *EsH){
+void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPVector Vdir, SPVector Hdir, SPCmplx *EsV, SPCmplx *EsH){
 
     double k;
     
@@ -32,14 +32,12 @@ void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *
     double r = VECT_MAG(obsDir);
     VECT_SCMULT(obsDir, 1/r, obsDir) ;
     
-    
     // Assuming that the direction of the ray has been normalised then
     // the direction cosine is just the componet of direction
     //
     uvw_sg.x = obsDir.x -ray.dir.x ;
     uvw_sg.y = obsDir.y -ray.dir.y ;
     uvw_sg.z = obsDir.z -ray.dir.z ;
-    
     
     // Now need to perform two seperate calculations:
     // 1) The surface integral over triangle 'c' called Ic
@@ -50,7 +48,6 @@ void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *
     // 1) Find the value of Ic
     //
     SPCmplx Ic = surfaceIntegral(k, tri, uvw_sg) ;
-
     
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //
@@ -59,24 +56,8 @@ void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPCmplx *
     // also return the polarisation direction of the Efield (in global coordinates)
     //
     SPCmplx Es_parr, Es_perp ;
-    // Define unit vectors for V & H fields
-    //
-    SPVector Es_parrdir, Es_perpdir, z_hat ;
-    VECT_CREATE(0, 0, 1, z_hat) ;
-    if(VECT_DOT(z_hat, obsDir) == 1.0){
-        // Ie looking from above - for diagnostic purposes - remove from SAR
-        // simulation as this never occurs.
-        //
-        VECT_CREATE(ray.pol.x, ray.pol.y, 0, Es_parrdir) ;
-        VECT_CROSS(Es_parrdir, z_hat, Es_perpdir) ;
-    }else{
-        VECT_CROSS(z_hat, obsDir, Es_perpdir) ;
-        VECT_CROSS(obsDir, Es_perpdir, Es_parrdir) ;
-    }
-    VECT_NORM(Es_parrdir, Es_parrdir) ;
-    VECT_NORM(Es_perpdir, Es_perpdir) ;
     
-    EField(k, r, tri, ray, Ic, Es_parrdir, Es_perpdir, &Es_parr, &Es_perp) ;
+    EField(k, r, tri, ray, Ic, Vdir, Hdir, &Es_parr, &Es_perp) ;
     *EsV = Es_parr ;
     *EsH = Es_perp ;
     return ;
@@ -129,7 +110,7 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     }else{
         VECT_CROSS (z_hat, Raydir_l, phi_l_hat) ;
     }
-    VECT_CROSS (Raydir_l, phi_l_hat, theta_l_hat) ;
+    VECT_CROSS(Raydir_l, phi_l_hat, theta_l_hat) ;
     VECT_NORM(phi_l_hat, phi_l_hat) ;
     VECT_NORM(theta_l_hat, theta_l_hat) ;
     double Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
