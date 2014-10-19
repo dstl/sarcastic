@@ -34,53 +34,185 @@
 
 #import "Triangle.h"
 #import "MVectorObjc.h"
+#include "matrixMultiplication.h"
+#include "materialProperties.h"
 
 @implementation Triangle {
-    MVector * _vertices[3];
-    MVector * _normal;
-}
-@synthesize materialName=_materialName;
-@synthesize triId=_triId;
-@synthesize matId=_matId;
+    NSString *_materialName ;
+    MVector * _vertices[3]; // Three triangle vertices
+    MVector * _normal;      // The triangle normal
+    MVector * _midpoint;    // The triangle midpoint
+    int       _matId ;       // Id (index) of material this triangle is made of
+    int       _triId ;       // Index of this triangle
+    double    _area;         // The triangle's area
+    double    _g2lMTX[9] ;   // Rotation matrix to convert from global coords into the triangle's local coords
+    double    _l2gMTX[9] ;   // Rotation matrix to convert from the triangle's local coords into global coords
+    double    _Rs ;          // The triangle's electrical resistivity
+ }
+
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c{
     self = [super init];
     if (self) {
+        double T_dash[9], T_dashdash[9], l, alpha, beta ;
+        MVector * x, *zhat ;
+        
         _vertices[0]  = [[MVector alloc] initWithMVector:a];
         _vertices[1]  = [[MVector alloc] initWithMVector:b];
         _vertices[2]  = [[MVector alloc] initWithMVector:c];
-        _normal       = [[[b subtract:a] cross:[c subtract:a]] norm] ;
         _triId        = 0 ;
-        _materialName = @"MATERIAL" ;
+        _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
+        _Rs           = materialProperties[_matId].resistivity ;
+        x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
+        l             = [x mag] ;
+        _area         = l * 0.5 ;
+        _normal       = [x multiply:1/l] ;
+        _midpoint     = [[MVector alloc] initWithValuesX:([_vertices[0] X]+[_vertices[1] X]+[_vertices[2] X])/3.0
+                                                       Y:([_vertices[0] Y]+[_vertices[1] Y]+[_vertices[2] Y])/3.0
+                                                       Z:([_vertices[0] Z]+[_vertices[1] Z]+[_vertices[2] Z])/3.0] ;
+        zhat          = [[MVector alloc] initWithValuesX:0 Y:0 Z:1] ;
+        alpha         = atan2([_normal Y], [_normal X]);
+        beta          = acos([zhat dot:_normal]) ;
+        T_dash[0]     = cos(alpha);
+        T_dash[1]     = sin(alpha);
+        T_dash[2]     = 0;
+        T_dash[3]     = -sin(alpha);
+        T_dash[4]     = cos(alpha);
+        T_dash[5]     = 0;
+        T_dash[6]     = 0;
+        T_dash[7]     = 0;
+        T_dash[8]     = 1;
+        T_dashdash[0] = cos(beta);
+        T_dashdash[1] = 0;
+        T_dashdash[2] = -sin(beta);
+        T_dashdash[3] = 0;
+        T_dashdash[4] = 1;
+        T_dashdash[5] = 0;
+        T_dashdash[6] = sin(beta);
+        T_dashdash[7] = 0;
+        T_dashdash[8] = cos(beta);
+        
+        matmul(T_dashdash, T_dash, _g2lMTX, 3, 3, 3, 3);
+        mat3by3inv(_g2lMTX, _l2gMTX);
+
     }
     return self;
 }
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val{
     self = [super init];
     if (self) {
+        double T_dash[9], T_dashdash[9], l, alpha, beta ;
+        MVector * x, *zhat ;
         _vertices[0]  = [[MVector alloc] initWithMVector:a];
         _vertices[1]  = [[MVector alloc] initWithMVector:b];
         _vertices[2]  = [[MVector alloc] initWithMVector:c];
-        _normal       = [[[b subtract:a] cross:[c subtract:a]] norm] ;
-        [self setTriId:val];
-        _materialName = @"MATERIAL" ;
+        _triId        = val ;
+        _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
+        _Rs           = materialProperties[_matId].resistivity ;
+        x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
+        l             = [x mag] ;
+        _area         = l * 0.5 ;
+        _normal       = [x multiply:1/l] ;
+        _midpoint     = [[MVector alloc] initWithValuesX:([_vertices[0] X]+[_vertices[1] X]+[_vertices[2] X])/3.0
+                                                       Y:([_vertices[0] Y]+[_vertices[1] Y]+[_vertices[2] Y])/3.0
+                                                       Z:([_vertices[0] Z]+[_vertices[1] Z]+[_vertices[2] Z])/3.0] ;
+        zhat          = [[MVector alloc] initWithValuesX:0 Y:0 Z:1] ;
+        alpha         = atan2([_normal Y], [_normal X]);
+        beta          = acos([zhat dot:_normal]) ;
+        T_dash[0]     = cos(alpha);
+        T_dash[1]     = sin(alpha);
+        T_dash[2]     = 0;
+        T_dash[3]     = -sin(alpha);
+        T_dash[4]     = cos(alpha);
+        T_dash[5]     = 0;
+        T_dash[6]     = 0;
+        T_dash[7]     = 0;
+        T_dash[8]     = 1;
+        T_dashdash[0] = cos(beta);
+        T_dashdash[1] = 0;
+        T_dashdash[2] = -sin(beta);
+        T_dashdash[3] = 0;
+        T_dashdash[4] = 1;
+        T_dashdash[5] = 0;
+        T_dashdash[6] = sin(beta);
+        T_dashdash[7] = 0;
+        T_dashdash[8] = cos(beta);
+        
+        matmul(T_dashdash, T_dash, _g2lMTX, 3, 3, 3, 3);
+        mat3by3inv(_g2lMTX, _l2gMTX);
+
     }
     return self;
 }
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andNormal: (MVector *) N{
     self = [super init];
     if (self) {
+        double T_dash[9], T_dashdash[9], l, alpha, beta ;
+        MVector * x, *zhat ;
+        
         _vertices[0]  = [[MVector alloc] initWithMVector:a];
         _vertices[1]  = [[MVector alloc] initWithMVector:b];
         _vertices[2]  = [[MVector alloc] initWithMVector:c];
-        _normal       = [[MVector alloc] initWithMVector:N];
         _triId        = 0 ;
-        _materialName = @"MATERIAL" ;
+        _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
+        _Rs           = materialProperties[_matId].resistivity ;
+        x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
+        l             = [x mag] ;
+        _area         = l * 0.5 ;
+        _normal       = [[MVector alloc] initWithMVector:N ];
+        _midpoint     = [[MVector alloc] initWithValuesX:([_vertices[0] X]+[_vertices[1] X]+[_vertices[2] X])/3.0
+                                                       Y:([_vertices[0] Y]+[_vertices[1] Y]+[_vertices[2] Y])/3.0
+                                                       Z:([_vertices[0] Z]+[_vertices[1] Z]+[_vertices[2] Z])/3.0] ;
+        zhat          = [[MVector alloc] initWithValuesX:0 Y:0 Z:1] ;
+        alpha         = atan2([_normal Y], [_normal X]);
+        beta          = acos([zhat dot:_normal]) ;
+        T_dash[0]     = cos(alpha);
+        T_dash[1]     = sin(alpha);
+        T_dash[2]     = 0;
+        T_dash[3]     = -sin(alpha);
+        T_dash[4]     = cos(alpha);
+        T_dash[5]     = 0;
+        T_dash[6]     = 0;
+        T_dash[7]     = 0;
+        T_dash[8]     = 1;
+        T_dashdash[0] = cos(beta);
+        T_dashdash[1] = 0;
+        T_dashdash[2] = -sin(beta);
+        T_dashdash[3] = 0;
+        T_dashdash[4] = 1;
+        T_dashdash[5] = 0;
+        T_dashdash[6] = sin(beta);
+        T_dashdash[7] = 0;
+        T_dashdash[8] = cos(beta);
+        
+        matmul(T_dashdash, T_dash, _g2lMTX, 3, 3, 3, 3);
+        mat3by3inv(_g2lMTX, _l2gMTX);
+        
     }
     return self;
 }
+
+- (void) setTriId: (int) val { _triId=val; }
+- (void) setMaterialName: (NSString *) name {
+    _materialName=name;
+    _Rs = -66.0;
+
+    for(int imat=0; imat < NMATERIALS; imat++){
+        scatProps m = materialProperties[imat] ;
+        if( !strcmp([name UTF8String], m.matname)){
+            _Rs = m.resistivity ;
+        }
+    }
+    if(_Rs < 0){
+        printf("ERROR : Triangle material %s not found\n",[name UTF8String]);
+        exit (-1);
+    }
+
+}
+- (NSString *) materialName { return _materialName; }
+- (MVector *) normal { return _normal ; }
 
 + (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c{
     return [[Triangle alloc] initWithVerticesAa:a Bb:b Cc:c];
@@ -98,9 +230,7 @@
 - (void) setVertex: (int) index toValue: (MVector *) coordinate{
     _vertices[index] = [coordinate copy];
 }
-- (MVector *) normal {
-    return _normal ;
-}
+
 - (BOOL) isPlanarInDimension: (unsigned int) k {
     if ( ([_vertices[0] cell:k] == [_vertices[1] cell:k]) 
         && ([_vertices[1] cell:k] == [_vertices[2] cell:k]) ){

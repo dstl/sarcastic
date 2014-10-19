@@ -69,7 +69,7 @@ void * devPulseBlock ( void * threadArg ) {
     int hrs,min,sec;
     int reportN = 500 ;
 
-    double gainRx, PowPerRay, derampRange, pCentDone, sexToGo ;
+    double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
     double *ranges, interogRad, intMinR, intMaxR ;
 
@@ -138,7 +138,7 @@ void * devPulseBlock ( void * threadArg ) {
     static char *stackTraverseCode = "/Users/darren/Development/sarcastic/sarcastic/kernels/stacklessTraverse.cl" ;
     static char *reflectCode       = "/Users/darren/Development/sarcastic/sarcastic/kernels/reflectRays.cl" ;
     static char *buildShadowsCode  = "/Users/darren/Development/sarcastic/sarcastic/kernels/buildShadowRays.cl" ;
-    static char *reflectPowCode    = "/Users/darren/Development/sarcastic/sarcastic/kernels/reflectionPower.cl" ;
+    static char *reflectPowCode    = "/Users/darren/Development/sarcastic/sarcastic/kernels/reflectionPowerPO.cl" ;
     
     CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
     CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
@@ -218,7 +218,7 @@ void * devPulseBlock ( void * threadArg ) {
         TxPos = td->TxPositions[pulseIndex] ;
         RxPos = td->RxPositions[pulseIndex] ;
         
-        // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
+        // Generate a distribution of nAzbeam x nElbeam rays that originate from the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
         rayArray = (Ray *)safeMalloc(nAzBeam*nElBeam, sizeof(Ray));
@@ -234,6 +234,7 @@ void * devPulseBlock ( void * threadArg ) {
         //
         VECT_MINUS(TxPos, aimdir) ;
         derampRange = VECT_MAG(aimdir);
+        derampPhase = -4.0 * SIPC_pi * derampRange * td->oneOverLambda ;
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
@@ -362,7 +363,7 @@ void * devPulseBlock ( void * threadArg ) {
                         irp = rnp[(nAzBeam*nElBeam*nbounce)+i] ;
                         
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
-                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,irp.power,nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
+                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
                         }
                     }
                 }
@@ -392,7 +393,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if (rnp[i].power != 0 && rnp[i].range !=0) cnt++ ;
+            if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
         }
         if(cnt > 0){
             nrnpItems = cnt;
@@ -409,11 +410,10 @@ void * devPulseBlock ( void * threadArg ) {
         cnt = 0;
         double totpow = 0.0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if (rnp[i].power != 0 && rnp[i].range !=0){
-                rnpData[cnt].power = rnp[i].power ;
-                rnpData[cnt].range = rnp[i].range ; 
+            if ((rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i) != 0 && rnp[i].range !=0){
+                rnpData[cnt].Es    = rnp[i].Es ;
                 rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                totpow += rnpData[cnt].power;
+                totpow += rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i ;
                 cnt++ ;
             }
         }
@@ -454,9 +454,13 @@ void * devPulseBlock ( void * threadArg ) {
         
         for (int i=0; i<nrnpItems; i++){
             
-            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
-            targ.r = rnpData[i].power*cos(phse) ;
-            targ.i = rnpData[i].power*sin(phse) ;
+            double phse = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
+            targ.r      = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
+            targ.i      = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
+            
+//            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
+//            targ.r = rnpData[i].power*cos(phse) ;
+//            targ.i = rnpData[i].power*sin(phse) ;
             
             rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
             

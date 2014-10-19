@@ -35,9 +35,10 @@
 #import <Foundation/Foundation.h>
 #import <SceneKit/SceneKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "radarMaterial.h"
+//#import "radarMaterial.h"
 #import "MVectorObjc.h"
 #import "Triangle.h"
+#include "materialProperties.h"
 
 @interface COLScene : NSObject <NSXMLParserDelegate> {
     

@@ -44,8 +44,6 @@ void readKdTree(const char *filename,
                 AABB * SceneBoundingBox,
                 int * nTriangles,
                 Triangle ** Triangles,
-                int * nTextures,
-                Texture ** textures,
                 int * nLeaves,
                 int *** triangleLists,
                 int  *nTreeNodes,
@@ -147,52 +145,19 @@ void readKdTree(const char *filename,
             exit(-1);
         }
         (*Triangles)[i].triNum = i;
-        (*Triangles)[i].d    = d;
-        (*Triangles)[i].nd_u = nd_u;
-        (*Triangles)[i].nd_v = nd_v;
-        (*Triangles)[i].k    = k;
-        (*Triangles)[i].kbu  = kbu;
-        (*Triangles)[i].kbv  = kbv;
-        (*Triangles)[i].kbd  = kbd;
-        (*Triangles)[i].kcu  = kcu;
-        (*Triangles)[i].kcv  = kcv;
-        (*Triangles)[i].kcd  = kcd;
-        (*Triangles)[i].textureInd = tex;
+        (*Triangles)[i].d      = d;
+        (*Triangles)[i].nd_u   = nd_u;
+        (*Triangles)[i].nd_v   = nd_v;
+        (*Triangles)[i].k      = k;
+        (*Triangles)[i].kbu    = kbu;
+        (*Triangles)[i].kbv    = kbv;
+        (*Triangles)[i].kbd    = kbd;
+        (*Triangles)[i].kcu    = kcu;
+        (*Triangles)[i].kcv    = kcv;
+        (*Triangles)[i].kcd    = kcd;
+        (*Triangles)[i].matInd = tex;
     }
-    
-    if(fread(nTextures, sizeof(int), 1, fp)!=1){
-        printf("ERROR: Failed to read nTextures from file %s\n",filename);
-        exit(-1);
-    }
-    *textures = (Texture *)malloc(sizeof(Texture) * *nTextures);
-    if (*textures == NULL) {
-        printf("ERROR: Malloc failed for textures. Requested %lu bytes\n",sizeof(Texture) * *nTextures);
-        exit(-1);
-    }
-    
-    for (i=0; i < *nTextures; i++){
-        if(fread(&ka, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read ka texture param from file %s\n",filename);
-            exit(-1);
-        }
-        if(fread(&kd, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read kd texture param from file %s\n",filename);
-            exit(-1);
-        }
-        if(fread(&ks, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read ks texture param from file %s\n",filename);
-            exit(-1);
-        }
-        if(fread(&n, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read n texture param from file %s\n",filename);
-            exit(-1);
-        }
-        (*textures)[i].ka = ka;
-        (*textures)[i].kd = kd;
-        (*textures)[i].ks = ks;
-        (*textures)[i].n  = n;
-    }
-    
+
     if(fread(nLeaves, sizeof(int), 1, fp)!=1){
         printf("ERROR: Failed to read nleaves from file %s\n",filename);
         exit(-1);
@@ -286,9 +251,9 @@ void readKdTree(const char *filename,
         (*tricos)[i].B.x  = Bx ;
         (*tricos)[i].B.y  = By ;
         (*tricos)[i].B.z  = Bz ;
-        (*tricos)[i].Cc.x  = Cx ;
-        (*tricos)[i].Cc.y  = Cy ;
-        (*tricos)[i].Cc.z  = Cz ;
+        (*tricos)[i].Cc.x = Cx ;
+        (*tricos)[i].Cc.y = Cy ;
+        (*tricos)[i].Cc.z = Cz ;
     }
 
     fclose(fp);

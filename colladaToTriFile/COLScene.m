@@ -239,33 +239,25 @@
                             exit(0);
                         }
                         
-                        // From p44 of Scene Kit Framework Reference, 2014-02-11
-                        //  'Each geometry element can be rendered using a different material. The index of the material used for a geometry
-                        //   element is equal to the index of that element modulo the number of materials.'
+                        // The material name is just a txt name set in the Collada file.
+                        // find the material in the materialProperties header file that
+                        // most closely matches it.
                         //
-                        radarMaterial *mat ;
-                        
-                        mat = [radarMaterial radarMaterialWithMaterialName:[[materials objectAtIndex:0] name]] ;
-
-                        if ([materials count] > 1) {
+                        for (int imat=0; imat<NMATERIALS; imat++) {
+                            NSString * mat = [NSString stringWithUTF8String:materialProperties[imat].matname] ;
                             for (int i=0; i< [materials count]; i++){
-                                if ( ! [[[materials objectAtIndex:i] name] caseInsensitiveCompare:@"material"] ) {
-                                    mat = [radarMaterial radarMaterialWithMaterialName:[[materials objectAtIndex:0] name]] ;
+                                if ([[[materials objectAtIndex:i] name] rangeOfString:mat options:NSCaseInsensitiveSearch].location != NSNotFound){
+                                    [_triangleMaterials addObject:mat] ;
+                                    [tri setMaterialName:mat] ;
+                                    // Make sure we drop out of the loops so that we pick up the first
+                                    // matching metrail in the list
+                                    //
+                                    i    = (int)[materials count] ;
+                                    imat = NMATERIALS;
                                 }
                             }
                         }
-                        [tri setMaterialName: [[materials objectAtIndex:0] name]];
-                        [_triangles         addObject:tri];
-                        
-                        // Check to see if material is already in the list
-                        //
-                        radarMaterial * m;
-                        for ( m in _triangleMaterials ) {
-                            if ( [mat materialID] == [m materialID] ) {
-                                mat = m ;
-                            }
-                        }
-                        [_triangleMaterials addObject:mat];
+                        [_triangles addObject:tri] ;
                     }
                     break;
                     

@@ -35,9 +35,7 @@
 #import "MVectorObjc.h"
 
 @interface Triangle : NSObject
-@property NSString *materialName ;
-@property int matId ;
-@property int triId ;
+
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c;
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val;
 - (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andNormal:(MVector *)N;
@@ -53,5 +51,8 @@
 - (double) maxInDim: (unsigned int) k ;
 - (BOOL) isEqual:(id)object ;
 - (NSUInteger) hash ;
-
+- (void) setTriId: (int) val ;
+- (void) setMaterialName: (NSString *) name ;
+- (NSString *) materialName ;
 @end
+

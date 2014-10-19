@@ -33,6 +33,8 @@ typedef struct Ray {
     SPVector pol ;               // unit vector of direction of E field of ray
 } Ray ;
 
+static double Z0 = 376.99111843077516; // Impedence of free space = 120 * PI
+
 void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPVector RXVdir, SPVector RXHdir, SPCmplx *EsV, SPCmplx *EsH) ;
 
 SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg) ;

@@ -565,10 +565,6 @@
      for each triangle:
         struct accelerated_tri_structure
      end for
-     uint number_of_texures
-     for each texture
-        write texture
-     end for
      uint number of leaves
      for each leaf
         uint num_of_tris_in_this_leaf
@@ -639,26 +635,26 @@
         fwrite(&tex, sizeof(int), 1, fp);
     }
     
-    // Write triangle texture data
-    //
-    ntex = [[self textures] count];
-    printf("Packing %ld textures\n",ntex);
-
-    fwrite(&ntex,sizeof(int),1,fp);
-    
-    radarMaterial *mat;
-    for (mat in [self textures]) {
-        ka = [mat ambient];
-        kd = [mat diffuse];
-        ks = [mat specular];
-        n = [mat shinyness];
-        fwrite(&ka,sizeof(float),1,fp);
-        fwrite(&kd,sizeof(float),1,fp);
-        fwrite(&ks,sizeof(float),1,fp);
-        fwrite(&n,sizeof(float),1,fp);
-        printf("Texture : Ka %2.1f, Ks %2.1f, Kd %2.1f n %2.1f %s\n",ka,ks,kd,n, [[mat materialName] UTF8String]);
-    }
-    printf ("Done\n");
+//    // Write triangle texture data
+//    //
+//    ntex = [[self textures] count];
+//    printf("Packing %ld textures\n",ntex);
+//
+//    fwrite(&ntex,sizeof(int),1,fp);
+//    
+//    radarMaterial *mat;
+//    for (mat in [self textures]) {
+//        ka = [mat ambient];
+//        kd = [mat diffuse];
+//        ks = [mat specular];
+//        n = [mat shinyness];
+//        fwrite(&ka,sizeof(float),1,fp);
+//        fwrite(&kd,sizeof(float),1,fp);
+//        fwrite(&ks,sizeof(float),1,fp);
+//        fwrite(&n,sizeof(float),1,fp);
+//        printf("Texture : Ka %2.1f, Ks %2.1f, Kd %2.1f n %2.1f %s\n",ka,ks,kd,n, [[mat materialName] UTF8String]);
+//    }
+//    printf ("Done\n");
 
     // Calculate the number of leaves and then for each leaf write the index of each triangle in the leaf
     

@@ -93,12 +93,12 @@ void oclReflectPower(cl_context          context,            // OpenCL context -
     
     // Set up the kernel arguments
     //
-    CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(cl_mem),      &dTriangles));
-    CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem), &dTextures));
+    CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(cl_mem),   &dTriangles));
+    CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem),   &dTextures));
     CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(cl_mem),   &dHits));
-    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(SPVector),   &RxPos));
+    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(SPVector), &RxPos));
     CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(double),   &GrxOverFourPi));
-    CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(int),   &nRays));
+    CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(int),      &nRays));
     CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(cl_mem),   &dRays));
     CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(cl_mem),   &dReflectedRays));
     CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(cl_mem),   &dShadowRays));

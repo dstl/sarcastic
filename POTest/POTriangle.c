@@ -118,9 +118,8 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     
     // Calculate Gamma_parallel and Gamma_perpendicular
     //
-    double Rs, Z0, GamParr, GamPerp ;
+    double Rs, GamParr, GamPerp ;
     Rs      = tri.Rs ;
-    Z0      = 120 * SIPC_pi ; // Impedence of free space
     GamParr = -1.0 * Z0 * cos_theta_il / (2*Rs + Z0*cos_theta_il) ;
     GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos_theta_il + Z0);
     
