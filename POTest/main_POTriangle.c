@@ -11,8 +11,8 @@
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 #define LAMBDA 0.04
-#define TXPOL "H"
-#define RXPOL "V"
+#define TXPOL "V"
+#define RXPOL "H"
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 
@@ -152,7 +152,7 @@ int main(int argc, const char * argv[])
                 if(CMPLX_MAG(EsH) < 1.0e-4){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsH)),phi_s,theta_s);
                 }
 
             }
