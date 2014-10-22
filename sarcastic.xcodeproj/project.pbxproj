@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		950635CD19F7972C00B83F4B /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
 		9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		9516175019DD81B30004C4F0 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
 		9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
@@ -59,7 +60,6 @@
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
 		958F607D19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */; };
-		958F607E19E9B23F00DD1F50 /* libSIlib-1.1-7-e17b94d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */; };
 		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
@@ -135,6 +135,7 @@
 
 /* Begin PBXFileReference section */
 		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		950635CC19F7972C00B83F4B /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
 		9516171819DAB7EB0004C4F0 /* libmtlib-3643M.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3643M.a"; sourceTree = "<group>"; };
 		9516171919DAB7EB0004C4F0 /* libmtlib-3758.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3758.a"; sourceTree = "<group>"; };
 		9516171A19DAB7EB0004C4F0 /* libmtlib-exported.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-exported.a"; sourceTree = "<group>"; };
@@ -355,7 +356,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				958F607E19E9B23F00DD1F50 /* libSIlib-1.1-7-e17b94d.a in Frameworks */,
+				950635CD19F7972C00B83F4B /* libSIlib-1.1.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,6 +602,7 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				950635CC19F7972C00B83F4B /* libSIlib-1.1.a */,
 				958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */,
 				9516172A19DAB7FA0004C4F0 /* lib */,
 				9516171719DAB7EB0004C4F0 /* lib */,

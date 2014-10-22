@@ -11,42 +11,71 @@
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 #define LAMBDA 0.04
+#define TXPOL "H"
+#define RXPOL "V"
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 
 int main(int argc, const char * argv[])
 {
     
-    triangle tri ;
+    triangle tri1, tri2 ;
     SPVector AA,BB,CC ;
-    VECT_CREATE( 0.1, -0.1,  0, AA);
-    VECT_CREATE( -0.1, 0.1,  0.1, BB);
-    VECT_CREATE( -0.1, -0.1,  0.1, CC);
-    buildTriangle(AA, BB, CC, &tri) ;
+    VECT_CREATE(  0.1, 0.0, 0.0, AA);
+    VECT_CREATE(  0.0, 0.1, 0.0, BB);
+    VECT_CREATE( -0.1, 0.0, 0.0, CC);
+    buildTriangle(AA, BB, CC, &tri1) ;
+    
+    VECT_CREATE( -0.1,  0.0, 0.0, AA);
+    VECT_CREATE(  0.0, -0.1, 0.0, BB);
+    VECT_CREATE(  0.1,  0.0, 0.0, CC);
+    buildTriangle(AA, BB, CC, &tri2) ;
     
     // Create a ray
     //
-    Ray r ;
+    Ray r1, r2 ;
     SPVector hp, dir;
-    VECT_CREATE(0.0, -20.0, 20.0, r.org);
+    VECT_CREATE(0.0, 0.0, 200.0, r1.org);
     VECT_CREATE(0.0, 0.0, 0.0, hp);
-    VECT_SUB(hp, r.org, dir);
-    r.len = 0.0;
-    r.pow = 1.0e12 ;
-    r.pow = r.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
-    VECT_NORM(dir, r.dir);
+    VECT_SUB(hp, r1.org, dir);
+    r1.len = 0.0;
+    r1.pow = 1.0e12 ;
+    r1.pow = r1.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
+    VECT_NORM(dir, r1.dir);
     SPVector zhat, Hpol, Vpol ;
     VECT_CREATE(0, 0, 1, zhat);
-    if(fabs(VECT_DOT(r.dir, zhat)) == 1.0){
+    if(fabs(VECT_DOT(r1.dir, zhat)) == 1.0){
         VECT_CREATE(1, 0, 0, Hpol);
     }else{
-        VECT_CROSS(r.dir, zhat, Hpol) ;
+        VECT_CROSS(r1.dir, zhat, Hpol) ;
         VECT_NORM(Hpol, Hpol) ;
     }
-    VECT_CROSS(Hpol, r.dir, Vpol) ;
-    r.pol = Vpol ;
+    VECT_CROSS(Hpol, r1.dir, Vpol) ;
+    if(TXPOL == "V"){
+        r1.pol = Vpol ;
+    }else{
+        r1.pol = Hpol ;
+    }
     
-    printf("Transmit location %f,%f,%f\n", r.org.x,r.org.y,r.org.z);
+    VECT_CREATE(0.0, 0.0, 200.0, r2.org);
+    VECT_CREATE(0.0, 0.0, 0.0, hp);
+    VECT_SUB(hp, r2.org, dir);
+    r2.len = 0.0;
+    r2.pow = 1.0e12 ;
+    r2.pow = r2.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
+    VECT_NORM(dir, r2.dir);
+    VECT_CREATE(0, 0, 1, zhat);
+    if(fabs(VECT_DOT(r2.dir, zhat)) == 1.0){
+        VECT_CREATE(1, 0, 0, Hpol);
+    }else{
+        VECT_CROSS(r2.dir, zhat, Hpol) ;
+        VECT_NORM(Hpol, Hpol) ;
+    }
+    VECT_CROSS(Hpol, r2.dir, Vpol) ;
+    r2.pol = Vpol ;
+
+    
+    printf("Transmit location %f,%f,%f\n", r1.org.x,r1.org.y,r1.org.z);
     printf("Hipoint location  %f,%f,%f\n", hp.x,hp.y,hp.z);
     printf(" Facet:\n");
     printf("    %8.2f %8.2f %8.2f\n",AA.x,AA.y,AA.z);
@@ -94,7 +123,7 @@ int main(int argc, const char * argv[])
                 // Ie looking from above - for diagnostic purposes - remove from SAR
                 // simulation as this never occurs.
                 //
-                VECT_CREATE(r.pol.x, r.pol.y, 0, RXVdir) ;
+                VECT_CREATE(r1.pol.x, r1.pol.y, 0, RXVdir) ;
                 VECT_CROSS(RXVdir, z_hat, RXHdir) ;
             }else{
                 VECT_CROSS(z_hat, obsDir, RXHdir) ;
@@ -103,14 +132,28 @@ int main(int argc, const char * argv[])
             VECT_NORM(RXVdir, RXVdir) ;
             VECT_NORM(RXHdir, RXHdir) ;
             
-            SPCmplx EsV, EsH ;
-            POTriangle(tri, r, RxPnt, LAMBDA, RXVdir, RXHdir, &EsV, &EsH) ;
+            SPCmplx EsV1, EsH1, EsV2, EsH2, EsV, EsH ;
+            POTriangle(tri1, r1, RxPnt, LAMBDA, RXVdir, RXHdir, &EsV1, &EsH1) ;
+            POTriangle(tri2, r2, RxPnt, LAMBDA, RXVdir, RXHdir, &EsV2, &EsH2) ;
             
-            if(CMPLX_MAG(EsV) < 1.0e-4){
-                printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+            if (RXPOL == "V") {
+                CMPLX_ADD(EsV1, EsV2, EsV) ;
+                if(CMPLX_MAG(EsV) < 1.0e-4){
+                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+                }else{
+                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                }
             }else{
-                printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                CMPLX_ADD(EsH1, EsH2, EsH) ;
+                if(CMPLX_MAG(EsH) < 1.0e-4){
+                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+                }else{
+                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                }
+
             }
+            
+            
             
         }
     }
