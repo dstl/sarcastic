@@ -72,7 +72,11 @@ int main(int argc, const char * argv[])
         VECT_NORM(Hpol, Hpol) ;
     }
     VECT_CROSS(Hpol, r2.dir, Vpol) ;
-    r2.pol = Vpol ;
+    if(TXPOL == "V"){
+        r2.pol = Vpol ;
+    }else{
+        r2.pol = Hpol ;
+    }
 
     
     printf("Transmit location %f,%f,%f\n", r1.org.x,r1.org.y,r1.org.z);
