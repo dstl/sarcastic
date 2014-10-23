@@ -212,7 +212,11 @@
 
 }
 - (NSString *) materialName { return _materialName; }
-- (MVector *) normal { return _normal ; }
+- (MVector *)  normal { return _normal ; }
+- (MVector *)  midpoint { return _midpoint ; }
+- (double)     area { return _area ; }
+- (double *)   globalToLocalMatrix { return _g2lMTX; }
+- (double *)   localToGlobalMatrix { return _l2gMTX; }
 
 + (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c{
     return [[Triangle alloc] initWithVerticesAa:a Bb:b Cc:c];

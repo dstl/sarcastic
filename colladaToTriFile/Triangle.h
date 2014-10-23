@@ -45,7 +45,6 @@
 - (void) setVertex: (int) index toValue: (MVector *) coordinate;
 - (BOOL) isPlanarInDimension: (unsigned int) k ;
 - (MVector *) vertexAt: (int) index;
-- (MVector *) normal ;
 - (NSComparisonResult) compareTriangle: (Triangle *) t ;
 - (double) minInDim: (unsigned int) k ;
 - (double) maxInDim: (unsigned int) k ;
@@ -54,5 +53,10 @@
 - (void) setTriId: (int) val ;
 - (void) setMaterialName: (NSString *) name ;
 - (NSString *) materialName ;
+- (MVector *) normal ;
+- (MVector *) midpoint ;
+- (double) area ;
+- (double *) globalToLocalMatrix ;
+- (double *) localToGlobalMatrix ;
 @end
 

@@ -82,7 +82,7 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     double sin_theta_il, cos_theta_il, tan_phi_il, sin_phi_il, cos_phi_il ;
     sin_theta_il = sqrt(uvw_il[0]*uvw_il[0] +  uvw_il[1] * uvw_il[1] ) ;
     cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
-    if(sin_theta_il == 0){
+    if(sin_theta_il <= 0.0001){
         tan_phi_il = 0.0 ;
         sin_phi_il = 1.0 ;
         cos_phi_il = 0.0 ;
@@ -105,7 +105,7 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     matmul(tri.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
     VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
     VECT_CREATE(0, 0, 1, z_hat) ;
-    if(fabs(VECT_DOT(z_hat, Raydir_l)) == 1.0){
+    if(fabs(VECT_DOT(z_hat, Raydir_l)) >=0.99){
         VECT_CREATE(1, 0, 0, phi_l_hat) ;
     }else{
         VECT_CROSS (z_hat, Raydir_l, phi_l_hat) ;
