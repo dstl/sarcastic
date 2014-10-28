@@ -48,8 +48,8 @@ int main(int argc, const char * argv[])
     SPVector illOrigin, illDir;
     double illRange, illAz, illInc ;
     illRange = 200.0 ;
-    illAz    = DEG2RAD(0.0) ;
-    illInc   = DEG2RAD(0.0) ;
+    illAz    = DEG2RAD(270.0) ;
+    illInc   = DEG2RAD(45.0) ;
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
     
@@ -159,12 +159,12 @@ int main(int argc, const char * argv[])
     int iphi, niphis;
     int itheta, nitheta;
     double startPhi,endPhi,startTheta,endTheta;
-    niphis     = 180 ;
-    nitheta    = 90 ;
-    startPhi   = DEG2RAD(300.0) ;
-    endPhi     = DEG2RAD(330.0) ;
-    startTheta = DEG2RAD(0) ;
-    endTheta   = SIPC_pi ;
+    niphis     = 360 ;
+    nitheta    = 180 ;
+    startPhi   = DEG2RAD(0.0) ;
+    endPhi     = DEG2RAD(360.0) ;
+    startTheta = DEG2RAD(0.0) ;
+    endTheta   = DEG2RAD(180.0) ;
     
     double deltaiphi, deltaitheta;
     deltaiphi = (endPhi-startPhi) / niphis ;
@@ -358,7 +358,7 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
                 tri.Rs = materialProperties[i].resistivity ;
             }
         }
-        if (VECT_DOT(tri.NN, illuminationDir) > 0) {
+        if (VECT_DOT(tri.NN, illuminationDir) > 0.000001) {
             tris_tmp[trind].id = tri.id ;
             tris_tmp[trind].AA.x = tri.AA.x ;
             tris_tmp[trind].AA.y = tri.AA.y ;
@@ -383,12 +383,16 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
                 tris_tmp[trind].localToGlobalMat[i] = tri.localToGlobalMat[i] ;
             }
             strcpy(tris_tmp[trind].mat, tri.mat) ;
-            printf("Triangle %d : \n",tri.id) ;
-            printf("    A      : %3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
-            printf("    B      : %3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
-            printf("    C      : %3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
-            printf("    N      : %3.6f,%3.6f,%3.6f\n",tri.NN.x,tri.NN.y,tri.NN.z );
-            printf("    M      : %3.6f,%3.6f,%3.6f\n",tri.MP.x,tri.MP.y,tri.MP.z );
+//            printf("Triangle %d : \n",tri.id) ;
+//            printf("    A      : %3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
+//            printf("    B      : %3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
+//            printf("    C      : %3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
+//            printf("    N      : %3.6f,%3.6f,%3.6f\n",tri.NN.x,tri.NN.y,tri.NN.z );
+//            printf("    M      : %3.6f,%3.6f,%3.6f\n",tri.MP.x,tri.MP.y,tri.MP.z );
+//            printf("%3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
+//            printf("%3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
+//            printf("%3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
+
 
             trind++;
         }else{

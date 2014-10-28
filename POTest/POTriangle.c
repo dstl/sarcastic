@@ -29,8 +29,9 @@ void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPVector 
     
     SPVector obsDir ;
     VECT_SUB(obsPnt, tri.MP, obsDir);
-    double r = VECT_MAG(obsDir);
-    VECT_SCMULT(obsDir, 1/r, obsDir) ;
+    double rt = VECT_MAG(obsDir);
+    double r = VECT_MAG(obsPnt);
+    VECT_SCMULT(obsDir, 1/rt, obsDir) ;
     
     // Assuming that the direction of the ray has been normalised then
     // the direction cosine is just the componet of direction
