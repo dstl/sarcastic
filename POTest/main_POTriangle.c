@@ -164,11 +164,11 @@ int main(int argc, const char * argv[])
     startPhi   = DEG2RAD(0.0) ;
     endPhi     = DEG2RAD(360.0) ;
     startTheta = DEG2RAD(0.0) ;
-    endTheta   = DEG2RAD(180.0) ;
+    endTheta   = DEG2RAD(90.0) ;
     
     double deltaiphi, deltaitheta;
     deltaiphi = (endPhi-startPhi) / niphis ;
-    deltaitheta = (endTheta-startTheta) / (2*nitheta) ;
+    deltaitheta = (endTheta-startTheta) / (nitheta) ;
     double phi_s, theta_s;
     SPVector RxPnt, obsDir ;
     double obsDist = 10000 ;
@@ -248,6 +248,7 @@ int main(int argc, const char * argv[])
     }
 
     free(tris) ;
+    free(rays) ;
     return 0;
 }
 
