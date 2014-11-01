@@ -195,7 +195,7 @@ int main(int argc, const char * argv[])
             if (RXPOL == "V") {
                 double EsV_mag = CMPLX_MAG(EsV);
                 if (RCSOUTPUT) {
-                    EsV_mag =  EsV_mag*EsV_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                    EsV_mag =  4*EsV_mag*EsV_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
                 }
                 if (OUTPUTDBS) {
                     Erx = 10*log10(EsV_mag) ;
@@ -210,7 +210,7 @@ int main(int argc, const char * argv[])
             }else if (RXPOL == "H"){
                 double EsH_mag = CMPLX_MAG(EsH) ;
                 if (RCSOUTPUT) {
-                    EsH_mag =  EsH_mag*EsH_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                    EsH_mag =  4*EsH_mag*EsH_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
                 }
                 if (OUTPUTDBS) {
                     Erx = 10*log10(EsH_mag) ;
@@ -232,7 +232,7 @@ int main(int argc, const char * argv[])
                 VECT_ADD(Ev, Eh, E) ;
                 E_mag = VECT_MAG(E);
                 if(RCSOUTPUT){
-                    E_mag =  E_mag*E_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                    E_mag =  4*E_mag*E_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
                 }
                 if (OUTPUTDBS) {
                     Erx = 10*log10(E_mag) ;

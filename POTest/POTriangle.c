@@ -151,8 +151,8 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     CMPLX_MULT(jkZ0_o_4PIr, e_jkr, tmp1);
     CMPLX_MULT(tmp1, Ic, scaler);
     SPCmplx par,per ;
-    CMPLX_SCMULT(A, 2*scaler, par) ;
-    CMPLX_SCMULT(B, 2*scaler, per) ;
+    CMPLX_SCMULT(A, scaler, par) ;
+    CMPLX_SCMULT(B, scaler, per) ;
     Es_parr->r = par.r ; Es_parr->i = par.i ;
     Es_perp->r = per.r ; Es_perp->i = per.i ;
     return ;
