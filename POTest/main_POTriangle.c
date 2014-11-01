@@ -10,10 +10,23 @@
 #include <SIlib.h>
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
-#define LAMBDA 0.04
 #define TXPOL "V"
 #define RXPOL "-"
-#define RAYPOW ((double)1.0e12)
+#define LAMBDA      ((double)0.0299)    // Wavelegth in metres
+#define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
+#define NPHIS       ((int)1)            // Number of observation points to calculate in azimuth
+#define NTHETAS     ((int)1)            // Number of observation points to calculate in elevation
+#define STARTPHI    ((int)270)          // Start azimuth angle (deg)
+#define ENDPHI      ((int)270)          // End azimuth angle (deg)
+#define STARTTHETA  ((int)45)           // Start angle of incidence (deg)
+#define ENDTHETA    ((int)45)           // End angle of incidence (deg)
+#define OBSDIST     ((double)1000.0)    // Observation distance in metres
+#define OUTPUTDBS   0                   // Boolean - should output be in DBs?
+#define ILLRANGE    ((double)200.0)     // Range in metres from origin of illumination source
+#define ILLAZ       ((double)270.0)     // Azimuth angke in degrees of source of illumination
+#define ILLINC      ((double)45.0)      // Incidence ange in degrees of source of illumination
+#define PRINTTRIS   0                   // Boolean - just print out triangles and quit
+#define RCSOUTPUT   1
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const char *fname) ;
@@ -28,33 +41,53 @@ int main(int argc, const char * argv[])
     SPVector zhat, Hpol, Vpol ;
     VECT_CREATE(0, 0, 1, zhat);
     
-    
-//    triangle tri1, tri2 ;
-//    SPVector AA,BB,CC, zhat, Hpol, Vpol ;
-//    VECT_CREATE(0, 0, 1, zhat);
-//
-//    VECT_CREATE(  0.15, 0.0, 0.0, AA);
-//    VECT_CREATE(  0.0, 0.15, 0.0, BB);
-//    VECT_CREATE( -0.15, 0.0, 0.0, CC);
-//    buildTriangle(AA, BB, CC, &tri1) ;
-//    
-//    VECT_CREATE( -0.15,  0.0, 0.0, AA);
-//    VECT_CREATE(  0.0, -0.15, 0.0, BB);
-//    VECT_CREATE(  0.15,  0.0, 0.0, CC);
-//    buildTriangle(AA, BB, CC, &tri2) ;
-    
     // Define the illumination Origin in terms of range and azimuth, and incidence angle
     //
     SPVector illOrigin, illDir;
-    double illRange, illAz, illInc ;
-    illRange = 200.0 ;
-    illAz    = DEG2RAD(270.0) ;
-    illInc   = DEG2RAD(45.0) ;
+    double illRange, illAz, illInc, Ei_pow ;
+    illRange = ILLRANGE ;
+    illAz    = DEG2RAD(ILLAZ) ;
+    illInc   = DEG2RAD(ILLINC) ;
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
     
     readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
     
+    /*
+     For debugging - allows you to set your own triangles without using a triangle file
+    ntris = 4 ;
+    tris = sp_malloc(sizeof(triangle) * ntris);
+    SPVector AA,BB,CC ;
+   
+    VECT_CREATE(  0.5000, 0.353553, 0.353553, AA);
+    VECT_CREATE(  0, 0, 0, BB);
+    VECT_CREATE( 0.50000, -0.353553, -0.353553, CC);
+    buildTriangle(AA, BB, CC, &(tris[0])) ;
+    
+    VECT_CREATE(  0.5000, 0.353553, 0.353553, AA);
+    VECT_CREATE(  -0.50000,  0.353553, 0.353553, BB);
+    VECT_CREATE( 0.0, 0.0, 0.0, CC);
+    buildTriangle(AA, BB, CC, &(tris[1])) ;
+    
+    VECT_CREATE(  -0.5000, 0.353553, 0.353553, AA);
+    VECT_CREATE(  -0.50000,  -0.353553, -0.353553, BB);
+    VECT_CREATE( 0.0, 0.0, 0.0, CC);
+    buildTriangle(AA, BB, CC, &(tris[2])) ;
+    
+    VECT_CREATE(  -0.5000, -0.353553, -0.353553, AA);
+    VECT_CREATE(  0.50000,  -0.353553, -0.353553, BB);
+    VECT_CREATE( 0.0, 0.0, 0.0, CC);
+    buildTriangle(AA, BB, CC, &(tris[3])) ;
+     */
+
+    if(PRINTTRIS){
+        exit(0);
+    }
+    
+    if (RCSOUTPUT) {
+        Ei_pow = RAYPOW / (4 * SIPC_pi * ILLRANGE * ILLRANGE) ; // power at facet in watts/m^2
+    }
+
     // We need parallel illumination so that we don't have to worry about transmit power or
     // phase effects from curved wavefronts
     //
@@ -83,7 +116,7 @@ int main(int argc, const char * argv[])
         VECT_ADD(rays[i].org, pervec, rays[i].org) ;
         VECT_CREATE(-illDir.x, -illDir.y, -illDir.z, rays[i].dir) ;
         rays[i].pow = RAYPOW ;
-        rays[i].pow = rays[i].pow / (SIPC_pi*illRange*illRange);
+        rays[i].pow = rays[i].pow / (4.0 * SIPC_pi*illRange*illRange);
         rays[i].len = 0.0 ;
         if(fabs(VECT_DOT(rays[i].dir, zhat)) >= 0.99 ){
             VECT_CREATE(1, 0, 0, Hpol);
@@ -99,80 +132,24 @@ int main(int argc, const char * argv[])
         }
     }
     
-    // Create a ray
-    //
-    /*Ray r1, r2 ;
-    SPVector hp, dir;
-    VECT_CREATE(0.0, 0.1, 200.0, r1.org);
-    VECT_CREATE(0.0, 0.1, 0.0, hp);
-    VECT_SUB(hp, r1.org, dir);
-    r1.len = 0.0;
-    r1.pow = 1.0e12 ;
-    r1.pow = r1.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
-    VECT_NORM(dir, r1.dir);
-    SPVector zhat, Hpol, Vpol ;
-    VECT_CREATE(0, 0, 1, zhat);
-    if(fabs(VECT_DOT(r1.dir, zhat)) >= 0.99 ){
-        VECT_CREATE(1, 0, 0, Hpol);
-    }else{
-        VECT_CROSS(r1.dir, zhat, Hpol) ;
-        VECT_NORM(Hpol, Hpol) ;
-    }
-    VECT_CROSS(Hpol, r1.dir, Vpol) ;
-    if(TXPOL == "V"){
-        r1.pol = Vpol ;
-    }else{
-        r1.pol = Hpol ;
-    }
-    
-    VECT_CREATE(0.0, -0.1, 200.0, r2.org);
-    VECT_CREATE(0.0, -0.1, 0.0, hp);
-    VECT_SUB(hp, r2.org, dir);
-    r2.len = 0.0;
-    r2.pow = 1.0e12 ;
-    r2.pow = r2.pow / (SIPC_pi*(dir.x*dir.x+dir.y*dir.y+dir.z*dir.z));
-    VECT_NORM(dir, r2.dir);
-    VECT_CREATE(0, 0, 1, zhat);
-    if(fabs(VECT_DOT(r2.dir, zhat)) >= 0.99 ){
-        VECT_CREATE(1, 0, 0, Hpol);
-    }else{
-        VECT_CROSS(r2.dir, zhat, Hpol) ;
-        VECT_NORM(Hpol, Hpol) ;
-    }
-    VECT_CROSS(Hpol, r2.dir, Vpol) ;
-    if(TXPOL == "V"){
-        r2.pol = Vpol ;
-    }else{
-        r2.pol = Hpol ;
-    }
-
-    
-    printf("Transmit location %f,%f,%f\n", r1.org.x,r1.org.y,r1.org.z);
-    printf("Hipoint location  %f,%f,%f\n", hp.x,hp.y,hp.z);
-    printf(" Facet:\n");
-    printf("    %8.2f %8.2f %8.2f\n",AA.x,AA.y,AA.z);
-    printf("    %8.2f %8.2f %8.2f\n",BB.x,BB.y,BB.z);
-    printf("    %8.2f %8.2f %8.2f\n",CC.x,CC.y,CC.z);
-    printf("    %8.2f %8.2f %8.2f\n",AA.x,AA.y,AA.z);
-     */
-    
     int iphi, niphis;
     int itheta, nitheta;
     double startPhi,endPhi,startTheta,endTheta;
-    niphis     = 360 ;
-    nitheta    = 180 ;
-    startPhi   = DEG2RAD(0.0) ;
-    endPhi     = DEG2RAD(360.0) ;
-    startTheta = DEG2RAD(0.0) ;
-    endTheta   = DEG2RAD(90.0) ;
+    niphis     = NPHIS ;
+    nitheta    = NTHETAS ;
+    startPhi   = DEG2RAD(STARTPHI) ;
+    endPhi     = DEG2RAD(ENDPHI) ;
+    startTheta = DEG2RAD(STARTTHETA) ;
+    endTheta   = DEG2RAD(ENDTHETA) ;
     
     double deltaiphi, deltaitheta;
     deltaiphi = (endPhi-startPhi) / niphis ;
     deltaitheta = (endTheta-startTheta) / (nitheta) ;
     double phi_s, theta_s;
     SPVector RxPnt, obsDir ;
-    double obsDist = 10000 ;
-    
+    double obsDist = OBSDIST ;
+    double Erx;
+
     for(itheta=0; itheta<nitheta; itheta++){
         theta_s = startTheta + itheta * deltaitheta ;
         
@@ -216,32 +193,57 @@ int main(int argc, const char * argv[])
             }
             
             if (RXPOL == "V") {
-                if(10*log10(CMPLX_MAG(EsV)) < 0.0){
+                double EsV_mag = CMPLX_MAG(EsV);
+                if (RCSOUTPUT) {
+                    EsV_mag =  EsV_mag*EsV_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                }
+                if (OUTPUTDBS) {
+                    Erx = 10*log10(EsV_mag) ;
+                }else{
+                    Erx = EsV_mag ;
+                }
+                if(Erx <  0.0){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsV)),phi_s,theta_s);
+                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
                 }
             }else if (RXPOL == "H"){
-                if(10*log10(CMPLX_MAG(EsH)) < 0.0){
+                double EsH_mag = CMPLX_MAG(EsH) ;
+                if (RCSOUTPUT) {
+                    EsH_mag =  EsH_mag*EsH_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                }
+                if (OUTPUTDBS) {
+                    Erx = 10*log10(EsH_mag) ;
+                }else{
+                    Erx = EsH_mag ;
+                }
+                if(Erx < 0.0){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-                    printf("%f, %f, %f \n",10*log10(CMPLX_MAG(EsH)),phi_s,theta_s);
+                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
                 }
             }else{
                 SPVector Ev, Eh, E;
-                double a ;
+                double a, E_mag ;
                 a = CMPLX_MAG(EsV);
                 VECT_SCMULT(RXVdir, a, Ev);
                 a = CMPLX_MAG(EsH);
                 VECT_SCMULT(RXHdir, a, Eh);
                 VECT_ADD(Ev, Eh, E) ;
-                if(10*log10(VECT_MAG(E)) < 0.0){
+                E_mag = VECT_MAG(E);
+                if(RCSOUTPUT){
+                    E_mag =  E_mag*E_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
+                }
+                if (OUTPUTDBS) {
+                    Erx = 10*log10(E_mag) ;
+                }else{
+                    Erx = E_mag ;
+                }
+                if(Erx < 0.0){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-                    printf("%f, %f, %f \n",10*log10(VECT_MAG(E)),phi_s,theta_s);
-                }
-//                printf("%f, %f, %f\n", CMPLX_PHASE(EsV), phi_s,theta_s);
-                
+                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
+                }                
             }
             
         }
@@ -390,10 +392,11 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
 //            printf("    C      : %3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
 //            printf("    N      : %3.6f,%3.6f,%3.6f\n",tri.NN.x,tri.NN.y,tri.NN.z );
 //            printf("    M      : %3.6f,%3.6f,%3.6f\n",tri.MP.x,tri.MP.y,tri.MP.z );
-//            printf("%3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
-//            printf("%3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
-//            printf("%3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
-
+            if(PRINTTRIS){
+                printf("%3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
+                printf("%3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
+                printf("%3.6f,%3.6f,%3.6f\n",tri.CC.x,tri.CC.y,tri.CC.z );
+            }
 
             trind++;
         }else{
