@@ -35,6 +35,8 @@ typedef struct Ray {
 
 static double Z0 = 376.99111843077516; // Impedence of free space = 120 * PI
 
+void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double lambda, SPVector Vdir, SPVector Hdir, SPCmplx *EsV, SPCmplx *EsH);
+
 void POTriangle(triangle tri, Ray ray, SPVector obsPnt, double lambda, SPVector RXVdir, SPVector RXHdir, SPCmplx *EsV, SPCmplx *EsH) ;
 
 SPCmplx surfaceIntegral (double k, triangle tri, SPVector uvw_sg) ;

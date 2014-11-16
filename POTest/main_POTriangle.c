@@ -12,16 +12,16 @@
 #include "matrixMultiplication.h"
 #define TXPOL "V"
 #define RXPOL "-"
-#define LAMBDA      ((double)0.0299)    // Wavelegth in metres
+#define LAMBDA      ((double)0.299)    // Wavelegth in metres
 #define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
-#define NPHIS       ((int)1)            // Number of observation points to calculate in azimuth
-#define NTHETAS     ((int)1)            // Number of observation points to calculate in elevation
-#define STARTPHI    ((int)270)          // Start azimuth angle (deg)
-#define ENDPHI      ((int)270)          // End azimuth angle (deg)
-#define STARTTHETA  ((int)45)           // Start angle of incidence (deg)
-#define ENDTHETA    ((int)45)           // End angle of incidence (deg)
+#define NPHIS       ((int)180)          // Number of observation points to calculate in azimuth
+#define NTHETAS     ((int)90)           // Number of observation points to calculate in elevation
+#define STARTPHI    ((int)0)            // Start azimuth angle (deg)
+#define ENDPHI      ((int)360)          // End azimuth angle (deg)
+#define STARTTHETA  ((int)0)            // Start angle of incidence (deg)
+#define ENDTHETA    ((int)90)           // End angle of incidence (deg)
 #define OBSDIST     ((double)1000.0)    // Observation distance in metres
-#define OUTPUTDBS   0                   // Boolean - should output be in DBs?
+#define OUTPUTDBS   1                   // Boolean - should output be in DBs?
 #define ILLRANGE    ((double)200.0)     // Range in metres from origin of illumination source
 #define ILLAZ       ((double)270.0)     // Azimuth angke in degrees of source of illumination
 #define ILLINC      ((double)45.0)      // Incidence ange in degrees of source of illumination
@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
     
     readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
     
-    /*
+    
      For debugging - allows you to set your own triangles without using a triangle file
     ntris = 4 ;
     tris = sp_malloc(sizeof(triangle) * ntris);
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[])
     VECT_CREATE(  0.50000,  -0.353553, -0.353553, BB);
     VECT_CREATE( 0.0, 0.0, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[3])) ;
-     */
+    
 
     if(PRINTTRIS){
         exit(0);
@@ -149,6 +149,7 @@ int main(int argc, const char * argv[])
     SPVector RxPnt, obsDir ;
     double obsDist = OBSDIST ;
     double Erx;
+    double k = 2 * SIPC_pi / LAMBDA ;
 
     for(itheta=0; itheta<nitheta; itheta++){
         theta_s = startTheta + itheta * deltaitheta ;
@@ -187,7 +188,7 @@ int main(int argc, const char * argv[])
             EsV.r = EsV.i = EsH.r = EsH.i = 0 ;
             
             for (int t=0; t<ntris; t++ ){
-                POTriangle(tris[t], rays[t], RxPnt, LAMBDA,  RXVdir, RXHdir, &EsV1, &EsH1);
+                POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
                 CMPLX_ADD(EsV, EsV1, EsV) ;
                 CMPLX_ADD(EsH, EsH1, EsH) ;
             }
@@ -224,8 +225,10 @@ int main(int argc, const char * argv[])
                 }
             }else{
                 SPVector Ev, Eh, E;
-                double a, E_mag ;
+                double a, E_mag, p ;
                 a = CMPLX_MAG(EsV);
+                p = CMPLX_PHASE(EsV) ;
+                printf("%f,%f,%f\n",p,phi_s,theta_s);
                 VECT_SCMULT(RXVdir, a, Ev);
                 a = CMPLX_MAG(EsH);
                 VECT_SCMULT(RXHdir, a, Eh);
@@ -240,10 +243,10 @@ int main(int argc, const char * argv[])
                     Erx = E_mag ;
                 }
                 if(Erx < 0.0){
-                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+//                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
-                }                
+//                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
+                }
             }
             
         }
