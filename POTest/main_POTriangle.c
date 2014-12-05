@@ -162,18 +162,17 @@ int main(int argc, const char * argv[])
             obsDir.z = cos(theta_s);
             VECT_SCMULT(obsDir, obsDist, RxPnt) ;
             
-            for (int t=0; t<ntris; t++ ){
-                SPVector tmp1, tmp2;
+            // For debugging - provides a handy way to see the expected phase at the receiver
+            //
+            /*for (int t=0; t<ntris; t++ ){
+                SPVector tmp1;
                 double p,p1, d ;
                 VECT_SUB(tris[t].MP, rays[t].org, tmp1);
-                p = -VECT_MAG(tmp1)/LAMBDA ;
-                p1 = modf(p, &d) ;
-                p = -OBSDIST/LAMBDA ;
-                p1 = modf(p, &d) ;
                 p = (-(VECT_MAG(tmp1)+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
                 p1 = modf(p, &d) ;
                 printf("Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
             }
+             */
 
             
             // Define unit vectors for V & H fields
@@ -205,7 +204,9 @@ int main(int argc, const char * argv[])
                 POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
                 CMPLX_ADD(EsV, EsV1, EsV) ;
                 CMPLX_ADD(EsH, EsH1, EsH) ;
-                printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                // For debugging - provides a way to see individual scattering contributions
+                //
+                // printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
             }
             
             if (RXPOL == "V") {
@@ -243,7 +244,6 @@ int main(int argc, const char * argv[])
                 double a, E_mag, p ;
                 a = CMPLX_MAG(EsV);
                 p = CMPLX_PHASE(EsV) ;
-                printf("%f,%f,%f\n",p,phi_s,theta_s);
                 VECT_SCMULT(RXVdir, a, Ev);
                 a = CMPLX_MAG(EsH);
                 VECT_SCMULT(RXHdir, a, Eh);
@@ -257,7 +257,9 @@ int main(int argc, const char * argv[])
                 }else{
                     Erx = E_mag ;
                 }
-                Erx = RAD2DEG(CMPLX_PHASE(EsV));
+                // For debugging - if you want to see the scattreing phase uncomment the next line
+                //
+                // Erx = RAD2DEG(CMPLX_PHASE(EsV));
                 
                 if(Erx < 00.0){
                     printf("%f, %f, %f \n",0.0,phi_s,theta_s);

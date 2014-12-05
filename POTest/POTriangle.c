@@ -18,10 +18,6 @@ int factorial(int n) ;
 #define LT 0.04
 static const SPVector zz_hat = {0.0, 0.0, 1.0};
 
-typedef struct CmplxVect{
-    SPVector Abar ;      // Amplitude and direction of complex number Abar * e^j_phs
-    double   phs  ;
-} CmplxVect  ;
 
 void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, SPVector Vdir, SPVector Hdir, SPCmplx *EsV, SPCmplx *EsH){
     
@@ -219,11 +215,10 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     
     ///////////////////////////////
     
-    CmplxVect Eig ;
-    VECT_SCMULT(ray.pol, sqrt(ray.pow), Eig.Abar) ;
+    SPVector Eig ;
+    VECT_SCMULT(ray.pol, sqrt(ray.pow), Eig) ;
     SPVector dist ;
     VECT_SUB(HitPnt, ray.org, dist);
-    Eig.phs = (ray.len + VECT_MAG(dist)) * k ;
     
     double uvw_ig[3], uvw_il[3]; // Direction cosines for incident Ray
     
@@ -256,9 +251,9 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     SPVector Eil, theta_l_hat, phi_l_hat ;
     SPVector Raydir_l ;
     VECT_CREATE(uvw_il[0], uvw_il[1], uvw_il[2], Raydir_l) ;
-    E_ig[0] = Eig.Abar.x ;
-    E_ig[1] = Eig.Abar.y ;
-    E_ig[2] = Eig.Abar.z ;
+    E_ig[0] = Eig.x ;
+    E_ig[1] = Eig.y ;
+    E_ig[2] = Eig.z ;
     matmul(tri.globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
     VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
     if(fabs(VECT_DOT(zz_hat, Raydir_l)) >=0.99){
@@ -292,17 +287,18 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     J_l[1] = Jy_l ;
     J_l[2] = 0.0  ;
     matmul(tri.localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;
-//    SPVector Jg;
-    CmplxVect Jg ;
-    VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg.Abar) ;
-    Jg.phs = Eig.phs ;
-    
-    double AAA = VECT_DOT(Vdir, Jg.Abar);
-    double BBB = VECT_DOT(Hdir, Jg.Abar);
-    
-    SPCmplx AAAA, BBBB;
-    CMPLX_F_MAKE(AAA*cos(Jg.phs), AAA*sin(Jg.phs), AAAA);
-    CMPLX_F_MAKE(BBB*cos(Jg.phs), BBB*sin(Jg.phs), BBBB);
+    SPVector Jg;
+    VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
+    double Ad = VECT_DOT(Vdir, Jg);
+    double Bd = VECT_DOT(Hdir, Jg);
+    SPCmplx Ac, Bc ;
+    double inPhse, inRng;
+    SPVector tmp10;
+    VECT_SUB(tri.MP, ray.org, tmp10);
+    inRng = VECT_MAG(tmp10);
+    inPhse = -(k * inRng) - (SIPC_pi/2.0) ;
+    CMPLX_F_MAKE(Ad*cos(inPhse), Ad*sin(inPhse), Ac);
+    CMPLX_F_MAKE(Bd*cos(inPhse), Bd*sin(inPhse), Bc);
     
     // Work out scaler (complex) component of E field
     //
@@ -313,14 +309,13 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     CMPLX_MULT(jkZ0_o_4PIr, e_jkr, tmp1);
     CMPLX_MULT(tmp1, Ic, scaler);
     SPCmplx par,per ;
-    CMPLX_MULT(AAAA, scaler, par) ;
-    CMPLX_MULT(BBBB, scaler, per) ;
-//    CMPLX_SCMULT(AAA, scaler, par) ;
-//    CMPLX_SCMULT(BBB, scaler, per) ;
+    //    CMPLX_SCMULT(A, scaler, par) ;
+    //    CMPLX_SCMULT(B, scaler, per) ;
+    CMPLX_MULT(Ac, scaler, par);
+    CMPLX_MULT(Bc, scaler, per);
     
-    *EsV = par ;
-    *EsH = per ;
-
+    EsV->r = par.r ; EsV->i = par.i ;
+    EsH->r = per.r ; EsH->i = per.i ;
     return ;
 
 }
