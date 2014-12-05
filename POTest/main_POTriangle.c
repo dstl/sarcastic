@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
     readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
     
     
-     For debugging - allows you to set your own triangles without using a triangle file
+    /* For debugging - allows you to set your own triangles without using a triangle file
     ntris = 4 ;
     tris = sp_malloc(sizeof(triangle) * ntris);
     SPVector AA,BB,CC ;
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[])
     VECT_CREATE(  0.50000,  -0.353553, -0.353553, BB);
     VECT_CREATE( 0.0, 0.0, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[3])) ;
-    
+    */
 
     if(PRINTTRIS){
         exit(0);
