@@ -449,7 +449,15 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
     double A = VECT_DOT(Es_parrdir, Jg);
     double B = VECT_DOT(Es_perpdir, Jg);
-    
+    SPCmplx Ac, Bc ;
+    double inPhse, inRng;
+    SPVector tmp10;
+    VECT_SUB(tri.MP, ray.org, tmp10);
+    inRng = VECT_MAG(tmp10);
+    inPhse = -(k * inRng) - (SIPC_pi/2.0) ;
+    CMPLX_F_MAKE(A*cos(inPhse), A*sin(inPhse), Ac);
+    CMPLX_F_MAKE(B*cos(inPhse), B*sin(inPhse), Bc);
+
     // Work out scaler (complex) component of E field
     //
     SPCmplx jkZ0_o_4PIr, tmp1, scaler, e_jkr;
@@ -459,8 +467,11 @@ void EField(double k, double r, triangle tri, Ray ray, SPCmplx Ic, SPVector Es_p
     CMPLX_MULT(jkZ0_o_4PIr, e_jkr, tmp1);
     CMPLX_MULT(tmp1, Ic, scaler);
     SPCmplx par,per ;
-    CMPLX_SCMULT(A, scaler, par) ;
-    CMPLX_SCMULT(B, scaler, per) ;
+//    CMPLX_SCMULT(A, scaler, par) ;
+//    CMPLX_SCMULT(B, scaler, per) ;
+    CMPLX_MULT(Ac, scaler, par);
+    CMPLX_MULT(Bc, scaler, per);
+
     Es_parr->r = par.r ; Es_parr->i = par.i ;
     Es_perp->r = per.r ; Es_perp->i = per.i ;
     return ;

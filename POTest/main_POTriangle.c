@@ -12,7 +12,7 @@
 #include "matrixMultiplication.h"
 #define TXPOL "V"
 #define RXPOL "-"
-#define LAMBDA      ((double)0.299)    // Wavelegth in metres
+#define LAMBDA      ((double)0.299)     // Wavelegth in metres
 #define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
 #define NPHIS       ((int)180)          // Number of observation points to calculate in azimuth
 #define NTHETAS     ((int)90)           // Number of observation points to calculate in elevation
@@ -23,8 +23,8 @@
 #define OBSDIST     ((double)1000.0)    // Observation distance in metres
 #define OUTPUTDBS   1                   // Boolean - should output be in DBs?
 #define ILLRANGE    ((double)200.0)     // Range in metres from origin of illumination source
-#define ILLAZ       ((double)270.0)     // Azimuth angke in degrees of source of illumination
-#define ILLINC      ((double)45.0)      // Incidence ange in degrees of source of illumination
+#define ILLAZ       ((double)270.0)       // Azimuth angke in degrees of source of illumination
+#define ILLINC      ((double)45.0)       // Incidence ange in degrees of source of illumination
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
 
@@ -53,33 +53,33 @@ int main(int argc, const char * argv[])
     
     readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
     
-    
-    /* For debugging - allows you to set your own triangles without using a triangle file
-    ntris = 4 ;
+    /*
+     For debugging - allows you to set your own triangles without using a triangle file
+     */
+    ntris = 2 ;
     tris = sp_malloc(sizeof(triangle) * ntris);
     SPVector AA,BB,CC ;
    
-    VECT_CREATE(  0.5000, 0.353553, 0.353553, AA);
-    VECT_CREATE(  0, 0, 0, BB);
-    VECT_CREATE( 0.50000, -0.353553, -0.353553, CC);
+    VECT_CREATE(  0.5,  0.5, 0.0, AA);
+    VECT_CREATE( -0.5,  0.5, 0.0, BB);
+    VECT_CREATE( -0.5, -0.5, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[0])) ;
     
-    VECT_CREATE(  0.5000, 0.353553, 0.353553, AA);
-    VECT_CREATE(  -0.50000,  0.353553, 0.353553, BB);
-    VECT_CREATE( 0.0, 0.0, 0.0, CC);
+    VECT_CREATE(   0.5,  -0.5, 0.0, AA);
+    VECT_CREATE(   0.5,   0.5, 0.0, BB);
+    VECT_CREATE(  -0.5,  -0.5, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[1])) ;
     
-    VECT_CREATE(  -0.5000, 0.353553, 0.353553, AA);
-    VECT_CREATE(  -0.50000,  -0.353553, -0.353553, BB);
+    /*VECT_CREATE(  -0.5000, 0.5, 0.0, AA);
+    VECT_CREATE(  -0.50000,  -0.5, 0.0, BB);
     VECT_CREATE( 0.0, 0.0, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[2])) ;
     
-    VECT_CREATE(  -0.5000, -0.353553, -0.353553, AA);
-    VECT_CREATE(  0.50000,  -0.353553, -0.353553, BB);
+    VECT_CREATE(  -0.5000, -0.5, 0.0, AA);
+    VECT_CREATE(  0.50000,  -0.5, 0, BB);
     VECT_CREATE( 0.0, 0.0, 0.0, CC);
-    buildTriangle(AA, BB, CC, &(tris[3])) ;
-    */
-
+    buildTriangle(AA, BB, CC, &(tris[3])) ;*/
+    
     if(PRINTTRIS){
         exit(0);
     }
@@ -162,6 +162,20 @@ int main(int argc, const char * argv[])
             obsDir.z = cos(theta_s);
             VECT_SCMULT(obsDir, obsDist, RxPnt) ;
             
+            for (int t=0; t<ntris; t++ ){
+                SPVector tmp1, tmp2;
+                double p,p1, d ;
+                VECT_SUB(tris[t].MP, rays[t].org, tmp1);
+                p = -VECT_MAG(tmp1)/LAMBDA ;
+                p1 = modf(p, &d) ;
+                p = -OBSDIST/LAMBDA ;
+                p1 = modf(p, &d) ;
+                p = (-(VECT_MAG(tmp1)+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
+                p1 = modf(p, &d) ;
+                printf("Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
+            }
+
+            
             // Define unit vectors for V & H fields
             // We do this as the definition of H and V from the sensor may not be truly horizontal
             // or vertical from the sensor. By allowing us to define the V & H directions we can
@@ -191,6 +205,7 @@ int main(int argc, const char * argv[])
                 POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
                 CMPLX_ADD(EsV, EsV1, EsV) ;
                 CMPLX_ADD(EsH, EsH1, EsH) ;
+                printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
             }
             
             if (RXPOL == "V") {
@@ -242,10 +257,12 @@ int main(int argc, const char * argv[])
                 }else{
                     Erx = E_mag ;
                 }
-                if(Erx < 0.0){
-//                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+                Erx = RAD2DEG(CMPLX_PHASE(EsV));
+                
+                if(Erx < 00.0){
+                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
                 }else{
-//                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
+                    printf("%f, %f, %f \n",Erx,phi_s,theta_s);
                 }
             }
             
