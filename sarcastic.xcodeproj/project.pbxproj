@@ -922,6 +922,11 @@
 		9504211E17A24F9400A076FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic/kernels\\\"",
+					"$(inherited)",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
@@ -933,6 +938,7 @@
 		9504211F17A24F9400A076FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic/kernels\\\"";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,

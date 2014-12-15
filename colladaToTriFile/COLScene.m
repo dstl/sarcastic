@@ -255,7 +255,7 @@
                             }
                         }
                         [tri setMaterialName: [[materials objectAtIndex:0] name]];
-                        [_triangles         addObject:tri];
+                        [_triangles addObject:tri];
                         
                         // Check to see if material is already in the list
                         //

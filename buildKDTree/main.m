@@ -118,11 +118,11 @@ int main (int argc, const char * argv[])
             Triangle * tri = [Triangle TriangleWithVerticesAa:AA Bb:BB Cc:CC andNormal:NN ];
             [tri setTriId:val] ;
             fread(&mat, sizeof(char), materialBytes, fpin) ;
-            NSString *strFromFile = [NSString stringWithUTF8String: mat] ;
+            NSString *strFromFile = [[NSString stringWithUTF8String: mat] uppercaseString];
             NSString *matStr ;
             for(int i=0; i<NMATERIALS; i++){
                matStr = [NSString stringWithUTF8String:materialProperties[i].matname];
-                if ([strFromFile isEqualToString:matStr]) {
+                if ([strFromFile rangeOfString:matStr].location != NSNotFound) {
                     [tri setMatId:i] ;
                     [tri setMaterialName:strFromFile] ;
                 }

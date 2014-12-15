@@ -33,29 +33,10 @@
  ***************************************************************************/
 
 #import <Foundation/Foundation.h>
-typedef enum {
-    ASPHALT,
-    BRICK,
-    CONCRETE,
-    METAL,
-    MATERIAL,
-    ROOFING,
-    VEGETATION,
-    WATER,
-    WOOD
-} materialType ;
 
 @interface radarMaterial : NSObject
 @property NSString *materialName;
-@property materialType materialID;
-@property NSArray * materialTypeArray ;
-@property float specular;
-@property float diffuse;
-@property float shinyness;
-@property float ambient;
-- (id) initWithMaterialName: (NSString *) name ;
-+ (id) radarMaterialWithMaterialName: (NSString *) name ;
-- (NSString *) materialTypeEnumToString: (materialType) enumVal ;
-- (materialType) materialTypeStringToEnum: (NSString *) strVal ;
-
+@property int materialID;
+- (id) initWithID: (int) matID andName: (NSString *) matName ;
++ (id) materialWithID: (int) matID andName: (NSString *) matName ;
 @end

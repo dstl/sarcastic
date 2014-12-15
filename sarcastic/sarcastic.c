@@ -340,13 +340,15 @@ int main (int argc, char **argv){
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    im_init(&cphd, &status) ;
-    load_cphd(&cphd, &hdr, 0, hdr.num_azi, &status);
-    
-    // wiping pulse data...
-    //
-    for (int i = 0; i<cphd.nx*cphd.ny; i++){
-        cphd.data.cmpl_f[i].i = cphd.data.cmpl_f[i].r = 0.0f;
+    if(outCPHDFile != NULL){
+        im_init(&cphd, &status) ;
+        load_cphd(&cphd, &hdr, 0, hdr.num_azi, &status);
+        
+        // wiping pulse data...
+        //
+        for (int i = 0; i<cphd.nx*cphd.ny; i++){
+            cphd.data.cmpl_f[i].i = cphd.data.cmpl_f[i].r = 0.0f;
+        }
     }
     
     // Calculate how many pulses can be processed on a device at a time
@@ -376,7 +378,11 @@ int main (int argc, char **argv){
         threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
         threadDataArray[dev].gainRx                 = gainRx;
         threadDataArray[dev].PowPerRay              = TxPowPerRay ;
-        threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
+        if(outCPHDFile == NULL){
+            threadDataArray[dev].phd                    = NULL ;
+        }else{
+            threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
+        }
         threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
         threadDataArray[dev].ADRate                 = hdr.clock_speed ;
         threadDataArray[dev].pulseDuration          = hdr.pulse_length ;
@@ -426,22 +432,24 @@ int main (int argc, char **argv){
         fclose(interrogateFP);
     }
 
-    FILE *fp;
-    fp = fopen(outCPHDFile, "w") ;
-    if (fp == NULL) {
-        fprintf(stderr, "Failed to open file %s\n", outCPHDFile);
-        perror("Error opening file");
-        exit(888);
-    }
-    
     endTimer(&runTimer, &status) ;
     printf("Done in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
-    printf("Writing CPHD File \"%s\"....",outCPHDFile);
-    hdr.data_type = ITYPE_CMPL_FLOAT ;
-    writeCPHD3Header( &hdr, fp, &status ) ;
-    write_cphd3_nb_vectors(&hdr, 0, fp, &status) ;
-    write_cphd3_wb_vectors(&hdr, &cphd, 0, fp, &status) ;
-    printf("...Done\n");
+    
+    if (outCPHDFile != NULL ) {
+        FILE *fp;
+        fp = fopen(outCPHDFile, "w") ;
+        if (fp == NULL) {
+            fprintf(stderr, "Failed to open file %s\n", outCPHDFile);
+            perror("Error opening file");
+            exit(888);
+        }
+        printf("Writing CPHD File \"%s\"....",outCPHDFile);
+        hdr.data_type = ITYPE_CMPL_FLOAT ;
+        writeCPHD3Header( &hdr, fp, &status ) ;
+        write_cphd3_nb_vectors(&hdr, 0, fp, &status) ;
+        write_cphd3_wb_vectors(&hdr, &cphd, 0, fp, &status) ;
+        printf("...Done\n");
+    }
     
     im_destroy(&cphd, &status);
     im_close_lib(&status);

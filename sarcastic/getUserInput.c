@@ -53,9 +53,11 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     char * interrogFname ;
     SPStatus fileStat ;
     FILE *fp;
+    int createNewCPHD ;
     
     *useGPU             =  0 ;
     *bounceToShow       =  0 ;
+    createNewCPHD       =  1 ;
     
     prompt  = (char *)malloc(sizeof(char)*256);
 
@@ -91,26 +93,6 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     file   = strrchr(prompt, '/');
     file = (file == NULL) ? prompt : file+1;
     
-    // change extension
-    //
-    char *pExt = strrchr(file, '.');
-    if (pExt != NULL)
-        strcpy(pExt, ".sarc.cph");
-    else
-        strcat(prompt, ".sarc.cph");
-        
-    do {
-        im_init_status(fileStat, 0) ;
-        *outCPHDFile = input_string((char *)"Output CPHD Filename", (char *)"CPHDOut",
-                               (char *)"The name of a CPHD file to create.",
-                               prompt);
-        if ( (fp = fopen(*outCPHDFile, "w")) == NULL){
-            printf(RED "Cannot access file %s\n" RESETCOLOR,*outCPHDFile);
-            fileStat.status = BAD_FILE ;
-        }else fclose(fp) ;
-            
-    } while(fileStat.status != NO_ERROR);
-    
     // Read in CPHD Header data to give the user a hand in choosing correct parameters
     //
     CPHDHeader hdr;
@@ -134,6 +116,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
 
     if(*nPulses == 1){
         *useGPU = 0;
+        createNewCPHD = 0;
         *bounceToShow = input_int((char *)"Which bounce number to show (1-8)", (char *)"bounceToShow",
                                   (char *)"Which radar bounce should be displayed? (<1 is do not show bounce info)", *bounceToShow);
         if (*bounceToShow > MAXBOUNCES || *bounceToShow < 1) *bounceToShow = 0 ;
@@ -162,6 +145,33 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     coordinate (elevation direction) of the ray to debug", *debugY);
             }while (*debugY < 0 || *debugY >= *nElBeam);
         }
+    }
+    
+    // To save processing time only read in the CPHDFile PHD if we are going to create a new
+    // CPHD file
+    //
+    if( createNewCPHD ){
+        // change extension
+        //
+        char *pExt = strrchr(file, '.');
+        if (pExt != NULL)
+            strcpy(pExt, ".sarc.cph");
+        else
+            strcat(prompt, ".sarc.cph");
+        
+        do {
+            im_init_status(fileStat, 0) ;
+            *outCPHDFile = input_string((char *)"Output CPHD Filename", (char *)"CPHDOut",
+                                        (char *)"The name of a CPHD file to create.",
+                                        prompt);
+            if ( (fp = fopen(*outCPHDFile, "w")) == NULL){
+                printf(RED "Cannot access file %s\n" RESETCOLOR,*outCPHDFile);
+                fileStat.status = BAD_FILE ;
+            }else fclose(fp) ;
+            
+        } while(fileStat.status != NO_ERROR);
+    }else{
+        *outCPHDFile = NULL ;
     }
     
     // Ask the user if he would like to interrogate a scattering point in a previously ray traced

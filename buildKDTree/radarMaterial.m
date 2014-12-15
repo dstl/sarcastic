@@ -35,110 +35,20 @@
 #import "radarMaterial.h"
 
 @implementation radarMaterial
-@synthesize materialName ;
-@synthesize materialID ;
-@synthesize specular ;
-@synthesize diffuse ;
-@synthesize shinyness ;
-@synthesize ambient ;
-@synthesize materialTypeArray ;
-- (id) initWithMaterialName: (NSString *) name {
+@synthesize materialName=_materialName ;
+@synthesize materialID=_materialID ;
+
+- (id) initWithID: (int) matID andName: (NSString *) matName {
     self = [super init];
     if (self) {
-        materialTypeArray = [NSArray arrayWithObjects:
-            @"asphalt",
-            @"brick",
-            @"concrete",
-            @"metal",
-            @"material",
-            @"roofing",
-            @"vegetation",
-            @"water",
-            @"wood", nil];
-
-        materialID   = [self materialTypeStringToEnum:name] ;
-        materialName = [self materialTypeEnumToString:materialID];
-        ambient = 0;
-        
-        switch (materialID) {
-            case ASPHALT :
-                specular  = 0.8f;
-                diffuse   = 0.2f;
-                shinyness = 30.0;
-                break;
-            case BRICK :
-                specular  = 0.7;
-                diffuse   = 0.3;
-                shinyness = 20.0;
-                break;
-            case CONCRETE :
-                specular  = 0.3f;
-                diffuse   = 0.7f;
-                shinyness = 10.0;
-                break;
-            case METAL :
-                specular  = 0.1f;
-                diffuse   = 0.0f;
-                shinyness = 30.0;
-                break;
-            case ROOFING :
-                specular  = 0.7f;
-                diffuse   = 0.3f;
-                shinyness = 40.0;
-                break;
-            case VEGETATION :
-                specular  = 0.2f;
-                diffuse   = 0.8f;
-                shinyness = 5;
-                break;
-            case WATER :
-                specular  = 1.0f;
-                diffuse   = 0.0f;
-                shinyness = 50.0;
-                break;
-            case WOOD :
-                specular  = 0.6f;
-                diffuse   = 0.4f;
-                shinyness = 10.0;
-                break;
-            case MATERIAL :
-            default:        // default MATERIAL
-                specular  = 0.9f;
-                diffuse   = 0.0f;
-                shinyness = 30.0;
-                break;
-        }
+        _materialName = matName ;
+        _materialID   = matID ;
     }
     return self;
 }
 
-+ (id) radarMaterialWithMaterialName:(NSString *)name{
-    return ([[radarMaterial alloc] initWithMaterialName:name]);
++ (id) materialWithID: (int) matID andName: (NSString *) matName {
+    return [[radarMaterial alloc] initWithID:matID andName:matName];
 }
 
-- (NSString *) materialTypeEnumToString: (materialType) enumVal {
-    return materialTypeArray[enumVal];
-}
-
-- (materialType) materialTypeStringToEnum: (NSString *) strVal {
-    NSString *material;
-    NSRange range ;
-    for (material in materialTypeArray){
-        range = [strVal rangeOfString:material options:NSCaseInsensitiveSearch];
-        if (range.location != NSNotFound) {
-            return ((int)[materialTypeArray indexOfObject:material]);
-        }
-    }
-    // Got here but no solution so use defaut type
-    //
-    for (material in materialTypeArray){
-        range = [material rangeOfString:@"material" options:NSCaseInsensitiveSearch];
-        
-        if (range.location != NSNotFound) {
-            return ((int)[materialTypeArray indexOfObject:material]);
-        }
-    }
-    return 0;
-
-}
 @end

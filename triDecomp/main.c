@@ -366,7 +366,6 @@ int main(int argc, const char * argv[])
         fwrite(&(tri.NN.x), sizeof(double), 1, fpout) ;
         fwrite(&(tri.NN.y), sizeof(double), 1, fpout) ;
         fwrite(&(tri.NN.z), sizeof(double), 1, fpout) ;
-        printf("Normal is %f,%f,%f\n",tri.NN.x,tri.NN.y,tri.NN.z) ;
         fwrite(tri.mat,     sizeof(char),   materialBytes, fpout);
         triAccessor = triAccessor->next ;
         itri++;

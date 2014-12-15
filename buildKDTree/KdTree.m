@@ -489,6 +489,23 @@
             NSLog(@"Error: ran out of memory for Triangles");
             exit(1);
         }
+        
+        NSMutableArray * materialsFound = [[NSMutableArray alloc] init] ;
+        Triangle *tri ;
+        for (tri in triangles){
+            int triid = [tri matId];
+            int found = 0 ;
+            for(int i=0; i< [materialsFound count]; i++){
+                if( [[materialsFound objectAtIndex:i] materialID] == triid){
+                    found =1 ;
+                }
+            }
+            if (found == 0) {
+                radarMaterial * material = [radarMaterial materialWithID:[tri matId] andName:[tri materialName]];
+                [materialsFound addObject:material];
+            }
+        }
+        _textures = [NSArray arrayWithArray:materialsFound];
     }
     return self;
 }
@@ -540,7 +557,6 @@
 - (void) PacktoFile: (NSString *) filename {
     double d, nd_u, nd_v, k , kbu , kbv;
     double kbd, kcu, kcv, kcd;
-    float ka, kd, ks, n;
     double AAx,AAy,AAz,BBx,BBy,BBz;
     double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz;
     NSInteger ntri,nleaves,nnodes,ntex;
@@ -648,15 +664,14 @@
     
     radarMaterial *mat;
     for (mat in [self textures]) {
-        ka = [mat ambient];
-        kd = [mat diffuse];
-        ks = [mat specular];
-        n = [mat shinyness];
-        fwrite(&ka,sizeof(float),1,fp);
-        fwrite(&kd,sizeof(float),1,fp);
-        fwrite(&ks,sizeof(float),1,fp);
-        fwrite(&n,sizeof(float),1,fp);
-        printf("Texture : Ka %2.1f, Ks %2.1f, Kd %2.1f n %2.1f %s\n",ka,ks,kd,n, [[mat materialName] UTF8String]);
+        int matId = [mat materialID] ;
+        int len = (int)[[mat materialName] length];
+        char * matNameBytes = (char *)sp_malloc(sizeof (char)*len);
+        strcpy(matNameBytes, [[mat materialName] UTF8String]);
+        fwrite(&matId, sizeof(int), 1, fp);
+        fwrite(&len, sizeof(int), 1, fp);
+        fwrite(matNameBytes, sizeof(char), len, fp);
+        printf("Texture: [%d] %s\n",matId,matNameBytes);
     }
     printf ("Done\n");
 
