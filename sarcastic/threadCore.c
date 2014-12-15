@@ -44,8 +44,6 @@
 #define OVERSAMP (512)
 #define NOINTERSECTION -1
 
-
-
 void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
@@ -99,7 +97,6 @@ void * devPulseBlock ( void * threadArg ) {
     bandwidth        = td->chirpRate * td->pulseDuration ;
     tid              = td->devIndex ;
     devId            = td->platform.device_ids[tid] ;
-    nx               = (int)td->phd->nx ;
     interrogate      = td->interrogate ;
     interogPt        = td->interogPt ;
     interogRad       = td->interogRad ;
@@ -134,11 +131,11 @@ void * devPulseBlock ( void * threadArg ) {
     cl_kernel  randRaysKL,     stackTraverseKL,  reflectKL,  buildShadowsKL,  reflectPowerKL ;
     size_t     randRaysLWS[2], stackTraverseLWS, reflectLWS, buildShadowsLWS, reflectPowerLWS ;
 
-    static char *randRaysCode      = "/Users/darren/Development/sarcastic/sarcastic/kernels/randomRays.cl" ;
-    static char *stackTraverseCode = "/Users/darren/Development/sarcastic/sarcastic/kernels/stacklessTraverse.cl" ;
-    static char *reflectCode       = "/Users/darren/Development/sarcastic/sarcastic/kernels/reflectRays.cl" ;
-    static char *buildShadowsCode  = "/Users/darren/Development/sarcastic/sarcastic/kernels/buildShadowRays.cl" ;
-    static char *reflectPowCode    = "/Users/darren/Development/sarcastic/sarcastic/kernels/reflectionPower.cl" ;
+    static char *randRaysCode      = OCLKERNELSPATH"/randomRays.cl" ;
+    static char *stackTraverseCode = OCLKERNELSPATH"/stacklessTraverse.cl" ;
+    static char *reflectCode       = OCLKERNELSPATH"/reflectRays.cl" ;
+    static char *buildShadowsCode  = OCLKERNELSPATH"/buildShadowRays.cl" ;
+    static char *reflectPowCode    = OCLKERNELSPATH"/reflectionPower.cl" ;
     
     CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
     CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
@@ -159,7 +156,6 @@ void * devPulseBlock ( void * threadArg ) {
     int                nLeaves          = td->KDT.nLeaves;            // number of leaves (nodes with triangles) in KdTree
     int *              triangleListPtrs = td->KDT.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
 
-    
     cl_mem dTriangles, dTextures,dKdTree, dtriListData,dtriListPtrs;
     dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles, NULL, &_err));
     dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,   NULL, &_err));
@@ -173,15 +169,18 @@ void * devPulseBlock ( void * threadArg ) {
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, triListDataSize,             triangleListData, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
     
-    // build a sinc kernel
-    //
-    resolution  = SIPC_c / (2.0 * bandwidth ) ;
-    sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
-    ikernel     = safeCalloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
-
-    sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
-    
-    printf("...Done\n");
+    if(td->phd != NULL){
+        // build a sinc kernel
+        //
+        nx = (int)td->phd->nx ;
+        resolution  = SIPC_c / (2.0 * bandwidth ) ;
+        sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
+        ikernel     = safeCalloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
+        
+        sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
+        
+        printf("...Done\n");
+    }
     
     // **** loop  start here
     //
@@ -401,93 +400,96 @@ void * devPulseBlock ( void * threadArg ) {
             exit(-1);
         }
         
-// DEBUG
-//        nrnpItems = 1;
-// DEBUG
-        rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
-        
-        cnt = 0;
-        double totpow = 0.0;
-        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if (rnp[i].power != 0 && rnp[i].range !=0){
-                rnpData[cnt].power = rnp[i].power ;
-                rnpData[cnt].range = rnp[i].range ; 
-                rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                totpow += rnpData[cnt].power;
-                cnt++ ;
+        if (td->phd != NULL){
+            
+            // DEBUG
+            //        nrnpItems = 1;
+            // DEBUG
+            rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
+            
+            cnt = 0;
+            double totpow = 0.0;
+            for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
+                if (rnp[i].power != 0 && rnp[i].range !=0){
+                    rnpData[cnt].power = rnp[i].power ;
+                    rnpData[cnt].range = rnp[i].range ;
+                    rnpData[cnt].rdiff = rnp[i].range - derampRange;
+                    totpow += rnpData[cnt].power;
+                    cnt++ ;
+                }
             }
-        }
-//        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
-        
-        ////////// DEBUG CODE to inject a single point target
-        
-//        float xpos = -5 ;
-//        float ypos = 0 ;
-//        SPVector tp ; // Target Point in metres from scene centre in E,N,Alt system
-//        SPVector rvect1, rvect2 ;
-//        SPVector R,sensor_pos, sc_pos, R_,KDP_,JDP_,IDP_;
-//        SPVector rng_dir, azi_dir ;
-//        sensor_pos = td->TxPositions[td->nPulses/2] ;
-//        VECT_CREATE(0, 0, 0, sc_pos);
-//        VECT_SUB(sensor_pos, sc_pos, R);
-//        VECT_UNIT(R, R_);
-//        VECT_CREATE(0, 0, 1, KDP_);     // == zbar
-//        VECT_PROJ(R_, KDP_, JDP_);
-//        VECT_CROSS(JDP_, KDP_, IDP_);
-//        VECT_SCMULT(JDP_, -1*ypos, rng_dir);
-//        VECT_SCMULT(IDP_,  xpos, azi_dir);
-//        VECT_ADD(azi_dir, rng_dir, tp) ;
-//        VECT_SUB(tp, TxPos, rvect1);
-//        VECT_SUB(tp, RxPos, rvect2) ;
-//        double r1,r2 ;
-//        r1 = VECT_MAG(rvect1);
-//        r2 = VECT_MAG(rvect2);
-//        int phase_sign = -1.0;
-//        rnpData[0].power = 1.0 ;
-//        rnpData[0].range = (r1 + r2) / 2.0 ;
-//        rnpData[0].rdiff = phase_sign * (derampRange - rnpData[0].range) ;
-        
-        ////////// DEBUG CODE to inject a single point target
-        
-        
-        im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
-        
-        for (int i=0; i<nrnpItems; i++){
+            //        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
             
-            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
-            targ.r = rnpData[i].power*cos(phse) ;
-            targ.i = rnpData[i].power*sin(phse) ;
+            ////////// DEBUG CODE to inject a single point target
             
-            rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
+            //        float xpos = -5 ;
+            //        float ypos = 0 ;
+            //        SPVector tp ; // Target Point in metres from scene centre in E,N,Alt system
+            //        SPVector rvect1, rvect2 ;
+            //        SPVector R,sensor_pos, sc_pos, R_,KDP_,JDP_,IDP_;
+            //        SPVector rng_dir, azi_dir ;
+            //        sensor_pos = td->TxPositions[td->nPulses/2] ;
+            //        VECT_CREATE(0, 0, 0, sc_pos);
+            //        VECT_SUB(sensor_pos, sc_pos, R);
+            //        VECT_UNIT(R, R_);
+            //        VECT_CREATE(0, 0, 1, KDP_);     // == zbar
+            //        VECT_PROJ(R_, KDP_, JDP_);
+            //        VECT_CROSS(JDP_, KDP_, IDP_);
+            //        VECT_SCMULT(JDP_, -1*ypos, rng_dir);
+            //        VECT_SCMULT(IDP_,  xpos, azi_dir);
+            //        VECT_ADD(azi_dir, rng_dir, tp) ;
+            //        VECT_SUB(tp, TxPos, rvect1);
+            //        VECT_SUB(tp, RxPos, rvect2) ;
+            //        double r1,r2 ;
+            //        r1 = VECT_MAG(rvect1);
+            //        r2 = VECT_MAG(rvect2);
+            //        int phase_sign = -1.0;
+            //        rnpData[0].power = 1.0 ;
+            //        rnpData[0].range = (r1 + r2) / 2.0 ;
+            //        rnpData[0].rdiff = phase_sign * (derampRange - rnpData[0].range) ;
             
-            if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
-                packSinc(targ, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel);
+            ////////// DEBUG CODE to inject a single point target
+            
+            
+            im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
+            
+            for (int i=0; i<nrnpItems; i++){
+                
+                double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
+                targ.r = rnpData[i].power*cos(phse) ;
+                targ.i = rnpData[i].power*sin(phse) ;
+                
+                rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
+                
+                if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
+                    packSinc(targ, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel);
+                }
             }
-        }
-        
-        // perform phase correction to account for deramped jitter in receiver timing
-        //
-        phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
-        
-        for(int x = 0; x < pulseLine.nx; x++) {
-            pcorr.r = td->amp_sf0[pulseIndex] * cos(phasecorr * (x - pulseLine.nx/2)) ;
-            pcorr.i = td->amp_sf0[pulseIndex] * sin(phasecorr * (x - pulseLine.nx/2)) ;
             
-            if(CMPLX_MAG(pulseLine.data.cmpl_f[x]) == 0.0 ){
-                tmp.r = tmp.i = 0.0 ;
-            }else{
-                CMPLX_MULT(pulseLine.data.cmpl_f[x], pcorr, tmp);
+            // perform phase correction to account for deramped jitter in receiver timing
+            //
+            phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
+            
+            for(int x = 0; x < pulseLine.nx; x++) {
+                pcorr.r = td->amp_sf0[pulseIndex] * cos(phasecorr * (x - pulseLine.nx/2)) ;
+                pcorr.i = td->amp_sf0[pulseIndex] * sin(phasecorr * (x - pulseLine.nx/2)) ;
+                
+                if(CMPLX_MAG(pulseLine.data.cmpl_f[x]) == 0.0 ){
+                    tmp.r = tmp.i = 0.0 ;
+                }else{
+                    CMPLX_MULT(pulseLine.data.cmpl_f[x], pcorr, tmp);
+                }
+                
+                pulseLine.data.cmpl_f[x] = tmp;
             }
-
-            pulseLine.data.cmpl_f[x] = tmp;
+            
+            im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
+            im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
+            im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
+            im_destroy(&pulseLine, &status) ;
+            
+            free(rnpData);
         }
-        
-        im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
-        im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
-        im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
-        im_destroy(&pulseLine, &status) ;
-        
-        free(rnpData);
         free(rnp);
 
     } // end of pulse loop

@@ -39,6 +39,7 @@
 //***************************************************************************
 
 #include "readKdTree.h"
+#include "materialProperties.h"
 
 void readKdTree(const char *filename,
                 AABB * SceneBoundingBox,
@@ -55,7 +56,6 @@ void readKdTree(const char *filename,
     FILE *fp;
     int i,trisInLeaf,tex;
     double d,nd_u,nd_v,k,kbu,kbv,kbd,kcu,kcv,kcd;
-    float ka, kd, ks, n;
     double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz ;
     
     fp=fopen(filename, "r");
@@ -170,27 +170,27 @@ void readKdTree(const char *filename,
         exit(-1);
     }
     
+    int matID;
+    int matNameLen;
+    char *matName = "";
     for (i=0; i < *nTextures; i++){
-        if(fread(&ka, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read ka texture param from file %s\n",filename);
+        if(fread(&matID, sizeof(int), 1, fp)!=1){
+            printf("ERROR: Failed to read materialID texture param from file %s\n",filename);
             exit(-1);
         }
-        if(fread(&kd, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read kd texture param from file %s\n",filename);
+        if(fread(&matNameLen, sizeof(int), 1, fp)!=1){
+            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
             exit(-1);
         }
-        if(fread(&ks, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read ks texture param from file %s\n",filename);
+        matName = (char *)sp_malloc(sizeof (char)*matNameLen);
+        if(fread(matName, sizeof(char), matNameLen, fp)!=matNameLen){
+            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
             exit(-1);
         }
-        if(fread(&n, sizeof(float), 1, fp)!=1){
-            printf("ERROR: Failed to read n texture param from file %s\n",filename);
-            exit(-1);
-        }
-        (*textures)[i].ka = ka;
-        (*textures)[i].kd = kd;
-        (*textures)[i].ks = ks;
-        (*textures)[i].n  = n;
+        (*textures)[i].ka = 0.0 ;
+        (*textures)[i].kd = materialProperties[matID].diffuse ;
+        (*textures)[i].ks = materialProperties[matID].specular ;
+        (*textures)[i].n  = materialProperties[matID].shinyness ;
     }
     
     if(fread(nLeaves, sizeof(int), 1, fp)!=1){
