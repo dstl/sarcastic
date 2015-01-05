@@ -70,6 +70,8 @@
 		95D0DACB19F16C2C00DBB831 /* libSIlib-1.1-7-e17b94d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */; };
 		95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
+		95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F276EA1A35C13A00FF9339 /* oclPOField.c */; };
+		95F276EC1A36006300FF9339 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -314,6 +316,8 @@
 		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D5E16A192CA57E001ABC11 /* main_POCalculation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main_POCalculation.c; sourceTree = "<group>"; };
 		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
+		95F276EA1A35C13A00FF9339 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
+		95F276ED1A36045900FF9339 /* POField.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = POField.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,6 +636,7 @@
 				953FA1D318F4289400EAD4F3 /* SPVector.cl */,
 				953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */,
 				953FA1D518F4289400EAD4F3 /* structures.cl */,
+				95F276ED1A36045900FF9339 /* POField.cl */,
 			);
 			path = kernels;
 			sourceTree = "<group>";
@@ -691,6 +696,7 @@
 				9516175C19DED74F0004C4F0 /* matrixMultiplication.c */,
 				9516175E19DED7690004C4F0 /* matrixMultiplication.h */,
 				9516175619DECEDE0004C4F0 /* main_POTriangle.c */,
+				95F276EA1A35C13A00FF9339 /* oclPOField.c */,
 				9516175A19DED0550004C4F0 /* POTriangle.c */,
 				9516175919DECFA20004C4F0 /* POTriangle.h */,
 				95D5E16A192CA57E001ABC11 /* main_POCalculation.c */,
@@ -957,8 +963,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F276EC1A36006300FF9339 /* buildKernel.c in Sources */,
 				9516175D19DED74F0004C4F0 /* matrixMultiplication.c in Sources */,
 				9516175B19DED0550004C4F0 /* POTriangle.c in Sources */,
+				95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */,
 				9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

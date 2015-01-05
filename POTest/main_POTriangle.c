@@ -27,9 +27,11 @@
 #define ILLINC      ((double)45.0)       // Incidence ange in degrees of source of illumination
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
+#define USEOPENCL   0
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const char *fname) ;
+void oclPOField(triangle *tris, int ntris, Ray *rays, int nrays, SPVector *hitPoints, SPVector RxPnt, double k, SPVector RXVdir, SPVector RXHdir, SPCmplx *EsV, SPCmplx *EsH);
 
 int main(int argc, const char * argv[])
 {
@@ -132,6 +134,13 @@ int main(int argc, const char * argv[])
         }
     }
     
+    // Setup Hit points
+    //
+    SPVector * hits = sp_malloc(sizeof(SPVector) * ntris);
+    for (int i=0; i<ntris; i++){
+        hits[i] = tris[i].MP ;
+    }
+    
     int iphi, niphis;
     int itheta, nitheta;
     double startPhi,endPhi,startTheta,endTheta;
@@ -200,13 +209,17 @@ int main(int argc, const char * argv[])
 
             EsV.r = EsV.i = EsH.r = EsH.i = 0 ;
             
-            for (int t=0; t<ntris; t++ ){
-                POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
-                CMPLX_ADD(EsV, EsV1, EsV) ;
-                CMPLX_ADD(EsH, EsH1, EsH) ;
-                // For debugging - provides a way to see individual scattering contributions
-                //
-                // printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+            if(USEOPENCL){
+                oclPOField(tris, ntris, rays, ntris, hits, RxPnt, k, RXVdir, RXHdir, &EsV, &EsH);
+            }else{
+                for (int t=0; t<ntris; t++ ){
+                    POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
+                    CMPLX_ADD(EsV, EsV1, EsV) ;
+                    CMPLX_ADD(EsH, EsH1, EsH) ;
+                    // For debugging - provides a way to see individual scattering contributions
+                    //
+                    // printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                }
             }
             
             if (RXPOL == "V") {
@@ -273,6 +286,7 @@ int main(int argc, const char * argv[])
 
     free(tris) ;
     free(rays) ;
+    free(hits) ;
     return 0;
 }
 
