@@ -45,8 +45,6 @@ void readKdTree(const char *filename,
                 AABB * SceneBoundingBox,
                 int * nTriangles,
                 Triangle ** Triangles,
-                int * nTextures,
-                Texture ** textures,
                 int * nLeaves,
                 int *** triangleLists,
                 int  *nTreeNodes,
@@ -147,17 +145,17 @@ void readKdTree(const char *filename,
             exit(-1);
         }
         (*Triangles)[i].triNum = i;
-        (*Triangles)[i].d    = d;
-        (*Triangles)[i].nd_u = nd_u;
-        (*Triangles)[i].nd_v = nd_v;
-        (*Triangles)[i].k    = k;
-        (*Triangles)[i].kbu  = kbu;
-        (*Triangles)[i].kbv  = kbv;
-        (*Triangles)[i].kbd  = kbd;
-        (*Triangles)[i].kcu  = kcu;
-        (*Triangles)[i].kcv  = kcv;
-        (*Triangles)[i].kcd  = kcd;
-        (*Triangles)[i].textureInd = tex;
+        (*Triangles)[i].d      = d;
+        (*Triangles)[i].nd_u   = nd_u;
+        (*Triangles)[i].nd_v   = nd_v;
+        (*Triangles)[i].k      = k;
+        (*Triangles)[i].kbu    = kbu;
+        (*Triangles)[i].kbv    = kbv;
+        (*Triangles)[i].kbd    = kbd;
+        (*Triangles)[i].kcu    = kcu;
+        (*Triangles)[i].kcv    = kcv;
+        (*Triangles)[i].kcd    = kcd;
+        (*Triangles)[i].matInd = tex;
     }
     
     if(fread(nTextures, sizeof(int), 1, fp)!=1){
@@ -286,9 +284,9 @@ void readKdTree(const char *filename,
         (*tricos)[i].B.x  = Bx ;
         (*tricos)[i].B.y  = By ;
         (*tricos)[i].B.z  = Bz ;
-        (*tricos)[i].Cc.x  = Cx ;
-        (*tricos)[i].Cc.y  = Cy ;
-        (*tricos)[i].Cc.z  = Cz ;
+        (*tricos)[i].Cc.x = Cx ;
+        (*tricos)[i].Cc.y = Cy ;
+        (*tricos)[i].Cc.z = Cz ;
     }
 
     fclose(fp);

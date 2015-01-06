@@ -7,18 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9516174A19DAB8240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
-		9516174C19DABA240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
-		9516174D19DABA400004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
-		9516174E19DD3AA60004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9516172319DAB7EB0004C4F0 /* libSIlib-1.0-12-078e83b.a */; };
+		950635CD19F7972C00B83F4B /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
+		950635E219F7ECEC00B83F4B /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635DC19F7ECE100B83F4B /* libSIlib-1.1.a */; };
+		950ABC2D1A5C31740085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
+		950ABC2E1A5C31A10085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
+		950ABC2F1A5C39B10085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
+		950ABC301A5C3B2A0085982A /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		9516175019DD81B30004C4F0 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
 		9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
 		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
+		9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175619DECEDE0004C4F0 /* main_POTriangle.c */; };
+		9516175B19DED0550004C4F0 /* POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175A19DED0550004C4F0 /* POTriangle.c */; };
+		9516175D19DED74F0004C4F0 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		953375E219D927C100DE1C46 /* KdTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E019D927C100DE1C46 /* KdTree.m */; };
 		953375E419D927DA00DE1C46 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E319D927DA00DE1C46 /* main.m */; };
 		953375EC19D9293200DE1C46 /* AABB.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E919D9293200DE1C46 /* AABB.m */; };
-		953375FC19D929B100DE1C46 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375FB19D929B100DE1C46 /* radarMaterial.m */; };
 		953375FE19D929C400DE1C46 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375FD19D929C400DE1C46 /* banner.c */; };
 		953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
 		953C58F519D33056006D5866 /* libSIlib-1.1-2-5e675ac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */; };
@@ -56,7 +60,6 @@
 		955F773F19CF1D4700BF3039 /* colladaToTriFile.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */; };
 		955F774419CF40A300BF3039 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		955F774719CF40E000BF3039 /* COLScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774619CF40E000BF3039 /* COLScene.m */; };
-		955F774A19CF410100BF3039 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774919CF410100BF3039 /* radarMaterial.m */; };
 		955F775019CF417800BF3039 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
@@ -65,8 +68,11 @@
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
-		95D5E16B192CA57E001ABC11 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 95D5E16A192CA57E001ABC11 /* main.c */; };
+		95D0DAC719EFF1EC00DBB831 /* reflectionPowerPO.cl in Sources */ = {isa = PBXBuildFile; fileRef = 95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */; };
+		95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
+		95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F276EA1A35C13A00FF9339 /* oclPOField.c */; };
+		95F276EC1A36006300FF9339 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -132,6 +138,26 @@
 
 /* Begin PBXFileReference section */
 		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		950635CC19F7972C00B83F4B /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
+		950635CF19F7ECE100B83F4B /* libmtlib-3643M.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3643M.a"; sourceTree = "<group>"; };
+		950635D019F7ECE100B83F4B /* libmtlib-3758.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3758.a"; sourceTree = "<group>"; };
+		950635D119F7ECE100B83F4B /* libmtlib-exported.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-exported.a"; sourceTree = "<group>"; };
+		950635D219F7ECE100B83F4B /* libmtlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmtlib.a; sourceTree = "<group>"; };
+		950635D319F7ECE100B83F4B /* libMVector-2.2.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libMVector-2.2.3.a"; sourceTree = "<group>"; };
+		950635D419F7ECE100B83F4B /* libMVector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMVector.a; sourceTree = "<group>"; };
+		950635D519F7ECE100B83F4B /* libSIlib-0.0.0-8-1286e87-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-0.0.0-8-1286e87-dirty.a"; sourceTree = "<group>"; };
+		950635D619F7ECE100B83F4B /* libSIlib-0.4.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-0.4.5.a"; sourceTree = "<group>"; };
+		950635D719F7ECE100B83F4B /* libSIlib-0.5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-0.5.1.a"; sourceTree = "<group>"; };
+		950635D819F7ECE100B83F4B /* libSIlib-0.5.3-2-fd172b9.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-0.5.3-2-fd172b9.a"; sourceTree = "<group>"; };
+		950635D919F7ECE100B83F4B /* libSIlib-0.5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-0.5.3.a"; sourceTree = "<group>"; };
+		950635DA19F7ECE100B83F4B /* libSIlib-1.0-12-078e83b.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-1.0-12-078e83b.a"; sourceTree = "<group>"; };
+		950635DB19F7ECE100B83F4B /* libSIlib-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-1.0.a"; sourceTree = "<group>"; };
+		950635DC19F7ECE100B83F4B /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-1.1.a"; sourceTree = "<group>"; };
+		950635DD19F7ECE100B83F4B /* libSIlib-OCL_Build_proram_bacl_compat-3-ge824d9a.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-OCL_Build_proram_bacl_compat-3-ge824d9a.a"; sourceTree = "<group>"; };
+		950635DE19F7ECE100B83F4B /* libSIlib-ocl_createTask_02-4-d8b0ed5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-ocl_createTask_02-4-d8b0ed5.a"; sourceTree = "<group>"; };
+		950635DF19F7ECE100B83F4B /* libSIlib-ocl_createTask_02-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-ocl_createTask_02-dirty.a"; sourceTree = "<group>"; };
+		950635E019F7ECE100B83F4B /* libSIlib-oclcreateTask-hotfix3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libSIlib-oclcreateTask-hotfix3.a"; sourceTree = "<group>"; };
+		950635E119F7ECE100B83F4B /* libSIlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSIlib.a; sourceTree = "<group>"; };
 		9516171819DAB7EB0004C4F0 /* libmtlib-3643M.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3643M.a"; sourceTree = "<group>"; };
 		9516171919DAB7EB0004C4F0 /* libmtlib-3758.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3758.a"; sourceTree = "<group>"; };
 		9516171A19DAB7EB0004C4F0 /* libmtlib-exported.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-exported.a"; sourceTree = "<group>"; };
@@ -180,6 +206,21 @@
 		9516174619DAB7FA0004C4F0 /* libgdal.la */ = {isa = PBXFileReference; lastKnownFileType = text; path = libgdal.la; sourceTree = "<group>"; };
 		9516174819DAB7FA0004C4F0 /* fftw3.pc */ = {isa = PBXFileReference; lastKnownFileType = text; path = fftw3.pc; sourceTree = "<group>"; };
 		9516174919DAB7FA0004C4F0 /* fftw3f.pc */ = {isa = PBXFileReference; lastKnownFileType = text; path = fftw3f.pc; sourceTree = "<group>"; };
+		9516175519DEC6F30004C4F0 /* POCalculaton.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = POCalculaton.c; path = sarcastic/POCalculaton.c; sourceTree = SOURCE_ROOT; };
+		9516175619DECEDE0004C4F0 /* main_POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_POTriangle.c; sourceTree = "<group>"; };
+		9516175919DECFA20004C4F0 /* POTriangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POTriangle.h; sourceTree = "<group>"; };
+		9516175A19DED0550004C4F0 /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
+		9516175C19DED74F0004C4F0 /* matrixMultiplication.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrixMultiplication.c; path = ../matrixMultiplication.c; sourceTree = "<group>"; };
+		9516175E19DED7690004C4F0 /* matrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = matrixMultiplication.h; path = ../matrixMultiplication.h; sourceTree = "<group>"; };
+		9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Chatzigeorgiadis - PO RCS Prediction.pdf"; sourceTree = "<group>"; };
+		9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DosSantos-Ludwig with barycentrics.pdf"; sourceTree = "<group>"; };
+		9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Efficient Evaluation of Radiation Integrals.pdf"; sourceTree = "<group>"; };
+		9526A0BD19E1DAF5003675FB /* Garrido - PO RCS Code.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Garrido - PO RCS Code.pdf"; sourceTree = "<group>"; };
+		9526A0BE19E1DAF5003675FB /* Levins PO Integration.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Levins PO Integration.pdf"; sourceTree = "<group>"; };
+		9526A0BF19E1DAF5003675FB /* Ludwig integral evaluation.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Ludwig integral evaluation.pdf"; sourceTree = "<group>"; };
+		9526A0C019E1DAF5003675FB /* Nikolaos Faros-RCS for planar surfaces.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Nikolaos Faros-RCS for planar surfaces.pdf"; sourceTree = "<group>"; };
+		9526A0C119E1DAF5003675FB /* pogorzelski - Ludwig with triangles.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pogorzelski - Ludwig with triangles.pdf"; sourceTree = "<group>"; };
+		9526A0C219E1DAF5003675FB /* Waddell- Rough Surface Scattering.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Waddell- Rough Surface Scattering.pdf"; sourceTree = "<group>"; };
 		953375E019D927C100DE1C46 /* KdTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KdTree.m; sourceTree = "<group>"; };
 		953375E119D927C100DE1C46 /* KdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KdTree.h; sourceTree = "<group>"; };
 		953375E319D927DA00DE1C46 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -267,13 +308,17 @@
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d.a"; sourceTree = "<group>"; };
 		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectionPowerPO.cl; sourceTree = "<group>"; };
 		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		95D5E16A192CA57E001ABC11 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		95D5E16A192CA57E001ABC11 /* main_POCalculation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main_POCalculation.c; sourceTree = "<group>"; };
 		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
+		95F276EA1A35C13A00FF9339 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
+		95F276ED1A36045900FF9339 /* POField.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = POField.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,7 +326,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9516174A19DAB8240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */,
+				950ABC2D1A5C31740085982A /* libSIlib-1.1.a in Frameworks */,
 				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
 				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
 				95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */,
@@ -306,7 +351,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9516174C19DABA240004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */,
+				950ABC2E1A5C31A10085982A /* libSIlib-1.1.a in Frameworks */,
 				953C590719D42966006D5866 /* libreadline.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,8 +360,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950ABC2F1A5C39B10085982A /* libSIlib-1.1.a in Frameworks */,
 				9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */,
-				9516174E19DD3AA60004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */,
 				953C591919D7F8C9006D5866 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,7 +370,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9516174D19DABA400004C4F0 /* libSIlib-1.0-12-078e83b.a in Frameworks */,
+				950635E219F7ECEC00B83F4B /* libSIlib-1.1.a in Frameworks */,
 				955F774419CF40A300BF3039 /* libreadline.dylib in Frameworks */,
 				955F773819CF1D4700BF3039 /* Foundation.framework in Frameworks */,
 			);
@@ -335,6 +380,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950635CD19F7972C00B83F4B /* libSIlib-1.1.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +404,7 @@
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
+				9526A0B919E1DAF5003675FB /* Documents */,
 			);
 			sourceTree = "<group>";
 		};
@@ -372,6 +419,33 @@
 				953C591819D7F8C9006D5866 /* buildKDTree */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		950635CE19F7ECE100B83F4B /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				950635CF19F7ECE100B83F4B /* libmtlib-3643M.a */,
+				950635D019F7ECE100B83F4B /* libmtlib-3758.a */,
+				950635D119F7ECE100B83F4B /* libmtlib-exported.a */,
+				950635D219F7ECE100B83F4B /* libmtlib.a */,
+				950635D319F7ECE100B83F4B /* libMVector-2.2.3.a */,
+				950635D419F7ECE100B83F4B /* libMVector.a */,
+				950635D519F7ECE100B83F4B /* libSIlib-0.0.0-8-1286e87-dirty.a */,
+				950635D619F7ECE100B83F4B /* libSIlib-0.4.5.a */,
+				950635D719F7ECE100B83F4B /* libSIlib-0.5.1.a */,
+				950635D819F7ECE100B83F4B /* libSIlib-0.5.3-2-fd172b9.a */,
+				950635D919F7ECE100B83F4B /* libSIlib-0.5.3.a */,
+				950635DA19F7ECE100B83F4B /* libSIlib-1.0-12-078e83b.a */,
+				950635DB19F7ECE100B83F4B /* libSIlib-1.0.a */,
+				950635DC19F7ECE100B83F4B /* libSIlib-1.1.a */,
+				950635DD19F7ECE100B83F4B /* libSIlib-OCL_Build_proram_bacl_compat-3-ge824d9a.a */,
+				950635DE19F7ECE100B83F4B /* libSIlib-ocl_createTask_02-4-d8b0ed5.a */,
+				950635DF19F7ECE100B83F4B /* libSIlib-ocl_createTask_02-dirty.a */,
+				950635E019F7ECE100B83F4B /* libSIlib-oclcreateTask-hotfix3.a */,
+				950635E119F7ECE100B83F4B /* libSIlib.a */,
+			);
+			name = lib;
+			path = ../../../../usr/local/dstl/lib;
 			sourceTree = "<group>";
 		};
 		9516171719DAB7EB0004C4F0 /* lib */ = {
@@ -444,6 +518,23 @@
 				9516174919DAB7FA0004C4F0 /* fftw3f.pc */,
 			);
 			path = pkgconfig;
+			sourceTree = "<group>";
+		};
+		9526A0B919E1DAF5003675FB /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */,
+				9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */,
+				9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */,
+				9526A0BD19E1DAF5003675FB /* Garrido - PO RCS Code.pdf */,
+				9526A0BE19E1DAF5003675FB /* Levins PO Integration.pdf */,
+				9526A0BF19E1DAF5003675FB /* Ludwig integral evaluation.pdf */,
+				9526A0C019E1DAF5003675FB /* Nikolaos Faros-RCS for planar surfaces.pdf */,
+				9526A0C119E1DAF5003675FB /* pogorzelski - Ludwig with triangles.pdf */,
+				9526A0C219E1DAF5003675FB /* Waddell- Rough Surface Scattering.pdf */,
+			);
+			name = Documents;
+			path = sarcastic/Documents;
 			sourceTree = "<group>";
 		};
 		953C58FD19D41F5B006D5866 /* triDecomp */ = {
@@ -541,10 +632,12 @@
 				953FA1CF18F4289400EAD4F3 /* intersect.cl */,
 				953FA1D018F4289400EAD4F3 /* randomRays.cl */,
 				953FA1D118F4289400EAD4F3 /* reflectionPower.cl */,
+				95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */,
 				953FA1D218F4289400EAD4F3 /* reflectRays.cl */,
 				953FA1D318F4289400EAD4F3 /* SPVector.cl */,
 				953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */,
 				953FA1D518F4289400EAD4F3 /* structures.cl */,
+				95F276ED1A36045900FF9339 /* POField.cl */,
 			);
 			path = kernels;
 			sourceTree = "<group>";
@@ -561,6 +654,9 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				950635CE19F7ECE100B83F4B /* lib */,
+				950635CC19F7972C00B83F4B /* libSIlib-1.1.a */,
+				958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */,
 				9516172A19DAB7FA0004C4F0 /* lib */,
 				9516171719DAB7EB0004C4F0 /* lib */,
 				953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */,
@@ -598,7 +694,14 @@
 		95D5E169192CA57E001ABC11 /* POTest */ = {
 			isa = PBXGroup;
 			children = (
-				95D5E16A192CA57E001ABC11 /* main.c */,
+				9516175C19DED74F0004C4F0 /* matrixMultiplication.c */,
+				9516175E19DED7690004C4F0 /* matrixMultiplication.h */,
+				9516175619DECEDE0004C4F0 /* main_POTriangle.c */,
+				95F276EA1A35C13A00FF9339 /* oclPOField.c */,
+				9516175A19DED0550004C4F0 /* POTriangle.c */,
+				9516175919DECFA20004C4F0 /* POTriangle.h */,
+				95D5E16A192CA57E001ABC11 /* main_POCalculation.c */,
+				9516175519DEC6F30004C4F0 /* POCalculaton.c */,
 				95D5E16C192CA57E001ABC11 /* POTest.1 */,
 			);
 			path = POTest;
@@ -664,6 +767,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 953C592119D7F8C9006D5866 /* Build configuration list for PBXNativeTarget "buildKDTree" */;
 			buildPhases = (
+				95D0DAC919F16A1E00DBB831 /* ShellScript */,
 				953C591419D7F8C9006D5866 /* Sources */,
 				953C591519D7F8C9006D5866 /* Frameworks */,
 				953C591619D7F8C9006D5866 /* CopyFiles */,
@@ -769,6 +873,19 @@
 			shellPath = /bin/sh;
 			shellScript = "cd ${PROJECT_DIR}/buildKDTree ; ./GenGitVersion.sh";
 		};
+		95D0DAC919F16A1E00DBB831 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${PROJECT_DIR}/buildKDTree ; ./GenGitVersion.sh";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -780,6 +897,7 @@
 				953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */,
 				953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */,
 				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
+				95D0DAC719EFF1EC00DBB831 /* reflectionPowerPO.cl in Sources */,
 				955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */,
 				953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */,
 				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
@@ -820,10 +938,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950ABC301A5C3B2A0085982A /* matrixMultiplication.c in Sources */,
 				9516175219DD83070004C4F0 /* PolyClip.c in Sources */,
 				9516175019DD81B30004C4F0 /* Triangle.m in Sources */,
 				9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */,
-				953375FC19D929B100DE1C46 /* radarMaterial.m in Sources */,
 				953375E419D927DA00DE1C46 /* main.m in Sources */,
 				953375E219D927C100DE1C46 /* KdTree.m in Sources */,
 				953375FE19D929C400DE1C46 /* banner.c in Sources */,
@@ -835,8 +953,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */,
 				953C58F719D3C944006D5866 /* Triangle.m in Sources */,
-				955F774A19CF410100BF3039 /* radarMaterial.m in Sources */,
 				955F775019CF417800BF3039 /* MVectorObjc.m in Sources */,
 				955F774719CF40E000BF3039 /* COLScene.m in Sources */,
 				955F773B19CF1D4700BF3039 /* main.m in Sources */,
@@ -847,7 +965,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95D5E16B192CA57E001ABC11 /* main.c in Sources */,
+				95F276EC1A36006300FF9339 /* buildKernel.c in Sources */,
+				9516175D19DED74F0004C4F0 /* matrixMultiplication.c in Sources */,
+				9516175B19DED0550004C4F0 /* POTriangle.c in Sources */,
+				95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */,
+				9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1190,6 +1312,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1211,6 +1337,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -67,7 +67,7 @@ void * devPulseBlock ( void * threadArg ) {
     int hrs,min,sec;
     int reportN = 500 ;
 
-    double gainRx, PowPerRay, derampRange, pCentDone, sexToGo ;
+    double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
     double *ranges, interogRad, intMinR, intMaxR ;
 
@@ -217,7 +217,7 @@ void * devPulseBlock ( void * threadArg ) {
         TxPos = td->TxPositions[pulseIndex] ;
         RxPos = td->RxPositions[pulseIndex] ;
         
-        // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
+        // Generate a distribution of nAzbeam x nElbeam rays that originate from the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
         rayArray = (Ray *)safeMalloc(nAzBeam*nElBeam, sizeof(Ray));
@@ -233,6 +233,7 @@ void * devPulseBlock ( void * threadArg ) {
         //
         VECT_MINUS(TxPos, aimdir) ;
         derampRange = VECT_MAG(aimdir);
+        derampPhase = -4.0 * SIPC_pi * derampRange * td->oneOverLambda ;
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
@@ -361,7 +362,7 @@ void * devPulseBlock ( void * threadArg ) {
                         irp = rnp[(nAzBeam*nElBeam*nbounce)+i] ;
                         
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
-                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,irp.power,nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
+                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
                         }
                     }
                 }
@@ -391,7 +392,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         int cnt=0;
         for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if (rnp[i].power != 0 && rnp[i].range !=0) cnt++ ;
+            if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
         }
         if(cnt > 0){
             nrnpItems = cnt;
@@ -400,53 +401,32 @@ void * devPulseBlock ( void * threadArg ) {
             exit(-1);
         }
         
-        if (td->phd != NULL){
-            
-            // DEBUG
-            //        nrnpItems = 1;
-            // DEBUG
-            rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
-            
-            cnt = 0;
-            double totpow = 0.0;
-            for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-                if (rnp[i].power != 0 && rnp[i].range !=0){
-                    rnpData[cnt].power = rnp[i].power ;
-                    rnpData[cnt].range = rnp[i].range ;
-                    rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                    totpow += rnpData[cnt].power;
-                    cnt++ ;
-                }
+
+// DEBUG
+//        nrnpItems = 1;
+// DEBUG
+        rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
+        
+        cnt = 0;
+        double totpow = 0.0;
+        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
+            if ((rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i) != 0 && rnp[i].range !=0){
+                rnpData[cnt].Es    = rnp[i].Es ;
+                rnpData[cnt].rdiff = rnp[i].range - derampRange;
+                totpow += rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i ;
+                cnt++ ;
             }
             //        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
             
-            ////////// DEBUG CODE to inject a single point target
             
-            //        float xpos = -5 ;
-            //        float ypos = 0 ;
-            //        SPVector tp ; // Target Point in metres from scene centre in E,N,Alt system
-            //        SPVector rvect1, rvect2 ;
-            //        SPVector R,sensor_pos, sc_pos, R_,KDP_,JDP_,IDP_;
-            //        SPVector rng_dir, azi_dir ;
-            //        sensor_pos = td->TxPositions[td->nPulses/2] ;
-            //        VECT_CREATE(0, 0, 0, sc_pos);
-            //        VECT_SUB(sensor_pos, sc_pos, R);
-            //        VECT_UNIT(R, R_);
-            //        VECT_CREATE(0, 0, 1, KDP_);     // == zbar
-            //        VECT_PROJ(R_, KDP_, JDP_);
-            //        VECT_CROSS(JDP_, KDP_, IDP_);
-            //        VECT_SCMULT(JDP_, -1*ypos, rng_dir);
-            //        VECT_SCMULT(IDP_,  xpos, azi_dir);
-            //        VECT_ADD(azi_dir, rng_dir, tp) ;
-            //        VECT_SUB(tp, TxPos, rvect1);
-            //        VECT_SUB(tp, RxPos, rvect2) ;
-            //        double r1,r2 ;
-            //        r1 = VECT_MAG(rvect1);
-            //        r2 = VECT_MAG(rvect2);
-            //        int phase_sign = -1.0;
-            //        rnpData[0].power = 1.0 ;
-            //        rnpData[0].range = (r1 + r2) / 2.0 ;
-            //        rnpData[0].rdiff = phase_sign * (derampRange - rnpData[0].range) ;
+
+            double phse = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
+            targ.r      = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
+            targ.i      = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
+            
+//            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
+//            targ.r = rnpData[i].power*cos(phse) ;
+//            targ.i = rnpData[i].power*sin(phse) ;
             
             ////////// DEBUG CODE to inject a single point target
             

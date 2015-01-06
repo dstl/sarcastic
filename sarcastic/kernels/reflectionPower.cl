@@ -325,7 +325,7 @@ __kernel void reflectPower(__global Triangle * Triangles,       // Array of Tria
         T   = Triangles[hits[ind].trinum];
         tex = Textures[T.textureInd];
         
-        // Create surface normal for taxture associated with this hitpoint
+        // Create surface normal for texture associated with this hitpoint
         //
         k  = T.k;
         ku = modulo[k+1];

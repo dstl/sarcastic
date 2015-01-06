@@ -55,6 +55,7 @@
 #include "ecef2SceneCoords.h"
 #include "colourCodes.h"
 #include "SarcasticVersion.h"
+#include "materialProperties.h"
 
 double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
 
@@ -67,7 +68,7 @@ int main (int argc, char **argv){
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8], interogPt ;
     double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
     char *KdTreeFile, *inCPHDFile, *outCPHDFile ;
-    int startPulse, nPulses, bounceToShow, nTriangles, nTextures, nLeaves, nTreeNodes, interrogate ;
+    int startPulse, nPulses, bounceToShow, nTriangles, nLeaves, nTreeNodes, interrogate ;
     int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
     SPImage cphd ;
     int debug, debugX=0, debugY=0;
@@ -78,7 +79,6 @@ int main (int argc, char **argv){
     cl_ulong    memSizeTmp,devMemSize;
     
     Triangle  * Triangles     = NULL ;
-    Texture   * textures      = NULL ;
     int       **triangleLists = NULL ;
     KdData    * KdTree        = NULL ;
     TriCoords * tricos        = NULL ;
@@ -109,8 +109,6 @@ int main (int argc, char **argv){
                &SceneBoundingBox,   // Bounding box for scene
                &nTriangles,         // Number of triangles in scene
                &Triangles,          // Array containing triangles
-               &nTextures,          // number if textures in scene
-               &textures,           // array containing textures
                &nLeaves,            // number of leaf nodes in KdTree
                &triangleLists,      // Array of int arrays containing triangles for each leaf
                &nTreeNodes,         // Number of nodes in KdTree
@@ -124,7 +122,6 @@ int main (int argc, char **argv){
     BuildRopesAndBoxes(KdTree, Ropes, SceneBoundingBox, KdTree);
     printf("Scene Summary:\n");
     printf("  Triangles : %d\n",nTriangles);
-    printf("  Textures  : %d\n",nTextures);
     printf("  Leaves    : %d\n",nLeaves);
     printf("  Nodes     : %d\n",nTreeNodes);
     printf("  Bound Box : %2.2f,%2.2f,%2.2f - %2.2f,%2.2f,%2.2f\n",
@@ -157,10 +154,8 @@ int main (int argc, char **argv){
     KdTreeStruct KDT ;
     KDT.KdTree           = KdTree ;
     KDT.nLeaves          = nLeaves ;
-    KDT.nTextures        = nTextures ;
     KDT.nTreeNodes       = nTreeNodes ;
     KDT.nTriangles       = nTriangles ;
-    KDT.textures         = textures ;
     KDT.triangleListData = triListData ;
     KDT.triangleListPtrs = triPtrs ;
     KDT.triangles        = Triangles ;
@@ -464,7 +459,6 @@ int main (int argc, char **argv){
     // Clear down the KdTree
     //
     free(Triangles);
-    free(textures);
     free(KdTree);
     free(tricos);
 

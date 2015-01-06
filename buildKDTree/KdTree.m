@@ -490,22 +490,22 @@
             exit(1);
         }
         
-        NSMutableArray * materialsFound = [[NSMutableArray alloc] init] ;
-        Triangle *tri ;
-        for (tri in triangles){
-            int triid = [tri matId];
-            int found = 0 ;
-            for(int i=0; i< [materialsFound count]; i++){
-                if( [[materialsFound objectAtIndex:i] materialID] == triid){
-                    found =1 ;
-                }
-            }
-            if (found == 0) {
-                radarMaterial * material = [radarMaterial materialWithID:[tri matId] andName:[tri materialName]];
-                [materialsFound addObject:material];
-            }
-        }
-        _textures = [NSArray arrayWithArray:materialsFound];
+//        NSMutableArray * materialsFound = [[NSMutableArray alloc] init] ;
+//        Triangle *tri ;
+//        for (tri in triangles){
+//            int triid = [tri matId];
+//            int found = 0 ;
+//            for(int i=0; i< [materialsFound count]; i++){
+//                if( [[materialsFound objectAtIndex:i] materialID] == triid){
+//                    found =1 ;
+//                }
+//            }
+//            if (found == 0) {
+//                radarMaterial * material = [radarMaterial materialWithID:[tri matId] andName:[tri materialName]];
+//                [materialsFound addObject:material];
+//            }
+//        }
+//        _textures = [NSArray arrayWithArray:materialsFound];
     }
     return self;
 }
@@ -581,10 +581,6 @@
      for each triangle:
         struct accelerated_tri_structure
      end for
-     uint number_of_texures
-     for each texture
-        write texture
-     end for
      uint number of leaves
      for each leaf
         uint num_of_tris_in_this_leaf
@@ -655,26 +651,7 @@
         fwrite(&tex, sizeof(int), 1, fp);
     }
     
-    // Write triangle texture data
-    //
-    ntex = [[self textures] count];
-    printf("Packing %ld textures\n",ntex);
-
-    fwrite(&ntex,sizeof(int),1,fp);
-    
-    radarMaterial *mat;
-    for (mat in [self textures]) {
-        int matId = [mat materialID] ;
-        int len = (int)[[mat materialName] length];
-        char * matNameBytes = (char *)sp_malloc(sizeof (char)*len);
-        strcpy(matNameBytes, [[mat materialName] UTF8String]);
-        fwrite(&matId, sizeof(int), 1, fp);
-        fwrite(&len, sizeof(int), 1, fp);
-        fwrite(matNameBytes, sizeof(char), len, fp);
-        printf("Texture: [%d] %s\n",matId,matNameBytes);
-    }
-    printf ("Done\n");
-
+   
     // Calculate the number of leaves and then for each leaf write the index of each triangle in the leaf
     
     for (node in _packArray)if( [node isLeaf] )nleaves++;

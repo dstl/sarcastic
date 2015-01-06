@@ -93,12 +93,12 @@ typedef union {
     
 } KdData ;
 
-typedef struct Texture {
-    float ka;    // Constant for ambient reflection
-    float kd;    // Constant for diffuse scattering
-    float ks;    // Constant for specular scattering
-    float n;     // Shininess constant
-} Texture;
+//typedef struct Texture {
+//    float ka;    // Constant for ambient reflection
+//    float kd;    // Constant for diffuse scattering
+//    float ks;    // Constant for specular scattering
+//    float n;     // Shininess constant
+//} Texture;
 
 
 typedef struct TriCoords {
@@ -123,8 +123,8 @@ typedef struct Ray {
 } Ray;
 
 typedef struct rangeAndPower {
-    double range ;
-    double power ;
+    double  range ;
+    SPCmplx Es ;
 } rangeAndPower ;
 
 typedef struct cplxf {
@@ -134,9 +134,9 @@ typedef struct cplxf {
 
 typedef struct Triangle {
     int  triNum;    // Triangle ID
-    double d;         // Constant of plane equation
-    double nd_u;      // Normal.u / normal.k
-    double nd_v;      // normal.v / normal.k
+    double d;       // Constant of plane equation
+    double nd_u;    // Normal.u / normal.k
+    double nd_v;    // normal.v / normal.k
     int k;          // projection dimension
     double kbu;
     double kbv;
@@ -144,14 +144,12 @@ typedef struct Triangle {
     double kcu;
     double kcv;
     double kcd;
-    int textureInd;
+    int    matInd;  // Material Index
 } Triangle;
 
 typedef struct KdTreeStruct {
     int                nTriangles;         // number of triangles in array 'triangles'
     Triangle *         triangles;          // Array of triangles of size nTriangles
-    int                nTextures;          // number of textures in array 'textures'
-    Texture *          textures;           // Array of textures of size nTextures
     int                nTreeNodes;         // number of nodes in KdTree
     KdData *           KdTree;             // SAH - KdTree to optimise ray traversal through volume
     int                triListDataSize;    // size of trianglelist data
@@ -217,12 +215,11 @@ typedef struct threadData {
 } threadData ;
 
 typedef struct rnpData_t {
-    double range;
-    double power;
-    double samplingOffset;
-    int samplingOffsetInt;
-    double indexOffset ;
-    double rdiff;
+    SPCmplx Es;
+    double  samplingOffset;
+    int     samplingOffsetInt;
+    double  indexOffset ;
+    double  rdiff;
 }rnpData_t ;
 
 typedef struct threadDataBF {

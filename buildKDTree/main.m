@@ -123,7 +123,6 @@ int main (int argc, const char * argv[])
             for(int i=0; i<NMATERIALS; i++){
                matStr = [NSString stringWithUTF8String:materialProperties[i].matname];
                 if ([strFromFile rangeOfString:matStr].location != NSNotFound) {
-                    [tri setMatId:i] ;
                     [tri setMaterialName:strFromFile] ;
                 }
             }
