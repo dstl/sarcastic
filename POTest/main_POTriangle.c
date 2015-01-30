@@ -12,19 +12,19 @@
 #include "matrixMultiplication.h"
 #define TXPOL "V"
 #define RXPOL "-"
-#define LAMBDA      ((double)0.299)     // Wavelegth in metres
+#define LAMBDA      ((double)0.03)     // Wavelegth in metres
 #define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
-#define NPHIS       ((int)180)          // Number of observation points to calculate in azimuth
-#define NTHETAS     ((int)90)           // Number of observation points to calculate in elevation
-#define STARTPHI    ((int)0)            // Start azimuth angle (deg)
-#define ENDPHI      ((int)360)          // End azimuth angle (deg)
-#define STARTTHETA  ((int)0)            // Start angle of incidence (deg)
-#define ENDTHETA    ((int)90)           // End angle of incidence (deg)
-#define OBSDIST     ((double)1000.0)    // Observation distance in metres
+#define NPHIS       ((int)1)          // Number of observation points to calculate in azimuth
+#define NTHETAS     ((int)1)           // Number of observation points to calculate in elevation
+#define STARTPHI    ((int)270)            // Start azimuth angle (deg)
+#define ENDPHI      ((int)270)          // End azimuth angle (deg)
+#define STARTTHETA  ((int)60)            // Start angle of incidence (deg)
+#define ENDTHETA    ((int)60)           // End angle of incidence (deg)
+#define OBSDIST     ((double)200.0)    // Observation distance in metres
 #define OUTPUTDBS   1                   // Boolean - should output be in DBs?
 #define ILLRANGE    ((double)200.0)     // Range in metres from origin of illumination source
 #define ILLAZ       ((double)270.0)       // Azimuth angke in degrees of source of illumination
-#define ILLINC      ((double)45.0)       // Incidence ange in degrees of source of illumination
+#define ILLINC      ((double)60.0)       // Incidence ange in degrees of source of illumination
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
 #define USEOPENCL   0
@@ -58,29 +58,85 @@ int main(int argc, const char * argv[])
     /*
      For debugging - allows you to set your own triangles without using a triangle file
      */
-    ntris = 2 ;
+//    ntris = 2 ;
+//    tris = sp_malloc(sizeof(triangle) * ntris);
+//    SPVector AA,BB,CC ;
+//    VECT_CREATE(  1,  1, 0.0, AA);
+//    VECT_CREATE(  -1,  1, 0.0, BB);
+//    VECT_CREATE(  -1,  -1, 0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[0])) ;
+//    
+//    VECT_CREATE(   -1, -1, 0.0, AA);
+//    VECT_CREATE(   1, -1, 0.0, BB);
+//    VECT_CREATE(   1, 1, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[1])) ;
+    
+    
+    ntris = 4 ;
     tris = sp_malloc(sizeof(triangle) * ntris);
     SPVector AA,BB,CC ;
-   
-    VECT_CREATE(  0.5,  0.5, 0.0, AA);
-    VECT_CREATE( -0.5,  0.5, 0.0, BB);
-    VECT_CREATE( -0.5, -0.5, 0.0, CC);
+    VECT_CREATE(  1,  1, 0.0, AA);
+    VECT_CREATE(  -1,  1, 0.0, BB);
+    VECT_CREATE(  0,  0, 0, CC);
     buildTriangle(AA, BB, CC, &(tris[0])) ;
     
-    VECT_CREATE(   0.5,  -0.5, 0.0, AA);
-    VECT_CREATE(   0.5,   0.5, 0.0, BB);
-    VECT_CREATE(  -0.5,  -0.5, 0.0, CC);
+    VECT_CREATE(   -1, 1, 0.0, AA);
+    VECT_CREATE(   -1, -1, 0.0, BB);
+    VECT_CREATE(   0, 0, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[1])) ;
     
-    /*VECT_CREATE(  -0.5000, 0.5, 0.0, AA);
-    VECT_CREATE(  -0.50000,  -0.5, 0.0, BB);
-    VECT_CREATE( 0.0, 0.0, 0.0, CC);
+    VECT_CREATE(   -1,  -1, 0.0, AA);
+    VECT_CREATE(   1,  -1, 0.0, BB);
+    VECT_CREATE(  0,  0, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[2])) ;
     
-    VECT_CREATE(  -0.5000, -0.5, 0.0, AA);
-    VECT_CREATE(  0.50000,  -0.5, 0, BB);
-    VECT_CREATE( 0.0, 0.0, 0.0, CC);
-    buildTriangle(AA, BB, CC, &(tris[3])) ;*/
+    VECT_CREATE(   1,  -1, 0.0, AA);
+    VECT_CREATE(   1,  1, 0.0, BB);
+    VECT_CREATE(   0, 0.0, 0.0,  CC);
+    buildTriangle(AA, BB, CC, &(tris[3])) ;
+    
+//    ntris = 8 ;
+//    tris = sp_malloc(sizeof(triangle) * ntris);
+//    SPVector AA,BB,CC ;
+//    VECT_CREATE(  -1,  -1, 0.0, AA);
+//    VECT_CREATE( 0,  -1, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[0])) ;
+//    
+//    VECT_CREATE(   0, -1, 0.0, AA);
+//    VECT_CREATE(  1, -1, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[1])) ;
+//    
+//    VECT_CREATE(   -1,  0, 0.0, AA);
+//    VECT_CREATE(   -1, -1, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[2])) ;
+//
+//    VECT_CREATE(   1,  -1, 0.0, AA);
+//    VECT_CREATE(   1, 0, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[3])) ;
+//    
+//    VECT_CREATE(   -1,  1, 0.0, AA);
+//    VECT_CREATE(   -1, 0, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[4])) ;
+//    
+//    VECT_CREATE(   1, 0, 0.0, AA);
+//    VECT_CREATE(   1, 1, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[5])) ;
+//    
+//    VECT_CREATE(   0, 1, 0.0, AA);
+//    VECT_CREATE(  -1, 1, 0.0, BB);
+//    VECT_CREATE(   0 ,0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[6])) ;
+//    
+//    VECT_CREATE(  1,  1, 0.0, AA);
+//    VECT_CREATE( 0,  1, 0.0, BB);
+//    VECT_CREATE( 0, 0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[7])) ;
     
     if(PRINTTRIS){
         exit(0);
@@ -116,6 +172,7 @@ int main(int argc, const char * argv[])
         VECT_SCMULT(vhatper, per, pervec) ;
         VECT_ADD(illOrigin, parvec, rays[i].org) ;
         VECT_ADD(rays[i].org, pervec, rays[i].org) ;
+//        rays[i].org = illOrigin ;
         VECT_CREATE(-illDir.x, -illDir.y, -illDir.z, rays[i].dir) ;
         rays[i].pow = RAYPOW ;
         rays[i].pow = rays[i].pow / (4.0 * SIPC_pi*illRange*illRange);
@@ -173,15 +230,18 @@ int main(int argc, const char * argv[])
             
             // For debugging - provides a handy way to see the expected phase at the receiver
             //
-            /*for (int t=0; t<ntris; t++ ){
+            double psum,p,p1;
+            psum=0.0;
+             for (int t=0; t<ntris; t++ ){
                 SPVector tmp1;
-                double p,p1, d ;
                 VECT_SUB(tris[t].MP, rays[t].org, tmp1);
                 p = (-(VECT_MAG(tmp1)+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
-                p1 = modf(p, &d) ;
-                printf("Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
+                p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
+                p1 = p1 * 2 * SIPC_pi ;
+                printf("GO Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
+                psum+=RAD2DEG(p1);
             }
-             */
+            printf("Mean GO Phase at RX is %f deg (-PI = %f)\n",psum/ntris,(psum/ntris)-180);
 
             
             // Define unit vectors for V & H fields
@@ -218,7 +278,7 @@ int main(int argc, const char * argv[])
                     CMPLX_ADD(EsH, EsH1, EsH) ;
                     // For debugging - provides a way to see individual scattering contributions
                     //
-                    // printf("EsV1[%d] : %f deg amp : %f v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                     printf("EsV1[%d] : %f deg amp : %e v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
                 }
             }
             
@@ -270,15 +330,19 @@ int main(int argc, const char * argv[])
                 }else{
                     Erx = E_mag ;
                 }
-                // For debugging - if you want to see the scattreing phase uncomment the next line
+                // For debugging - if you want to see the scattering phase uncomment the next line
                 //
-                // Erx = RAD2DEG(CMPLX_PHASE(EsV));
+                 Erx = RAD2DEG(CMPLX_PHASE(EsV));
                 
-                if(Erx < 00.0){
-                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
-                }else{
+//                if(Erx < 00.0){
+//                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+//                }else{
                     printf("%f, %f, %f \n",Erx,phi_s,theta_s);
-                }
+                    p = (-(ILLRANGE+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
+                    double p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
+                    p1 = p1 * 2 * SIPC_pi ;
+                    printf("Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
+//                }
             }
             
         }
