@@ -41,6 +41,7 @@
 //
 //***************************************************************************
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
+#include "materialProperties.h"
 // #include "SPVector.cl"
 //+++++++++++++++++++++++++++ Start of SPVector.cl +++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -222,13 +223,6 @@ typedef struct cplxf {
     float i;
 } cplxf;
 
-typedef struct Texture {
-    float ka;    // Constant for ambient reflection
-    float kd;    // Constant for diffuse scattering
-    float ks;    // Constant for specular scattering
-    float n;     // Shininess constant
-} Texture;
-
 typedef struct AABB {
     SPVector AA;
     SPVector BB;
@@ -260,6 +254,7 @@ typedef struct Ray {
     SPVector dir;    // Direction
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
+    SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
 typedef struct rangeAndPower {
@@ -276,9 +271,9 @@ typedef struct Hit {
 
 typedef struct Triangle {
     int  triNum;    // Triangle ID
-    double d;         // Constant of plane equation
-    double nd_u;      // Normal.u / normal.k
-    double nd_v;      // normal.v / normal.k
+    double d;       // Constant of plane equation
+    double nd_u;    // Normal.u / normal.k
+    double nd_v;    // normal.v / normal.k
     int k;          // projection dimension
     double kbu;
     double kbv;
@@ -286,7 +281,7 @@ typedef struct Triangle {
     double kcu;
     double kcv;
     double kcd;
-    int textureInd;
+    int    matInd;  // Material Index
 } Triangle;
 
 typedef struct TriCoords {
@@ -297,8 +292,6 @@ typedef struct TriCoords {
 //+++++++++++++++++++++++++++ End of structures.cl +++++++++++++++++++++++++++++++++++++++++++++++
 
 __kernel void reflect(__global Triangle * Triangles,
-                      __global Texture  * Textures,
-                      int nTextures,
                       __global Ray *rays,
                       __global Hit *hits,
                       __global Ray *reflectedRays,
@@ -308,7 +301,7 @@ __kernel void reflect(__global Triangle * Triangles,
     int ind, t, k, ku, kv ;
     unsigned int modulo[5];
     Triangle T ;
-    SPVector N, v, R, I, hp;
+    SPVector N, v, R, I, hp, perpol;
  
     modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
     ind = get_global_id(0) ;
@@ -336,14 +329,21 @@ __kernel void reflect(__global Triangle * Triangles,
         reflectedRays[ind].dir = R ;
         reflectedRays[ind].len = rays[ind].len + hits[ind].dist ;
         
-        
         // Now calculate forward scattered ray power by only considering the
         // specular component of the reflective surface texture.
         // (Diffuse and shinyness components are only taken into account on rays
         // returning to the sensor from a visible hit point
         //
-        reflectedRays[ind].pow = rays[ind].pow * Textures[T.textureInd].ks ;
+        ks =  materialProperties[T.matInd].specular ;
+        reflectedRays[ind].pow = rays[ind].pow * ks ;
 //        printf("power in %e, power out %e\n",rays[ind].pow,reflectedRays[ind].pow);
+        
+        // Calculate the polarisation of the reflected ray based upon the polarisation
+        // of the incident ray
+        //
+        VECT_CROSS(rays[ind].dir, rays[ind].pol, perpol);
+        VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol) ;
+       
     }
     
     return ;

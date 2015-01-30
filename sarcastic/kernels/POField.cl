@@ -132,17 +132,16 @@ void matmul(__global double *A,double *B, double *O, int Ax, int Ay,int Bx, int 
 static constant SPVector zz_hat = {0.0, 0.0, 1.0};
 static constant double Z0 = 376.99111843077516; // Impedence of free space = 120 * PI
 
-__kernel void POField(__global triangle * tris,          // input array of triangles
-                       int ntris,                  // input number of trianges
-                      __global Ray *rays,               // input array of rays
+__kernel void POField(__global triangle * tris,    // input array of triangles
+                       __global Ray *rays,         // input array of rays
                        int nrays,                  // input number of incident rays to process
-                      __global SPVector *hits,          // input array of hit points for each ray
+                      __global SPVector *hits,     // input array of hit points for each ray
                        SPVector RxPnt,             // input receiver location to calc field at
                        double k,                   // input k=2*PI/lambda
-                       SPVector Vdir,            // input unit vector defining V pol at receiver
-                       SPVector Hdir,            // input unit vector defining H pol at receiver
-                      __global SPCmplx *EsVs,           // output array of scattered field strengths for V pol
-                      __global SPCmplx *EsHs)            // output array of scattered field strengths for H pol
+                       SPVector Vdir,              // input unit vector defining V pol at receiver
+                       SPVector Hdir,              // input unit vector defining H pol at receiver
+                      __global SPCmplx *EsVs,      // output array of scattered field strengths for V pol
+                      __global SPCmplx *EsHs)      // output array of scattered field strengths for H pol
 {
 
     int ind,n ;

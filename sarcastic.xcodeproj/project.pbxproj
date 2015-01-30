@@ -46,14 +46,13 @@
 		953FA1F618F4289400EAD4F3 /* oclBuildShadowRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D718F4289400EAD4F3 /* oclBuildShadowRays.c */; };
 		953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
 		953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
-		953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */; };
 		953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
 		953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */; };
 		953FA1FC18F4289400EAD4F3 /* readKdTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DD18F4289400EAD4F3 /* readKdTree.c */; };
 		953FA1FD18F4289400EAD4F3 /* sarcastic.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DF18F4289400EAD4F3 /* sarcastic.c */; };
-		953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E118F4289400EAD4F3 /* threadBeamForm.c */; };
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
+		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
 		955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
 		955F773819CF1D4700BF3039 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
 		955F773B19CF1D4700BF3039 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F773A19CF1D4700BF3039 /* main.m */; };
@@ -68,7 +67,6 @@
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
-		95D0DAC719EFF1EC00DBB831 /* reflectionPowerPO.cl in Sources */ = {isa = PBXBuildFile; fileRef = 95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */; };
 		95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
 		95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F276EA1A35C13A00FF9339 /* oclPOField.c */; };
@@ -292,6 +290,7 @@
 		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		95492F391A74EFC90061FCF7 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
 		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
 		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
 		955F773519CF1D4700BF3039 /* colladaToTriFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToTriFile; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -614,9 +613,10 @@
 				953FA1DD18F4289400EAD4F3 /* readKdTree.c */,
 				953FA1DE18F4289400EAD4F3 /* readKdTree.h */,
 				953FA1E118F4289400EAD4F3 /* threadBeamForm.c */,
-				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */,
 				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
+				953FA1E218F4289400EAD4F3 /* threadCore.c */,
+				95492F391A74EFC90061FCF7 /* oclPOField.c */,
 				955F772B19CF0FA500BF3039 /* Utils */,
 				953FA1CB18F4289400EAD4F3 /* kernels */,
 			);
@@ -894,14 +894,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				953FA1F618F4289400EAD4F3 /* oclBuildShadowRays.c in Sources */,
-				953FA1FE18F4289400EAD4F3 /* threadBeamForm.c in Sources */,
 				953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */,
 				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
-				95D0DAC719EFF1EC00DBB831 /* reflectionPowerPO.cl in Sources */,
 				955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */,
-				953FA1F918F4289400EAD4F3 /* oclRayTrace.c in Sources */,
 				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
 				953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */,
+				95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */,
 				953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */,
 				953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */,
 				953FA1FC18F4289400EAD4F3 /* readKdTree.c in Sources */,

@@ -47,11 +47,10 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
                    cl_kernel          STkernel,           // stacklessTraverse kernel, already compiled and created from a program
                    int                nRays,              // Total number of rays to cast
                    size_t             localWorkSize,      // Work dimensions for this device
-                   cl_mem             dTriangles,
-                   cl_mem             dTextures,
-                   cl_mem             dKdTree,
-                   cl_mem             dtriListData,
-                   cl_mem             dtriListPtrs,
+                   cl_mem             dTriangles,         // device memory for triangles
+                   cl_mem             dKdTree,            // device memory for KdTree
+                   cl_mem             dtriListData,       // device array containing all indices. size=nTriIndices
+                   cl_mem             dtriListPtrs,       // device array containing index in triIndices that matches node. - size=nLeaves
                    AABB               SceneBoundingBox,   // Bounding box of scene - required for ray traversal optimisation
                    Ray *              rays,               // Array of rays (size nRays). Each ray will be cast through KdTree
                    Hit *              hits                // output array of hit locations
@@ -72,13 +71,13 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-    dHits        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Hit)*nRays,           NULL, &_err));
-    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Ray)*nRays,           NULL, &_err));
+    dHits        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Hit)*nRays, NULL, &_err));
+    dRays        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Ray)*nRays,  NULL, &_err));
     
     // Add write buffer commands to the command queue ready for execution
     //
-    CL_CHECK(clEnqueueWriteBuffer(Q, dRays,        CL_TRUE, 0, sizeof(Ray)*nRays,           rays,             0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dHits,        CL_TRUE, 0, sizeof(Hit)*nRays,           hits,             0, NULL,NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dRays, CL_TRUE, 0, sizeof(Ray)*nRays, rays, 0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dHits, CL_TRUE, 0, sizeof(Hit)*nRays, hits, 0, NULL,NULL));
     
     // Set up the kernel arguments
     //

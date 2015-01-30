@@ -92,11 +92,7 @@ void readKdTree(const char *filename,
         exit(-1);
     }
     
-    *Triangles = (Triangle *)malloc(sizeof(Triangle) * *nTriangles);
-    if (*Triangles == NULL) {
-        printf("ERROR: Malloc failed for triangles. Requested %lu bytes\n",sizeof(Triangle) * *nTriangles);
-        exit(-1);
-    }
+    *Triangles = (Triangle *)sp_malloc(sizeof(Triangle) * *nTriangles) ;
     
     for (i=0; i< *nTriangles; i++){
         
@@ -158,38 +154,34 @@ void readKdTree(const char *filename,
         (*Triangles)[i].matInd = tex;
     }
     
-    if(fread(nTextures, sizeof(int), 1, fp)!=1){
-        printf("ERROR: Failed to read nTextures from file %s\n",filename);
-        exit(-1);
-    }
-    *textures = (Texture *)malloc(sizeof(Texture) * *nTextures);
-    if (*textures == NULL) {
-        printf("ERROR: Malloc failed for textures. Requested %lu bytes\n",sizeof(Texture) * *nTextures);
-        exit(-1);
-    }
-    
-    int matID;
-    int matNameLen;
-    char *matName = "";
-    for (i=0; i < *nTextures; i++){
-        if(fread(&matID, sizeof(int), 1, fp)!=1){
-            printf("ERROR: Failed to read materialID texture param from file %s\n",filename);
-            exit(-1);
-        }
-        if(fread(&matNameLen, sizeof(int), 1, fp)!=1){
-            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
-            exit(-1);
-        }
-        matName = (char *)sp_malloc(sizeof (char)*matNameLen);
-        if(fread(matName, sizeof(char), matNameLen, fp)!=matNameLen){
-            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
-            exit(-1);
-        }
-        (*textures)[i].ka = 0.0 ;
-        (*textures)[i].kd = materialProperties[matID].diffuse ;
-        (*textures)[i].ks = materialProperties[matID].specular ;
-        (*textures)[i].n  = materialProperties[matID].shinyness ;
-    }
+//    if(fread(nTextures, sizeof(int), 1, fp)!=1){
+//        printf("ERROR: Failed to read nTextures from file %s\n",filename);
+//        exit(-1);
+//    }
+//    *textures = (Texture *)sp_malloc(sizeof(Texture) * *nTextures);
+//    
+//    int matID;
+//    int matNameLen;
+//    char *matName = "";
+//    for (i=0; i < *nTextures; i++){
+//        if(fread(&matID, sizeof(int), 1, fp)!=1){
+//            printf("ERROR: Failed to read materialID texture param from file %s\n",filename);
+//            exit(-1);
+//        }
+//        if(fread(&matNameLen, sizeof(int), 1, fp)!=1){
+//            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
+//            exit(-1);
+//        }
+//        matName = (char *)sp_malloc(sizeof (char)*matNameLen);
+//        if(fread(matName, sizeof(char), matNameLen, fp)!=matNameLen){
+//            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
+//            exit(-1);
+//        }
+//        (*textures)[i].ka = 0.0 ;
+//        (*textures)[i].kd = materialProperties[matID].diffuse ;
+//        (*textures)[i].ks = materialProperties[matID].specular ;
+//        (*textures)[i].n  = materialProperties[matID].shinyness ;
+//    }
     
     if(fread(nLeaves, sizeof(int), 1, fp)!=1){
         printf("ERROR: Failed to read nleaves from file %s\n",filename);

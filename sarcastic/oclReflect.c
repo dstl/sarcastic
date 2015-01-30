@@ -42,9 +42,7 @@
 void oclReflect(cl_context          context,            // OpenCL context - alrready built
                 cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                 cl_kernel           kernel,             // OpenCl kernel for this routine to call
-                cl_mem              dTriangles,
-                cl_mem              dTextures,
-                int                 nTextures,
+                cl_mem              dTriangles,         // Device array of triangles
                 int                 nRays,              // Number of rays to reflect
                 size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
                 Ray                 *rays,              // Array of rays to consider
@@ -78,12 +76,10 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
     // Set up the kernel arguments
     //
     CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(cl_mem), &dTriangles));
-    CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem), &dTextures));
-    CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(int),    &nTextures));
-    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(cl_mem), &dRays));
-    CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(cl_mem), &dHits));
-    CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(cl_mem), &dReflected));
-    CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(int),    &nRays));
+    CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem), &dRays));
+    CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(cl_mem), &dHits));
+    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(cl_mem), &dReflected));
+    CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(int),    &nRays));
 
     
     // Queue up the commands on the device to be executed as soon as possible

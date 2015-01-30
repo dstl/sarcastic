@@ -119,7 +119,7 @@ typedef struct Ray {
     SPVector dir;    // Direction
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
-
+    SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
 typedef struct rangeAndPower {
@@ -283,7 +283,6 @@ void oclKdTreeHits(cl_context         context,            // OpenCL context - al
                    int                nRays,              // Total number of rays to cast
                    size_t             localWorkSize,      // Work dimensions for this device
                    cl_mem             dTriangles,
-                   cl_mem             dTextures,
                    cl_mem             dKdTree,
                    cl_mem             dtriListData,
                    cl_mem             dtriListPtrs,
@@ -296,8 +295,6 @@ void oclReflect(cl_context          context,            // OpenCL context - alrr
                 cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                 cl_kernel           kernel,             // OpenCl kernel for this routine to call
                 cl_mem              dTriangles,
-                cl_mem              dTextures,
-                int                 nTextures,
                 int                 nRays,              // Number of rays to reflect
                 size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
                 Ray                 *rays,              // Array of rays to consider

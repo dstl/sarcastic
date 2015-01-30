@@ -48,8 +48,8 @@ void packSinc(SPCmplx point, SPCmplx *outData, double rdiff, double sampleSpacin
 static void ham1dx(double * data, int nx);
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
 void generate_gaussian_ray_distribution(double xStdev,double yStdev, SPVector txPos, SPVector GRP, int nx,int ny, Ray *rayArray);
-void * safeCalloc(int numItems, int sizeofItems);
-void * safeMalloc(int numItems, int sizeofItems);
+//void * safeCalloc(int numItems, int sizeofItems);
+//void * safeMalloc(int numItems, int sizeofItems);
 
     
 void * devPulseBlock ( void * threadArg ) {
@@ -69,7 +69,7 @@ void * devPulseBlock ( void * threadArg ) {
 
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
-    double *ranges, interogRad, intMinR, intMaxR ;
+    double *ranges, interogRad, intMinR, intMaxR, k ;
 
     AABB SceneBoundingBox ;
     rangeAndPower * rnp, irp ;
@@ -101,6 +101,7 @@ void * devPulseBlock ( void * threadArg ) {
     interogPt        = td->interogPt ;
     interogRad       = td->interogRad ;
     interogFP        = *(td->interogFP) ;
+    k                = 2 * SIPC_pi / (SIPC_c / td->freq_centre) ;
     
 //    debug            = td->debug ;
 //    debugX           = td->debugX ;
@@ -147,8 +148,6 @@ void * devPulseBlock ( void * threadArg ) {
     //
     int                nTriangles       = td->KDT.nTriangles;         // number of triangles in array 'triangles'
     Triangle *         triangles        = td->KDT.triangles;          // Array of triangles of size nTriangles
-    int                nTextures        = td->KDT.nTextures;          // number of textures in array 'textures'
-    Texture *          textures         = td->KDT.textures;           // Array of textures of size nTextures
     int                nTreeNodes       = td->KDT.nTreeNodes;         // number of nodes in KdTree
     KdData *           KdTree           = td->KDT.KdTree;             // SAH - KdTree to optimise ray traversal through volume
     int                triListDataSize  = td->KDT.triListDataSize;    // size of trianglelist data
@@ -156,15 +155,13 @@ void * devPulseBlock ( void * threadArg ) {
     int                nLeaves          = td->KDT.nLeaves;            // number of leaves (nodes with triangles) in KdTree
     int *              triangleListPtrs = td->KDT.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
 
-    cl_mem dTriangles, dTextures,dKdTree, dtriListData,dtriListPtrs;
+    cl_mem dTriangles,dKdTree, dtriListData,dtriListPtrs;
     dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles, NULL, &_err));
-    dTextures    = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Texture)*nTextures,   NULL, &_err));
     dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,   NULL, &_err));
     dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  triListDataSize,             NULL, &_err));
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(int)*nLeaves,         NULL, &_err));
 
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTextures,    CL_TRUE, 0, sizeof(Texture)*nTextures,   textures,         0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*nTreeNodes,   KdTree,           0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, triListDataSize,             triangleListData, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
@@ -175,7 +172,7 @@ void * devPulseBlock ( void * threadArg ) {
         nx = (int)td->phd->nx ;
         resolution  = SIPC_c / (2.0 * bandwidth ) ;
         sampSpacing = SIPC_c / (2.0 * (nx/(td->pulseDuration * td->ADRate)) * bandwidth) ;
-        ikernel     = safeCalloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
+        ikernel     = sp_calloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
         
         sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
         
@@ -220,7 +217,7 @@ void * devPulseBlock ( void * threadArg ) {
         // Generate a distribution of nAzbeam x nElbeam rays that originate from the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
         //
-        rayArray = (Ray *)safeMalloc(nAzBeam*nElBeam, sizeof(Ray));
+        rayArray = (Ray *)sp_malloc(nAzBeam*nElBeam * sizeof(Ray));
         
         oclRandomRays(context,commandQ,randRaysKL,nAzBeam,nElBeam,randRaysLWS,td->beamMaxAz,td->beamMaxEl,TxPos, origin, PowPerRay, rayArray);
         
@@ -237,18 +234,18 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
-        rnp = (rangeAndPower *)safeCalloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
+        rnp = (rangeAndPower *)sp_calloc(nAzBeam*nElBeam*MAXBOUNCES, sizeof(rangeAndPower));
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
             // Malloc space for hits for this bounce
             //
-            hitArray = (Hit *)safeMalloc(nRays,sizeof(Hit));
+            hitArray = (Hit *)sp_malloc(nRays * sizeof(Hit));
 
             // Cast the rays in rayArray through the KdTree using a stackless traversal technique
             // return the hit locations in hitArray
             //
-            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
+            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
             
             // Sort out hits
             //
@@ -263,9 +260,9 @@ void * devPulseBlock ( void * threadArg ) {
             
             // shrink rayArray and hitArray to get rid of misses
             //
-            newRays       = (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
-            newHits       = (Hit *)safeMalloc(reflectCount, sizeof(Hit)) ;
-            reflectedRays = (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
+            newRays       = (Ray *)sp_malloc(reflectCount * sizeof(Ray)) ;
+            newHits       = (Hit *)sp_malloc(reflectCount * sizeof(Hit)) ;
+            reflectedRays = (Ray *)sp_malloc(reflectCount * sizeof(Ray)) ;
             
             for (int i=0; i<nRays; i++) {
                 if ( hitArray[i].trinum != NOINTERSECTION ){
@@ -282,7 +279,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build forward scattering rays ready for next turn round the loop
             //
-            oclReflect(context, commandQ, reflectKL, dTriangles, dTextures, nTextures, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+            oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
             
             // If debug out is required then capturing here using the origins of the Reflected rays
             // which will save us having to calculate the hit locations again
@@ -297,9 +294,9 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Malloc space for shadowRays (arrays from a hit going back to receiver)
             //
-            shadowRays =    (Ray *)safeMalloc(reflectCount, sizeof(Ray)) ;
-            shadowHits =    (Hit *)safeMalloc(reflectCount, sizeof(Hit)) ;
-            ranges     = (double *)safeMalloc(reflectCount, sizeof(double)) ;
+            shadowRays =    (Ray *)sp_malloc(reflectCount * sizeof(Ray)) ;
+            shadowHits =    (Hit *)sp_malloc(reflectCount * sizeof(Hit)) ;
+            ranges     = (double *)sp_malloc(reflectCount * sizeof(double)) ;
             
             // Build Shadowrays
             //
@@ -308,7 +305,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
-            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dTextures, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
+            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
             
             // Shrink the shadowRays to only include those that made it back to the sensor
             // in order to calculate power at sensor we also need the Illumination or LRays
@@ -319,10 +316,10 @@ void * devPulseBlock ( void * threadArg ) {
             
             if( nShadows != 0){
                 
-                newRays       = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
-                newHits       = (Hit *)safeMalloc(nShadows, sizeof(Hit)) ;
-                LRays         = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
-                RRays         = (Ray *)safeMalloc(nShadows, sizeof(Ray)) ;
+                newRays       = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
+                newHits       = (Hit *)sp_malloc(nShadows * sizeof(Hit)) ;
+                LRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
+                RRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
                 
                 for (int i=0; i<nRays; i++) {
                     if ( shadowHits[i].trinum == NOINTERSECTION ){
@@ -341,8 +338,10 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
-                oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
+//                oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
                 
+                oclPOPower(context, commandQ, POPowerKL, POPowerLWS, dTriangles, hitArray, nShadowRays, LRays, RxPos, k, ranges, &(rnp[nAzBeam*nElBeam*nbounce])) ;
+
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
@@ -405,7 +404,7 @@ void * devPulseBlock ( void * threadArg ) {
 // DEBUG
 //        nrnpItems = 1;
 // DEBUG
-        rnpData_t * rnpData = (rnpData_t *)safeMalloc(nrnpItems, sizeof(rnpData_t));
+        rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
         
         cnt = 0;
         double totpow = 0.0;
@@ -427,9 +426,7 @@ void * devPulseBlock ( void * threadArg ) {
 //            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
 //            targ.r = rnpData[i].power*cos(phse) ;
 //            targ.i = rnpData[i].power*sin(phse) ;
-            
-            ////////// DEBUG CODE to inject a single point target
-            
+                        
             
             im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
             
@@ -562,24 +559,24 @@ ham1dx(double * data, int nx)
     }
 }
 
-void * safeCalloc(int numItems, int sizeofItems){
-    void * ret ;
-    ret = calloc(numItems, sizeofItems);
-    if (ret == NULL) {
-        printf("*** Failed to safeCalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
-        exit(-98);
-    }
-    return ret ;
-}
-
-void * safeMalloc(int numItems, int sizeofItems){
-    void * ret ;
-    ret = malloc(sizeofItems*numItems);
-    if (ret == NULL){
-        printf("*** Failed to safeMalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
-        exit(-99);
-    }
-//    printf(" ++++ Malloced %d bytes (pointer %p)\n",sizeofItems*numItems,ret);
-
-    return ret ;
-}
+//void * safeCalloc(int numItems, int sizeofItems){
+//    void * ret ;
+//    ret = calloc(numItems, sizeofItems);
+//    if (ret == NULL) {
+//        printf("*** Failed to safeCalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
+//        exit(-98);
+//    }
+//    return ret ;
+//}
+//
+//void * safeMalloc(int numItems, int sizeofItems){
+//    void * ret ;
+//    ret = malloc(sizeofItems*numItems);
+//    if (ret == NULL){
+//        printf("*** Failed to safeMalloc %d bytes at line %d, file %s\n",sizeofItems*numItems, __LINE__, __FILE__);
+//        exit(-99);
+//    }
+////    printf(" ++++ Malloced %d bytes (pointer %p)\n",sizeofItems*numItems,ret);
+//
+//    return ret ;
+//}

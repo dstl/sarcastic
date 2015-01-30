@@ -326,6 +326,7 @@ __kernel void buildShadowRays(const    int nRays,           // The number of ref
         shadowRays[ind].dir = dir ;
         shadowRays[ind].pow = reflectedRays[ind].pow ;
         shadowRays[ind].len = reflectedRays[ind].len ;
+        shadowRays[ind.pol] = reflectedRays[ind].pol ;
         
     }
     return ;
