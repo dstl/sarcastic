@@ -99,8 +99,9 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     // r is the magnitude of the vector defining the observation point in global coordinates (not the range)
     //
     VECT_SUB(obsPnt, HitPnt, obsDir);
+    r = VECT_MAG(obsDir) ;
     VECT_NORM(obsDir, obsDir);
-    r  = VECT_MAG(obsPnt);
+//    r  = VECT_MAG(obsPnt);
     VECT_SUB(HitPnt, ray.org, rayDist);
     r_ig   = VECT_MAG(rayDist);
     phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
@@ -338,23 +339,32 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     J_per = VECT_DOT(Hdir, Jg);
     CMPLX_F_MAKE(J_par*cos(phs_ig), J_par*sin(phs_ig), Jc_par);
     CMPLX_F_MAKE(J_per*cos(phs_ig), J_per*sin(phs_ig), Jc_per);
+//    printf("Vdir: %f,%f,%f\n",Vdir.x,Vdir.y,Vdir.z);
+//    printf("Jg : %f,%f,%f\n",Jg.x,Jg.y,Jg.z);
+//    printf("J_par : %f\n",J_par);
+//    printf("phs_ig : %f\n",phs_ig);
     
     // Work out scaler (complex) component of E field
     //
     CMPLX_F_MAKE(0, -k*Z0/(4*SIPC_pi*r), jkZ0_o_4PIr) ;
     e_jkr.r = cos(-k*r);
     e_jkr.i = sin(-k*r);
+    
+//    printf("phase(Jc_par)      : %8.5f (%6.1f deg) (%e, %e)\n",CMPLX_PHASE(Jc_par), RAD2DEG(CMPLX_PHASE(Jc_par)),Jc_par.r,Jc_par.i);
+//    printf("phase(e_jkr)       : %8.5f (%6.1f deg) (total: %f)\n",CMPLX_PHASE(e_jkr), RAD2DEG(CMPLX_PHASE(e_jkr)), -k*r);
+//    printf("phase(jkZ0_o_4PIr) : %8.5f (%6.1f deg) (%e, %e)\n",CMPLX_PHASE(jkZ0_o_4PIr), RAD2DEG(CMPLX_PHASE(jkZ0_o_4PIr)),jkZ0_o_4PIr.r,jkZ0_o_4PIr.i);
+//    printf("phase(Ic)          : %8.5f (%6.1f deg) (%e, %e)\n",CMPLX_PHASE(Ic), RAD2DEG(CMPLX_PHASE(Ic)),Ic.r,Ic.i);
+
     CMPLX_MULT(jkZ0_o_4PIr, e_jkr, tmp1);
     CMPLX_MULT(tmp1, Ic, tmp);
     CMPLX_MULT(Jc_par, tmp, Epar);
     CMPLX_MULT(Jc_per, tmp, Eper);
-    
+//    printf("Ic:%f  J_par:%f, Jc_per:%f\n",CMPLX_PHASE(Ic),CMPLX_PHASE(Jc_par),CMPLX_PHASE(Jc_per));
     EsV->r = Epar.r ; EsV->i = Epar.i ;
     EsH->r = Eper.r ; EsH->i = Eper.i ;
     return ;
 
 }
-
 
 // Function to calculate n!
 //

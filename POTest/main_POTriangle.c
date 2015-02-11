@@ -12,26 +12,29 @@
 #include "matrixMultiplication.h"
 #define TXPOL "V"
 #define RXPOL "-"
-#define LAMBDA      ((double)0.03)     // Wavelegth in metres
+#define LAMBDA      ((double)0.3)     // Wavelegth in metres
 #define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
-#define NPHIS       ((int)1)          // Number of observation points to calculate in azimuth
-#define NTHETAS     ((int)1)           // Number of observation points to calculate in elevation
-#define STARTPHI    ((int)270)            // Start azimuth angle (deg)
-#define ENDPHI      ((int)270)          // End azimuth angle (deg)
-#define STARTTHETA  ((int)60)            // Start angle of incidence (deg)
-#define ENDTHETA    ((int)60)           // End angle of incidence (deg)
-#define OBSDIST     ((double)200.0)    // Observation distance in metres
+#define NPHIS       ((int)1000)          // Number of observation points to calculate in azimuth
+#define NTHETAS     ((int)200)           // Number of observation points to calculate in elevation
+#define STARTPHI    ((double)0)            // Start azimuth angle (deg)
+#define ENDPHI      ((double)360)          // End azimuth angle (deg)
+#define STARTTHETA  ((double)0)            // Start angle of incidence (deg)
+#define ENDTHETA    ((double)90)           // End angle of incidence (deg)
+#define OBSDIST     ((double)20000.0)    // Observation distance in metres
 #define OUTPUTDBS   1                   // Boolean - should output be in DBs?
-#define ILLRANGE    ((double)200.0)     // Range in metres from origin of illumination source
+#define ILLRANGE    ((double)20000.0)     // Range in metres from origin of illumination source
 #define ILLAZ       ((double)270.0)       // Azimuth angke in degrees of source of illumination
-#define ILLINC      ((double)60.0)       // Incidence ange in degrees of source of illumination
+#define ILLINC      ((double)30.0)       // Incidence ange in degrees of source of illumination
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
 #define USEOPENCL   0
+#define NRAYS       200
+#define GOONLY      0                   // Perform calculations using geometrical optics rather than physical optics (PO)
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
 void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const char *fname) ;
 void oclPOField(triangle *tris, int ntris, Ray *rays, int nrays, SPVector *hitPoints, SPVector RxPnt, double k, SPVector RXVdir, SPVector RXHdir, SPCmplx *EsV, SPCmplx *EsH);
+int PointInTriangle(SPVector p, SPVector p0, SPVector p1, SPVector p2);
 
 int main(int argc, const char * argv[])
 {
@@ -58,42 +61,56 @@ int main(int argc, const char * argv[])
     /*
      For debugging - allows you to set your own triangles without using a triangle file
      */
-//    ntris = 2 ;
+//    ntris = 1 ;
 //    tris = sp_malloc(sizeof(triangle) * ntris);
 //    SPVector AA,BB,CC ;
-//    VECT_CREATE(  1,  1, 0.0, AA);
-//    VECT_CREATE(  -1,  1, 0.0, BB);
-//    VECT_CREATE(  -1,  -1, 0, CC);
+//    VECT_CREATE(   0, -1, 0.0, AA);
+//    VECT_CREATE(   1, 1, 0.0, BB);
+//    VECT_CREATE(   -1, 1, 0.0, CC);
+//    double dx,dy;
+//    dx=  0.0;
+//    dy=  0.33333333333333331;
+//    VECT_CREATE(   0+dx,  1+dy, 0.0, AA);
+//    VECT_CREATE(  -1+dx, -1+dy, 0.0, BB);
+//    VECT_CREATE(   1+dx, -1+dy, 0.0, CC);
 //    buildTriangle(AA, BB, CC, &(tris[0])) ;
-//    
-//    VECT_CREATE(   -1, -1, 0.0, AA);
-//    VECT_CREATE(   1, -1, 0.0, BB);
-//    VECT_CREATE(   1, 1, 0.0, CC);
-//    buildTriangle(AA, BB, CC, &(tris[1])) ;
     
-    
-    ntris = 4 ;
+    ntris = 2 ;
     tris = sp_malloc(sizeof(triangle) * ntris);
     SPVector AA,BB,CC ;
-    VECT_CREATE(  1,  1, 0.0, AA);
-    VECT_CREATE(  -1,  1, 0.0, BB);
-    VECT_CREATE(  0,  0, 0, CC);
+    VECT_CREATE(  0.5,  0.5, 0.0, AA);
+    VECT_CREATE( -0.5,  0.5, 0.0, BB);
+    VECT_CREATE( -0.5, -0.5, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[0])) ;
     
-    VECT_CREATE(   -1, 1, 0.0, AA);
-    VECT_CREATE(   -1, -1, 0.0, BB);
-    VECT_CREATE(   0, 0, 0.0, CC);
+    VECT_CREATE(  -0.5, -0.5, 0.0, AA);
+    VECT_CREATE(   0.5, -0.5, 0.0, BB);
+    VECT_CREATE(   0.5,  0.5, 0.0, CC);
     buildTriangle(AA, BB, CC, &(tris[1])) ;
     
-    VECT_CREATE(   -1,  -1, 0.0, AA);
-    VECT_CREATE(   1,  -1, 0.0, BB);
-    VECT_CREATE(  0,  0, 0.0, CC);
-    buildTriangle(AA, BB, CC, &(tris[2])) ;
     
-    VECT_CREATE(   1,  -1, 0.0, AA);
-    VECT_CREATE(   1,  1, 0.0, BB);
-    VECT_CREATE(   0, 0.0, 0.0,  CC);
-    buildTriangle(AA, BB, CC, &(tris[3])) ;
+//    ntris = 4 ;
+//    tris = sp_malloc(sizeof(triangle) * ntris);
+//    SPVector AA,BB,CC ;
+//    VECT_CREATE(  0.5, 0.5, 0.0, AA);
+//    VECT_CREATE( -0.5, 0.5, 0.0, BB);
+//    VECT_CREATE(  0.0, 0.0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[0])) ;
+//    
+//    VECT_CREATE( -0.5,  0.5, 0.0, AA);
+//    VECT_CREATE( -0.5, -0.5, 0.0, BB);
+//    VECT_CREATE(  0.0,  0.0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[1])) ;
+//    
+//    VECT_CREATE( -0.5, -0.5, 0.0, AA);
+//    VECT_CREATE(  0.5, -0.5, 0.0, BB);
+//    VECT_CREATE(  0.0,  0.0, 0.0, CC);
+//    buildTriangle(AA, BB, CC, &(tris[2])) ;
+//    
+//    VECT_CREATE(  0.5, -0.5, 0.0, AA);
+//    VECT_CREATE(  0.5,  0.5, 0.0, BB);
+//    VECT_CREATE(  0.0,  0.0, 0.0,  CC);
+//    buildTriangle(AA, BB, CC, &(tris[3])) ;
     
 //    ntris = 8 ;
 //    tris = sp_malloc(sizeof(triangle) * ntris);
@@ -142,17 +159,72 @@ int main(int argc, const char * argv[])
         exit(0);
     }
     
-    if (RCSOUTPUT) {
-        Ei_pow = RAYPOW / (4 * SIPC_pi * ILLRANGE * ILLRANGE) ; // power at facet in watts/m^2
-    }
 
     // We need parallel illumination so that we don't have to worry about transmit power or
     // phase effects from curved wavefronts
     //
     
-    int nRays = ntris ;
-    Ray *rays = (Ray *)sp_malloc(sizeof(Ray) * nRays) ;
-    SPVector vhatpar,vhatper, parvec, pervec ;
+    int nRays = NRAYS;
+    Ray *rays       =      (Ray *)sp_malloc(sizeof(Ray) * nRays) ;
+    SPVector * hits = (SPVector *)sp_malloc(sizeof(SPVector) * nRays);
+    int * triForHit =      (int *)sp_malloc(sizeof(int) * nRays);
+    int * hitsForTri=      (int *)sp_malloc(sizeof(int) * ntris);
+    
+    double xmin,xmax,ymin,ymax,x,y;
+    xmin = -0.5;
+    xmax = +0.5;
+    ymin = -0.5;
+    ymax = +0.5;
+    for(int h=0; h<nRays; h++){
+        x = xmin + ((rand() / (double) (RAND_MAX)) * (xmax-xmin));
+        y = ymin + ((rand() / (double) (RAND_MAX)) * (ymax-ymin));
+//        x=y=0;
+        VECT_CREATE( x, y, 0, hits[h]);
+//        VECT_CREATE( tris[h].MP.x, tris[h].MP.y, 0, hits[h]);
+//        printf("%f,%f\n",hits[h].x,hits[h].y);
+    }
+    
+    if (RCSOUTPUT) {
+        Ei_pow = RAYPOW / (4 * SIPC_pi * ILLRANGE * ILLRANGE) ; // power at facet in watts/m^2
+    }
+    
+    for (int i=0; i<nRays; i++) {
+        rays[i].org = illOrigin ;
+        rays[i].pow = RAYPOW ;
+        VECT_SUB(hits[i], rays[i].org, rays[i].dir);
+        rays[i].len = VECT_MAG(rays[i].dir);
+        VECT_NORM(rays[i].dir, rays[i].dir);
+        rays[i].pow = RAYPOW / (4.0 * SIPC_pi*rays[i].len*rays[i].len);
+        if(fabs(VECT_DOT(rays[i].dir, zhat)) >= 0.99 ){
+            VECT_CREATE(1, 0, 0, Hpol);
+        }else{
+            VECT_CROSS(rays[i].dir, zhat, Hpol) ;
+            VECT_NORM(Hpol, Hpol) ;
+        }
+        VECT_CROSS(Hpol, rays[i].dir, Vpol) ;
+        if(TXPOL == "V"){
+            rays[i].pol = Vpol ;
+        }else{
+            rays[i].pol = Hpol ;
+        }
+        
+        // find triangle for this ray
+        //
+        for(int t=0; t<ntris; t++){
+            if( PointInTriangle(hits[i], tris[t].AA, tris[t].BB, tris[t].CC) ){
+                triForHit[i] = t;
+                hitsForTri[t]++ ;
+//                printf("Ray %d hits triangle %d at (%f,%f)\n",i,triForHit[i],hits[i].x,hits[i].y);
+                t=ntris;
+            }else{
+                triForHit[i] = -1;
+            }
+
+        }
+    }
+    
+        
+    /*SPVector vhatpar,vhatper, parvec, pervec ;
     double par,per ;
 
     if(fabs(VECT_DOT(illDir, zhat)) == 1.0 ){
@@ -172,7 +244,6 @@ int main(int argc, const char * argv[])
         VECT_SCMULT(vhatper, per, pervec) ;
         VECT_ADD(illOrigin, parvec, rays[i].org) ;
         VECT_ADD(rays[i].org, pervec, rays[i].org) ;
-//        rays[i].org = illOrigin ;
         VECT_CREATE(-illDir.x, -illDir.y, -illDir.z, rays[i].dir) ;
         rays[i].pow = RAYPOW ;
         rays[i].pow = rays[i].pow / (4.0 * SIPC_pi*illRange*illRange);
@@ -191,12 +262,7 @@ int main(int argc, const char * argv[])
         }
     }
     
-    // Setup Hit points
-    //
-    SPVector * hits = sp_malloc(sizeof(SPVector) * ntris);
-    for (int i=0; i<ntris; i++){
-        hits[i] = tris[i].MP ;
-    }
+    */
     
     int iphi, niphis;
     int itheta, nitheta;
@@ -230,18 +296,29 @@ int main(int argc, const char * argv[])
             
             // For debugging - provides a handy way to see the expected phase at the receiver
             //
-            double psum,p,p1;
-            psum=0.0;
-             for (int t=0; t<ntris; t++ ){
-                SPVector tmp1;
-                VECT_SUB(tris[t].MP, rays[t].org, tmp1);
-                p = (-(VECT_MAG(tmp1)+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
-                p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
-                p1 = p1 * 2 * SIPC_pi ;
-                printf("GO Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
-                psum+=RAD2DEG(p1);
-            }
-            printf("Mean GO Phase at RX is %f deg (-PI = %f)\n",psum/ntris,(psum/ntris)-180);
+//            double psum,p,p1;
+//            psum=0.0;
+//             for (int n=0; n<nRays; n++ ){
+//                 SPVector tmp1,tmp2;
+//                 VECT_SUB(hits[n], rays[n].org, tmp1);
+//                 p = (-(VECT_MAG(tmp1))*2*SIPC_pi/LAMBDA) ;
+//                 p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
+//                 p1 = p1 * 2 * SIPC_pi ;
+//                 printf("GO Phase TX->Hitpoint : %f\n",RAD2DEG(p1));
+//                 
+//                 VECT_SUB(RxPnt, hits[n], tmp2);
+//                 p = (-VECT_MAG(tmp2)*2*SIPC_pi/LAMBDA) ;
+//                 p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
+//                 p1 = p1 * 2 * SIPC_pi ;
+//                 printf("GO Phase Hitpoint->RX : %f\n",RAD2DEG(p1));
+//                 
+//                 p = (-(VECT_MAG(tmp1)+VECT_MAG(tmp2))*2*SIPC_pi/LAMBDA)-SIPC_pi ;
+//                 p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
+//                 p1 = p1 * 2 * SIPC_pi ;
+//                 printf("GO Phase at RX for ray %d should be %f radians (%f deg)\n",n ,p , RAD2DEG(p1));
+//                 psum+=RAD2DEG(p1);
+//            }
+//            printf("Mean GO Phase at RX is %f deg (+PI = %f)\n",psum/nRays,(psum/nRays)+180);
 
             
             // Define unit vectors for V & H fields
@@ -271,14 +348,39 @@ int main(int argc, const char * argv[])
             
             if(USEOPENCL){
                 oclPOField(tris, ntris, rays, ntris, hits, RxPnt, k, RXVdir, RXHdir, &EsV, &EsH);
+            }else if(GOONLY){
+                double r,p,phs;
+                SPVector v;
+                for (int n=0; n<nRays; n++ ){
+                    r=0;
+                    if(triForHit[n] >= 0){
+                        VECT_SUB(RxPnt, hits[n], v);
+                        r += VECT_MAG(v);
+                        VECT_SUB(hits[n], illOrigin, v);
+                        r += VECT_MAG(v);
+                        p = sqrt(RAYPOW) / (4 * SIPC_pi * r * r) ;
+                        phs = (-2.0 * SIPC_pi * r / LAMBDA) - SIPC_pi ;
+                        EsV1.r = p * cos(phs);
+                        EsV1.i = p * sin(phs);
+                        CMPLX_ADD(EsV, EsV1, EsV);
+                        EsH.r = EsH.i = 0.0;
+                        // For debugging - provides a way to see individual scattering contributions
+                        //
+//                        printf("EsV1[%d] : %f deg amp : %e v/m  (%f, %f)\n",n,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                    }
+                }
             }else{
-                for (int t=0; t<ntris; t++ ){
-                    POField(tris[t], rays[t], tris[t].MP, RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
-                    CMPLX_ADD(EsV, EsV1, EsV) ;
-                    CMPLX_ADD(EsH, EsH1, EsH) ;
-                    // For debugging - provides a way to see individual scattering contributions
-                    //
-                     printf("EsV1[%d] : %f deg amp : %e v/m  (%f, %f)\n",t,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                for (int n=0; n<nRays; n++ ){
+                    if(triForHit[n] >= 0){
+                        POField(tris[triForHit[n]], rays[n], hits[n], RxPnt, k,  RXVdir, RXHdir, &EsV1, &EsH1);
+                        CMPLX_SCMULT(1.0/hitsForTri[triForHit[n]], EsV1, EsV1);
+                        CMPLX_SCMULT(1.0/hitsForTri[triForHit[n]], EsH1, EsH1);
+                        CMPLX_ADD(EsV, EsV1, EsV) ;
+                        CMPLX_ADD(EsH, EsH1, EsH) ;
+                        // For debugging - provides a way to see individual scattering contributions
+                        //
+//                        printf("EsV1[%d] : %f deg amp : %e v/m  (%f, %f)\n",n,RAD2DEG(CMPLX_PHASE(EsV1)), CMPLX_MAG(EsV1),EsV1.r,EsV1.i);
+                    }
                 }
             }
             
@@ -321,7 +423,7 @@ int main(int argc, const char * argv[])
                 a = CMPLX_MAG(EsH);
                 VECT_SCMULT(RXHdir, a, Eh);
                 VECT_ADD(Ev, Eh, E) ;
-                E_mag = VECT_MAG(E);
+                E_mag = VECT_MAG(E) ;
                 if(RCSOUTPUT){
                     E_mag =  4*E_mag*E_mag * 4.0 * SIPC_pi * OBSDIST * OBSDIST / Ei_pow ;
                 }
@@ -332,17 +434,26 @@ int main(int argc, const char * argv[])
                 }
                 // For debugging - if you want to see the scattering phase uncomment the next line
                 //
-                 Erx = RAD2DEG(CMPLX_PHASE(EsV));
+                //Erx = RAD2DEG(CMPLX_PHASE(EsV));
                 
-//                if(Erx < 00.0){
-//                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
-//                }else{
+                if(Erx < 00.0){
+                    printf("%f, %f, %f \n",0.0,phi_s,theta_s);
+                }else{
                     printf("%f, %f, %f \n",Erx,phi_s,theta_s);
-                    p = (-(ILLRANGE+OBSDIST)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
-                    double p1 = (p / (2*SIPC_pi)) - ((int)(p / (2*SIPC_pi)));
-                    p1 = p1 * 2 * SIPC_pi ;
-                    printf("Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
-//                }
+//                    double r; SPVector v,v1;
+//                    r=0;
+//                    VECT_CREATE(0, 1, 0, v);
+//                    VECT_SUB(RxPnt, v, v1);
+//                    r += VECT_MAG(v1);
+//                    VECT_SUB(v, illOrigin, v1);
+//                    r += VECT_MAG(v1);
+//                
+//                    p = (-(r)*2*SIPC_pi/LAMBDA)-SIPC_pi ;
+//                    double p1 = (p / (2*SIPC_pi));
+//                    p1 = p1 - ((int)(p / (2*SIPC_pi)));
+//                    p1 = p1 * 2 * SIPC_pi ;
+//                    printf("GO Phase at RX should be %f radians (%f deg)\n",p , RAD2DEG(p1));
+                }
             }
             
         }
@@ -564,10 +675,30 @@ void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri){
     T_dashdash[7] = 0;
     T_dashdash[8] = cos(beta);
     
-    
-    
     matmul(T_dashdash, T_dash, tri->globalToLocalMat, 3, 3, 3, 3);
     mat3by3inv(tri->globalToLocalMat, tri->localToGlobalMat);
 
     return ;
+}
+
+
+int PointInTriangle(SPVector p, SPVector p0, SPVector p1, SPVector p2)
+{
+    double s = (p0.y * p2.x) - (p0.x * p2.y) + ((p2.y - p0.y) * p.x) + ((p0.x - p2.x) * p.y);
+    double t = (p0.x * p1.y) - (p0.y * p1.x) + ((p0.y - p1.y) * p.x) + ((p1.x - p0.x) * p.y);
+    
+    if ((s < 0) != (t < 0))
+        return 0;
+    
+    double A = (-p1.y * p2.x) + (p0.y * (p2.x - p1.x)) + (p0.x * (p1.y - p2.y)) + (p1.x * p2.y);
+    if (A < 0.0){
+        s = -s;
+        t = -t;
+        A = -A;
+    }
+    if (s > 0 && t > 0 && (s + t) < A){
+        return 1 ;
+    }else{
+        return 0 ;
+    }
 }
