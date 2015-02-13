@@ -589,8 +589,9 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             // Have a leaf now
             //
             trisInLeaf = triangleListData[triangleListPtrs[KDT_OFFSET(node)]];
-            hits[ind].dist = 10e6;
-            
+            hits[ind].dist   = 10e6;
+            hits[ind].trinum = NOINTERSECTION ;
+
             for (i=0; i<trisInLeaf; i++){
                 __global Triangle * tri = &(Triangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
                 Intersect(tri, &(rays[ind]), &(hits[ind]));
