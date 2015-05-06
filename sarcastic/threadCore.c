@@ -407,25 +407,27 @@ void * devPulseBlock ( void * threadArg ) {
             rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
             
             cnt = 0;
-            double totpow = 0.0;
             for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
                 if (CMPLX_MAG(rnp[i].Es) != 0 && rnp[i].range !=0){
                     rnpData[cnt].Es    = rnp[i].Es ;
                     rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                    totpow += rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i ;
                     cnt++ ;
                 }
             }
         
-//            printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
             im_init(&pulseLine, &status);
             im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
-            double phse;
+            double phse, power, rangeToTarget, isopowattarg;
             for (int i=0; i<nrnpItems; i++){
                 
                 phse    = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
-                targ.r  = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
-                targ.i  = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
+                // Make the power equal to the actual RCS of the point
+                //
+                rangeToTarget = derampRange+rnpData[i].rdiff ;
+                isopowattarg = PowPerRay / (4 * SIPC_pi * rangeToTarget * rangeToTarget) ;
+                power = 4 * CMPLX_MAG(rnpData[i].Es) * CMPLX_MAG(rnpData[i].Es) * 4.0 * SIPC_pi * (rangeToTarget * rangeToTarget) / isopowattarg ;
+                targ.r  = power * cos(phse) ;
+                targ.i  = power * sin(phse) ;
                 
                 rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
                 

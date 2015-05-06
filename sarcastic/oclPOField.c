@@ -58,7 +58,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
                 SPVector            RxPos,              // Location of Receiver in x,y,z
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
-                double              gainRx,              // Receiver gain used for power calculations
+                double              gainRx,             // Receiver gain used for power calculations
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 )
 
@@ -98,6 +98,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
         hitpoints[i].hit = shadowRays[i].org ;
         hitpoints[i].tri = hits[i].trinum ;
         hitsOnEachTri[hitpoints[i].tri]++;
+        rays[i].pow = rays[i].pow / (4 * SIPC_pi * hits[i].dist * hits[i].dist) ;
     }
     
     // Add write buffer commands to the command queue ready for execution
@@ -148,7 +149,6 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     
     CL_CHECK(clEnqueueReadBuffer(Q,dEsVs, CL_TRUE,0,sizeof(SPCmplx)*nRays, VsTmp, 0,NULL,NULL));
     CL_CHECK(clEnqueueReadBuffer(Q,dEsHs, CL_TRUE,0,sizeof(SPCmplx)*nRays, HsTmp, 0,NULL,NULL));
-
     
     // The PO Field equation calculations take into account the inverse square law path loss
     // back to the receiver. We do need to multiply by the receiver gain though.
@@ -156,7 +156,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     // calculations assume RCS from one point. 
     //
     for (int r=0; r<nRays; r++ ){
-        rnp[r].range = ranges[r] ;
+        rnp[r].range = (ranges[r] + rays[r].len + hits[r].dist) / 2;
         CMPLX_SCMULT(gainRx / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
     }
     
