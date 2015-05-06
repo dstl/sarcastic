@@ -45,11 +45,11 @@
 void readKdTree(const char *filename,           // Filename for KdTree
                     AABB * SceneBoundingBox,    // Bounding box for scene
                     int * nTriangles,           // Number of triangles in scene
-                    Triangle ** Triangles,      // Array containing triangles
+                    ATS ** accelTriangles,      // Array containing triangles
+                    Triangle **triangles,       // Array of triangle structures
                     int * nLeaves,              // number of leaf nodes in KdTree
                     int *** triangleLists,      // Array of int arrays containing triangles for each leaf
                     int * nTreeNodes,           // Number of nodes in KdTree
-                    KdData ** KdTree,           // KdTree returned.
-                    TriCoords **tricos );       // Triangle coordinates
+                    KdData ** KdTree);          // KdTree returned.);
 
 #endif

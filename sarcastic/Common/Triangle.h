@@ -1,12 +1,12 @@
 /***************************************************************************
- *  radarMaterial.m
+ *  Triangle.h
  *  Sadilac
  *
- *  Created by Muff Darren on 19/05/2012.
- *  Copyright (c) 2014 [dstl]. All rights reserved.
+ *  Created by Muff Darren on 20/05/2012.
+ *  Copyright (c) 2014 [Dstl]. All rights reserved.
  *
  *  CLASSIFICATION       :   UNCLASSIFIED
- *  Date of CLASSN       :   18/02/2014
+ *  Date of CLASSN       :   20/05/2012
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,24 +31,34 @@
  * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
  * IRELAND.
  ***************************************************************************/
+#import <Foundation/Foundation.h>
+@class MVector ;
 
-#import "radarMaterial.h"
-
-@implementation radarMaterial
-@synthesize materialName=_materialName ;
-@synthesize materialID=_materialID ;
-
-- (id) initWithID: (int) matID andName: (NSString *) matName {
-    self = [super init];
-    if (self) {
-        _materialName = matName ;
-        _materialID   = matID ;
-    }
-    return self;
-}
-
-+ (id) materialWithID: (int) matID andName: (NSString *) matName {
-    return [[radarMaterial alloc] initWithID:matID andName:matName];
-}
-
+@interface Triangle : NSObject
+@property NSString *materialName ;
+@property int matId ;
+@property int triId ;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val;
+- (id) initWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andNormal:(MVector *)N;
++ (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c;
++ (id) TriangleWithVerticesAa: (MVector *) a Bb: (MVector *) b Cc: (MVector *) c andId: (int) val;
++ (id) TriangleWithVerticesAa:(MVector *)a Bb:(MVector *)b Cc:(MVector *)c andNormal:(MVector *) N;
+- (void) setVertex: (int) index toValue: (MVector *) coordinate;
+- (BOOL) isPlanarInDimension: (unsigned int) k ;
+- (MVector *) vertexAt: (int) index;
+- (NSComparisonResult) compareTriangle: (Triangle *) t ;
+- (double) minInDim: (unsigned int) k ;
+- (double) maxInDim: (unsigned int) k ;
+- (BOOL) isEqual:(id)object ;
+- (NSUInteger) hash ;
+- (void) setTriId: (int) val ;
+- (void) setMaterialName: (NSString *) name ;
+- (NSString *) materialName ;
+- (MVector *) normal ;
+- (MVector *) midpoint ;
+- (double) area ;
+- (double *) globalToLocalMatrix ;
+- (double *) localToGlobalMatrix ;
 @end
+

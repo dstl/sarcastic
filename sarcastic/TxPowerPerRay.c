@@ -36,7 +36,7 @@
  * IRELAND.
  *
  ***************************************************************************/
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "TxPowerPerRay.h"
 
 double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain){
@@ -73,7 +73,9 @@ double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *re
 
     }
 
-    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+//    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+    Pray = Pt * gainTx ;
+    
     *receiverGain = gainRx ;
     return (Pray) ;
    

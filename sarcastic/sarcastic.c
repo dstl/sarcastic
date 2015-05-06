@@ -78,10 +78,10 @@ int main (int argc, char **argv){
     cl_uint     ndevs;
     cl_ulong    memSizeTmp,devMemSize;
     
-    Triangle  * Triangles     = NULL ;
+    ATS       * accelTriangles= NULL ;
     int       **triangleLists = NULL ;
     KdData    * KdTree        = NULL ;
-    TriCoords * tricos        = NULL ;
+    Triangle  * triangles     = NULL ;
     SPVector  * RxPos         = NULL ;
     SPVector  * TxPos         = NULL ;
     double    * Fx0s          = NULL ;
@@ -108,13 +108,12 @@ int main (int argc, char **argv){
     readKdTree(KdTreeFile,          // Filename for KdTree
                &SceneBoundingBox,   // Bounding box for scene
                &nTriangles,         // Number of triangles in scene
-               &Triangles,          // Array containing triangles
+               &accelTriangles,     // Array containing accelerated triangle structures
+               &triangles,          // Array containing triangles
                &nLeaves,            // number of leaf nodes in KdTree
                &triangleLists,      // Array of int arrays containing triangles for each leaf
                &nTreeNodes,         // Number of nodes in KdTree
-               &KdTree,             // KdTree returned.
-               &tricos);            // Triangle coordinates
-    
+               &KdTree);            // KdTree returned.
     
     // Build Ropes and AABBs for faster stackless traversal
     //
@@ -158,7 +157,7 @@ int main (int argc, char **argv){
     KDT.nTriangles       = nTriangles ;
     KDT.triangleListData = triListData ;
     KDT.triangleListPtrs = triPtrs ;
-    KDT.triangles        = Triangles ;
+    KDT.accelTriangles   = accelTriangles ;
     KDT.triListDataSize  = triListDataSize ;
     
     // Check the cphdfile
@@ -393,6 +392,7 @@ int main (int argc, char **argv){
         threadDataArray[dev].interogPt              = interogPt ;
         threadDataArray[dev].interogRad             = interogRad ;
         threadDataArray[dev].interogFP              = &interrogateFP ;
+        threadDataArray[dev].triangles              = triangles ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
@@ -446,7 +446,9 @@ int main (int argc, char **argv){
         printf("...Done\n");
     }
     
-    im_destroy(&cphd, &status);
+    if(outCPHDFile != NULL){
+        im_destroy(&cphd, &status);
+    }
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;
@@ -458,9 +460,9 @@ int main (int argc, char **argv){
     
     // Clear down the KdTree
     //
-    free(Triangles);
+    free(accelTriangles);
     free(KdTree);
-    free(tricos);
+    free(triangles);
 
     return 0;
 

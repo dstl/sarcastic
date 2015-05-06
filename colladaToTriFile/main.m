@@ -10,7 +10,7 @@
 #import "MVectorObjc.h"
 #import "COLScene.h"
 #import "Triangle.h"
-#include <SILib.h>
+#include <SIlib/SILib.h>
 
 #define ROOTPATH "/Users/Darren/Development"
 
@@ -143,14 +143,6 @@ int main(int argc, const char * argv[])
             fwrite(&y, sizeof(double), 1, fp);
             fwrite(&z, sizeof(double), 1, fp);
             printf("    Normal : %3.6f,%3.6f,%3.6f\n",x,y,z);
-            
-            x = [[tri midpoint] X];
-            y = [[tri midpoint] Y];
-            z = [[tri midpoint] Z];
-            fwrite(&x, sizeof(double), 1, fp);
-            fwrite(&y, sizeof(double), 1, fp);
-            fwrite(&z, sizeof(double), 1, fp);
-            printf("  Midpoint : %3.6f,%3.6f,%3.6f\n",x,y,z);
 
             x = [tri area] ;
             fwrite(&x, sizeof(double), 1, fp);

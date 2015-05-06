@@ -85,6 +85,7 @@ typedef struct Ray {
     SPVector dir;    // Direction
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
+    SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
 typedef struct rangeAndPower {

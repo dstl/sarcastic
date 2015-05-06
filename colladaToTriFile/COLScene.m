@@ -49,7 +49,7 @@
             exit(1);
         }
         
-        // Initialiese the triangle array
+        // Initialise the triangle array
         //
         _triangles = [[NSMutableOrderedSet alloc] init];
         
@@ -243,6 +243,7 @@
                         // find the material in the materialProperties header file that
                         // most closely matches it.
                         //
+                        [tri setMaterialName: @"MATERIAL"];
                         for (int imat=0; imat<NMATERIALS; imat++) {
                             NSString * mat = [NSString stringWithUTF8String:materialProperties[imat].matname] ;
                             for (int i=0; i< [materials count]; i++){
@@ -257,7 +258,6 @@
                                 }
                             }
                         }
-                        [tri setMaterialName: [[materials objectAtIndex:0] name]];
                         [_triangles addObject:tri];
                         
                     }

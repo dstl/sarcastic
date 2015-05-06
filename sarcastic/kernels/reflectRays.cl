@@ -41,7 +41,33 @@
 //
 //***************************************************************************
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
-#include "materialProperties.h"
+//#include "materialProperties.h"
+#define MATBYTES 128
+
+typedef struct scatProps {
+    char   matname[MATBYTES] ;
+    float  corlen      ;
+    float  roughness   ;
+    float  resistivity ;
+    float  specular    ;
+    float  diffuse     ;
+    float  shinyness   ;
+} scatProps ;
+
+#define NMATERIALS 9
+static constant scatProps materialProperties[NMATERIALS] = {
+    //   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
+    {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
+    {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },
+    {"BRICK",       0.1,        0.001,      1.0e18,     0.7,        0.3,        20.0        },
+    {"CONCRETE",    0.2,        0.01,       120.0,      0.3,        0.7,        10.0        },
+    {"METAL",       100.0,      0.0,        1.0e-8,     1.0,        0.0,        50.0        },
+    {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
+    {"VEGETATION",  0.01,       0.1,        2000.0,     0.2,        0.8,        5.0         },
+    {"WATER",       0.01,       0.1,        2.0e1,      1.0,        0.0,        50.0        },
+    {"WOOD",        0.1,        0.001,      1.0e14,     0.6,        0.4,        10.0        }
+} ;
+
 // #include "SPVector.cl"
 //+++++++++++++++++++++++++++ Start of SPVector.cl +++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -269,7 +295,7 @@ typedef struct Hit {
     double v;
 } Hit;
 
-typedef struct Triangle {
+typedef struct ATS {
     int  triNum;    // Triangle ID
     double d;       // Constant of plane equation
     double nd_u;    // Normal.u / normal.k
@@ -282,7 +308,7 @@ typedef struct Triangle {
     double kcv;
     double kcd;
     int    matInd;  // Material Index
-} Triangle;
+} ATS;
 
 typedef struct TriCoords {
     SPVector A ;      // Cartesian coordinates of triangle
@@ -291,7 +317,7 @@ typedef struct TriCoords {
 } TriCoords ;
 //+++++++++++++++++++++++++++ End of structures.cl +++++++++++++++++++++++++++++++++++++++++++++++
 
-__kernel void reflect(__global Triangle * Triangles,
+__kernel void reflect(__global ATS * accelTriangles,
                       __global Ray *rays,
                       __global Hit *hits,
                       __global Ray *reflectedRays,
@@ -300,8 +326,9 @@ __kernel void reflect(__global Triangle * Triangles,
 {
     int ind, t, k, ku, kv ;
     unsigned int modulo[5];
-    Triangle T ;
+    ATS T ;
     SPVector N, v, R, I, hp, perpol;
+    float ks;
  
     modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
     ind = get_global_id(0) ;
@@ -309,7 +336,7 @@ __kernel void reflect(__global Triangle * Triangles,
     if (ind >=0 && ind < nRays ) {
         
         t = hits[ind].trinum;
-        T = Triangles[t];
+        T = accelTriangles[t];
         k = T.k;
         ku = modulo[k+1];
         kv = modulo[k+2];
@@ -333,9 +360,12 @@ __kernel void reflect(__global Triangle * Triangles,
         // specular component of the reflective surface texture.
         // (Diffuse and shinyness components are only taken into account on rays
         // returning to the sensor from a visible hit point
+        // Note that this is because we use PO for last bounce but phong shding for all others
         //
         ks =  materialProperties[T.matInd].specular ;
-        reflectedRays[ind].pow = rays[ind].pow * ks ;
+        // power at reflected point is Pt*Gtx / 4 PI R^2
+        //
+        reflectedRays[ind].pow = rays[ind].pow * ks / (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);
 //        printf("power in %e, power out %e\n",rays[ind].pow,reflectedRays[ind].pow);
         
         // Calculate the polarisation of the reflected ray based upon the polarisation

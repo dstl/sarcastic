@@ -77,7 +77,7 @@ typedef union {
 #define VECT_SUB(aVect,bVect,outVect) {                 \
     outVect.x = aVect.x - bVect.x;                      \
     outVect.y = aVect.y - bVect.y;                      \
-o   utVect.z = aVect.z - bVect.z;                      \
+    outVect.z = aVect.z - bVect.z;                      \
 }
 
 /// add two vectors
@@ -244,7 +244,7 @@ __kernel void randomRays(const ulong  seed,         // Random number generator s
                          const SPVector aimpoint,   // aimpoint (mean) of beam
                          const int nx,              // number of rays in x
                          const int ny,              // number of rays in y
-                         const double pow,          // Ray Power (Pp = (Pt * Gtx / (4*PI)) * dAz * dEl)
+                         const double pow,          // Ray Power (Pp = (Pt * Gtx)
                          __global Ray *rayArray)    // output of rays
 {
     

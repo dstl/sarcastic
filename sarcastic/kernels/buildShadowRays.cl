@@ -261,6 +261,7 @@ typedef struct Ray {
     SPVector dir;    // Direction
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
+    SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
 typedef struct rangeAndPower {
@@ -275,7 +276,7 @@ typedef struct Hit {
     double v;
 } Hit;
 
-typedef struct Triangle {
+typedef struct ATS {
     int  triNum;    // Triangle ID
     double d;         // Constant of plane equation
     double nd_u;      // Normal.u / normal.k
@@ -288,7 +289,7 @@ typedef struct Triangle {
     double kcv;
     double kcd;
     int textureInd;
-} Triangle;
+} ATS;
 
 typedef struct TriCoords {
     SPVector A ;      // Cartesian coordinates of triangle
@@ -326,7 +327,7 @@ __kernel void buildShadowRays(const    int nRays,           // The number of ref
         shadowRays[ind].dir = dir ;
         shadowRays[ind].pow = reflectedRays[ind].pow ;
         shadowRays[ind].len = reflectedRays[ind].len ;
-        shadowRays[ind.pol] = reflectedRays[ind].pol ;
+        shadowRays[ind].pol = reflectedRays[ind].pol ;
         
     }
     return ;

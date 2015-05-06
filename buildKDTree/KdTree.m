@@ -33,7 +33,6 @@
  ***************************************************************************/
 
 #import "KdTree.h"
-#import "Timer.h"
 
 @implementation KdTreeEvent
 @synthesize ptype=_ptype;
@@ -632,11 +631,11 @@
         kcd  = [tri kcd];
         tex  = [tri texture];
         
-        for (int i=0; i< [[self textures] count]; i++) {
-            if( tex == [[[self textures] objectAtIndex:i] materialID]){
-                tex = i ;
-            }
-        }
+//        for (int i=0; i< [[self textures] count]; i++) {
+//            if( tex == [[[self textures] objectAtIndex:i] materialID]){
+//                tex = i ;
+//            }
+//        }
         
         fwrite(&d,sizeof(double),1,fp);
         fwrite(&nd_u,sizeof(double),1,fp);
@@ -708,6 +707,9 @@
     }
     
     printf("Writing triangle coords\n");
+    double Nx,Ny,Nz,area;
+    double *gtolmtx, *ltogmtx;
+    int mat ;
     for (t in [_root triangles]){
         Ax = [[t vertexAt:0] X] ;
         Ay = [[t vertexAt:0] Y] ;
@@ -718,6 +720,14 @@
         Cx = [[t vertexAt:2] X] ;
         Cy = [[t vertexAt:2] Y] ;
         Cz = [[t vertexAt:2] Z] ;
+        Nx = [[t normal] X];
+        Ny = [[t normal] Y];
+        Nz = [[t normal] Z];
+        area = [t area] ;
+        gtolmtx = [t globalToLocalMatrix];
+        ltogmtx = [t localToGlobalMatrix];
+        mat = [t matId];
+        
         fwrite(&Ax,sizeof(double),1,fp);
         fwrite(&Ay,sizeof(double),1,fp);
         fwrite(&Az,sizeof(double),1,fp);
@@ -727,6 +737,13 @@
         fwrite(&Cx,sizeof(double),1,fp);
         fwrite(&Cy,sizeof(double),1,fp);
         fwrite(&Cz,sizeof(double),1,fp);
+        fwrite(&Nx,sizeof(double),1,fp);
+        fwrite(&Ny,sizeof(double),1,fp);
+        fwrite(&Nz,sizeof(double),1,fp);
+        fwrite(&area,sizeof(double),1,fp);
+        for (int i=0; i<9; i++)fwrite(&gtolmtx[i],sizeof(double),1,fp);
+        for (int i=0; i<9; i++)fwrite(&ltogmtx[i],sizeof(double),1,fp);
+        fwrite(&mat, sizeof(int), 1, fp);
     }
 
     fclose(fp);

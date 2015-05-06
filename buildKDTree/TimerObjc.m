@@ -1,5 +1,5 @@
 /***************************************************************************
- *  radarMaterial.h
+ *  Timer.m
  *  Sadilac
  *
  *  Created by Muff Darren on 19/05/2012.
@@ -32,11 +32,43 @@
  * IRELAND.
  ***************************************************************************/
 
-#import <Foundation/Foundation.h>
+#import "Timer.h"
 
-@interface radarMaterial : NSObject
-@property NSString *materialName;
-@property int materialID;
-- (id) initWithID: (int) matID andName: (NSString *) matName ;
-+ (id) materialWithID: (int) matID andName: (NSString *) matName ;
+@implementation Timer
+
+- (id) init {
+    self = [super init];
+    if (self != nil) {
+        start = nil;
+        end = nil;
+    }
+    return self;
+}
+
+- (void) startTimer {
+    start = [NSDate date];
+}
+
+- (void) stopTimer {
+    end = [NSDate date];
+}
+
+- (double) timeElapsedInSeconds {
+    return [end timeIntervalSinceDate:start];
+}
+
+- (double) timeElapsedInMilliseconds {
+    return [self timeElapsedInSeconds] * 1000.0f;
+}
+
+- (double) timeElapsedInMinutes {
+    return [self timeElapsedInSeconds] / 60.0f;
+}
+
+- (NSDate *) estimatedTimeOfCompletion: (double) percentDone {
+    NSTimeInterval t = [[NSDate date] timeIntervalSinceDate:start];
+    t = t * 100 / percentDone;
+    NSDate * etc = [NSDate dateWithTimeInterval:t sinceDate:start];
+    return etc;
+}
 @end

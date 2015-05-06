@@ -40,30 +40,36 @@
 
 #include "sarcastic.h"
 
+typedef struct HitPoint {
+    SPVector hit;       // Location of hitpoint in x,y,z
+    int tri;            // index of triangle that this hit is on
+} HitPoint ;
 
-void oclPOPower(cl_context          context,            // OpenCL context - already built
+void oclPOField(cl_context          context,            // OpenCL context - already built
                 cl_command_queue    Q,                  // OpenCl command Q - already instatiated
                 cl_kernel           kernel,             // OpenCl kernel for this routine to call
                 size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
-                cl_mem              dTriangles,         // Device memory location of triangle data
+                Triangle            *triangles,         // Array of triangles
+                int                 ntris,              // Number of triangles
                 Hit                 *hits,              // Array of hit locations to x-ref with triangles for material props
                 int                 nRays,              // The number of reflected rays being considered
                 Ray                 *rays,              // unit vector rays arriving at hitpoint
-                Ray                 *reflectedRays,     // Array of reflected rays - used for their origin as its the reflection point to Rx
+                Ray                 *shadowRays,        // Array of reflected rays - used for their origin as its the reflection point to Rx
                 SPVector            RxPos,              // Location of Receiver in x,y,z
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
+                double              gainRx,              // Receiver gain used for power calculations
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 )
 
 {
-    cl_mem dHits ;
+    cl_mem dHitpoints ;
     cl_mem dRays ;
     cl_mem dReflectedRays ;
     cl_mem dRanges ;
-    cl_mem dRnp ;
     cl_mem dEsVs;
     cl_mem dEsHs;
+    cl_mem dTriangles ;
     
     size_t globalWorkSize ;
     
@@ -74,19 +80,32 @@ void oclPOPower(cl_context          context,            // OpenCL context - alre
     
     // Create OpenCl device buffers to hold data for this ray cast
     //
-    dHits          = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Hit)*nRays,           NULL, &_err));
+    dTriangles     = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*ntris,      NULL, &_err));
+    dHitpoints     = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(HitPoint)*nRays,      NULL, &_err));
     dRays          = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,           NULL, &_err));
     dReflectedRays = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Ray)*nRays,           NULL, &_err));
     dRanges        = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(double)*nRays,        NULL, &_err));
-    dRnp           = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(rangeAndPower)*nRays, NULL, &_err));
     dEsVs          = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(SPCmplx)*nRays,       NULL, &_err));
     dEsHs          = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(SPCmplx)*nRays,       NULL, &_err));
     
+    // Prepare the hitpoints from the input 'Hits' (which contain the index of the triangle assiciated with each hit) and
+    // the x,y,z location of the hit (taken from the input shadow ray origin).
+    //
+    HitPoint *hitpoints = (HitPoint *)sp_malloc(sizeof(HitPoint)*nRays);
+    int *hitsOnEachTri  = (int *)sp_calloc(ntris, sizeof(int));
+    
+    for(int i=0; i<nRays; i++){
+        hitpoints[i].hit = shadowRays[i].org ;
+        hitpoints[i].tri = hits[i].trinum ;
+        hitsOnEachTri[hitpoints[i].tri]++;
+    }
+    
     // Add write buffer commands to the command queue ready for execution
     //
-    CL_CHECK(clEnqueueWriteBuffer(Q, dHits,          CL_TRUE, 0, sizeof(Hit)*nRays,           hits,          0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dTriangles,     CL_TRUE, 0, sizeof(Triangle)*ntris,      triangles,     0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dHitpoints,     CL_TRUE, 0, sizeof(HitPoint)*nRays,      hitpoints,     0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dRays,          CL_TRUE, 0, sizeof(Ray)*nRays,           rays,          0, NULL, NULL));
-    CL_CHECK(clEnqueueWriteBuffer(Q, dReflectedRays, CL_TRUE, 0, sizeof(Ray)*nRays,           reflectedRays, 0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(Q, dReflectedRays, CL_TRUE, 0, sizeof(Ray)*nRays,           shadowRays, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(Q, dRanges,        CL_TRUE, 0, sizeof(double)*nRays,        ranges,        0, NULL, NULL));
     
     // Define unit vectors for V & H fields
@@ -108,7 +127,7 @@ void oclPOPower(cl_context          context,            // OpenCL context - alre
     CL_CHECK(clSetKernelArg(kernel, 0,   sizeof(cl_mem),   &dTriangles));   // input array of triangles
     CL_CHECK(clSetKernelArg(kernel, 1,   sizeof(cl_mem),   &dRays));        // input array of rays
     CL_CHECK(clSetKernelArg(kernel, 2,   sizeof(int),      &nRays));        // input number of incident rays to process
-    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(cl_mem),   &dHits));        // input array of hit points for each ray
+    CL_CHECK(clSetKernelArg(kernel, 3,   sizeof(cl_mem),   &dHitpoints));   // input array of hit points for each ray
     CL_CHECK(clSetKernelArg(kernel, 4,   sizeof(SPVector), &RxPos));        // input receiver location to calc field at
     CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double),   &k));            // input k=2*PI/lambda
     CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(SPVector), &RXVdir));       // input unit vector defining V pol at receiver
@@ -130,25 +149,31 @@ void oclPOPower(cl_context          context,            // OpenCL context - alre
     CL_CHECK(clEnqueueReadBuffer(Q,dEsVs, CL_TRUE,0,sizeof(SPCmplx)*nRays, VsTmp, 0,NULL,NULL));
     CL_CHECK(clEnqueueReadBuffer(Q,dEsHs, CL_TRUE,0,sizeof(SPCmplx)*nRays, HsTmp, 0,NULL,NULL));
 
+    
+    // The PO Field equation calculations take into account the inverse square law path loss
+    // back to the receiver. We do need to multiply by the receiver gain though.
+    // We also need to take into account how many times each triangle has been hit as the PO
+    // calculations assume RCS from one point. 
+    //
     for (int r=0; r<nRays; r++ ){
         rnp[r].range = ranges[r] ;
-        rnp[r].Es    = VsTmp[r] ;
+        CMPLX_SCMULT(gainRx / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
     }
-    
-    /*
-    // Read results from device
-    //
-    CL_CHECK(clEnqueueReadBuffer(Q,dRnp, CL_TRUE,0,sizeof(rangeAndPower)*nRays,   rnp, 0,NULL,NULL));
-    */
     
     // Clear down OpenCL allocations
     //
-    clReleaseMemObject(dHits);
+    clReleaseMemObject(dTriangles);
+    clReleaseMemObject(dHitpoints);
     clReleaseMemObject(dRays);
     clReleaseMemObject(dReflectedRays);
-    clReleaseMemObject(dShadowRays);
     clReleaseMemObject(dRanges);
-    clReleaseMemObject(dRnp);
+    clReleaseMemObject(dEsVs);
+    clReleaseMemObject(dEsHs);
+    
+    free(hitpoints);
+    free(VsTmp);
+    free(HsTmp);
+    free(hitsOnEachTri);
     
     return ;
 }

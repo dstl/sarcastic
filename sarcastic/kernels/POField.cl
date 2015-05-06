@@ -1,24 +1,50 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
-#define MATBYTES 128
 #define SIPC_pi 3.14159265358979323846
 #define SURFMAXN 4
 #define LT 0.04
 
+// materialProperties.h
+#define MATBYTES 128
+
+typedef struct scatProps {
+    char   matname[MATBYTES] ;
+    float  corlen      ;
+    float  roughness   ;
+    float  resistivity ;
+    float  specular    ;
+    float  diffuse     ;
+    float  shinyness   ;
+} scatProps ;
+
+#define NMATERIALS 9
+static constant scatProps materialProperties[NMATERIALS] = {
+//   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
+    {"MATERIAL",    100.0,      0.0,        0.0,        1.0,        0.0,        50.0        },
+    {"ASPHALT",     0.5,        0.005,      1.0e18,     0.8,        0.2,        30.0        },
+    {"BRICK",       0.1,        0.001,      1.0e18,     0.7,        0.3,        20.0        },
+    {"CONCRETE",    0.2,        0.01,       120.0,      0.3,        0.7,        10.0        },
+    {"METAL",       100.0,      0.0,        1.0e-8,     1.0,        0.0,        50.0        },
+    {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
+    {"VEGETATION",  0.01,       0.1,        2000.0,     0.2,        0.8,        5.0         },
+    {"WATER",       0.01,       0.1,        2.0e1,      1.0,        0.0,        50.0        },
+    {"WOOD",        0.1,        0.001,      1.0e14,     0.6,        0.4,        10.0        }
+} ;
+// end of materialProperties.h
+
+
 typedef struct { double x, y, z; } SPVector ;
 
-typedef struct triangle{
+typedef struct Triangle{
     int        id ;
     SPVector   AA ;
     SPVector   BB ;
     SPVector   CC ;
     SPVector   NN ;
-    SPVector   MP ;
     double     area ;
     double     globalToLocalMat[9];
     double     localToGlobalMat[9];
-    double     Rs ;
-    char       mat[MATBYTES] ;
-} triangle;
+    int        matId;
+} Triangle;
 
 typedef struct Ray {
     SPVector org ;               // Origin of ray
@@ -39,6 +65,10 @@ typedef struct {
     float parg;
 } SPCmplxPol;
 
+typedef struct HitPoint {
+    SPVector hit;       // Location of hitpoint in x,y,z
+    int tri;            // index of triangle that this hit is on
+} HitPoint ;
 
 /// Make a cartesian complex number
 ///
@@ -74,9 +104,9 @@ typedef struct {
 /// Create a vector
 ///
 #define VECT_CREATE(a,b,c,outVect) {    \
-outVect.x = a;                      \
-outVect.y = b;                      \
-outVect.z = c;                      \
+    outVect.x = a;                      \
+    outVect.y = b;                      \
+    outVect.z = c;                      \
 }
 /// Find the equivalent unit vector v
 ///
@@ -90,18 +120,18 @@ outVect.z = c;                      \
 /// find a cross product of two vectors
 ///
 #define VECT_CROSS(aVect,bVect,outVect) {                       \
-SPVector ___tmp ;                                           \
-___tmp.x = aVect.y*bVect.z - aVect.z*bVect.y;               \
-___tmp.y = aVect.z*bVect.x - aVect.x*bVect.z;               \
-___tmp.z = aVect.x*bVect.y - aVect.y*bVect.x;               \
-outVect = ___tmp ;                                          \
+    SPVector ___tmp ;                                           \
+    ___tmp.x = aVect.y*bVect.z - aVect.z*bVect.y;               \
+    ___tmp.y = aVect.z*bVect.x - aVect.x*bVect.z;               \
+    ___tmp.z = aVect.x*bVect.y - aVect.y*bVect.x;               \
+    outVect = ___tmp ;                                          \
 }
 /// Multiply a vector by a constant
 ///
 #define VECT_SCMULT(inVect,inScal,outVect)  {   \
-outVect.x = (inVect.x)*inScal;              \
-outVect.y = (inVect.y)*inScal;              \
-outVect.z = (inVect.z)*inScal;              \
+    outVect.x = (inVect.x)*inScal;              \
+    outVect.y = (inVect.y)*inScal;              \
+    outVect.z = (inVect.z)*inScal;              \
 }
 /// Find the modulus (or magnitdue) of a vector
 ///
@@ -114,9 +144,9 @@ outVect.z = (inVect.z)*inScal;              \
 /// Subtract two vectors
 ///
 #define VECT_SUB(aVect,bVect,outVect) {                 \
-outVect.x = aVect.x - bVect.x;                      \
-outVect.y = aVect.y - bVect.y;                      \
-outVect.z = aVect.z - bVect.z;                      \
+    outVect.x = aVect.x - bVect.x;                      \
+    outVect.y = aVect.y - bVect.y;                      \
+    outVect.z = aVect.z - bVect.z;                      \
 }
 
 // Forward declarations here
@@ -127,21 +157,21 @@ SPCmplx G_func3(double gamma);
 SPCmplx G_func2(double gamma);
 SPCmplx G_func1(double gamma);
 SPCmplx G_func0(double gamma);
-void matmul(__global double *A,double *B, double *O, int Ax, int Ay,int Bx, int By);
+void matmul(double *A,double *B, double *O, int Ax, int Ay,int Bx, int By);
 
 static constant SPVector zz_hat = {0.0, 0.0, 1.0};
 static constant double Z0 = 376.99111843077516; // Impedence of free space = 120 * PI
 
-__kernel void POField(__global triangle * tris,    // input array of triangles
-                       __global Ray *rays,         // input array of rays
-                       int nrays,                  // input number of incident rays to process
-                      __global SPVector *hits,     // input array of hit points for each ray
-                       SPVector RxPnt,             // input receiver location to calc field at
-                       double k,                   // input k=2*PI/lambda
-                       SPVector Vdir,              // input unit vector defining V pol at receiver
-                       SPVector Hdir,              // input unit vector defining H pol at receiver
-                      __global SPCmplx *EsVs,      // output array of scattered field strengths for V pol
-                      __global SPCmplx *EsHs)      // output array of scattered field strengths for H pol
+__kernel void POField(__global Triangle * tris, // input array of triangles
+                      __global Ray *rays,       // input array of rays
+                      int nrays,                // input number of incident rays to process
+                      __global HitPoint *hitpoints,  // input array of hit points for each ray
+                      SPVector RxPnt,           // input receiver location to calc field at
+                      double k,                 // input k=2*PI/lambda
+                      SPVector Vdir,            // input unit vector defining V pol at receiver
+                      SPVector Hdir,            // input unit vector defining H pol at receiver
+                      __global SPCmplx *EsVs,   // output array of scattered field strengths for V pol
+                      __global SPCmplx *EsHs)   // output array of scattered field strengths for H pol
 {
 
     int ind,n ;
@@ -149,6 +179,9 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
 
     if (ind >=0 && ind < nrays ) {
 
+//        printf("[%d] Vdir : %f,%f,%f\n",ind,Vdir.x,Vdir.y,Vdir.z);
+//        printf("[%d] Hdir : %f,%f,%f\n",ind,Hdir.x,Hdir.y,Hdir.z);
+        
         // Some notes on variable terminology used in this function
         //
         // _il = incident ray in local coords
@@ -171,6 +204,13 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         double Dq_minus_Dp, Eiphi_l, Eitheta_l, Rs, GamParr, GamPerp ;
         double J_l[3], J_g[3],J_par, J_per;
         double phs_ig, r_ig;
+        double globalToLocalMat[9];
+        double localToGlobalMat[9];
+        
+        for(int i=0; i<9; i++)globalToLocalMat[i] = tris[hitpoints[ind].tri].globalToLocalMat[i];
+        for(int i=0; i<9; i++)localToGlobalMat[i] = tris[hitpoints[ind].tri].localToGlobalMat[i];
+        
+        int matId;
         
         SPVector uvw_sg, obsDir, rayDist, Raydir_l ;
         SPVector Eil, Eig, theta_l_hat, phi_l_hat, Jg;
@@ -183,11 +223,11 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         
         // r is the magnitude of the vector defining the observation point in global coordinates (not the range)
         //
-        VECT_SUB(RxPnt, hits[ind], obsDir);
+        VECT_SUB(RxPnt, hitpoints[ind].hit, obsDir);
         VECT_NORM(obsDir, obsDir);
         r  = VECT_MAG(RxPnt);
-        VECT_SUB(hits[ind], rays[ind].org, rayDist);
-        r_ig   = VECT_MAG(rayDist);
+        VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
+        r_ig   = VECT_MAG(rayDist) + rays[ind].len;
         phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
         
         // Sort out the direction cosines for this ray, hitpoint and observation point
@@ -205,16 +245,16 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         u  = uvw_sg.x ;
         v  = uvw_sg.y ;
         w  = uvw_sg.z ;
-        x1 = tris[ind].AA.x ;
-        y1 = tris[ind].AA.y ;
-        z1 = tris[ind].AA.z ;
-        x2 = tris[ind].BB.x ;
-        y2 = tris[ind].BB.y ;
-        z2 = tris[ind].BB.z ;
-        x3 = tris[ind].CC.x ;
-        y3 = tris[ind].CC.y ;
-        z3 = tris[ind].CC.z ;
-        A  = tris[ind].area ;
+        x1 = tris[hitpoints[ind].tri].AA.x;
+        y1 = tris[hitpoints[ind].tri].AA.y ;
+        z1 = tris[hitpoints[ind].tri].AA.z ;
+        x2 = tris[hitpoints[ind].tri].BB.x ;
+        y2 = tris[hitpoints[ind].tri].BB.y ;
+        z2 = tris[hitpoints[ind].tri].BB.z ;
+        x3 = tris[hitpoints[ind].tri].CC.x ;
+        y3 = tris[hitpoints[ind].tri].CC.y ;
+        z3 = tris[hitpoints[ind].tri].CC.z ;
+        A  = tris[hitpoints[ind].tri].area ;
         
         Cp = Cq = 0;
         C0 = 1;
@@ -481,7 +521,7 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         uvw_ig[1] = -rays[ind].dir.y;
         uvw_ig[2] = -rays[ind].dir.z;
         
-        matmul(tris[ind].globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
+        matmul(globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
         
         sin_theta_il = sqrt(uvw_il[0]*uvw_il[0] +  uvw_il[1] * uvw_il[1] ) ;
         cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
@@ -502,7 +542,7 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         E_ig[0] = Eig.x ;
         E_ig[1] = Eig.y ;
         E_ig[2] = Eig.z ;
-        matmul(tris[ind].globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
+        matmul(globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
         VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
         if(fabs(VECT_DOT(zz_hat, Raydir_l)) >=0.99){
             VECT_CREATE(1, 0, 0, phi_l_hat) ;
@@ -517,7 +557,8 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         
         // Calculate Gamma_parallel and Gamma_perpendicular
         //
-        Rs      = tris[ind].Rs ;
+        matId   = tris[hitpoints[ind].tri].matId ;
+        Rs      = materialProperties[matId].resistivity ;
         GamParr = -1.0 * Z0 * cos_theta_il / (2*Rs + Z0*cos_theta_il) ;
         GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos_theta_il + Z0);
         
@@ -527,7 +568,7 @@ __kernel void POField(__global triangle * tris,    // input array of triangles
         J_l[0] = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * cos_theta_il ;
         J_l[1] = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * cos_theta_il ;
         J_l[2] = 0.0  ;
-        matmul(tris[ind].localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;
+        matmul(localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;
         VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
         
         // Find the component of the surface current in the parallel polarisation
@@ -646,7 +687,7 @@ SPCmplx G_func4(double gamma){
 //  int Bx  - number of columns in B
 //  int By  - number of rows in B
 //
-void matmul(__global double *A, double *B, double *O, int Ax, int Ay,int Bx, int By)
+void matmul(double *A, double *B, double *O, int Ax, int Ay,int Bx, int By)
 {
     // Ax must be equal to By !!!
     //

@@ -43,9 +43,9 @@
 //
 //***************************************************************************
 
-#ifndef __GOSS__ecef2Scene__
-#define __GOSS__ecef2Scene__
-#include <SIlib.h>
+#ifndef __SARCASTIC__ecef2Scene__
+#define __SARCASTIC__ecef2Scene__
+#include <SIlib/SIlib.h>
 
 void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint);
 

@@ -51,7 +51,7 @@
 #else
 #include <CL/opencl.h>
 #endif
-#include "SIlib.h"
+#include <SIlib/SIlib.h>
 #ifndef CL_DEVICE_COMPUTE_CAPABILITY_MAJOR_NV
 #define CL_DEVICE_COMPUTE_CAPABILITY_MAJOR_NV       0x4000
 #define CL_DEVICE_COMPUTE_CAPABILITY_MINOR_NV       0x4001

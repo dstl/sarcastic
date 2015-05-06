@@ -53,7 +53,8 @@ int buildKernel(cl_context context,             // OpenCL Context. Already creat
     cl_int err ;
     size_t warpSize;
     
-    sprintf(compilerOptions, "-Werror -I/Users/darren/Development/sarcastic/sarcastic/kernels/") ;
+//    sprintf(compilerOptions, "-Werror -I/Users/darren/Development/sarcastic/sarcastic/kernels/") ;
+    sprintf(compilerOptions, "-I/Users/darren/Development/sarcastic/sarcastic/kernels/") ;
     
     *program = CL_CHECK_ERR(clCreateProgramWithSource(context, 1, (const char **) &kernelCodePath, NULL, &_err));
     

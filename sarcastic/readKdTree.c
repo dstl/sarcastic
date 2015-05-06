@@ -39,22 +39,21 @@
 //***************************************************************************
 
 #include "readKdTree.h"
-#include "materialProperties.h"
+//#include "materialProperties.h"
 
 void readKdTree(const char *filename,
                 AABB * SceneBoundingBox,
                 int * nTriangles,
-                Triangle ** Triangles,
+                ATS ** accelTriangles,
+                Triangle **triangles,
                 int * nLeaves,
                 int *** triangleLists,
                 int  *nTreeNodes,
-                KdData ** KdTree,
-                TriCoords **tricos ) {
+                KdData ** KdTree) {
     
     FILE *fp;
     int i,trisInLeaf,tex;
     double d,nd_u,nd_v,k,kbu,kbv,kbd,kcu,kcv,kcd;
-    double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz ;
     
     fp=fopen(filename, "r");
     if (fp==NULL){
@@ -92,7 +91,7 @@ void readKdTree(const char *filename,
         exit(-1);
     }
     
-    *Triangles = (Triangle *)sp_malloc(sizeof(Triangle) * *nTriangles) ;
+    *accelTriangles = (ATS *)sp_malloc(sizeof(ATS) * *nTriangles) ;
     
     for (i=0; i< *nTriangles; i++){
         
@@ -140,18 +139,18 @@ void readKdTree(const char *filename,
             printf("ERROR: Failed to read tex for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        (*Triangles)[i].triNum = i;
-        (*Triangles)[i].d      = d;
-        (*Triangles)[i].nd_u   = nd_u;
-        (*Triangles)[i].nd_v   = nd_v;
-        (*Triangles)[i].k      = k;
-        (*Triangles)[i].kbu    = kbu;
-        (*Triangles)[i].kbv    = kbv;
-        (*Triangles)[i].kbd    = kbd;
-        (*Triangles)[i].kcu    = kcu;
-        (*Triangles)[i].kcv    = kcv;
-        (*Triangles)[i].kcd    = kcd;
-        (*Triangles)[i].matInd = tex;
+        (*accelTriangles)[i].triNum = i;
+        (*accelTriangles)[i].d      = d;
+        (*accelTriangles)[i].nd_u   = nd_u;
+        (*accelTriangles)[i].nd_v   = nd_v;
+        (*accelTriangles)[i].k      = k;
+        (*accelTriangles)[i].kbu    = kbu;
+        (*accelTriangles)[i].kbv    = kbv;
+        (*accelTriangles)[i].kbd    = kbd;
+        (*accelTriangles)[i].kcu    = kcu;
+        (*accelTriangles)[i].kcv    = kcv;
+        (*accelTriangles)[i].kcd    = kcd;
+        (*accelTriangles)[i].matInd = tex;
     }
     
 //    if(fread(nTextures, sizeof(int), 1, fp)!=1){
@@ -231,54 +230,101 @@ void readKdTree(const char *filename,
         }
     }
     
-    *tricos = (TriCoords *)malloc(sizeof(TriCoords) * *nTriangles);
-    if (*tricos == NULL) {
-        printf("ERROR: Malloc failed for triangle coordinates. Requested %lu bytes\n",sizeof(tricos) * *nTriangles);
-        exit(-1);
-    }
+    *triangles = (Triangle *)sp_malloc(sizeof(Triangle) * *nTriangles);
+    double dub;
+    int ind;
     for (i=0; i< *nTriangles; i++){
-        if(fread(&Ax, sizeof(double), 1, fp)!=1){
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read A for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&Ay, sizeof(double), 1, fp)!=1){
+        (*triangles)[i].AA.x  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read A for triangle %d from file %s\n",i,filename);
             exit(-1);
-        }if(fread(&Az, sizeof(double), 1, fp)!=1){
+        }
+        (*triangles)[i].AA.y  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read A for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&Bx, sizeof(double), 1, fp)!=1){
+        (*triangles)[i].AA.z  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read B for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&By, sizeof(double), 1, fp)!=1){
+        (*triangles)[i].BB.x  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read B for triangle %d from file %s\n",i,filename);
             exit(-1);
-        }if(fread(&Bz, sizeof(double), 1, fp)!=1){
+        }
+        (*triangles)[i].BB.y  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read B for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&Cx, sizeof(double), 1, fp)!=1){
+        (*triangles)[i].BB.z  = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read C for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&Cy, sizeof(double), 1, fp)!=1){
-            printf("ERROR: Failed to read C for triangle %d from file %s\n",i,filename);
-            exit(-1);
-        }if(fread(&Cz, sizeof(double), 1, fp)!=1){
+        (*triangles)[i].CC.x = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
             printf("ERROR: Failed to read C for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        (*tricos)[i].A.x  = Ax ;
-        (*tricos)[i].A.y  = Ay ;
-        (*tricos)[i].A.z  = Az ;
-        (*tricos)[i].B.x  = Bx ;
-        (*tricos)[i].B.y  = By ;
-        (*tricos)[i].B.z  = Bz ;
-        (*tricos)[i].Cc.x = Cx ;
-        (*tricos)[i].Cc.y = Cy ;
-        (*tricos)[i].Cc.z = Cz ;
+        (*triangles)[i].CC.y = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
+            printf("ERROR: Failed to read C for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].CC.z = dub ;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
+            printf("ERROR: Failed to read N for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].NN.x = dub;
+
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
+            printf("ERROR: Failed to read N for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].NN.y = dub;
+        
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
+            printf("ERROR: Failed to read N for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].NN.z = dub ;
+        
+        if(fread(&dub, sizeof(double), 1, fp)!=1){
+            printf("ERROR: Failed to read Area for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].area = dub ;
+        
+        for(int j=0; j<9; j++){
+            fread(&dub, sizeof(double), 1, fp);
+            (*triangles)[i].globalToLocalMat[j] = dub;
+        }
+        for(int j=0; j<9; j++){
+            fread(&dub, sizeof(double), 1, fp);
+            (*triangles)[i].localToGlobalMat[j] = dub;
+        }
+        if(fread(&ind, sizeof(int), 1, fp)!=1){
+            printf("ERROR: Failed to read material ID for triangle %d from file %s\n",i,filename);
+            exit(-1);
+        }
+        (*triangles)[i].matId = ind;
     }
 
     fclose(fp);

@@ -299,6 +299,7 @@ int oclGetPlatformID(OCLPlatform *platform, SPStatus *status)
             if (ciErrNum != CL_SUCCESS) {
                 if(status->debug > 10)printf("ERROR: Failed to get platform IDs\n");
                 status->status = ciErrNum ;
+                free(clPlatformIDs);
                 return status->status ;
             }
             for(cl_uint i = 0; i < num_platforms; ++i){
@@ -353,6 +354,7 @@ int best2DWorkSize(cl_kernel Kernel, cl_device_id device, long X, long Y, int *l
     if (err != CL_SUCCESS){
         if(status->debug>=10)printf("Error: Failed to retrieve kernel work group Size! %d\n", err);
         status->status = err ;
+        free(maxSizes);
         return ( status->status );
     }
     
@@ -366,6 +368,7 @@ int best2DWorkSize(cl_kernel Kernel, cl_device_id device, long X, long Y, int *l
     if (err != CL_SUCCESS){
         if(status->debug>=10)printf("Error: Failed to retrieve kernel work group info! %d\n", err);
         status->status = err ;
+        free(maxSizes);
         return ( status->status );
     }
 
@@ -374,6 +377,7 @@ int best2DWorkSize(cl_kernel Kernel, cl_device_id device, long X, long Y, int *l
     if (err != CL_SUCCESS){
         if(status->debug>=10)printf("Error: Failed to retrieve kernel warp info! %d\n", err);
         status->status = err ;
+        free(maxSizes);
         return ( status->status );
     }
     
@@ -405,6 +409,7 @@ int best2DWorkSize(cl_kernel Kernel, cl_device_id device, long X, long Y, int *l
     if ( *localXSize > maxSizes[0]){
         if(status->debug>=10)printf("Error : max work items per dimension smaller than calculated local X Size\n");
         status->status = OPENCL_WORKSIZE_ERROR ;
+        free(maxSizes);
         return ( status->status );
     }
     

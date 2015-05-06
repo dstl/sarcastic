@@ -36,7 +36,7 @@
 #import "MVectorObjc.h"
 #import "KdTree.h"
 #import "Triangle.h"
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
 #define SHOWOUTPUT 1
@@ -96,7 +96,7 @@ int main (int argc, const char * argv[])
         
         for (int itri=0; itri < ntri; itri++ ) {
             int val ;
-            double AAx,AAy,AAz,BBx,BBy,BBz,CCx,CCy,CCz,NNx,NNy,NNz ;
+            double AAx,AAy,AAz,BBx,BBy,BBz,CCx,CCy,CCz,NNx,NNy,NNz,area,x ;
             char mat[MATBYTES] ;
             fread(&val, sizeof(int),    1, fpin) ;
             fread(&AAx, sizeof(double), 1, fpin) ;
@@ -117,6 +117,23 @@ int main (int argc, const char * argv[])
             MVector  * NN  = [MVector MVectorWithValuesX:NNx Y:NNy Z:NNz] ;
             Triangle * tri = [Triangle TriangleWithVerticesAa:AA Bb:BB Cc:CC andNormal:NN ];
             [tri setTriId:val] ;
+            
+            // Read Area - don't need it yet just read it in
+            //
+            fread(&area,sizeof(double), 1, fpin) ;
+            
+            // Same for the globalToLocalMatrix
+            //
+            for (int j=0; j<9; j++){
+                fread(&x, sizeof(double), 1, fpin);
+            }
+            
+            // Same for the LocalToGlobalMatrix
+            //
+            for (int j=0; j<9; j++){
+                fread(&x, sizeof(double), 1, fpin);
+            }
+
             fread(&mat, sizeof(char), materialBytes, fpin) ;
             NSString *strFromFile = [[NSString stringWithUTF8String: mat] uppercaseString];
             NSString *matStr ;

@@ -262,6 +262,7 @@ typedef struct Ray {
     SPVector dir;    // Direction
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
+    SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
 typedef struct rangeAndPower {
@@ -276,7 +277,7 @@ typedef struct Hit {
     double v;
 } Hit;
 
-typedef struct Triangle {
+typedef struct ATS {
     int  triNum;    // Triangle ID
     double d;         // Constant of plane equation
     double nd_u;      // Normal.u / normal.k
@@ -289,7 +290,7 @@ typedef struct Triangle {
     double kcv;
     double kcd;
     int textureInd;
-} Triangle;
+} ATS;
 
 typedef struct TriCoords {
     SPVector A ;      // Cartesian coordinates of triangle
@@ -440,9 +441,9 @@ OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max)
 
 #define EPSILON          ((double) 0.000001)
 
-void Intersect(__global Triangle *tri, __global Ray *ray, __global Hit *hit);
+void Intersect(__global ATS *tri, __global Ray *ray, __global Hit *hit);
 
-void Intersect(__global Triangle *tri, __global Ray *ray, __global Hit *hit){
+void Intersect(__global ATS *tri, __global Ray *ray, __global Hit *hit){
     unsigned int modulo[5];
     modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
     
@@ -489,7 +490,7 @@ void Intersect(__global Triangle *tri, __global Ray *ray, __global Hit *hit){
 __kernel void stacklessTraverse(__global KdData * KdTree,
                                 __global int * triangleListData,
                                 __global int * triangleListPtrs,
-                                __global Triangle * Triangles,
+                                __global ATS * accelTriangles,
                                 const    AABB SceneBoundingBox,
                                 const    int nRays,                 // Number of rays
                                 __global Ray * rays,                // array of rays to process.
@@ -593,7 +594,7 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             hits[ind].trinum = NOINTERSECTION ;
 
             for (i=0; i<trisInLeaf; i++){
-                __global Triangle * tri = &(Triangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
+                __global ATS * tri = &(accelTriangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
                 Intersect(tri, &(rays[ind]), &(hits[ind]));
             }
             

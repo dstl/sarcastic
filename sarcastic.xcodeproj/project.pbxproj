@@ -12,14 +12,10 @@
 		950ABC2D1A5C31740085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
 		950ABC2E1A5C31A10085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
 		950ABC2F1A5C39B10085982A /* libSIlib-1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950635CC19F7972C00B83F4B /* libSIlib-1.1.a */; };
-		950ABC301A5C3B2A0085982A /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
-		9516175019DD81B30004C4F0 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
-		9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
 		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
 		9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175619DECEDE0004C4F0 /* main_POTriangle.c */; };
 		9516175B19DED0550004C4F0 /* POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175A19DED0550004C4F0 /* POTriangle.c */; };
-		9516175D19DED74F0004C4F0 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		953375E219D927C100DE1C46 /* KdTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E019D927C100DE1C46 /* KdTree.m */; };
 		953375E419D927DA00DE1C46 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E319D927DA00DE1C46 /* main.m */; };
 		953375EC19D9293200DE1C46 /* AABB.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E919D9293200DE1C46 /* AABB.m */; };
@@ -27,7 +23,6 @@
 		953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
 		953C58F519D33056006D5866 /* libSIlib-1.1-2-5e675ac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */; };
 		953C58F619D3305E006D5866 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
-		953C58F719D3C944006D5866 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 953C58D619D316CF006D5866 /* Triangle.m */; };
 		953C58FF19D41F5B006D5866 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 953C58FE19D41F5B006D5866 /* main.c */; };
 		953C590119D41F5B006D5866 /* triDecomp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 953C590019D41F5B006D5866 /* triDecomp.1 */; };
 		953C590719D42966006D5866 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
@@ -59,15 +54,20 @@
 		955F773F19CF1D4700BF3039 /* colladaToTriFile.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */; };
 		955F774419CF40A300BF3039 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		955F774719CF40E000BF3039 /* COLScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774619CF40E000BF3039 /* COLScene.m */; };
-		955F775019CF417800BF3039 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 955F774F19CF417800BF3039 /* MVectorObjc.m */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95B9D7E11AEA64D300CEA000 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */; };
+		95B9D7E21AEA64D300CEA000 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DE1AEA649000CEA000 /* radarMaterial.m */; };
+		95B9D7E31AEA64D300CEA000 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E01AEA649000CEA000 /* Triangle.m */; };
+		95B9D7E51AEA689F00CEA000 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */; };
+		95B9D7E61AEA68B500CEA000 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E01AEA649000CEA000 /* Triangle.m */; };
+		95B9D7E91AEA6CF900CEA000 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E71AEA6CC400CEA000 /* matrixMultiplication.c */; };
+		95B9D7ED1AEA730B00CEA000 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E71AEA6CC400CEA000 /* matrixMultiplication.c */; };
 		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
-		95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175C19DED74F0004C4F0 /* matrixMultiplication.c */; };
 		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
 		95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F276EA1A35C13A00FF9339 /* oclPOField.c */; };
 		95F276EC1A36006300FF9339 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
@@ -208,8 +208,6 @@
 		9516175619DECEDE0004C4F0 /* main_POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_POTriangle.c; sourceTree = "<group>"; };
 		9516175919DECFA20004C4F0 /* POTriangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POTriangle.h; sourceTree = "<group>"; };
 		9516175A19DED0550004C4F0 /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
-		9516175C19DED74F0004C4F0 /* matrixMultiplication.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrixMultiplication.c; path = ../matrixMultiplication.c; sourceTree = "<group>"; };
-		9516175E19DED7690004C4F0 /* matrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = matrixMultiplication.h; path = ../matrixMultiplication.h; sourceTree = "<group>"; };
 		9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Chatzigeorgiadis - PO RCS Prediction.pdf"; sourceTree = "<group>"; };
 		9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DosSantos-Ludwig with barycentrics.pdf"; sourceTree = "<group>"; };
 		9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Efficient Evaluation of Radiation Integrals.pdf"; sourceTree = "<group>"; };
@@ -235,8 +233,6 @@
 		953375FD19D929C400DE1C46 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = banner.c; sourceTree = "<group>"; };
 		953375FF19D929D500DE1C46 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
 		9533760019D929E600DE1C46 /* Sadilac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sadilac.h; sourceTree = "<group>"; };
-		953C58D519D316CF006D5866 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
-		953C58D619D316CF006D5866 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Triangle.m; sourceTree = "<group>"; };
 		953C58DC19D32D1D006D5866 /* testImport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testImport; sourceTree = BUILT_PRODUCTS_DIR; };
 		953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-2-5e675ac.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-2-5e675ac.a"; sourceTree = "<group>"; };
 		953C58FC19D41F5B006D5866 /* triDecomp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = triDecomp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -249,7 +245,6 @@
 		953C590E19D72734006D5866 /* ranf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ranf.c; sourceTree = "<group>"; };
 		953C591019D72794006D5866 /* ranf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ranf.h; sourceTree = "<group>"; };
 		953C591119D72865006D5866 /* pmath_rng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pmath_rng.c; path = ../pmath_rng.c; sourceTree = "<group>"; };
-		953C591319D7EC43006D5866 /* materialProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialProperties.h; sourceTree = "<group>"; };
 		953C591819D7F8C9006D5866 /* buildKDTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = buildKDTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		953C591E19D7F8C9006D5866 /* buildKDTree-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "buildKDTree-Prefix.pch"; sourceTree = "<group>"; };
 		953C591F19D7F8C9006D5866 /* buildKDTree.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = buildKDTree.1; sourceTree = "<group>"; };
@@ -265,27 +260,27 @@
 		953FA1C818F4289400EAD4F3 /* GenGitVersion.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		953FA1C918F4289400EAD4F3 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getUserInput.c; sourceTree = "<group>"; };
 		953FA1CA18F4289400EAD4F3 /* sarcastic.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = sarcastic.1; sourceTree = "<group>"; };
-		953FA1CC18F4289400EAD4F3 /* buildShadowRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = buildShadowRays.cl; sourceTree = "<group>"; };
+		953FA1CC18F4289400EAD4F3 /* buildShadowRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = buildShadowRays.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		953FA1CD18F4289400EAD4F3 /* clipToAABB.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = clipToAABB.cl; sourceTree = "<group>"; };
-		953FA1CE18F4289400EAD4F3 /* GOSSKernelCode.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = GOSSKernelCode.cl; sourceTree = "<group>"; };
-		953FA1CF18F4289400EAD4F3 /* intersect.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = intersect.cl; sourceTree = "<group>"; };
+		953FA1CE18F4289400EAD4F3 /* GOSSKernelCode.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = GOSSKernelCode.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
+		953FA1CF18F4289400EAD4F3 /* intersect.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = intersect.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		953FA1D018F4289400EAD4F3 /* randomRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = randomRays.cl; sourceTree = "<group>"; };
-		953FA1D118F4289400EAD4F3 /* reflectionPower.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectionPower.cl; sourceTree = "<group>"; };
-		953FA1D218F4289400EAD4F3 /* reflectRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectRays.cl; sourceTree = "<group>"; };
+		953FA1D118F4289400EAD4F3 /* reflectionPower.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = reflectionPower.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
+		953FA1D218F4289400EAD4F3 /* reflectRays.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = reflectRays.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		953FA1D318F4289400EAD4F3 /* SPVector.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = SPVector.cl; sourceTree = "<group>"; };
-		953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = stacklessTraverse.cl; sourceTree = "<group>"; };
+		953FA1D418F4289400EAD4F3 /* stacklessTraverse.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = stacklessTraverse.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		953FA1D518F4289400EAD4F3 /* structures.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = structures.cl; sourceTree = "<group>"; };
 		953FA1D618F4289400EAD4F3 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
 		953FA1D718F4289400EAD4F3 /* oclBuildShadowRays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclBuildShadowRays.c; sourceTree = "<group>"; };
 		953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclKdTreeHits.c; sourceTree = "<group>"; };
 		953FA1D918F4289400EAD4F3 /* oclRandomRays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclRandomRays.c; sourceTree = "<group>"; };
-		953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclRayTrace.c; sourceTree = "<group>"; };
+		953FA1DA18F4289400EAD4F3 /* oclRayTrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = oclRayTrace.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		953FA1DB18F4289400EAD4F3 /* oclReflect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflect.c; sourceTree = "<group>"; };
 		953FA1DC18F4289400EAD4F3 /* oclReflectionPower.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclReflectionPower.c; sourceTree = "<group>"; };
-		953FA1DD18F4289400EAD4F3 /* readKdTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readKdTree.c; sourceTree = "<group>"; };
-		953FA1DE18F4289400EAD4F3 /* readKdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readKdTree.h; sourceTree = "<group>"; };
-		953FA1DF18F4289400EAD4F3 /* sarcastic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sarcastic.c; sourceTree = "<group>"; };
-		953FA1E018F4289400EAD4F3 /* sarcastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sarcastic.h; sourceTree = "<group>"; };
+		953FA1DD18F4289400EAD4F3 /* readKdTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = readKdTree.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		953FA1DE18F4289400EAD4F3 /* readKdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = readKdTree.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		953FA1DF18F4289400EAD4F3 /* sarcastic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = sarcastic.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		953FA1E018F4289400EAD4F3 /* sarcastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = sarcastic.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		953FA1E118F4289400EAD4F3 /* threadBeamForm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadBeamForm.c; sourceTree = "<group>"; };
 		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
@@ -300,19 +295,24 @@
 		955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = colladaToTriFile.1; sourceTree = "<group>"; };
 		955F774519CF40E000BF3039 /* COLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COLScene.h; sourceTree = "<group>"; };
 		955F774619CF40E000BF3039 /* COLScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COLScene.m; sourceTree = "<group>"; };
-		955F774819CF410100BF3039 /* radarMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = radarMaterial.h; sourceTree = "<group>"; };
-		955F774919CF410100BF3039 /* radarMaterial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = radarMaterial.m; sourceTree = "<group>"; };
-		955F774E19CF417800BF3039 /* MVectorObjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVectorObjc.h; sourceTree = "<group>"; };
-		955F774F19CF417800BF3039 /* MVectorObjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVectorObjc.m; sourceTree = "<group>"; };
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d.a"; sourceTree = "<group>"; };
+		95B9D7DB1AEA649000CEA000 /* MVectorObjc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVectorObjc.h; sourceTree = "<group>"; };
+		95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVectorObjc.m; sourceTree = "<group>"; };
+		95B9D7DD1AEA649000CEA000 /* radarMaterial.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = radarMaterial.h; sourceTree = "<group>"; };
+		95B9D7DE1AEA649000CEA000 /* radarMaterial.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = radarMaterial.m; sourceTree = "<group>"; };
+		95B9D7DF1AEA649000CEA000 /* Triangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
+		95B9D7E01AEA649000CEA000 /* Triangle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Triangle.m; sourceTree = "<group>"; };
+		95B9D7E41AEA669600CEA000 /* materialProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialProperties.h; sourceTree = "<group>"; };
+		95B9D7E71AEA6CC400CEA000 /* matrixMultiplication.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = matrixMultiplication.c; sourceTree = "<group>"; };
+		95B9D7E81AEA6CC400CEA000 /* matrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrixMultiplication.h; sourceTree = "<group>"; };
 		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
-		95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = reflectionPowerPO.cl; sourceTree = "<group>"; };
+		95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = reflectionPowerPO.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D5E16A192CA57E001ABC11 /* main_POCalculation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main_POCalculation.c; sourceTree = "<group>"; };
 		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
@@ -396,11 +396,12 @@
 				95C1708C18C9CC9800651D97 /* libfftw3.a */,
 				957B840717AD25C600B963DE /* libreadline.dylib */,
 				957B840517AD255E00B963DE /* libexpat.dylib */,
-				953FA1BE18F4289400EAD4F3 /* sarcastic */,
-				95D5E169192CA57E001ABC11 /* POTest */,
+				95B9D7DA1AEA63F200CEA000 /* Common */,
 				955F773919CF1D4700BF3039 /* colladaToTriFile */,
 				953C58FD19D41F5B006D5866 /* triDecomp */,
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
+				953FA1BE18F4289400EAD4F3 /* sarcastic */,
+				95D5E169192CA57E001ABC11 /* POTest */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
 				9526A0B919E1DAF5003675FB /* Documents */,
@@ -539,7 +540,6 @@
 		953C58FD19D41F5B006D5866 /* triDecomp */ = {
 			isa = PBXGroup;
 			children = (
-				953C591319D7EC43006D5866 /* materialProperties.h */,
 				953C58FE19D41F5B006D5866 /* main.c */,
 				953C590D19D6BCB8006D5866 /* boxMullerRandom.h */,
 				953C590B19D6BC08006D5866 /* boxMullerRandom.c */,
@@ -615,8 +615,8 @@
 				953FA1E118F4289400EAD4F3 /* threadBeamForm.c */,
 				953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */,
 				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
-				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				95492F391A74EFC90061FCF7 /* oclPOField.c */,
+				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				955F772B19CF0FA500BF3039 /* Utils */,
 				953FA1CB18F4289400EAD4F3 /* kernels */,
 			);
@@ -668,15 +668,9 @@
 		955F773919CF1D4700BF3039 /* colladaToTriFile */ = {
 			isa = PBXGroup;
 			children = (
-				953C58D519D316CF006D5866 /* Triangle.h */,
-				953C58D619D316CF006D5866 /* Triangle.m */,
 				955F773A19CF1D4700BF3039 /* main.m */,
 				955F774519CF40E000BF3039 /* COLScene.h */,
 				955F774619CF40E000BF3039 /* COLScene.m */,
-				955F774819CF410100BF3039 /* radarMaterial.h */,
-				955F774919CF410100BF3039 /* radarMaterial.m */,
-				955F774E19CF417800BF3039 /* MVectorObjc.h */,
-				955F774F19CF417800BF3039 /* MVectorObjc.m */,
 				955F773E19CF1D4700BF3039 /* colladaToTriFile.1 */,
 				955F773C19CF1D4700BF3039 /* Supporting Files */,
 			);
@@ -691,11 +685,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		95B9D7DA1AEA63F200CEA000 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				95B9D7E71AEA6CC400CEA000 /* matrixMultiplication.c */,
+				95B9D7E81AEA6CC400CEA000 /* matrixMultiplication.h */,
+				95B9D7E41AEA669600CEA000 /* materialProperties.h */,
+				95B9D7DB1AEA649000CEA000 /* MVectorObjc.h */,
+				95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */,
+				95B9D7DD1AEA649000CEA000 /* radarMaterial.h */,
+				95B9D7DE1AEA649000CEA000 /* radarMaterial.m */,
+				95B9D7DF1AEA649000CEA000 /* Triangle.h */,
+				95B9D7E01AEA649000CEA000 /* Triangle.m */,
+			);
+			name = Common;
+			path = sarcastic/Common;
+			sourceTree = "<group>";
+		};
 		95D5E169192CA57E001ABC11 /* POTest */ = {
 			isa = PBXGroup;
 			children = (
-				9516175C19DED74F0004C4F0 /* matrixMultiplication.c */,
-				9516175E19DED7690004C4F0 /* matrixMultiplication.h */,
 				9516175619DECEDE0004C4F0 /* main_POTriangle.c */,
 				95F276EA1A35C13A00FF9339 /* oclPOField.c */,
 				9516175A19DED0550004C4F0 /* POTriangle.c */,
@@ -836,12 +845,12 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9504211217A24F9400A076FC /* sarcastic */,
-				95D5E167192CA57E001ABC11 /* POTest */,
 				955F773419CF1D4700BF3039 /* colladaToTriFile */,
-				953C58DB19D32D1D006D5866 /* testImport */,
 				953C58FB19D41F5B006D5866 /* triDecomp */,
 				953C591719D7F8C9006D5866 /* buildKDTree */,
+				9504211217A24F9400A076FC /* sarcastic */,
+				95D5E167192CA57E001ABC11 /* POTest */,
+				953C58DB19D32D1D006D5866 /* testImport */,
 			);
 		};
 /* End PBXProject section */
@@ -936,10 +945,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				950ABC301A5C3B2A0085982A /* matrixMultiplication.c in Sources */,
+				95B9D7ED1AEA730B00CEA000 /* matrixMultiplication.c in Sources */,
+				95B9D7E61AEA68B500CEA000 /* Triangle.m in Sources */,
+				95B9D7E51AEA689F00CEA000 /* MVectorObjc.m in Sources */,
 				9516175219DD83070004C4F0 /* PolyClip.c in Sources */,
-				9516175019DD81B30004C4F0 /* Triangle.m in Sources */,
-				9516175119DD81B30004C4F0 /* MVectorObjc.m in Sources */,
 				953375E419D927DA00DE1C46 /* main.m in Sources */,
 				953375E219D927C100DE1C46 /* KdTree.m in Sources */,
 				953375FE19D929C400DE1C46 /* banner.c in Sources */,
@@ -951,9 +960,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95D0DACD19F1ACEE00DBB831 /* matrixMultiplication.c in Sources */,
-				953C58F719D3C944006D5866 /* Triangle.m in Sources */,
-				955F775019CF417800BF3039 /* MVectorObjc.m in Sources */,
+				95B9D7E91AEA6CF900CEA000 /* matrixMultiplication.c in Sources */,
+				95B9D7E11AEA64D300CEA000 /* MVectorObjc.m in Sources */,
+				95B9D7E21AEA64D300CEA000 /* radarMaterial.m in Sources */,
+				95B9D7E31AEA64D300CEA000 /* Triangle.m in Sources */,
 				955F774719CF40E000BF3039 /* COLScene.m in Sources */,
 				955F773B19CF1D4700BF3039 /* main.m in Sources */,
 			);
@@ -964,7 +974,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				95F276EC1A36006300FF9339 /* buildKernel.c in Sources */,
-				9516175D19DED74F0004C4F0 /* matrixMultiplication.c in Sources */,
 				9516175B19DED0550004C4F0 /* POTriangle.c in Sources */,
 				95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */,
 				9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */,
@@ -998,7 +1007,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					/usr/local/dstl/include/SIlib,
+					/usr/local/dstl/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -1028,7 +1037,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					/usr/local/dstl/include/SIlib,
+					/usr/local/dstl/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,

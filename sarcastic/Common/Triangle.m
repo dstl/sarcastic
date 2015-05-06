@@ -199,11 +199,13 @@
 - (void) setMaterialName: (NSString *) name {
     _materialName=name;
     _Rs = -66.0;
+    _matId = 0;
 
     for(int imat=0; imat < NMATERIALS; imat++){
         scatProps m = materialProperties[imat] ;
         if( !strcmp([name UTF8String], m.matname)){
             _Rs = m.resistivity ;
+            _matId = imat;
         }
     }
     if(_Rs < 0){

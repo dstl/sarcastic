@@ -128,26 +128,26 @@ void * devPulseBlock ( void * threadArg ) {
     //
     //  Build the kernels now and bail out if any fail to compile
     //
-    cl_program randRaysPG,     stackTraversePG,  reflectPG,  buildShadowsPG,  reflectPowerPG ;
-    cl_kernel  randRaysKL,     stackTraverseKL,  reflectKL,  buildShadowsKL,  reflectPowerKL ;
-    size_t     randRaysLWS[2], stackTraverseLWS, reflectLWS, buildShadowsLWS, reflectPowerLWS ;
+    cl_program randRaysPG,     stackTraversePG,  reflectPG,  buildShadowsPG,  POFieldPG ;
+    cl_kernel  randRaysKL,     stackTraverseKL,  reflectKL,  buildShadowsKL,  POFieldKL ;
+    size_t     randRaysLWS[2], stackTraverseLWS, reflectLWS, buildShadowsLWS, POFieldLWS ;
 
     static char *randRaysCode      = OCLKERNELSPATH"/randomRays.cl" ;
     static char *stackTraverseCode = OCLKERNELSPATH"/stacklessTraverse.cl" ;
     static char *reflectCode       = OCLKERNELSPATH"/reflectRays.cl" ;
     static char *buildShadowsCode  = OCLKERNELSPATH"/buildShadowRays.cl" ;
-    static char *reflectPowCode    = OCLKERNELSPATH"/reflectionPower.cl" ;
+    static char *reflectPowCode    = OCLKERNELSPATH"/POField.cl" ;
     
     CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
     CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
     CL_CHECK(buildKernel(context, reflectCode,       "reflect",           devId, 1, &reflectPG,       &reflectKL,       &reflectLWS));
     CL_CHECK(buildKernel(context, buildShadowsCode,  "buildShadowRays",   devId, 1, &buildShadowsPG,  &buildShadowsKL,  &buildShadowsLWS));
-    CL_CHECK(buildKernel(context, reflectPowCode,    "reflectPower",      devId, 1, &reflectPowerPG,  &reflectPowerKL,  &reflectPowerLWS));
+    CL_CHECK(buildKernel(context, reflectPowCode,    "POField",           devId, 1, &POFieldPG,       &POFieldKL,       &POFieldLWS));
   
     // Allocate memory for items that are needed in all kernels
     //
     int                nTriangles       = td->KDT.nTriangles;         // number of triangles in array 'triangles'
-    Triangle *         triangles        = td->KDT.triangles;          // Array of triangles of size nTriangles
+    ATS *              accelTriangles   = td->KDT.accelTriangles;          // Array of triangles of size nTriangles
     int                nTreeNodes       = td->KDT.nTreeNodes;         // number of nodes in KdTree
     KdData *           KdTree           = td->KDT.KdTree;             // SAH - KdTree to optimise ray traversal through volume
     int                triListDataSize  = td->KDT.triListDataSize;    // size of trianglelist data
@@ -156,12 +156,12 @@ void * devPulseBlock ( void * threadArg ) {
     int *              triangleListPtrs = td->KDT.triangleListPtrs;   // array of pointers into triangleListData for each KdTree node
 
     cl_mem dTriangles,dKdTree, dtriListData,dtriListPtrs;
-    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(Triangle)*nTriangles, NULL, &_err));
+    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(ATS)*nTriangles, NULL, &_err));
     dKdTree      = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(KdData)*nTreeNodes,   NULL, &_err));
     dtriListData = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  triListDataSize,             NULL, &_err));
     dtriListPtrs = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(int)*nLeaves,         NULL, &_err));
 
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(Triangle)*nTriangles, triangles,        0, NULL, NULL));
+    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(ATS)*nTriangles, accelTriangles,        0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dKdTree,      CL_TRUE, 0, sizeof(KdData)*nTreeNodes,   KdTree,           0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListData, CL_TRUE, 0, triListDataSize,             triangleListData, 0, NULL, NULL));
     CL_CHECK(clEnqueueWriteBuffer(commandQ, dtriListPtrs, CL_TRUE, 0, sizeof(int)*nLeaves,         triangleListPtrs, 0, NULL, NULL));
@@ -305,7 +305,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
-            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
+            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles , dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
             
             // Shrink the shadowRays to only include those that made it back to the sensor
             // in order to calculate power at sensor we also need the Illumination or LRays
@@ -340,8 +340,7 @@ void * devPulseBlock ( void * threadArg ) {
                 //
 //                oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
                 
-                oclPOPower(context, commandQ, POPowerKL, POPowerLWS, dTriangles, hitArray, nShadowRays, LRays, RxPos, k, ranges, &(rnp[nAzBeam*nElBeam*nbounce])) ;
-
+                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, &(rnp[nAzBeam*nElBeam*nbounce])) ;
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
@@ -389,52 +388,44 @@ void * devPulseBlock ( void * threadArg ) {
         
         free(rayArray) ;
         
-        int cnt=0;
-        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
-        }
-        if(cnt > 0){
-            nrnpItems = cnt;
-        }else{
-            printf("ERROR: No intersections on device %d for pulse %d\n",tid, pulseIndex);
-            exit(-1);
-        }
-        
+        if(td->phd != NULL){
 
-// DEBUG
-//        nrnpItems = 1;
-// DEBUG
-        rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
-        
-        cnt = 0;
-        double totpow = 0.0;
-        for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
-            if ((rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i) != 0 && rnp[i].range !=0){
-                rnpData[cnt].Es    = rnp[i].Es ;
-                rnpData[cnt].rdiff = rnp[i].range - derampRange;
-                totpow += rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i ;
-                cnt++ ;
+            int cnt=0;
+            for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
+                if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
             }
-            //        printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
+            if(cnt > 0){
+                nrnpItems = cnt;
+            }else{
+                printf("ERROR: No intersections on device %d for pulse %d\n",tid, pulseIndex);
+                exit(-1);
+            }
             
+            // DEBUG
+            //        nrnpItems = 1;
+            // DEBUG
+            rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
             
-
-            double phse = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
-            targ.r      = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
-            targ.i      = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
-            
-//            double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
-//            targ.r = rnpData[i].power*cos(phse) ;
-//            targ.i = rnpData[i].power*sin(phse) ;
-                        
-            
+            cnt = 0;
+            double totpow = 0.0;
+            for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
+                if (CMPLX_MAG(rnp[i].Es) != 0 && rnp[i].range !=0){
+                    rnpData[cnt].Es    = rnp[i].Es ;
+                    rnpData[cnt].rdiff = rnp[i].range - derampRange;
+                    totpow += rnpData[cnt].Es.r * rnpData[cnt].Es.r + rnpData[cnt].Es.i * rnpData[cnt].Es.i ;
+                    cnt++ ;
+                }
+            }
+        
+//            printf("Total power : %e, # of intersecting rays : %d, powerperray: %f db (%f)\n",totpow,nrnpItems,10*log(PowPerRay), PowPerRay);
+            im_init(&pulseLine, &status);
             im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
-            
+            double phse;
             for (int i=0; i<nrnpItems; i++){
                 
-                double phse  = (-4.0 * SIPC_pi * rnpData[i].rdiff * td->oneOverLambda) ;
-                targ.r = rnpData[i].power*cos(phse) ;
-                targ.i = rnpData[i].power*sin(phse) ;
+                phse    = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
+                targ.r  = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
+                targ.i  = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
                 
                 rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
                 
@@ -466,11 +457,13 @@ void * devPulseBlock ( void * threadArg ) {
             im_destroy(&pulseLine, &status) ;
             
             free(rnpData);
-        }
-        free(rnp);
-
-    } // end of pulse loop
-    free(ikernel);
+            
+        } // end of pulse loop
+    }
+    
+    if(td->phd != NULL){
+        free(ikernel);
+    }
     
     // Clear down OpenCL allocations
     //
@@ -478,12 +471,12 @@ void * devPulseBlock ( void * threadArg ) {
     clReleaseKernel(stackTraverseKL);
     clReleaseKernel(reflectKL);
     clReleaseKernel(buildShadowsKL);
-    clReleaseKernel(reflectPowerKL);
+    clReleaseKernel(POFieldKL);
     clReleaseProgram(randRaysPG) ;
     clReleaseProgram(stackTraversePG) ;
     clReleaseProgram(reflectPG) ;
     clReleaseProgram(buildShadowsPG) ;
-    clReleaseProgram(reflectPowerPG) ;
+    clReleaseProgram(POFieldPG) ;
     clReleaseCommandQueue(commandQ);
     clReleaseContext(context);
     

@@ -37,10 +37,10 @@
  *
  ***************************************************************************/
 
-#ifndef GOSS_GOSS_h
-#define GOSS_GOSS_h
+#ifndef SARCASTIC_SARCASTIC_h
+#define SARCASTIC_SARCASTIC_h
 
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "SarcasticVersion.h"
 #include <string.h>
 #include <sys/time.h>
@@ -50,6 +50,7 @@
 #include <CL/opencl.h>
 #endif
 #include "OpenCLUtils.h"
+#include "materialProperties.h"
 
 #define EPSILON ((double)(0.00000001))  // Small number
 #define NILROPE ((int) -666666 )
@@ -101,11 +102,11 @@ typedef union {
 //} Texture;
 
 
-typedef struct TriCoords {
-    SPVector A ;      // Cartesian coordinates of triangle
-    SPVector B ;
-    SPVector Cc ;
-} TriCoords ;
+//typedef struct TriCoords {
+//    SPVector A ;      // Cartesian coordinates of triangle
+//    SPVector B ;
+//    SPVector Cc ;
+//} TriCoords ;
 
 typedef struct Hit {
     double dist;
@@ -132,7 +133,7 @@ typedef struct cplxf {
     float i;
 } cplxf;
 
-typedef struct Triangle {
+typedef struct ATS {    // Accelerated Triangle Structure
     int  triNum;    // Triangle ID
     double d;       // Constant of plane equation
     double nd_u;    // Normal.u / normal.k
@@ -145,11 +146,23 @@ typedef struct Triangle {
     double kcv;
     double kcd;
     int    matInd;  // Material Index
+} ATS;
+
+typedef struct Triangle{
+    int        id ;
+    SPVector   AA ;
+    SPVector   BB ;
+    SPVector   CC ;
+    SPVector   NN ;
+    double     area ;
+    double     globalToLocalMat[9];
+    double     localToGlobalMat[9];
+    int        matId;
 } Triangle;
 
 typedef struct KdTreeStruct {
     int                nTriangles;         // number of triangles in array 'triangles'
-    Triangle *         triangles;          // Array of triangles of size nTriangles
+    ATS *              accelTriangles;     // Array of triangles of size nTriangles
     int                nTreeNodes;         // number of nodes in KdTree
     KdData *           KdTree;             // SAH - KdTree to optimise ray traversal through volume
     int                triListDataSize;    // size of trianglelist data
@@ -210,8 +223,8 @@ typedef struct threadData {
     int interrogate ;           // Do we want to write out details about an interrogation point in the scene?
     SPVector interogPt ;        // Position in scene coordinates of a point to be interogated
     double interogRad ;         // Radius in metres around interrogation point to calculate scattering for
-    FILE ** interogFP ;          // File pointer to dump out interrogation data
-    
+    FILE ** interogFP ;         // File pointer to dump out interrogation data
+    Triangle *triangles;        // Array of triangle coordinates
 } threadData ;
 
 typedef struct rnpData_t {
@@ -328,6 +341,23 @@ void oclReflectPower(cl_context          context,            // OpenCL context -
                      Ray                 *shadowRays,        // Viewpoint unit vector. The vector direction to calculate power for (usually to receiver)
                      double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                      rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
+);
+
+void oclPOField(cl_context          context,            // OpenCL context - already built
+                cl_command_queue    Q,                  // OpenCl command Q - already instatiated
+                cl_kernel           kernel,             // OpenCl kernel for this routine to call
+                size_t              localWorkSize,      // Local workgroupsize to use for OpenCL Kernel
+                Triangle            *triangles,         // Array of triangles
+                int                 ntris,              // Number of triangles
+                Hit                 *hits,              // Array of hit locations to x-ref with triangles for material props
+                int                 nRays,              // The number of reflected rays being considered
+                Ray                 *rays,              // unit vector rays arriving at hitpoint
+                Ray                 *shadowRays,        // Array of reflected rays - used for their origin as its the reflection point to Rx
+                SPVector            RxPos,              // Location of Receiver in x,y,z
+                double              k,                  // Wavenumber constant k = 2 * PI / Lambda
+                double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
+                double              gainRX,             // Receiver gain
+                rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 );
 
 int buildKernel(cl_context context,             // OpenCL Context. Already created
