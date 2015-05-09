@@ -7,28 +7,28 @@
 //
 
 #include <stdio.h>
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 #define TXPOL "V"
 #define RXPOL "-"
-#define LAMBDA      ((double)0.3)     // Wavelegth in metres
+#define LAMBDA      ((double)0.3)       // Wavelegth in metres
 #define RAYPOW      ((double)1.0e8)     // Transmit power used for incident E field = Pt * Gt
-#define NPHIS       ((int)1000)          // Number of observation points to calculate in azimuth
-#define NTHETAS     ((int)200)           // Number of observation points to calculate in elevation
-#define STARTPHI    ((double)0)            // Start azimuth angle (deg)
-#define ENDPHI      ((double)360)          // End azimuth angle (deg)
-#define STARTTHETA  ((double)0)            // Start angle of incidence (deg)
-#define ENDTHETA    ((double)90)           // End angle of incidence (deg)
-#define OBSDIST     ((double)20000.0)    // Observation distance in metres
+#define NPHIS       ((int)360)          // Number of observation points to calculate in azimuth
+#define NTHETAS     ((int)90)           // Number of observation points to calculate in elevation
+#define STARTPHI    ((double)0)         // Start azimuth angle (deg)
+#define ENDPHI      ((double)3          // End azimuth angle (deg)
+#define STARTTHETA  ((double)0)         // Start angle of incidence (deg)
+#define ENDTHETA    ((double)90)        // End angle of incidence (deg)
+#define OBSDIST     ((double)20000.0)   // Observation distance in metres
 #define OUTPUTDBS   1                   // Boolean - should output be in DBs?
-#define ILLRANGE    ((double)20000.0)     // Range in metres from origin of illumination source
-#define ILLAZ       ((double)270.0)       // Azimuth angke in degrees of source of illumination
-#define ILLINC      ((double)30.0)       // Incidence ange in degrees of source of illumination
+#define ILLRANGE    ((double)20000.0)   // Range in metres from origin of illumination source
+#define ILLAZ       ((double)180.0)     // Azimuth angke in degrees of source of illumination
+#define ILLINC      ((double)30.0)      // Incidence ange in degrees of source of illumination
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
 #define USEOPENCL   0
-#define NRAYS       200
+#define NRAYS       20
 #define GOONLY      0                   // Perform calculations using geometrical optics rather than physical optics (PO)
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
     
-    readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
+//    readTriFile(&tris, &ntris, illDir ,"/Users/Darren/Development/DATA/triangles.tri") ;
     
     /*
      For debugging - allows you to set your own triangles without using a triangle file
@@ -555,9 +555,6 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
         fread(&(tri.NN.x), sizeof(double), 1, fpin) ;
         fread(&(tri.NN.y), sizeof(double), 1, fpin) ;
         fread(&(tri.NN.z), sizeof(double), 1, fpin) ;
-        fread(&(tri.MP.x), sizeof(double), 1, fpin) ;
-        fread(&(tri.MP.y), sizeof(double), 1, fpin) ;
-        fread(&(tri.MP.z), sizeof(double), 1, fpin) ;
         fread(&(tri.area), sizeof(double), 1, fpin) ;
         for (int i=0; i<9; i++){
             fread(&(tri.globalToLocalMat[i]), sizeof(double), 1, fpin) ;
@@ -565,13 +562,8 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
         for (int i=0; i<9; i++){
             fread(&(tri.localToGlobalMat[i]), sizeof(double), 1, fpin) ;
         }
-        fread(&(tri.mat) , sizeof(char), materialBytes, fpin) ;
+        fread(&(tri.matId) , sizeof(int), 1, fpin) ;
         
-        for (int i=0; i< NMATERIALS; i++){
-            if (!strcmp(tri.mat, materialProperties[i].matname)) {
-                tri.Rs = materialProperties[i].resistivity ;
-            }
-        }
         if (VECT_DOT(tri.NN, illuminationDir) > 0.000001) {
             tris_tmp[trind].id = tri.id ;
             tris_tmp[trind].AA.x = tri.AA.x ;
@@ -586,9 +578,6 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
             tris_tmp[trind].NN.x = tri.NN.x ;
             tris_tmp[trind].NN.y = tri.NN.y ;
             tris_tmp[trind].NN.z = tri.NN.z ;
-            tris_tmp[trind].MP.x = tri.MP.x ;
-            tris_tmp[trind].MP.y = tri.MP.y ;
-            tris_tmp[trind].MP.z = tri.MP.z ;
             tris_tmp[trind].area = tri.area ;
             for (int i=0; i<9; i++){
                 tris_tmp[trind].globalToLocalMat[i] = tri.globalToLocalMat[i] ;
@@ -596,7 +585,6 @@ void readTriFile(triangle **tris, int *ntris, SPVector illuminationDir, const ch
             for (int i=0; i<9; i++){
                 tris_tmp[trind].localToGlobalMat[i] = tri.localToGlobalMat[i] ;
             }
-            strcpy(tris_tmp[trind].mat, tri.mat) ;
 //            printf("Triangle %d : \n",tri.id) ;
 //            printf("    A      : %3.6f,%3.6f,%3.6f\n",tri.AA.x,tri.AA.y,tri.AA.z );
 //            printf("    B      : %3.6f,%3.6f,%3.6f\n",tri.BB.x,tri.BB.y,tri.BB.z );
@@ -637,21 +625,7 @@ void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri){
     VECT_CROSS(l1, l2, NN) ;
     tri->area = VECT_MAG(NN) * 0.5 ;
     VECT_NORM(NN, tri->NN) ;
-    strcpy (tri->mat, "METAL") ;
-    tri->Rs = -66.0;
-    for(int imat=0; imat < NMATERIALS; imat++){
-        scatProps m = materialProperties[imat] ;
-        if( !strcmp(tri->mat, m.matname)){
-            tri->Rs = m.resistivity ;
-        }
-    }
-    if(tri->Rs < 0){
-        printf("ERROR : Triangle material %s not found\n",tri->mat);
-        exit (-1);
-    }
-    tri->MP.x = (AA.x+BB.x+CC.x) / 3.0 ;
-    tri->MP.y = (AA.y+BB.y+CC.y) / 3.0 ;
-    tri->MP.z = (AA.z+BB.z+CC.z) / 3.0 ;
+    tri->matId = 0;
     
     VECT_CREATE(0, 0, 1, zhat);
     alpha = atan2(tri->NN.y, tri->NN.x);

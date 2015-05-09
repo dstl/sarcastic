@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "OpenCLUtils.h"
 #include "POTriangle.h"
 

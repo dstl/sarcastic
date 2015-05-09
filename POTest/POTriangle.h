@@ -9,6 +9,7 @@
 #ifndef sarcastic_POTriangle_h
 #define sarcastic_POTriangle_h
 #include "materialProperties.h"
+#include "matrixMultiplication.h"
 
 typedef struct triangle{
     int        id ;
@@ -16,12 +17,10 @@ typedef struct triangle{
     SPVector   BB ;
     SPVector   CC ;
     SPVector   NN ;
-    SPVector   MP ;
     double     area ;
     double     globalToLocalMat[9];
     double     localToGlobalMat[9];
-    double     Rs ;
-    char       mat[MATBYTES] ;
+    int        matId;
 
 } triangle;
 

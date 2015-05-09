@@ -51,7 +51,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
-#include <SIlib.h>
+#include <SIlib/SIlib.h>
 #include "POTriangle.h"
 #include "matrixMultiplication.h"
 #define SURFMAXN 4
@@ -319,7 +319,7 @@ void POField(triangle tri, Ray ray, SPVector HitPnt, SPVector obsPnt, double k, 
     
     // Calculate Gamma_parallel and Gamma_perpendicular
     //
-    Rs      = tri.Rs ;
+    Rs      = materialProperties[tri.matId].resistivity ;
     GamParr = -1.0 * Z0 * cos_theta_il / (2*Rs + Z0*cos_theta_il) ;
     GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos_theta_il + Z0);
     

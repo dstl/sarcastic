@@ -58,6 +58,7 @@
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
+		95A046461AFE22D700FD0114 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E71AEA6CC400CEA000 /* matrixMultiplication.c */; };
 		95B9D7E11AEA64D300CEA000 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */; };
 		95B9D7E21AEA64D300CEA000 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DE1AEA649000CEA000 /* radarMaterial.m */; };
 		95B9D7E31AEA64D300CEA000 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E01AEA649000CEA000 /* Triangle.m */; };
@@ -979,6 +980,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95A046461AFE22D700FD0114 /* matrixMultiplication.c in Sources */,
 				95F276EC1A36006300FF9339 /* buildKernel.c in Sources */,
 				9516175B19DED0550004C4F0 /* POTriangle.c in Sources */,
 				95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */,
