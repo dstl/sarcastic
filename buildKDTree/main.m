@@ -39,7 +39,7 @@
 #include <SIlib/SIlib.h>
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
-#define SHOWOUTPUT 1
+#define SHOWTRIANGLES 0
 
 void banner() ;
 
@@ -146,18 +146,18 @@ int main (int argc, const char * argv[])
             [triangles addObject:tri] ;
         }
         
-//        if (SHOWOUTPUT) {
-//            printf("Triangle file contains the following triangles:\n");
-//            for (int itri=0; itri < ntri; itri++ ) {
-//                Triangle *t = [triangles objectAtIndex:itri];
-//                printf("Triangle %d\n", [t triId]);
-//                printf("  AA       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:0] X],[[t vertexAt:0] Y],[[t vertexAt:0] Z]);
-//                printf("  BB       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:1] X],[[t vertexAt:1] Y],[[t vertexAt:1] Z]);
-//                printf("  CC       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:2] X],[[t vertexAt:2] Y],[[t vertexAt:2] Z]);
-//                printf("  Normal   : %3.6f,%3.6f,%3.6f\n", [[t normal] X],[[t normal] Y],[[t normal] Z]);
-//                printf("  Material : %s \n", [[t materialName] UTF8String]);
-//            }
-//        }
+        if (SHOWTRIANGLES) {
+            printf("Triangle file contains the following triangles:\n");
+            for (int itri=0; itri < ntri; itri++ ) {
+                Triangle *t = [triangles objectAtIndex:itri];
+                printf("Triangle %d\n", [t triId]);
+                printf("  AA       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:0] X],[[t vertexAt:0] Y],[[t vertexAt:0] Z]);
+                printf("  BB       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:1] X],[[t vertexAt:1] Y],[[t vertexAt:1] Z]);
+                printf("  CC       : %3.6f,%3.6f,%3.6f\n", [[t vertexAt:2] X],[[t vertexAt:2] Y],[[t vertexAt:2] Z]);
+                printf("  Normal   : %3.6f,%3.6f,%3.6f\n", [[t normal] X],[[t normal] Y],[[t normal] Z]);
+                printf("  Material : %s \n", [[t materialName] UTF8String]);
+            }
+        }
         
         KdTree * kdtree = [[KdTree alloc] initWithTriangles:triangles] ;
         [kdtree printBoxes] ;

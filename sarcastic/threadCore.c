@@ -189,25 +189,25 @@ void * devPulseBlock ( void * threadArg ) {
         
         // print out some useful progress information
         //
-        if ( td->devIndex == 0 ) {
-            if( pulse % reportN == 0 && td->nPulses != 1){
-                pCentDone = 100.0*pulse/td->nPulses ;
-                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN))*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
-                if(pulse != 0 ){
-                    current  = time(NULL);
-                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
-                    hrs      = (int)floor(sexToGo/60/60) ;
-                    min      = (int)floor(sexToGo / 60) - (hrs*60);
-                    sec      = (int)sexToGo % 60;
-                    complete = current + sexToGo ;
-                    p        = localtime(&complete) ;
-                    strftime(ct, 1000, "%a %b %d %H:%M", p);
-                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
-                }else{
-                    printf("  Calculating ETC...\n");
-                }
-            }
-        }
+//        if ( td->devIndex == 0 ) {
+//            if( pulse % reportN == 0 && td->nPulses != 1){
+//                pCentDone = 100.0*pulse/td->nPulses ;
+//                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN))*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
+//                if(pulse != 0 ){
+//                    current  = time(NULL);
+//                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+//                    hrs      = (int)floor(sexToGo/60/60) ;
+//                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+//                    sec      = (int)sexToGo % 60;
+//                    complete = current + sexToGo ;
+//                    p        = localtime(&complete) ;
+//                    strftime(ct, 1000, "%a %b %d %H:%M", p);
+//                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+//                }else{
+//                    printf("  Calculating ETC...\n");
+//                }
+//            }
+//        }
         
         // Set correct parameters for beam to ray trace
         //
@@ -417,25 +417,29 @@ void * devPulseBlock ( void * threadArg ) {
         
             im_init(&pulseLine, &status);
             im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
-            double phse, power, rangeToTarget, isopowattarg;
+            double phse;
+            SPCmplx targtot = {0.0f,0.0f};
+
             for (int i=0; i<nrnpItems; i++){
-                
-                phse    = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
-                // Make the power equal to the actual RCS of the point
-                //
-                rangeToTarget = derampRange+rnpData[i].rdiff ;
-                isopowattarg = PowPerRay / (4 * SIPC_pi * rangeToTarget * rangeToTarget) ;
-                power = 4 * CMPLX_MAG(rnpData[i].Es) * CMPLX_MAG(rnpData[i].Es) * 4.0 * SIPC_pi * (rangeToTarget * rangeToTarget) / isopowattarg ;
-                targ.r  = power * cos(phse) ;
-                targ.i  = power * sin(phse) ;
-                
-                rangeLabel = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
-                
+                rangeLabel  = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
                 if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
+
+                    phse        = CMPLX_PHASE(rnpData[i].Es) - derampPhase ;
+                    targ.r      = CMPLX_MAG(rnpData[i].Es) * cos(phse) ;
+                    targ.i      = CMPLX_MAG(rnpData[i].Es) * sin(phse) ;
+                
                     packSinc(targ, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel);
+                    
+                    CMPLX_ADD(targ, targtot, targtot);
                 }
             }
             
+            double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
+            
+            printf("Grazing is %f\n",RAD2DEG(atan2(RxPos.z,-1*RxPos.x)));
+            printf("Total RCS for pulse %d is %f m^2 (1m^2 plate should be %f m^2)\n",
+                   pulse,cmplx_mag ,4*SIPC_pi/((SIPC_c / td->freq_centre)*(SIPC_c / td->freq_centre)));
+                        
             // perform phase correction to account for deramped jitter in receiver timing
             //
             phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;

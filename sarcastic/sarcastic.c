@@ -168,7 +168,8 @@ int main (int argc, char **argv){
     // print out info about the collection
     //
     printCPHDCollectionInfo(&hdr, NULL, &status) ;
-    
+    printf("Wavelength                  : %f m\n",SIPC_c/hdr.freq_centre);
+
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
     if((RxPos = (SPVector *)malloc(sizeof(SPVector)*nPulses))==NULL){

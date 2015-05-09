@@ -51,6 +51,7 @@
 #endif
 #include "OpenCLUtils.h"
 #include "materialProperties.h"
+#include "RCS.h"
 
 #define EPSILON ((double)(0.00000001))  // Small number
 #define NILROPE ((int) -666666 )

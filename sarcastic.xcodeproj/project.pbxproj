@@ -57,6 +57,7 @@
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
+		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95B9D7E11AEA64D300CEA000 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */; };
 		95B9D7E21AEA64D300CEA000 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7DE1AEA649000CEA000 /* radarMaterial.m */; };
 		95B9D7E31AEA64D300CEA000 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 95B9D7E01AEA649000CEA000 /* Triangle.m */; };
@@ -299,6 +300,8 @@
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d.a"; sourceTree = "<group>"; };
+		95A046431AFBCD7E00FD0114 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RCS.c; sourceTree = "<group>"; };
+		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCS.h; sourceTree = "<group>"; };
 		95B9D7DB1AEA649000CEA000 /* MVectorObjc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVectorObjc.h; sourceTree = "<group>"; };
 		95B9D7DC1AEA649000CEA000 /* MVectorObjc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVectorObjc.m; sourceTree = "<group>"; };
 		95B9D7DD1AEA649000CEA000 /* radarMaterial.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = radarMaterial.h; sourceTree = "<group>"; };
@@ -617,6 +620,8 @@
 				953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */,
 				95492F391A74EFC90061FCF7 /* oclPOField.c */,
 				953FA1E218F4289400EAD4F3 /* threadCore.c */,
+				95A046431AFBCD7E00FD0114 /* RCS.c */,
+				95A046441AFBCD7E00FD0114 /* RCS.h */,
 				955F772B19CF0FA500BF3039 /* Utils */,
 				953FA1CB18F4289400EAD4F3 /* kernels */,
 			);
@@ -908,6 +913,7 @@
 				955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */,
 				953FA1FA18F4289400EAD4F3 /* oclReflect.c in Sources */,
 				953FA1E918F4289400EAD4F3 /* ecef2SceneCoords.c in Sources */,
+				95A046451AFBCD7E00FD0114 /* RCS.c in Sources */,
 				95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */,
 				953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */,
 				953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */,

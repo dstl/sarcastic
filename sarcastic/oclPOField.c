@@ -157,7 +157,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     //
     for (int r=0; r<nRays; r++ ){
         rnp[r].range = (ranges[r] + rays[r].len + hits[r].dist) / 2;
-        CMPLX_SCMULT(gainRx / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
+        CMPLX_SCMULT(1.0 / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
     }
     
     // Clear down OpenCL allocations
