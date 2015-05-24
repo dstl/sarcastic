@@ -346,6 +346,9 @@ __kernel void reflect(__global ATS * accelTriangles,
         VECT_NORM(N,N);
         
         I = rays[ind].dir;
+        if(VECT_DOT(I,N)>0){
+            VECT_MINUS(N,N);
+        }
         VECT_SCMULT(N, 2.0 * VECT_DOT(I, N), v);
         VECT_SUB(I, v, R);
 //        VECT_NORM(R,R) ;
@@ -365,14 +368,26 @@ __kernel void reflect(__global ATS * accelTriangles,
         ks =  materialProperties[T.matInd].specular ;
         // power at reflected point is Pt*Gtx / 4 PI R^2
         //
-        reflectedRays[ind].pow = rays[ind].pow * ks / (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);
+        double islf = (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);
+        islf = (islf < 1 ) ? 1 : islf ;
+        reflectedRays[ind].pow = rays[ind].pow * ks ;
 //        printf("power in %e, power out %e\n",rays[ind].pow,reflectedRays[ind].pow);
         
         // Calculate the polarisation of the reflected ray based upon the polarisation
         // of the incident ray
         //
-        VECT_CROSS(rays[ind].dir, rays[ind].pol, perpol);
-        VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol) ;
+        VECT_CROSS(rays[ind].pol, N, perpol);
+        VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol);
+        VECT_NORM(reflectedRays[ind].pol,reflectedRays[ind].pol);
+
+//        VECT_CROSS(rays[ind].dir, rays[ind].pol, perpol);
+//        VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol) ;
+//        VECT_NORM(reflectedRays[ind].pol,reflectedRays[ind].pol);
+//        printf("refected ray %d pol is %f,%f,%f (input dir: %f,%f,%f  pol: %f,%f,%f)\n",
+//               ind,reflectedRays[ind].pol.x,reflectedRays[ind].pol.y,reflectedRays[ind].pol.z,
+//               rays[ind].dir.x, rays[ind].dir.y, rays[ind].dir.z,
+//               rays[ind].pol.x, rays[ind].pol.y, rays[ind].pol.z);
+//        printf("reflected ray %d has reflected power %f (input power : %f, dist : %f fact:%f)\n",ind,reflectedRays[ind].pow,rays[ind].pow,hits[ind].dist,islf);
        
     }
     

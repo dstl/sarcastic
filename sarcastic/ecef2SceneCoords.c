@@ -59,6 +59,7 @@ void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
         n = VECT_DOT(v, N) ;            // n is component of v in local North direction
         a = VECT_DOT(v, A) ;            // a is component of v in altitude direction
 
+        a=0;
         VECT_CREATE(e, n, a, points[i]) ;
     }
    

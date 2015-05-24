@@ -240,8 +240,8 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    maxBeamUsedAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
-    maxBeamUsedEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedAz = 0.7 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedEl = 0.7 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
     
     collectionGeom cGeom;
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);

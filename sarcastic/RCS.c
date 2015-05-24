@@ -52,7 +52,7 @@ double RCS(double PtGt, double EMagAtRx, double TxRange, double RxRange){
     // Correct the received radar field magnitude to be the power at the reflection point
     // An interesting point here. The E field measured at the receiver is the mean
     // amplitude of a sinusoidal wave function. The peak amplitude is therefore twice as large
-    // (hence teh factor of 4 below when calculating the power (amplitude squared)
+    // (hence the factor of 4 below when calculating the power (amplitude squared)
     //
     double Ppt = EMagAtRx * EMagAtRx * 4 * ( 4.0 * SIPC_pi * RxRange * RxRange); // Watts / m^2
 

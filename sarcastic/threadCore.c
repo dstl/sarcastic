@@ -342,6 +342,25 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, &(rnp[nAzBeam*nElBeam*nbounce])) ;
                 
+                SPCmplx ttot = {0.0f,0.0f};
+                if (nbounce <3) {
+                    for(int i=0; i<nShadowRays; i++){
+                        irp = rnp[(nAzBeam*nElBeam*nbounce)+i] ;
+//
+//                        printf("[%d | %d | %d] hit tri %d at %5.2f,%5.2f,%5.2f range: %6.3f mag: %4.2e ( %9.2e,%9.2e = %7.2f deg) (input pow: %4.2e\n",
+//                               pulse,nbounce,i,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z,
+//                               irp.range,CMPLX_MAG(irp.Es),irp.Es.r,irp.Es.i,RAD2DEG( CMPLX_PHASE(irp.Es)), LRays[i].pow);
+                        CMPLX_ADD(irp.Es, ttot, ttot);
+                    }
+//                    printf("combined field at RX for bounce %d is %e (%e, %e = %f deg)\n",nbounce,CMPLX_MAG(ttot),ttot.r,ttot.i,RAD2DEG( CMPLX_PHASE(ttot) ));
+                    double p = -4*SIPC_pi*((VECT_MAG(RxPos)+VECT_MAG(TxPos))/2.0)*td->oneOverLambda ;
+                    p = p / (2 * SIPC_pi) ;
+                    int ip = (int)p;
+                    p = (p - ip) * 2 * SIPC_pi;
+//                    printf("Satellite range %7.4f phase should be %f deg\n",(VECT_MAG(RxPos)+VECT_MAG(TxPos))/2.0,RAD2DEG(p));
+                };
+                
+                
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
                 //
@@ -430,16 +449,22 @@ void * devPulseBlock ( void * threadArg ) {
                 
                     packSinc(targ, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel);
                     
-                    CMPLX_ADD(targ, targtot, targtot);
+                    CMPLX_ADD(rnpData[i].Es, targtot, targtot);
                 }
             }
             
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
             
-            printf("Grazing is %f\n",RAD2DEG(atan2(RxPos.z,-1*RxPos.x)));
-            printf("Total RCS for pulse %d is %f m^2 (1m^2 plate should be %f m^2)\n",
-                   pulse,cmplx_mag ,4*SIPC_pi/((SIPC_c / td->freq_centre)*(SIPC_c / td->freq_centre)));
-                        
+//            printf("Grazing is %f\n",RAD2DEG(atan2(RxPos.z,-1*RxPos.x)));
+//            printf("Total RCS for pulse %d is %f m^2 (1m^2 plate should be %f m^2)\n",
+//                   pulse,cmplx_mag ,4*SIPC_pi/((SIPC_c / td->freq_centre)*(SIPC_c / td->freq_centre)));
+//            printf("%d, %f\n",pulse,cmplx_mag);
+            printf("Total RCS for pulse %d is %f m^2\n",pulse,cmplx_mag);
+            printf("For comparison: \n");
+            printf("    1m^2 flat plate : %f\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
+            printf("    1m dihedral     : %f\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
+            printf("    2m trihedral    : %f\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
+
             // perform phase correction to account for deramped jitter in receiver timing
             //
             phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;

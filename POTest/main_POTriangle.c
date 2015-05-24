@@ -17,7 +17,7 @@
 #define NPHIS       ((int)360)          // Number of observation points to calculate in azimuth
 #define NTHETAS     ((int)90)           // Number of observation points to calculate in elevation
 #define STARTPHI    ((double)0)         // Start azimuth angle (deg)
-#define ENDPHI      ((double)3          // End azimuth angle (deg)
+#define ENDPHI      ((double)360)       // End azimuth angle (deg)
 #define STARTTHETA  ((double)0)         // Start angle of incidence (deg)
 #define ENDTHETA    ((double)90)        // End angle of incidence (deg)
 #define OBSDIST     ((double)20000.0)   // Observation distance in metres
@@ -28,7 +28,8 @@
 #define PRINTTRIS   0                   // Boolean - just print out triangles and quit
 #define RCSOUTPUT   1
 #define USEOPENCL   0
-#define NRAYS       20
+#define NRAYSX      10
+#define NRAYSY      10
 #define GOONLY      0                   // Perform calculations using geometrical optics rather than physical optics (PO)
 
 void buildTriangle(SPVector AA, SPVector BB, SPVector CC, triangle * tri) ;
@@ -164,64 +165,91 @@ int main(int argc, const char * argv[])
     // phase effects from curved wavefronts
     //
     
-    int nRays = NRAYS;
+    int nRays = NRAYSX * NRAYSY;
     Ray *rays       =      (Ray *)sp_malloc(sizeof(Ray) * nRays) ;
     SPVector * hits = (SPVector *)sp_malloc(sizeof(SPVector) * nRays);
     int * triForHit =      (int *)sp_malloc(sizeof(int) * nRays);
     int * hitsForTri=      (int *)sp_malloc(sizeof(int) * ntris);
     
-    double xmin,xmax,ymin,ymax,x,y;
+    double xmin,xmax,ymin,ymax,x,y,delx,dely;
+    int ix, iy, index;
     xmin = -0.5;
     xmax = +0.5;
     ymin = -0.5;
     ymax = +0.5;
-    for(int h=0; h<nRays; h++){
-        x = xmin + ((rand() / (double) (RAND_MAX)) * (xmax-xmin));
-        y = ymin + ((rand() / (double) (RAND_MAX)) * (ymax-ymin));
-//        x=y=0;
-        VECT_CREATE( x, y, 0, hits[h]);
-//        VECT_CREATE( tris[h].MP.x, tris[h].MP.y, 0, hits[h]);
-//        printf("%f,%f\n",hits[h].x,hits[h].y);
+    delx = (xmax-xmin) / NRAYSX ;
+    printf("Hits\n");
+    for(iy=0; iy<NRAYSY; iy++){
+        for(ix=0; ix<NRAYSX; ix++){
+            x = xmin + ix*delx ;
+            y = ymin + iy*dely ;
+            index = iy*NRAYSX+ix;
+            VECT_CREATE( x, y, 0, hits[index]);
+            printf("%f,%f\n",hits[index].x,hits[index].y);
+            SPVector dir;
+            VECT_SUB(hits[index], illOrigin, dir);
+            VECT_NORM(dir, rays[index].dir);
+            rays[index].org = illOrigin ;
+            rays[index].pow = RAYPOW ;
+            rays[index].len = 0.0;
+            if(fabs(VECT_DOT(rays[index].dir, zhat)) >= 0.99 ){
+                VECT_CREATE(1, 0, 0, Hpol);
+            }else{
+                VECT_CROSS(rays[index].dir, zhat, Hpol) ;
+                VECT_NORM(Hpol, Hpol) ;
+            }
+            VECT_CROSS(Hpol, rays[index].dir, Vpol) ;
+            if(TXPOL == "V"){
+                rays[index].pol = Vpol ;
+            }else{
+                rays[index].pol = Hpol ;
+            }
+        }
     }
+    
+    // Now trace each ray through the volume to find the hits
+    // The purpose here is to build a set of hit points 
+    //
+    
     
     if (RCSOUTPUT) {
         Ei_pow = RAYPOW / (4 * SIPC_pi * ILLRANGE * ILLRANGE) ; // power at facet in watts/m^2
     }
-    
-    for (int i=0; i<nRays; i++) {
-        rays[i].org = illOrigin ;
-        rays[i].pow = RAYPOW ;
-        VECT_SUB(hits[i], rays[i].org, rays[i].dir);
-        rays[i].len = VECT_MAG(rays[i].dir);
-        VECT_NORM(rays[i].dir, rays[i].dir);
-        rays[i].pow = RAYPOW / (4.0 * SIPC_pi*rays[i].len*rays[i].len);
-        if(fabs(VECT_DOT(rays[i].dir, zhat)) >= 0.99 ){
-            VECT_CREATE(1, 0, 0, Hpol);
-        }else{
-            VECT_CROSS(rays[i].dir, zhat, Hpol) ;
-            VECT_NORM(Hpol, Hpol) ;
-        }
-        VECT_CROSS(Hpol, rays[i].dir, Vpol) ;
-        if(TXPOL == "V"){
-            rays[i].pol = Vpol ;
-        }else{
-            rays[i].pol = Hpol ;
-        }
-        
-        // find triangle for this ray
-        //
-        for(int t=0; t<ntris; t++){
-            if( PointInTriangle(hits[i], tris[t].AA, tris[t].BB, tris[t].CC) ){
-                triForHit[i] = t;
-                hitsForTri[t]++ ;
-//                printf("Ray %d hits triangle %d at (%f,%f)\n",i,triForHit[i],hits[i].x,hits[i].y);
-                t=ntris;
-            }else{
-                triForHit[i] = -1;
-            }
-
-        }
-    }
+//    
+//    for (int i=0; i<nRays; i++) {
+//        rays[i].org = illOrigin ;
+//        rays[i].pow = RAYPOW ;
+//        VECT_SUB(hits[i], rays[i].org, rays[i].dir);
+//        rays[i].len = VECT_MAG(rays[i].dir);
+//        VECT_NORM(rays[i].dir, rays[i].dir);
+//        rays[i].pow = RAYPOW / (4.0 * SIPC_pi*rays[i].len*rays[i].len);
+//        if(fabs(VECT_DOT(rays[i].dir, zhat)) >= 0.99 ){
+//            VECT_CREATE(1, 0, 0, Hpol);
+//        }else{
+//            VECT_CROSS(rays[i].dir, zhat, Hpol) ;
+//            VECT_NORM(Hpol, Hpol) ;
+//        }
+//        VECT_CROSS(Hpol, rays[i].dir, Vpol) ;
+//        if(TXPOL == "V"){
+//            rays[i].pol = Vpol ;
+//        }else{
+//            rays[i].pol = Hpol ;
+//        }
+//        
+//        // find triangle for this ray
+//        //
+//        for(int t=0; t<ntris; t++){
+//            if( PointInTriangle(hits[i], tris[t].AA, tris[t].BB, tris[t].CC) ){
+//                triForHit[i] = t;
+//                hitsForTri[t]++ ;
+////                printf("Ray %d hits triangle %d at (%f,%f)\n",i,triForHit[i],hits[i].x,hits[i].y);
+//                t=ntris;
+//            }else{
+//                triForHit[i] = -1;
+//            }
+//
+//        }
+//    }
     
         
     /*SPVector vhatpar,vhatper, parvec, pervec ;

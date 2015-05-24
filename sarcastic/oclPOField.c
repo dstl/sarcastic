@@ -98,7 +98,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
         hitpoints[i].hit = shadowRays[i].org ;
         hitpoints[i].tri = hits[i].trinum ;
         hitsOnEachTri[hitpoints[i].tri]++;
-        rays[i].pow = rays[i].pow / (4 * SIPC_pi * hits[i].dist * hits[i].dist) ;
+        rays[i].pow = rays[i].pow; // (4 * SIPC_pi * hits[i].dist * hits[i].dist) ;
     }
     
     // Add write buffer commands to the command queue ready for execution
@@ -158,6 +158,9 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     for (int r=0; r<nRays; r++ ){
         rnp[r].range = (ranges[r] + rays[r].len + hits[r].dist) / 2;
         CMPLX_SCMULT(1.0 / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
+//        printf("Range to Rx: %f, ray.len: %f, hit.dist: %f (Range : %f) E: %e (normalised E: %e %d tris)\n",
+//               ranges[r],rays[r].len,hits[r].dist,rnp[r].range,CMPLX_MAG(VsTmp[r]),CMPLX_MAG(rnp[r].Es),hitsOnEachTri[hitpoints[r].tri]);
+
     }
     
     // Clear down OpenCL allocations

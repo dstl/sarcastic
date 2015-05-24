@@ -224,11 +224,17 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // r is the magnitude of the vector defining the observation point in global coordinates (not the range)
         //
         VECT_SUB(RxPnt, hitpoints[ind].hit, obsDir);
+        r = VECT_MAG(obsDir);
         VECT_NORM(obsDir, obsDir);
-        r  = VECT_MAG(RxPnt);
+//        r  = VECT_MAG(RxPnt);
         VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
         r_ig   = VECT_MAG(rayDist) + rays[ind].len;
         phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
+//        double p = phs_ig;
+//        p = p / (2 * SIPC_pi) ;
+//        int ip = (int)p;
+//        p = (p - ip) * 2 * SIPC_pi;
+//        printf("[%d] phs_ig : %f\n",ind,(180/SIPC_pi)*p);
         
         // Sort out the direction cosines for this ray, hitpoint and observation point
         // Assuming that the direction of the ray has been normalised then
@@ -354,7 +360,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(t1, sum, Ic);
             
         }else if ( magDp < Lt && magDq < Lt ){  // Case 2
-            
             sum.r = sum.i = 0;
             jDp_a[0].r = 1 ; jDp_a[0].i = 0 ;
             jDq_a[0].r = 1 ; jDq_a[0].i = 0 ;
@@ -377,7 +382,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(tmp, sum, Ic);
             
         } else if ( magDp >= Lt && magDq < Lt ){    // Case 3
-            
             sum.r = sum.i = 0;
             jDq_pow.r = 1.0; jDq_pow.i = 0.0 ;
             G = G_func1(-Dp) ;
@@ -426,7 +430,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(t1, sum, Ic);
             
         } else if ( magDp >= Lt && magDq >= Lt && fabs(Dp - Dq) < Lt ){   // Case 4
-            
             sum.r = sum.i = 0;
             // Set up zeroeth term of sum
             //
@@ -512,7 +515,10 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // At this point we have integrated the complex field over the triangular facet and have the
         // value stored in the complex number Ic
         //
-        VECT_SCMULT(rays[ind].pol, sqrt(rays[ind].pow), Eig) ;
+        VECT_SCMULT(rays[ind].pol, sqrt(rays[ind].pow / (4 * SIPC_pi * r_ig * r_ig)), Eig) ;
+//        printf("[%d] : pol : %f,%f,%f\n",ind,rays[ind].pol.x,rays[ind].pol.y,rays[ind].pol.z);
+//        printf("[po %d] r_ig: %f input E: %e E corrected for r_ig: %e r to rx:%e total r: %e\n",
+//               ind,r_ig,rays[ind].pow,sqrt(rays[ind].pow / (4 * SIPC_pi * r_ig * r_ig)),r,r+r_ig);
         
         // Assuming that the direction of the ray has been normalised then
         // the direction cosine is just the component of direction
