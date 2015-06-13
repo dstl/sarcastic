@@ -358,6 +358,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                 double              gainRX,             // Receiver gain
+                int                 firstBounce,        // If 1 then origin is used for phase calculation in Filed equations causing triangles to correctly combine
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 );
 

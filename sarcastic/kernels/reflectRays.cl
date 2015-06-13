@@ -380,15 +380,6 @@ __kernel void reflect(__global ATS * accelTriangles,
         VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol);
         VECT_NORM(reflectedRays[ind].pol,reflectedRays[ind].pol);
 
-//        VECT_CROSS(rays[ind].dir, rays[ind].pol, perpol);
-//        VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol) ;
-//        VECT_NORM(reflectedRays[ind].pol,reflectedRays[ind].pol);
-//        printf("refected ray %d pol is %f,%f,%f (input dir: %f,%f,%f  pol: %f,%f,%f)\n",
-//               ind,reflectedRays[ind].pol.x,reflectedRays[ind].pol.y,reflectedRays[ind].pol.z,
-//               rays[ind].dir.x, rays[ind].dir.y, rays[ind].dir.z,
-//               rays[ind].pol.x, rays[ind].pol.y, rays[ind].pol.z);
-//        printf("reflected ray %d has reflected power %f (input power : %f, dist : %f fact:%f)\n",ind,reflectedRays[ind].pow,rays[ind].pow,hits[ind].dist,islf);
-       
     }
     
     return ;

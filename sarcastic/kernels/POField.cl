@@ -2,6 +2,7 @@
 #define SIPC_pi 3.14159265358979323846
 #define SURFMAXN 4
 #define LT 0.04
+#define PRINTIND 6
 
 // materialProperties.h
 #define MATBYTES 128
@@ -170,6 +171,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
                       double k,                 // input k=2*PI/lambda
                       SPVector Vdir,            // input unit vector defining V pol at receiver
                       SPVector Hdir,            // input unit vector defining H pol at receiver
+                      int firstBounce,          // if 1 then PO calcs use origin for field combination
                       __global SPCmplx *EsVs,   // output array of scattered field strengths for V pol
                       __global SPCmplx *EsHs)   // output array of scattered field strengths for H pol
 {
@@ -178,9 +180,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
     ind = get_global_id(0) ;
 
     if (ind >=0 && ind < nrays ) {
-
-//        printf("[%d] Vdir : %f,%f,%f\n",ind,Vdir.x,Vdir.y,Vdir.z);
-//        printf("[%d] Hdir : %f,%f,%f\n",ind,Hdir.x,Hdir.y,Hdir.z);
         
         // Some notes on variable terminology used in this function
         //
@@ -226,23 +225,19 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         VECT_SUB(RxPnt, hitpoints[ind].hit, obsDir);
         r = VECT_MAG(obsDir);
         VECT_NORM(obsDir, obsDir);
-//        r  = VECT_MAG(RxPnt);
+        if( firstBounce == 1 ){
+            r  = VECT_MAG(RxPnt);
+        }
         VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
         r_ig   = VECT_MAG(rayDist) + rays[ind].len;
         phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
-//        double p = phs_ig;
-//        p = p / (2 * SIPC_pi) ;
-//        int ip = (int)p;
-//        p = (p - ip) * 2 * SIPC_pi;
-//        printf("[%d] phs_ig : %f\n",ind,(180/SIPC_pi)*p);
         
         // Sort out the direction cosines for this ray, hitpoint and observation point
         // Assuming that the direction of the ray has been normalised then
         // the direction cosine is just the component of direction
         //
-        uvw_sg.x = obsDir.x -rays[ind].dir.x ;
-        uvw_sg.y = obsDir.y -rays[ind].dir.y ;
-        uvw_sg.z = obsDir.z -rays[ind].dir.z ;
+        VECT_SUB(obsDir,rays[ind].dir,uvw_sg) ;
+        VECT_NORM(uvw_sg,uvw_sg);
         
         // Calculate surface integral using Ludwig's integration algorithm [1], (modified for
         // triangular subregions by Pogorzelski [2] and then modified again for barycentric (simplex)
@@ -516,9 +511,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // value stored in the complex number Ic
         //
         VECT_SCMULT(rays[ind].pol, sqrt(rays[ind].pow / (4 * SIPC_pi * r_ig * r_ig)), Eig) ;
-//        printf("[%d] : pol : %f,%f,%f\n",ind,rays[ind].pol.x,rays[ind].pol.y,rays[ind].pol.z);
-//        printf("[po %d] r_ig: %f input E: %e E corrected for r_ig: %e r to rx:%e total r: %e\n",
-//               ind,r_ig,rays[ind].pow,sqrt(rays[ind].pow / (4 * SIPC_pi * r_ig * r_ig)),r,r+r_ig);
         
         // Assuming that the direction of the ray has been normalised then
         // the direction cosine is just the component of direction
@@ -528,7 +520,6 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         uvw_ig[2] = -rays[ind].dir.z;
         
         matmul(globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
-        
         sin_theta_il = sqrt(uvw_il[0]*uvw_il[0] +  uvw_il[1] * uvw_il[1] ) ;
         cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
         if(sin_theta_il <= 0.0001){
@@ -550,17 +541,18 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         E_ig[2] = Eig.z ;
         matmul(globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
         VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
+
         if(fabs(VECT_DOT(zz_hat, Raydir_l)) >=0.99){
             VECT_CREATE(1, 0, 0, phi_l_hat) ;
         }else{
             VECT_CROSS (zz_hat, Raydir_l, phi_l_hat) ;
         }
-        VECT_CROSS(Raydir_l, phi_l_hat, theta_l_hat) ;
+        VECT_CROSS(phi_l_hat, Raydir_l, theta_l_hat) ;
         VECT_NORM(phi_l_hat, phi_l_hat) ;
         VECT_NORM(theta_l_hat, theta_l_hat) ;
         Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
         Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
-        
+
         // Calculate Gamma_parallel and Gamma_perpendicular
         //
         matId   = tris[hitpoints[ind].tri].matId ;
@@ -574,14 +566,18 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         J_l[0] = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * cos_theta_il ;
         J_l[1] = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * cos_theta_il ;
         J_l[2] = 0.0  ;
+
         matmul(localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;
-        VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
         
-        // Find the component of the surface current in the parallel polarisation
-        // direction
-        //
+        VECT_CREATE(J_g[0], J_g[1], J_g[2], Jg) ;
+        SPCmplx Jc,E;
+        double J = VECT_MAG(Jg);
         J_par = VECT_DOT(Vdir, Jg);
         J_per = VECT_DOT(Hdir, Jg);
+        double polang = atan2(J_par,J_per);
+        J_par = J*sin(polang);
+        J_per = J*cos(polang);
+
         CMPLX_F_MAKE(J_par*cos(phs_ig), J_par*sin(phs_ig), Jc_par);
         CMPLX_F_MAKE(J_per*cos(phs_ig), J_per*sin(phs_ig), Jc_per);
         

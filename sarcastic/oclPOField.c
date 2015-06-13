@@ -39,6 +39,7 @@
  ***************************************************************************/
 
 #include "sarcastic.h"
+#define RXPOL "V" // Can be V or H or - (both)
 
 typedef struct HitPoint {
     SPVector hit;       // Location of hitpoint in x,y,z
@@ -59,6 +60,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                 double              gainRx,             // Receiver gain used for power calculations
+                int                 firstBounce,        // if 1 then PO calcs use origin for field calculations
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 )
 
@@ -133,8 +135,9 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     CL_CHECK(clSetKernelArg(kernel, 5,   sizeof(double),   &k));            // input k=2*PI/lambda
     CL_CHECK(clSetKernelArg(kernel, 6,   sizeof(SPVector), &RXVdir));       // input unit vector defining V pol at receiver
     CL_CHECK(clSetKernelArg(kernel, 7,   sizeof(SPVector), &RXHdir));       // input unit vector defining H pol at receiver
-    CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(cl_mem),   &dEsVs));        // output array of scattered field strengths for V pol
-    CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(cl_mem),   &dEsHs));        // output array of scattered field strengths for H pol
+    CL_CHECK(clSetKernelArg(kernel, 8,   sizeof(int),      &firstBounce));  // if 1 then origin is used for field equations
+    CL_CHECK(clSetKernelArg(kernel, 9,   sizeof(cl_mem),   &dEsVs));        // output array of scattered field strengths for V pol
+    CL_CHECK(clSetKernelArg(kernel,10,   sizeof(cl_mem),   &dEsHs));        // output array of scattered field strengths for H pol
     
     
     // Queue up the commands on the device to be executed as soon as possible
@@ -155,11 +158,31 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     // We also need to take into account how many times each triangle has been hit as the PO
     // calculations assume RCS from one point. 
     //
+    SPCmplx Ecmplx;
     for (int r=0; r<nRays; r++ ){
+        
         rnp[r].range = (ranges[r] + rays[r].len + hits[r].dist) / 2;
-        CMPLX_SCMULT(1.0 / hitsOnEachTri[hitpoints[r].tri], VsTmp[r], rnp[r].Es) ;
-//        printf("Range to Rx: %f, ray.len: %f, hit.dist: %f (Range : %f) E: %e (normalised E: %e %d tris)\n",
-//               ranges[r],rays[r].len,hits[r].dist,rnp[r].range,CMPLX_MAG(VsTmp[r]),CMPLX_MAG(rnp[r].Es),hitsOnEachTri[hitpoints[r].tri]);
+
+        if (RXPOL == "V") {
+            Ecmplx = VsTmp[r] ;
+        }else if (RXPOL == "H"){
+            Ecmplx = HsTmp[r] ;
+        } else {
+            SPVector Ev, Eh, E;
+            double a, E_mag, p ;
+            a = CMPLX_MAG(VsTmp[r]);
+            p = CMPLX_PHASE(VsTmp[r]) ;
+            VECT_SCMULT(RXVdir, a, Ev);
+            a = CMPLX_MAG(HsTmp[r]);
+            VECT_SCMULT(RXHdir, a, Eh);
+            VECT_ADD(Ev, Eh, E) ;
+            E_mag = VECT_MAG(E) ;
+            CMPLX_F_MAKE(E_mag*cos(p), E_mag*sin(p), Ecmplx);
+        }
+//        printf("Ev : %e, %f\n",CMPLX_MAG(VsTmp[r]),CMPLX_PHASE(VsTmp[r]));
+//        printf("Eh : %e, %f\n",CMPLX_MAG(HsTmp[r]),CMPLX_PHASE(HsTmp[r]));
+        
+        CMPLX_SCMULT(1.0 / hitsOnEachTri[hitpoints[r].tri], Ecmplx, rnp[r].Es) ;
 
     }
     

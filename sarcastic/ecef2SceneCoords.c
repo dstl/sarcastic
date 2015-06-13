@@ -59,6 +59,9 @@ void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
         n = VECT_DOT(v, N) ;            // n is component of v in local North direction
         a = VECT_DOT(v, A) ;            // a is component of v in altitude direction
 
+        // Dont forget to change this - a=0 set here to put the sensor on the x-y plane for easier debugging
+        // of RCS primitive calculatioms
+        //
         a=0;
         VECT_CREATE(e, n, a, points[i]) ;
     }

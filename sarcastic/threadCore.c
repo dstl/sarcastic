@@ -189,25 +189,25 @@ void * devPulseBlock ( void * threadArg ) {
         
         // print out some useful progress information
         //
-//        if ( td->devIndex == 0 ) {
-//            if( pulse % reportN == 0 && td->nPulses != 1){
-//                pCentDone = 100.0*pulse/td->nPulses ;
-//                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN))*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
-//                if(pulse != 0 ){
-//                    current  = time(NULL);
-//                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
-//                    hrs      = (int)floor(sexToGo/60/60) ;
-//                    min      = (int)floor(sexToGo / 60) - (hrs*60);
-//                    sec      = (int)sexToGo % 60;
-//                    complete = current + sexToGo ;
-//                    p        = localtime(&complete) ;
-//                    strftime(ct, 1000, "%a %b %d %H:%M", p);
-//                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
-//                }else{
-//                    printf("  Calculating ETC...\n");
-//                }
-//            }
-//        }
+        if ( td->devIndex == 0 ) {
+            if( pulse % reportN == 0 && td->nPulses != 1){
+                pCentDone = 100.0*pulse/td->nPulses ;
+                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse*td->nThreads, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN))*td->nThreads, td->nPulses*td->nThreads,(int)pCentDone);
+                if(pulse != 0 ){
+                    current  = time(NULL);
+                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                    hrs      = (int)floor(sexToGo/60/60) ;
+                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+                    sec      = (int)sexToGo % 60;
+                    complete = current + sexToGo ;
+                    p        = localtime(&complete) ;
+                    strftime(ct, 1000, "%a %b %d %H:%M", p);
+                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+                }else{
+                    printf("  Calculating ETC...\n");
+                }
+            }
+        }
         
         // Set correct parameters for beam to ray trace
         //
@@ -302,7 +302,6 @@ void * devPulseBlock ( void * threadArg ) {
             //
             oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, reflectCount, RxPos, reflectedRays, shadowRays, ranges);
             
-            
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
             oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles , dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
@@ -338,27 +337,8 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
-//                oclReflectPower(context, commandQ, reflectPowerKL, reflectPowerLWS, dTriangles, dTextures, hitArray, RxPos, gainRx/(4.0*SIPC_pi), nShadowRays, LRays, RRays, shadowRays, ranges, &(rnp[nAzBeam*nElBeam*nbounce]));
+                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nAzBeam*nElBeam*nbounce])) ;
                 
-                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, &(rnp[nAzBeam*nElBeam*nbounce])) ;
-                
-                SPCmplx ttot = {0.0f,0.0f};
-                if (nbounce <3) {
-                    for(int i=0; i<nShadowRays; i++){
-                        irp = rnp[(nAzBeam*nElBeam*nbounce)+i] ;
-//
-//                        printf("[%d | %d | %d] hit tri %d at %5.2f,%5.2f,%5.2f range: %6.3f mag: %4.2e ( %9.2e,%9.2e = %7.2f deg) (input pow: %4.2e\n",
-//                               pulse,nbounce,i,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z,
-//                               irp.range,CMPLX_MAG(irp.Es),irp.Es.r,irp.Es.i,RAD2DEG( CMPLX_PHASE(irp.Es)), LRays[i].pow);
-                        CMPLX_ADD(irp.Es, ttot, ttot);
-                    }
-//                    printf("combined field at RX for bounce %d is %e (%e, %e = %f deg)\n",nbounce,CMPLX_MAG(ttot),ttot.r,ttot.i,RAD2DEG( CMPLX_PHASE(ttot) ));
-                    double p = -4*SIPC_pi*((VECT_MAG(RxPos)+VECT_MAG(TxPos))/2.0)*td->oneOverLambda ;
-                    p = p / (2 * SIPC_pi) ;
-                    int ip = (int)p;
-                    p = (p - ip) * 2 * SIPC_pi;
-//                    printf("Satellite range %7.4f phase should be %f deg\n",(VECT_MAG(RxPos)+VECT_MAG(TxPos))/2.0,RAD2DEG(p));
-                };
                 
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
@@ -459,11 +439,11 @@ void * devPulseBlock ( void * threadArg ) {
 //            printf("Total RCS for pulse %d is %f m^2 (1m^2 plate should be %f m^2)\n",
 //                   pulse,cmplx_mag ,4*SIPC_pi/((SIPC_c / td->freq_centre)*(SIPC_c / td->freq_centre)));
 //            printf("%d, %f\n",pulse,cmplx_mag);
-            printf("Total RCS for pulse %d is %f m^2\n",pulse,cmplx_mag);
+            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log(cmplx_mag));
             printf("For comparison: \n");
-            printf("    1m^2 flat plate : %f\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
-            printf("    1m dihedral     : %f\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
-            printf("    2m trihedral    : %f\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda);
+            printf("    1m^2 flat plate : %f (%f dB m^2)\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
 
             // perform phase correction to account for deramped jitter in receiver timing
             //
