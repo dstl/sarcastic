@@ -404,7 +404,6 @@ void * devPulseBlock ( void * threadArg ) {
             //        nrnpItems = 1;
             // DEBUG
             rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
-            
             cnt = 0;
             for (int i=0; i<nAzBeam*nElBeam*MAXBOUNCES; i++){
                 if (CMPLX_MAG(rnp[i].Es) != 0 && rnp[i].range !=0){
@@ -435,23 +434,21 @@ void * devPulseBlock ( void * threadArg ) {
             
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
             
-//            printf("Grazing is %f\n",RAD2DEG(atan2(RxPos.z,-1*RxPos.x)));
 //            printf("Total RCS for pulse %d is %f m^2 (1m^2 plate should be %f m^2)\n",
 //                   pulse,cmplx_mag ,4*SIPC_pi/((SIPC_c / td->freq_centre)*(SIPC_c / td->freq_centre)));
-//            printf("%d, %f\n",pulse,cmplx_mag);
-            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log(cmplx_mag));
-            printf("For comparison: \n");
-            printf("    1m^2 flat plate : %f (%f dB m^2)\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
-            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
-            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+//            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log(cmplx_mag));
+//            printf("For comparison: \n");
+//            printf("    1m^2 flat plate : %f (%f dB m^2)\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+//            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+//            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
 
             // perform phase correction to account for deramped jitter in receiver timing
             //
             phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
             
             for(int x = 0; x < pulseLine.nx; x++) {
-                pcorr.r = td->amp_sf0[pulseIndex] * cos(phasecorr * (x - pulseLine.nx/2)) ;
-                pcorr.i = td->amp_sf0[pulseIndex] * sin(phasecorr * (x - pulseLine.nx/2)) ;
+                pcorr.r =  cos(phasecorr * (x - pulseLine.nx/2)) / (td->amp_sf0[pulseIndex]);
+                pcorr.i =  sin(phasecorr * (x - pulseLine.nx/2)) / (td->amp_sf0[pulseIndex]);
                 
                 if(CMPLX_MAG(pulseLine.data.cmpl_f[x]) == 0.0 ){
                     tmp.r = tmp.i = 0.0 ;

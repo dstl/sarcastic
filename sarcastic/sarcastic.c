@@ -240,8 +240,8 @@ int main (int argc, char **argv){
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
     }
-    maxBeamUsedAz = 0.7 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
-    maxBeamUsedEl = 0.7 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
     
     collectionGeom cGeom;
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
@@ -255,6 +255,7 @@ int main (int argc, char **argv){
     
     double TxPowPerRay, gainRx ;
     TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
+    printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
 
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
