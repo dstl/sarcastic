@@ -56,37 +56,53 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
         
         // Find the material for this geometry
         //
-        TiXmlElement* instance_geometry =
-        doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node")->FirstChildElement("instance_geometry");
-        while (instance_geometry != NULL) {
-            std::string instance_id ;
-            instance_id = instance_geometry->Attribute("url") ;
-            instance_id = instance_id.erase(0, 1);
-            if (data.name == instance_id) {
-                std::string materialID ;
-                materialID = instance_geometry->FirstChildElement("bind_material")->FirstChildElement("technique_common")->FirstChildElement("instance_material")->Attribute("target");
-                materialID = materialID.erase(0, 1);
-                std::string materiaName ;
-                TiXmlElement *material =  doc.RootElement()->FirstChildElement("library_materials")->FirstChildElement("material");
-                while( material != NULL){
-                    if(std::string(material->Attribute("id")) == materialID){
-                        data.material = std::string(material->Attribute("name")) ;
-                    }
-                    material = material->NextSiblingElement("material");
-                }
-            }
-            instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");
-        }
-        
-        // Find the world transformation matrix for this geometry
-        //
-        
+        TiXmlElement* instance_geometry ;
         TiXmlElement * node =
         doc.RootElement()->FirstChildElement("library_nodes");
         if(node != NULL){
             printf("Error: Collada file is hierarchical. Please save without \'preserve hierachies\' option");
             exit(1);
         }
+        node = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
+        while (node != NULL){
+            instance_geometry = node->FirstChildElement("instance_geometry");
+
+            while (instance_geometry != NULL) {
+                std::string instance_id ;
+                instance_id = instance_geometry->Attribute("url") ;
+                instance_id = instance_id.erase(0, 1);
+                if (data.name == instance_id) {
+                    // Found the instance_geometry for our geometry
+                    // see if it has a material
+                    //
+                    std::string materialID ;
+                    materialID = instance_geometry->FirstChildElement("bind_material")->FirstChildElement("technique_common")->FirstChildElement("instance_material")->Attribute("target");
+                    materialID = materialID.erase(0, 1);
+                    std::string materiaName ;
+                    TiXmlElement *material =  doc.RootElement()->FirstChildElement("library_materials")->FirstChildElement("material");
+                    while( material != NULL){
+                        if(std::string(material->Attribute("id")) == materialID){
+                            
+                            data.material = std::string(material->Attribute("name")) ;
+                        }
+                        material = material->NextSiblingElement("material");
+                    }
+                }
+                instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");
+            }
+            
+            // Make sure we also search for child nodes
+            //
+            TiXmlElement *nextnode = node->NextSiblingElement("node");
+            if (nextnode == NULL){
+                nextnode = node->FirstChildElement("node");
+            }
+            node = nextnode;
+        }
+        
+        // Find the world transformation matrix for this geometry
+        //
+        
         node = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
         double transform[16] = {1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0} ;
 
@@ -137,6 +153,8 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
                 instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");
             }
         
+            // Make sure we also search for child nodes
+            //
             TiXmlElement *nextnode = node->NextSiblingElement("node");
             if (nextnode == NULL){
                 nextnode = node->FirstChildElement("node");
