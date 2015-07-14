@@ -8,7 +8,9 @@
 #include <SIlib/SIlib.h>
 #include "trianglecpp.h"
 #include "materialProperties.h"
-
+extern "C" {
+#include "matrixMultiplication.h"
+}
 std::vector<ColGeom> geom_vec;    // Vector containing COLLADA meshes
 int num_objects;                  // Number of meshes in the vector
 int triangleCount(ColGeom v);
@@ -59,6 +61,8 @@ int main(int argc, char* argv[]) {
             float *f      = (float *)geom_vec[i].map["POSITION"].data;
             int stride    = geom_vec[i].map["POSITION"].stride ;
             float scaling = geom_vec[i].scaling;
+            scaling = 1;
+            double localPt[4], globalPt[4];
 
             for (int j=0; j<geom_vec[i].index_count/3; j++){
                 short AAi,BBi,CCi;
@@ -66,15 +70,34 @@ int main(int argc, char* argv[]) {
                 BBi = geom_vec[i].indices[j*3+1] ;
                 CCi = geom_vec[i].indices[j*3+2] ;
                 float AAx,AAy,AAz, BBx,BBy,BBz, CCx,CCy,CCz;
-                AAx = f[AAi*stride+0] * scaling;
-                AAy = f[AAi*stride+1] * scaling;
-                AAz = f[AAi*stride+2] * scaling;
-                BBx = f[BBi*stride+0] * scaling;
-                BBy = f[BBi*stride+1] * scaling;
-                BBz = f[BBi*stride+2] * scaling;
-                CCx = f[CCi*stride+0] * scaling;
-                CCy = f[CCi*stride+1] * scaling;
-                CCz = f[CCi*stride+2] * scaling;
+                
+                localPt[0] = f[AAi*stride+0] * scaling;
+                localPt[1] = f[AAi*stride+1] * scaling;
+                localPt[2] = f[AAi*stride+2] * scaling;
+                localPt[3] = 1 ;
+                matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
+                AAx = globalPt[0];
+                AAy = globalPt[1];
+                AAz = globalPt[2];
+                
+                localPt[0] = f[BBi*stride+0] * scaling;
+                localPt[1] = f[BBi*stride+1] * scaling;
+                localPt[2] = f[BBi*stride+2] * scaling;
+                localPt[3] = 1 ;
+                matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
+                BBx = globalPt[0];
+                BBy = globalPt[1];
+                BBz = globalPt[2];
+
+                localPt[0] = f[CCi*stride+0] * scaling;
+                localPt[1] = f[CCi*stride+1] * scaling;
+                localPt[2] = f[CCi*stride+2] * scaling;
+                localPt[3] = 1 ;
+                matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
+                CCx = globalPt[0];
+                CCy = globalPt[1];
+                CCz = globalPt[2];
+
                 SPVector AA,BB,CC;
                 VECT_CREATE(AAx, AAy, AAz, AA);
                 VECT_CREATE(BBx, BBy, BBz, BB);
@@ -87,9 +110,7 @@ int main(int argc, char* argv[]) {
     ColladaInterface::freeGeometries(&geom_vec);
     
     
-    writePLYFile(plyFname, tri_vec);
-    
-    
+    if(plyop)writePLYFile(plyFname, tri_vec);
     
     im_close_lib(&status);
 

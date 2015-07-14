@@ -49,7 +49,7 @@ struct ColGeom {
     int index_count ;
     unsigned short* indices ;
     float scaling ;
-    float transform[16];
+    double transform[16];
     std::string material ;
 };
 

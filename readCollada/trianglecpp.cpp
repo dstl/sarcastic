@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Dstl. All rights reserved.
 //
 
-#include <boost/algorithm/string.hpp>
 #include "trianglecpp.h"
 #include "materialProperties.h"
 extern "C"

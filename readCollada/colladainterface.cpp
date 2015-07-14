@@ -80,8 +80,14 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
         
         // Find the world transformation matrix for this geometry
         //
+        
         TiXmlElement * node =
-        doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
+        doc.RootElement()->FirstChildElement("library_nodes");
+        if(node != NULL){
+            printf("Error: Collada file is hierarchical. Please save without \'preserve hierachies\' option");
+            exit(1);
+        }
+        node = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
         double transform[16] = {1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0} ;
 
         while (node != NULL){
@@ -104,16 +110,29 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
                         for(int i=1; i<16; i++){
                             tMat[i] = atof(strtok(NULL, " "));
                         }
-                        
-                        
-                        // Iterate back to top level calculate the transform for each parent node
-                        //
-                        
-                        
                         double outMat[16] ;
                         matmul(transform, tMat, outMat, 4, 4, 4, 4);
                         for(int i=0; i<16; i++)transform[i]=outMat[i];
                     }
+                    
+                    // Iterate back to top level calculate the transform for each parent node
+                    //
+                    TiXmlElement *parentMatrix = node->Parent()->FirstChildElement("matrix");
+                    while (parentMatrix != NULL){
+                        char* matrixText = (char *)parentMatrix->GetText() ;
+                        tMat[0] = atof(strtok(matrixText, " "));
+                        for(int i=1; i<16; i++){
+                            tMat[i] = atof(strtok(NULL, " "));
+                        }
+                        double outMat[16] ;
+                        matmul(transform, tMat, outMat, 4, 4, 4, 4);
+                        for(int i=0; i<16; i++)transform[i]=outMat[i];
+                        
+                        parentMatrix = parentMatrix->Parent()->FirstChildElement("matrix");
+                    }
+                    // Now have the world transformation matrix stored in transform[]
+                    //
+                    
                 }
                 instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");
             }
