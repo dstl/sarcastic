@@ -50,7 +50,8 @@ struct ColGeom {
     unsigned short* indices ;
     float scaling ;
     double transform[16];
-    std::string material ;
+    std::string materialSide1 = std::string("") ;
+    std::string materialSide2 = std::string("") ;
 };
 
 SourceData readSource(TiXmlElement*);

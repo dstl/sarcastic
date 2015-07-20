@@ -76,16 +76,26 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
                     // see if it has a material
                     //
                     std::string materialID ;
-                    materialID = instance_geometry->FirstChildElement("bind_material")->FirstChildElement("technique_common")->FirstChildElement("instance_material")->Attribute("target");
-                    materialID = materialID.erase(0, 1);
-                    std::string materiaName ;
-                    TiXmlElement *material =  doc.RootElement()->FirstChildElement("library_materials")->FirstChildElement("material");
-                    while( material != NULL){
-                        if(std::string(material->Attribute("id")) == materialID){
-                            
-                            data.material = std::string(material->Attribute("name")) ;
+                    TiXmlElement *instanceMaterial;
+                    instanceMaterial = instance_geometry->FirstChildElement("bind_material")->FirstChildElement("technique_common")->FirstChildElement("instance_material");
+                    while (instanceMaterial != NULL) {
+                    
+                        materialID = instanceMaterial->Attribute("target");
+                        materialID = materialID.erase(0, 1);
+                        std::string materiaName ;
+                        TiXmlElement *material =  doc.RootElement()->FirstChildElement("library_materials")->FirstChildElement("material");
+                        while (material != NULL) {
+                            if(std::string(material->Attribute("id")) == materialID){
+                                
+                                if(data.materialSide1 == std::string("")){
+                                    data.materialSide1 = std::string(material->Attribute("name")) ;
+                                } else if (data.materialSide2 == std::string("")) {
+                                    data.materialSide2 = std::string(material->Attribute("name")) ;
+                                }
+                            }
+                            material = material->NextSiblingElement("material");
                         }
-                        material = material->NextSiblingElement("material");
+                        instanceMaterial = instanceMaterial->NextSiblingElement("instance_material");
                     }
                 }
                 instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");

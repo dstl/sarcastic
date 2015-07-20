@@ -78,15 +78,11 @@ Triangle::~Triangle(){
 void Triangle::setMaterial(int mat){ matId = mat; }
 
 void Triangle::setMaterial(std::string material){
-    
-    // Convert material to be upper case
-    // 'just in case ;-)'
-    //
-    char c[material.length()];
-    for(int i=0; i<material.length(); i++)c[i] = std::toupper(material[i]);
+  
+    std::transform(material.begin(), material.end(),material.begin(), ::toupper);
     
     for(int i=0; i<NMATERIALS; i++){
-        if (!strcmp(materialProperties[i].matname,c)) {
+        if (material.find(std::string(materialProperties[i].matname)) != std::string::npos ) {
             matId = i ;
             i = NMATERIALS ;
         }

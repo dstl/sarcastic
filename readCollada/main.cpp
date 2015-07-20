@@ -102,7 +102,23 @@ int main(int argc, char* argv[]) {
                 VECT_CREATE(AAx, AAy, AAz, AA);
                 VECT_CREATE(BBx, BBy, BBz, BB);
                 VECT_CREATE(CCx, CCy, CCz, CC);
-                Triangle t = Triangle(AA, BB, CC,geom_vec[i].material);
+                
+                std::string triMaterial ;
+                if (geom_vec[i].materialSide1 == std::string("material")) {
+                    if (geom_vec[i].materialSide2 != std::string("material") && geom_vec[i].materialSide2 != std::string("")) {
+                        triMaterial = geom_vec[i].materialSide2;
+                    }else{
+                        triMaterial = materialProperties[0].matname;
+                    }
+                }else if (geom_vec[i].materialSide2 == std::string("material")){
+                    if (geom_vec[i].materialSide1 != std::string("material") && geom_vec[i].materialSide1 != std::string("")) {
+                        triMaterial = geom_vec[i].materialSide1;
+                    }else{
+                        triMaterial = materialProperties[0].matname;
+                    }
+                }
+                
+                Triangle t = Triangle(AA, BB, CC,triMaterial);
                 tri_vec.push_back(t);
             }
         }
