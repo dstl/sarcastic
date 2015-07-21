@@ -11,14 +11,10 @@
 extern "C" {
 #include "matrixMultiplication.h"
 }
+#include "TriangleFile.h"
+
 std::vector<ColGeom> geom_vec;    // Vector containing COLLADA meshes
 int num_objects;                  // Number of meshes in the vector
-int triangleCount(ColGeom v);
-int vertexCount(ColGeom v);
-bool SPVectorsAreEqual(SPVector a, SPVector b);
-std::vector<SPVector> uniqueVertices(std::vector<Triangle> triangles);
-void writePLYFile(std::string fname, std::vector<Triangle> triangles);
-FILE * initialise_ply_file(const char *fname, int nvertices, int ntris);
 
 int main(int argc, char* argv[]) {
     
@@ -123,134 +119,19 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+    
+    TriangleFile trifile(tri_vec);
+    trifile.WriteFile(outFile);
+    
+    if(plyop){
+        trifile.WritePLYFile(plyFname, false);
+    }
+    
+    
     ColladaInterface::freeGeometries(&geom_vec);
-    
-    
-    if(plyop)writePLYFile(plyFname, tri_vec);
-    
     im_close_lib(&status);
 
     std::cout << "Done" << std::endl;
     
     return 0;
-}
-
-int vertexCount(ColGeom v){
-    int nvertices = 0 ;
-    if(v.map["POSITION"].type == GL_FLOAT){
-        nvertices += (v.map["POSITION"].size / sizeof(float))/3 ;
-    }else if(v.map["POSITION"].type == GL_INT){
-        nvertices += (v.map["POSITION"].size / sizeof(int))/3 ;
-    }else{
-        printf("Error : data source is neither float nor int\n");
-        exit(1);
-    }
-    return nvertices ;
-}
-
-int triangleCount(ColGeom v){
-    int ntris = 0;
-    
-    if(v.primitive == GL_TRIANGLES){
-        ntris += v.index_count/3 ;
-    }
-    return ntris ;
-}
-
-FILE * initialise_ply_file(const char *fname, int nvertices, int ntris){
-    
-    FILE *fp = fopen(fname, "w");
-    
-    if (fp == NULL) {
-        printf("Error : could not open file for writing\n");
-        exit(1);
-    }
-    
-    fprintf(fp,"ply\n");
-    fprintf(fp,"format ascii 1.0\n");
-    fprintf(fp,"comment testplyfile\n");
-    fprintf(fp,"element vertex %d\n",nvertices);
-    fprintf(fp,"property float x\n");
-    fprintf(fp,"property float y\n");
-    fprintf(fp,"property float z\n");
-    fprintf(fp,"element face %d\n",ntris);
-    fprintf(fp,"property list uchar int vertex_index\n");
-    fprintf(fp,"property uchar red\n");
-    fprintf(fp,"property uchar green\n");
-    fprintf(fp,"property uchar blue\n");
-    fprintf(fp,"end_header\n");
-    
-    return(fp);
-}
-
-std::vector<SPVector> uniqueVertices(std::vector<Triangle> triangles){
-    int ntris = (int)triangles.size();
-    SPVector test;
-    bool repeated;
-    
-    std::vector<SPVector> vertices_orig;
-    std::vector<SPVector> vertices_new;
-    
-    for(int i=0; i<ntris; i++){
-        vertices_orig.push_back(triangles[i].AA);
-        vertices_orig.push_back(triangles[i].BB);
-        vertices_orig.push_back(triangles[i].CC);
-    }
-    
-    for(int i=0; i<vertices_orig.size(); i++){
-        test     = vertices_orig[i];
-        repeated = false;
-        for (int j=0; j<vertices_new.size(); j++){
-            if( SPVectorsAreEqual(test, vertices_new[j])){
-                repeated = true;
-            }
-        }
-        if (repeated == false) {
-            vertices_new.push_back(test);
-        }
-    }
-    return vertices_new ;
-}
-
-void writePLYFile(std::string fname, std::vector<Triangle> triangles){
-    
-    std::vector<SPVector> v;
-    
-    v = uniqueVertices(triangles);
-    
-    FILE * fp = initialise_ply_file(fname.c_str(), (int)v.size(), (int)triangles.size());
-    
-    // rebuild triangles to use unique vertices
-    //
-    int t[(int)triangles.size()][3];
-    for(int i=0; i<triangles.size(); i++){
-        SPVector aa,bb,cc;
-        aa = triangles[i].AA ;
-        bb = triangles[i].BB ;
-        cc = triangles[i].CC ;
-        
-        for(int j=0; j<v.size(); j++){
-            if(SPVectorsAreEqual(v[j], aa))t[i][0] = j ;
-            if(SPVectorsAreEqual(v[j], bb))t[i][1] = j ;
-            if(SPVectorsAreEqual(v[j], cc))t[i][2] = j ;
-        }
-    }
-    
-    // Write out the unique vertices
-    //
-    for (int i=0; i<v.size(); i++){
-        fprintf(fp,"%4.4f %4.4f %4.4f\n",v[i].x,v[i].y,v[i].z);
-    }
-    // now write out triangles
-    //
-    for(int i=0; i<triangles.size(); i++){
-        fprintf(fp, "3 %d %d %d %d %d %d\n",t[i][0], t[i][1], t[i][2],
-                materialColours[triangles[i].matId][0],materialColours[triangles[i].matId][1],materialColours[triangles[i].matId][2]);
-    }
-    fclose(fp);
-    return ;
-}
-
-bool SPVectorsAreEqual(SPVector a, SPVector b){
-    return (a.x==b.x && a.y==b.y && a.z==b.z) ;
 }
