@@ -15,8 +15,6 @@
 
 class Triangle {
    
-    double     globalToLocalMat[9];
-    double     localToGlobalMat[9];
     
 public:
     Triangle(SPVector aa, SPVector bb, SPVector cc) ;
@@ -33,7 +31,8 @@ public:
     SPVector   NN ;
     double     area ;
     int        matId;
-
+    double     globalToLocalMat[9];
+    double     localToGlobalMat[9];
 };
 
 
