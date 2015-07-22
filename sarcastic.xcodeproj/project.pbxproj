@@ -68,11 +68,9 @@
 		9562DA631B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA641B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA651B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
-		9562DA661B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA681B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9562DA691B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
-		9562DA6B1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9567C8381B2F0426000742A6 /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
 		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
 		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
@@ -1223,7 +1221,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				953FA1F618F4289400EAD4F3 /* oclBuildShadowRays.c in Sources */,
-				9562DA6B1B4FFE4D00EC6D83 /* Triangle.m in Sources */,
 				953FA1FB18F4289400EAD4F3 /* oclReflectionPower.c in Sources */,
 				9562DA611B4FFE4D00EC6D83 /* MVectorObjc.m in Sources */,
 				953FA1EB18F4289400EAD4F3 /* getUserInput.c in Sources */,
@@ -1233,7 +1230,6 @@
 				95A046451AFBCD7E00FD0114 /* RCS.c in Sources */,
 				95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */,
 				953FA1F718F4289400EAD4F3 /* oclKdTreeHits.c in Sources */,
-				9562DA661B4FFE4D00EC6D83 /* radarMaterial.m in Sources */,
 				953FA1F818F4289400EAD4F3 /* oclRandomRays.c in Sources */,
 				953FA1FC18F4289400EAD4F3 /* readKdTree.c in Sources */,
 				953FA1E618F4289400EAD4F3 /* banner.c in Sources */,
