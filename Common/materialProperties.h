@@ -63,5 +63,16 @@ static scatProps materialProperties[NMATERIALS] = {
     {"WOOD",        0.1,        0.001,      1.0e14,     0.6,        0.4,        10.0        }
 } ;
 
+static int materialColours[NMATERIALS][3] = {
+    {255, 255, 255},        // 0 = Material
+    {128, 128, 128},        // 1 = Asphalt
+    {224, 224, 224},        // 2 = Brick
+    {176,  19,  35},        // 3 = Concrete
+    {176,  94,  41},        // 4 = Metal
+    {214, 186, 062},        // 5 = Roofing
+    {166, 214, 054},        // 6 = Vegetation
+    {056, 125, 214},        // 7 = Water
+    {137,  46, 014},        // 8 = Wood
+};
 
 #endif
