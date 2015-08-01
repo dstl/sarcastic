@@ -8,7 +8,7 @@ char array_types[7][15] = {"float_array", "int_array", "bool_array", "Name_array
 
 char primitive_types[7][15] = {"lines", "linestrips", "polygons", "polylist",
     "triangles", "trifans", "tristrips"};
-
+std::vector<std::string> stringTok(std::string s) ;
 void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filename) {
     
     TiXmlElement *mesh, *vertices, *input, *source, *primitive;
@@ -34,6 +34,14 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
     TiXmlElement* geometry =
     doc.RootElement()->FirstChildElement("library_geometries")->FirstChildElement("geometry");
     
+    double transform[16];
+    double tMat[16];
+    TiXmlElement *matrix;
+    TiXmlElement *nextnode ;
+    TiXmlElement *parentMatrix;
+    TiXmlElement* instance_geometry ;
+    TiXmlElement * node ;
+    
     // Iterate through geometry elements
     //
     while(geometry != NULL) {
@@ -56,9 +64,7 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
         
         // Find the material for this geometry
         //
-        TiXmlElement* instance_geometry ;
-        TiXmlElement * node =
-        doc.RootElement()->FirstChildElement("library_nodes");
+        node = doc.RootElement()->FirstChildElement("library_nodes");
         if(node != NULL){
             printf("Error: Collada file is hierarchical. Please save without \'preserve hierachies\' option");
             exit(1);
@@ -112,64 +118,61 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
         
         // Find the world transformation matrix for this geometry
         //
-        
         node = doc.RootElement()->FirstChildElement("library_visual_scenes")->FirstChildElement("visual_scene")->FirstChildElement("node");
-        double transform[16] = {1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0} ;
+        transform[0]  = 1.0; transform[1]  = 0.0; transform[2]  = 0.0; transform[3]  = 0.0;
+        transform[4]  = 0.0; transform[5]  = 1.0; transform[6]  = 0.0; transform[7]  = 0.0;
+        transform[8]  = 0.0; transform[9]  = 0.0; transform[10] = 1.0; transform[11] = 0.0;
+        transform[12] = 0.0; transform[13] = 0.0; transform[14] = 0.0; transform[15] = 1.0;
 
         while (node != NULL){
-        
+            
             instance_geometry = node->FirstChildElement("instance_geometry");
-            double tMat[16];
+            matrix = node->FirstChildElement("matrix");
             
             while (instance_geometry != NULL) {
                 std::string instance_id ;
                 instance_id = instance_geometry->Attribute("url") ;
                 instance_id = instance_id.erase(0, 1);
                 if (data.name == instance_id) {
-                    // Found the instance_geometry for our geometry
-                    // see if it has a transformation matrix
-                    //
-                    TiXmlElement *matrix = node->FirstChildElement("matrix");
                     if( matrix != NULL){
-                        char* matrixText = (char *)matrix->GetText() ;
-                        tMat[0] = atof(strtok(matrixText, " "));
-                        for(int i=1; i<16; i++){
-                            tMat[i] = atof(strtok(NULL, " "));
+                        std::vector<std::string> matrixElements = stringTok(std::string(matrix->GetText()));
+                        for(int i=0; i<16; i++){
+                            tMat[i] = atof(matrixElements[i].c_str());
                         }
                         double outMat[16] ;
                         matmul(transform, tMat, outMat, 4, 4, 4, 4);
                         for(int i=0; i<16; i++)transform[i]=outMat[i];
                     }
-                    
                     // Iterate back to top level calculate the transform for each parent node
                     //
-                    TiXmlElement *parentMatrix = node->Parent()->FirstChildElement("matrix");
-                    while (parentMatrix != NULL){
-                        char* matrixText = (char *)parentMatrix->GetText() ;
-                        tMat[0] = atof(strtok(matrixText, " "));
-                        for(int i=1; i<16; i++){
-                            tMat[i] = atof(strtok(NULL, " "));
+                    TiXmlNode *parentNode = node->Parent();
+                    while (parentNode != NULL){
+                        parentMatrix = parentNode->FirstChildElement("matrix");
+                        if (parentMatrix != NULL) {
+                            std::vector<std::string> matrixElements = stringTok(std::string(parentMatrix->GetText()));
+                            for(int i=0; i<16; i++){
+                                tMat[i] = atof(matrixElements[i].c_str());
+                            }
+                            double outMat[16] ;
+                            matmul(transform, tMat, outMat, 4, 4, 4, 4);
+                            for(int i=0; i<16; i++)transform[i]=outMat[i];
                         }
-                        double outMat[16] ;
-                        matmul(transform, tMat, outMat, 4, 4, 4, 4);
-                        for(int i=0; i<16; i++)transform[i]=outMat[i];
-                        
-                        parentMatrix = parentMatrix->Parent()->FirstChildElement("matrix");
+                        parentNode   = parentNode->Parent() ;
                     }
                     // Now have the world transformation matrix stored in transform[]
                     //
-                    
                 }
                 instance_geometry = instance_geometry->NextSiblingElement("instance_geometry");
             }
-        
-            // Make sure we also search for child nodes
-            //
-            TiXmlElement *nextnode = node->NextSiblingElement("node");
+            nextnode = node->NextSiblingElement("node");
             if (nextnode == NULL){
                 nextnode = node->FirstChildElement("node");
             }
             node = nextnode;
+            if(node != NULL){
+                std::string node_id ;
+                node_id = node->Attribute("id");
+            }
         }
         
         for(int i=0; i<16; i++)data.transform[i]=transform[i];
@@ -207,36 +210,24 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
             primitive = mesh->FirstChildElement("triangles");
             std::vector<unsigned short>indices_vec ;
             
-            while ( primitive != NULL) {
-                
-                // Determine number of primitives
-                //
-                primitive->QueryIntAttribute("count", &prim_count);
-                num_indices = prim_count * 3;
-                data.index_count += num_indices;
-                
-                // Read the index values
-                //
-                char* text = (char*)(primitive->FirstChildElement("p")->GetText());
-                indices_vec.push_back((unsigned short)atoi(strtok(text, " ")));
-                for(int index=1; index<num_indices; index++) {
-                    indices_vec.push_back((unsigned short)atoi(strtok(NULL, " ")));
-                }
-                
-                primitive = primitive->NextSiblingElement("triangles");
-            }
+//            while ( primitive != NULL) {
+//                
+//                // Determine number of primitives
+//                //
+//                primitive->QueryIntAttribute("count", &prim_count);
+//                num_indices = prim_count * 3;
+//                data.index_count += num_indices;
+//                
+//                // Read the index values
+//                //
+//                std::vector<std::string> text = stringTok(std::string(primitive->FirstChildElement("p")->GetText()));
+//                for(int index=0; index<num_indices; index++) {
+//                    indices_vec.push_back((unsigned short)atoi(text[index].c_str()));
+//                }
+//                
+//                primitive = primitive->NextSiblingElement("triangles");
+//            }
             
-            if(data.index_count > 0){
-                data.primitive = GL_TRIANGLES ;
-                // Allocate memory for indices
-                //
-                data.indices = (unsigned short*)malloc(indices_vec.size()* sizeof(unsigned short));
-                for (int i=0; i<indices_vec.size(); i++){
-                    data.indices[i] = indices_vec[i] ;
-                }
-            }
-
-            /*
             for(int i=0; i<7; i++) {
                 primitive = mesh->FirstChildElement(primitive_types[i]);
                 if(primitive != NULL) {
@@ -279,13 +270,13 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
                     
                     // Read the index values
                     //
-                    char* text = (char*)(primitive->FirstChildElement("p")->GetText());
-                    data.indices[0] = (unsigned short)atoi(strtok(text, " "));
-                    for(int index=1; index<num_indices; index++) {
-                        data.indices[index] = (unsigned short)atoi(strtok(NULL, " "));
+                    std::vector<std::string> text = stringTok(std::string(primitive->FirstChildElement("p")->GetText()));
+
+                    for(int index=0; index<num_indices; index++) {
+                        data.indices[index] = (unsigned short)atoi(text[index].c_str());
                     }
                 }
-            }*/
+            }
             
             mesh = mesh->NextSiblingElement("mesh");
         }
@@ -323,7 +314,7 @@ SourceData readSource(TiXmlElement* source) {
     
     SourceData source_data;
     TiXmlElement *array;
-    char* text;
+    std::vector<std::string> text;
     unsigned int num_vals, stride;
     int check;
     
@@ -346,7 +337,7 @@ SourceData readSource(TiXmlElement* source) {
             
             // Read array values
             //
-            text = (char*)(array->GetText());
+            text = stringTok(array->GetText());
             
             // Initialize mesh data according to data type
             //
@@ -361,9 +352,8 @@ SourceData readSource(TiXmlElement* source) {
                     
                     // Read the float values
                     //
-                    ((float*)source_data.data)[0] = atof(strtok(text, " "));  
-                    for(unsigned int index=1; index<num_vals; index++) {
-                        ((float*)source_data.data)[index] = atof(strtok(NULL, " "));   
+                    for(unsigned int index=0; index<num_vals; index++) {
+                        ((float*)source_data.data)[index] = atof(text[index].c_str());
                     }
                     break;
                     
@@ -376,9 +366,8 @@ SourceData readSource(TiXmlElement* source) {
                     
                     // Read the int values
                     //
-                    ((int*)source_data.data)[0] = atof(strtok(text, " "));  
-                    for(unsigned int index=1; index<num_vals; index++) {
-                        ((int*)source_data.data)[index] = atof(strtok(NULL, " "));   
+                    for(unsigned int index=0; index<num_vals; index++) {
+                        ((int*)source_data.data)[index] = atof(text[index].c_str());
                     }
                     break;
                     
@@ -393,4 +382,20 @@ SourceData readSource(TiXmlElement* source) {
     return source_data;
 }
 
-
+std::vector<std::string> stringTok(std::string s){
+    std::vector<std::string> results;
+    size_t lastOffset = 0;
+    std::string delims(" ");
+    
+    while(true)
+    {
+        size_t offset = s.find_first_of(delims, lastOffset);
+        results.push_back(s.substr(lastOffset, offset - lastOffset));
+        if (offset == std::string::npos)
+            break;
+        else
+            lastOffset = offset + 1; // add one to skip the delimiter
+    }
+    
+    return results ;
+}

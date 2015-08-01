@@ -57,7 +57,6 @@ int main(int argc, char* argv[]) {
             float *f      = (float *)geom_vec[i].map["POSITION"].data;
             int stride    = geom_vec[i].map["POSITION"].stride ;
             float scaling = geom_vec[i].scaling;
-            scaling = 1;
             double localPt[4], globalPt[4];
 
             for (int j=0; j<geom_vec[i].index_count/3; j++){
@@ -70,7 +69,7 @@ int main(int argc, char* argv[]) {
                 localPt[0] = f[AAi*stride+0] * scaling;
                 localPt[1] = f[AAi*stride+1] * scaling;
                 localPt[2] = f[AAi*stride+2] * scaling;
-                localPt[3] = 1 ;
+                localPt[3] = scaling ;
                 matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
                 AAx = globalPt[0];
                 AAy = globalPt[1];
@@ -79,7 +78,7 @@ int main(int argc, char* argv[]) {
                 localPt[0] = f[BBi*stride+0] * scaling;
                 localPt[1] = f[BBi*stride+1] * scaling;
                 localPt[2] = f[BBi*stride+2] * scaling;
-                localPt[3] = 1 ;
+                localPt[3] = scaling ;
                 matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
                 BBx = globalPt[0];
                 BBy = globalPt[1];
@@ -88,7 +87,7 @@ int main(int argc, char* argv[]) {
                 localPt[0] = f[CCi*stride+0] * scaling;
                 localPt[1] = f[CCi*stride+1] * scaling;
                 localPt[2] = f[CCi*stride+2] * scaling;
-                localPt[3] = 1 ;
+                localPt[3] = scaling ;
                 matmul(geom_vec[i].transform, localPt, globalPt, 4, 4, 1, 4);
                 CCx = globalPt[0];
                 CCy = globalPt[1];
