@@ -467,6 +467,8 @@ void * devPulseBlock ( void * threadArg ) {
             free(rnpData);
             
         } // end of pulse loop
+        
+        free(rnp) ;
     }
     
     if(td->phd != NULL){
