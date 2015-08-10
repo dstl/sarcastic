@@ -67,6 +67,20 @@
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95ABA80E1B5F7FAB00A485BA /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
 		95ABA80F1B5F7FAB00A485BA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80D1B5F7FAB00A485BA /* main.cpp */; };
+		95B5F8981B771A430095A6AB /* SARTrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B5F8951B771A430095A6AB /* SARTrace.c */; };
+		95B5F8991B771A430095A6AB /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B5F8971B771A430095A6AB /* threadCore.c */; };
+		95B5F89B1B771A6B0095A6AB /* getSARTraceUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B5F89A1B771A6B0095A6AB /* getSARTraceUserInput.c */; };
+		95B5F89D1B77219F0095A6AB /* SARTracebanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 95B5F89C1B77219F0095A6AB /* SARTracebanner.c */; };
+		95B5F89E1B7724BE0095A6AB /* readKdTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DD18F4289400EAD4F3 /* readKdTree.c */; };
+		95B5F89F1B7734630095A6AB /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
+		95B5F8A01B77348A0095A6AB /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
+		95B5F8A11B7734F70095A6AB /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
+		95B5F8A41B7735360095A6AB /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
+		95B5F8A51B7735400095A6AB /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		95B5F8A61B77355A0095A6AB /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */; };
+		95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
+		95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
+		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
 		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
 		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
@@ -83,6 +97,15 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9504211117A24F9400A076FC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		951F56001B6F49320036CBAC /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -215,6 +238,7 @@
 		9516175619DECEDE0004C4F0 /* main_POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_POTriangle.c; sourceTree = "<group>"; };
 		9516175919DECFA20004C4F0 /* POTriangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POTriangle.h; sourceTree = "<group>"; };
 		9516175A19DED0550004C4F0 /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
+		951F56021B6F49320036CBAC /* SARTrace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SARTrace; sourceTree = BUILT_PRODUCTS_DIR; };
 		9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Chatzigeorgiadis - PO RCS Prediction.pdf"; sourceTree = "<group>"; };
 		9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DosSantos-Ludwig with barycentrics.pdf"; sourceTree = "<group>"; };
 		9526A0BC19E1DAF5003675FB /* Efficient Evaluation of Radiation Integrals.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Efficient Evaluation of Radiation Integrals.pdf"; sourceTree = "<group>"; };
@@ -296,7 +320,7 @@
 		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
 		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
 		955F773719CF1D4700BF3039 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		9562D9CA1B483FEA00EC6D83 /* readCollada */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = readCollada; sourceTree = BUILT_PRODUCTS_DIR; };
+		9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToTriFile; sourceTree = BUILT_PRODUCTS_DIR; };
 		9562D9D51B48465400EC6D83 /* changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.txt; sourceTree = "<group>"; };
 		9562D9D71B48465400EC6D83 /* annotated.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = annotated.html; sourceTree = "<group>"; };
 		9562D9D81B48465400EC6D83 /* classes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = classes.html; sourceTree = "<group>"; };
@@ -422,6 +446,13 @@
 		95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = colladaToTriFile/colladainterface.cpp; sourceTree = SOURCE_ROOT; };
 		95ABA80C1B5F7FAB00A485BA /* colladainterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colladainterface.h; path = colladaToTriFile/colladainterface.h; sourceTree = SOURCE_ROOT; };
 		95ABA80D1B5F7FAB00A485BA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = colladaToTriFile/main.cpp; sourceTree = SOURCE_ROOT; };
+		95B5F8951B771A430095A6AB /* SARTrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SARTrace.c; sourceTree = "<group>"; };
+		95B5F8961B771A430095A6AB /* SARTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SARTrace.h; sourceTree = "<group>"; };
+		95B5F8971B771A430095A6AB /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
+		95B5F89A1B771A6B0095A6AB /* getSARTraceUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getSARTraceUserInput.c; sourceTree = "<group>"; };
+		95B5F89C1B77219F0095A6AB /* SARTracebanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SARTracebanner.c; sourceTree = "<group>"; };
+		95B5F8A21B7735140095A6AB /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
+		95B5F8AA1B78F9FA0095A6AB /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		95C1708B18C9CC9800651D97 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
@@ -451,6 +482,16 @@
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		951F55FF1B6F49320036CBAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95B5F8A51B7735400095A6AB /* libreadline.dylib in Frameworks */,
+				95B5F8A41B7735360095A6AB /* libexpat.dylib in Frameworks */,
+				95B5F8A11B7734F70095A6AB /* libSIlib-1.2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,6 +559,7 @@
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
 				95D5E169192CA57E001ABC11 /* POTest */,
+				951F56031B6F49320036CBAC /* SARTrace */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
 				9526A0B919E1DAF5003675FB /* Documents */,
@@ -532,7 +574,8 @@
 				953C58DC19D32D1D006D5866 /* testImport */,
 				953C58FC19D41F5B006D5866 /* triDecomp */,
 				953C591819D7F8C9006D5866 /* buildKDTree */,
-				9562D9CA1B483FEA00EC6D83 /* readCollada */,
+				9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */,
+				951F56021B6F49320036CBAC /* SARTrace */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -634,6 +677,19 @@
 				9516174919DAB7FA0004C4F0 /* fftw3f.pc */,
 			);
 			path = pkgconfig;
+			sourceTree = "<group>";
+		};
+		951F56031B6F49320036CBAC /* SARTrace */ = {
+			isa = PBXGroup;
+			children = (
+				95B5F8AA1B78F9FA0095A6AB /* GenGitVersion.sh */,
+				95B5F8951B771A430095A6AB /* SARTrace.c */,
+				95B5F8961B771A430095A6AB /* SARTrace.h */,
+				95B5F8971B771A430095A6AB /* threadCore.c */,
+				95B5F89C1B77219F0095A6AB /* SARTracebanner.c */,
+				95B5F89A1B771A6B0095A6AB /* getSARTraceUserInput.c */,
+			);
+			path = SARTrace;
 			sourceTree = "<group>";
 		};
 		9526A0B919E1DAF5003675FB /* Documents */ = {
@@ -772,6 +828,7 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95B5F8A21B7735140095A6AB /* libxml2.2.dylib */,
 				9567C8371B2F0426000742A6 /* libSIlib-1.2.a */,
 				9567C8351B2EFE0B000742A6 /* libSIlib-1.1-7-e17b94d-dirty.a */,
 				950635CE19F7ECE100B83F4B /* lib */,
@@ -974,6 +1031,24 @@
 			productReference = 9504211317A24F9400A076FC /* sarcastic */;
 			productType = "com.apple.product-type.tool";
 		};
+		951F56011B6F49320036CBAC /* SARTrace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 951F56061B6F49320036CBAC /* Build configuration list for PBXNativeTarget "SARTrace" */;
+			buildPhases = (
+				95B5F8AC1B78FBEC0095A6AB /* ShellScript */,
+				951F55FE1B6F49320036CBAC /* Sources */,
+				951F55FF1B6F49320036CBAC /* Frameworks */,
+				951F56001B6F49320036CBAC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SARTrace;
+			productName = SARTrace;
+			productReference = 951F56021B6F49320036CBAC /* SARTrace */;
+			productType = "com.apple.product-type.tool";
+		};
 		953C58DB19D32D1D006D5866 /* testImport */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 953C58E519D32D1D006D5866 /* Build configuration list for PBXNativeTarget "testImport" */;
@@ -1041,7 +1116,7 @@
 			);
 			name = colladaToTriFile;
 			productName = colladaInterface;
-			productReference = 9562D9CA1B483FEA00EC6D83 /* readCollada */;
+			productReference = 9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */;
 			productType = "com.apple.product-type.tool";
 		};
 		95D5E167192CA57E001ABC11 /* POTest */ = {
@@ -1070,6 +1145,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Dstl;
 				TargetAttributes = {
+					951F56011B6F49320036CBAC = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
 					9562D9C91B483FEA00EC6D83 = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
@@ -1093,6 +1171,7 @@
 				9504211217A24F9400A076FC /* sarcastic */,
 				95D5E167192CA57E001ABC11 /* POTest */,
 				953C58DB19D32D1D006D5866 /* testImport */,
+				951F56011B6F49320036CBAC /* SARTrace */,
 			);
 		};
 /* End PBXProject section */
@@ -1123,6 +1202,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd ${PROJECT_DIR}/buildKDTree ; ./GenGitVersion.sh";
+		};
+		95B5F8AC1B78FBEC0095A6AB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PROJECT_DIR/SARTrace ; $PROJECT_DIR/SARTrace/GenGitVersion.sh";
 		};
 		95D0DAC919F16A1E00DBB831 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1164,6 +1256,24 @@
 				953FA1EA18F4289400EAD4F3 /* generate_gaussian_ray_distribution.c in Sources */,
 				953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */,
 				953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		951F55FE1B6F49320036CBAC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */,
+				95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */,
+				95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */,
+				95B5F8A61B77355A0095A6AB /* ecef2SceneCoords.c in Sources */,
+				95B5F8A01B77348A0095A6AB /* buildKernel.c in Sources */,
+				95B5F89F1B7734630095A6AB /* BuildRopesAndBoxes.c in Sources */,
+				95B5F89E1B7724BE0095A6AB /* readKdTree.c in Sources */,
+				95B5F89B1B771A6B0095A6AB /* getSARTraceUserInput.c in Sources */,
+				95B5F8991B771A430095A6AB /* threadCore.c in Sources */,
+				95B5F8981B771A430095A6AB /* SARTrace.c in Sources */,
+				95B5F89D1B77219F0095A6AB /* SARTracebanner.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1326,6 +1436,79 @@
 					/usr/local/dstl/lib,
 				);
 				PRODUCT_NAME = sarcastic;
+			};
+			name = Release;
+		};
+		951F56071B6F49320036CBAC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "OCLKERNELSPATH=\\\"$PROJECT_DIR/sarcastic/kernels\\\"";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include,
+					$PROJECT_DIR/sarcastic,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		951F56081B6F49320036CBAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "OCLKERNELSPATH=\\\"$PROJECT_DIR/sarcastic/kernels\\\"";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/dstl/include,
+					$PROJECT_DIR/sarcastic,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1639,6 +1822,15 @@
 			buildConfigurations = (
 				9504211E17A24F9400A076FC /* Debug */,
 				9504211F17A24F9400A076FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		951F56061B6F49320036CBAC /* Build configuration list for PBXNativeTarget "SARTrace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				951F56071B6F49320036CBAC /* Debug */,
+				951F56081B6F49320036CBAC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

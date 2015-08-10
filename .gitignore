@@ -22,3 +22,4 @@ sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcschemes/sarcastic.xcscheme
 sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcschemes/xcschememanagement.plist
 *.xcscheme
 Version.h
+SartraceVersion.h
