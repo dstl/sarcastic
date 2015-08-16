@@ -48,6 +48,78 @@ TriangleFile::TriangleFile( std::vector<Triangle> tris ) {
     triangles = tris ;
 }
 
+TriangleFile::TriangleFile( std::string fname){
+    FILE *fp;
+    fp = fopen(fname.c_str(), "r");
+    if (fp==NULL) {
+        printf("Error : Could not open file %s\n",fname.c_str());
+        exit(1);
+    }
+    
+    int ntri,vertexBytes,MAXMATNAME;
+    
+    fread(&ntri,        sizeof(int), 1, fp);
+    fread(&vertexBytes, sizeof(int), 1, fp);
+    fread(&MAXMATNAME,  sizeof(int), 1, fp);
+    
+    int trinum;
+    for (int i=0; i<ntri; i++){
+        fread(&trinum, sizeof(int), 1, fp);
+        if (trinum != i) {
+            printf("Error: indexing problem attempting to read triangle %d\n",i);
+            exit(0);
+        }
+        double x,y,z,area, *p ;
+        SPVector AA,BB,CC,NN;
+
+        fread(&x, sizeof(double), 1, fp);
+        fread(&y, sizeof(double), 1, fp);
+        fread(&z, sizeof(double), 1, fp);
+        VECT_CREATE(x, y, z, AA);
+        fread(&x, sizeof(double), 1, fp);
+        fread(&y, sizeof(double), 1, fp);
+        fread(&z, sizeof(double), 1, fp);
+        VECT_CREATE(x, y, z, BB);
+        fread(&x, sizeof(double), 1, fp);
+        fread(&y, sizeof(double), 1, fp);
+        fread(&z, sizeof(double), 1, fp);
+        VECT_CREATE(x, y, z, CC);
+        fread(&x, sizeof(double), 1, fp);
+        fread(&y, sizeof(double), 1, fp);
+        fread(&z, sizeof(double), 1, fp);
+        VECT_CREATE(x, y, z, NN);
+        fread(&area, sizeof(double), 1, fp);
+        
+        Triangle tri;
+        tri.AA = AA;
+        tri.BB = BB;
+        tri.CC = CC;
+        tri.NN = NN;
+        tri.area = area ;
+        
+        p = tri.globalToLocalMat;
+        for (int j=0; j<9; j++){
+            fread(&x, sizeof(double), 1, fp);
+            p[j] = x ;
+
+        }
+        p = tri.localToGlobalMat ;
+        for (int j=0; j<9; j++){
+            fread(&x, sizeof(double), 1, fp);
+            p[j] = x ;
+
+        }
+        char matname[MAXMATNAME];
+        fread(matname, sizeof(char), MAXMATNAME, fp);
+        tri.setMaterial(std::string(matname));
+        triangles.push_back(tri);
+    }
+    
+    fclose(fp);
+    return ;
+        
+}
+
 void TriangleFile::WriteFile(std::string fname){
     FILE *fp;
     fp = fopen(fname.c_str(), "w");
@@ -60,9 +132,9 @@ void TriangleFile::WriteFile(std::string fname){
     int vertexBytes = sizeof(double) ;
     int MAXMATNAME = MATBYTES ; // bytes
     
-    fwrite(&ntri, sizeof(int), 1, fp);
-    fwrite(&vertexBytes, sizeof(int),1,fp);
-    fwrite(&MAXMATNAME, sizeof(int), 1, fp);
+    fwrite(&ntri,        sizeof(int), 1, fp);
+    fwrite(&vertexBytes, sizeof(int), 1, fp);
+    fwrite(&MAXMATNAME,  sizeof(int), 1, fp);
     
     for (int i=0; i<ntri; i++){
         

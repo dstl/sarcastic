@@ -1,15 +1,25 @@
 /***************************************************************************
+ *  boxMuller_Random.c
+ *  triDecomp
  *
- *       Module:    trianglecpp.h
- *      Program:    SARCASTIC
- *   Created by:    Darren Muff on 21/07/2015.
- *                  Copyright (c) 2015 Dstl. All rights reserved.
+ *  Created by Muff Darren on 27/09/2014.
+ *  Copyright (c) 2014 [dstl]. All rights reserved.
+ *
+ * Original source code
+ *  (c) Copyright 1994, Everett F. Carter Jr.
+ *  Permission is granted by the author to use
+ *  this software for any application provided this
+ *  copyright notice is preserved.
  *
  *   Description:
- *      Class header for trianglecpp class
+ *      Implements the Polar form of the Box-Muller Transformation
+ *      This module is taken from http://www.taygeta.com/random/gaussian.html
+ *      There is a useful discussion on generating Gaussian random numbers
+ *      at http://www.design.caltech.edu/erik/Misc/Gaussian.html
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  21/07/2015
+ *
+ *  CLASSIFICATION       :   UNCLASSIFIED
+ *  Date of CLASSN       :   25/09/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -33,37 +43,14 @@
  * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
  * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
  * IRELAND.
- *
  ***************************************************************************/
 
-#ifndef __sarcastic__trianglecpp__
-#define __sarcastic__trianglecpp__
+#ifndef sarcastic_boxMullerRandom_h
+#define sarcastic_boxMullerRandom_h
 
-#include <iostream>
-#include <stdio.h>
-#include <SIlib/SIlib.h>
+#include <math.h>
+#include "ranf.h"
 
-class Triangle {
-   
-public:
-    Triangle();
-    Triangle(SPVector aa, SPVector bb, SPVector cc) ;
-    Triangle(SPVector aa, SPVector bb, SPVector cc, int material) ;
-    Triangle(SPVector aa, SPVector bb, SPVector cc, std::string material) ;
-    ~Triangle();
-    
-    void setMaterial(int matId);
-    void setMaterial(std::string material);
-    
-    SPVector   AA ;
-    SPVector   BB ;
-    SPVector   CC ;
-    SPVector   NN ;
-    double     area ;
-    int        matId;
-    double     globalToLocalMat[9];
-    double     localToGlobalMat[9];
-};
+float box_muller(float m, float s);	/* normal random variate generator */
 
-
-#endif /* defined(__sarcastic__trianglecpp__) */
+#endif

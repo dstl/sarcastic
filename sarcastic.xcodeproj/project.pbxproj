@@ -42,6 +42,16 @@
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
 		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
+		954D03521B7BC7AD003CCB86 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D03511B7BC7AD003CCB86 /* main.cpp */; };
+		954D03561B7BC807003CCB86 /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
+		954D03571B7BC8FC003CCB86 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		954D03581B7BCA08003CCB86 /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
+		954D03591B7BCAC7003CCB86 /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
+		954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
+		954D035D1B7CF461003CCB86 /* JRStriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 954D035B1B7CF461003CCB86 /* JRStriangle.c */; };
+		954D03601B7DCCDA003CCB86 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 954D035E1B7DCCDA003CCB86 /* boxMullerRandom.c */; };
+		954D03631B7DD20A003CCB86 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 954D03611B7DD20A003CCB86 /* ranf.c */; };
+		954D03651B7DD25C003CCB86 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 954D03641B7DD25C003CCB86 /* pmath_rng.c */; };
 		955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
 		9562DA401B48465400EC6D83 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
 		9562DA411B48465400EC6D83 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
@@ -140,6 +150,15 @@
 			dstSubfolderSpec = 0;
 			files = (
 				953C592019D7F8C9006D5866 /* buildKDTree.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		954D034D1B7BC7AD003CCB86 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -317,6 +336,15 @@
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TxPowerPerRay.c; sourceTree = "<group>"; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
 		95492F391A74EFC90061FCF7 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
+		954D034F1B7BC7AD003CCB86 /* materialise */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = materialise; sourceTree = BUILT_PRODUCTS_DIR; };
+		954D03511B7BC7AD003CCB86 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		954D035B1B7CF461003CCB86 /* JRStriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = JRStriangle.c; sourceTree = "<group>"; };
+		954D035C1B7CF461003CCB86 /* JRStriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRStriangle.h; sourceTree = "<group>"; };
+		954D035E1B7DCCDA003CCB86 /* boxMullerRandom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boxMullerRandom.c; sourceTree = "<group>"; };
+		954D035F1B7DCCDA003CCB86 /* boxMullerRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boxMullerRandom.h; sourceTree = "<group>"; };
+		954D03611B7DD20A003CCB86 /* ranf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ranf.c; sourceTree = "<group>"; };
+		954D03621B7DD20A003CCB86 /* ranf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ranf.h; sourceTree = "<group>"; };
+		954D03641B7DD25C003CCB86 /* pmath_rng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pmath_rng.c; sourceTree = "<group>"; };
 		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
 		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
 		955F773719CF1D4700BF3039 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -524,6 +552,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		954D034C1B7BC7AD003CCB86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				954D03571B7BC8FC003CCB86 /* libreadline.dylib in Frameworks */,
+				954D03561B7BC807003CCB86 /* libSIlib-1.2.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9562D9C71B483FEA00EC6D83 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -555,6 +592,7 @@
 				957B840517AD255E00B963DE /* libexpat.dylib */,
 				95B9D7DA1AEA63F200CEA000 /* Common */,
 				9562D9CB1B483FEA00EC6D83 /* colladaToTriFile */,
+				954D03501B7BC7AD003CCB86 /* materialise */,
 				953C58FD19D41F5B006D5866 /* triDecomp */,
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
@@ -576,6 +614,7 @@
 				953C591819D7F8C9006D5866 /* buildKDTree */,
 				9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */,
 				951F56021B6F49320036CBAC /* SARTrace */,
+				954D034F1B7BC7AD003CCB86 /* materialise */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -814,6 +853,21 @@
 				95F276ED1A36045900FF9339 /* POField.cl */,
 			);
 			path = kernels;
+			sourceTree = "<group>";
+		};
+		954D03501B7BC7AD003CCB86 /* materialise */ = {
+			isa = PBXGroup;
+			children = (
+				954D03511B7BC7AD003CCB86 /* main.cpp */,
+				954D035B1B7CF461003CCB86 /* JRStriangle.c */,
+				954D035C1B7CF461003CCB86 /* JRStriangle.h */,
+				954D03641B7DD25C003CCB86 /* pmath_rng.c */,
+				954D03611B7DD20A003CCB86 /* ranf.c */,
+				954D03621B7DD20A003CCB86 /* ranf.h */,
+				954D035E1B7DCCDA003CCB86 /* boxMullerRandom.c */,
+				954D035F1B7DCCDA003CCB86 /* boxMullerRandom.h */,
+			);
+			path = materialise;
 			sourceTree = "<group>";
 		};
 		955F772B19CF0FA500BF3039 /* Utils */ = {
@@ -1102,6 +1156,23 @@
 			productReference = 953C591819D7F8C9006D5866 /* buildKDTree */;
 			productType = "com.apple.product-type.tool";
 		};
+		954D034E1B7BC7AD003CCB86 /* materialise */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 954D03551B7BC7AD003CCB86 /* Build configuration list for PBXNativeTarget "materialise" */;
+			buildPhases = (
+				954D034B1B7BC7AD003CCB86 /* Sources */,
+				954D034C1B7BC7AD003CCB86 /* Frameworks */,
+				954D034D1B7BC7AD003CCB86 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = materialise;
+			productName = materialise;
+			productReference = 954D034F1B7BC7AD003CCB86 /* materialise */;
+			productType = "com.apple.product-type.tool";
+		};
 		9562D9C91B483FEA00EC6D83 /* colladaToTriFile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9562D9D01B483FEA00EC6D83 /* Build configuration list for PBXNativeTarget "colladaToTriFile" */;
@@ -1148,6 +1219,9 @@
 					951F56011B6F49320036CBAC = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
+					954D034E1B7BC7AD003CCB86 = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
 					9562D9C91B483FEA00EC6D83 = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
@@ -1172,6 +1246,7 @@
 				95D5E167192CA57E001ABC11 /* POTest */,
 				953C58DB19D32D1D006D5866 /* testImport */,
 				951F56011B6F49320036CBAC /* SARTrace */,
+				954D034E1B7BC7AD003CCB86 /* materialise */,
 			);
 		};
 /* End PBXProject section */
@@ -1313,6 +1388,21 @@
 				953375E219D927C100DE1C46 /* KdTree.m in Sources */,
 				953375FE19D929C400DE1C46 /* banner.c in Sources */,
 				953375EC19D9293200DE1C46 /* AABB.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		954D034B1B7BC7AD003CCB86 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */,
+				954D03591B7BCAC7003CCB86 /* trianglecpp.cpp in Sources */,
+				954D03581B7BCA08003CCB86 /* TriangleFile.cpp in Sources */,
+				954D03601B7DCCDA003CCB86 /* boxMullerRandom.c in Sources */,
+				954D03651B7DD25C003CCB86 /* pmath_rng.c in Sources */,
+				954D03631B7DD20A003CCB86 /* ranf.c in Sources */,
+				954D035D1B7CF461003CCB86 /* JRStriangle.c in Sources */,
+				954D03521B7BC7AD003CCB86 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1679,6 +1769,71 @@
 			};
 			name = Release;
 		};
+		954D03531B7BC7AD003CCB86 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		954D03541B7BC7AD003CCB86 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/dstl/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9562D9CE1B483FEA00EC6D83 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1861,6 +2016,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		954D03551B7BC7AD003CCB86 /* Build configuration list for PBXNativeTarget "materialise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				954D03531B7BC7AD003CCB86 /* Debug */,
+				954D03541B7BC7AD003CCB86 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		9562D9D01B483FEA00EC6D83 /* Build configuration list for PBXNativeTarget "colladaToTriFile" */ = {
 			isa = XCConfigurationList;

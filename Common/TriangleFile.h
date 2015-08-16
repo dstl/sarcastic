@@ -46,13 +46,14 @@
 #include <SIlib/SIlib.h>
 #include "trianglecpp.h"
 
-
 class TriangleFile {
     static std::string version ;
-    std::vector<Triangle> triangles ;
 
 public:
+    std::vector<Triangle> triangles ;
+
     TriangleFile( std::vector<Triangle> tris ) ;
+    TriangleFile( std::string filename) ;
     void WriteFile( std::string filename ) ;
     void WritePLYFile( std::string filename, bool binary) ;
 };

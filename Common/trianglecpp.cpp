@@ -43,6 +43,8 @@ extern "C"
 #include "matrixMultiplication.h"
 }
 
+Triangle::Triangle(){}
+
 Triangle::Triangle(SPVector aa, SPVector bb, SPVector cc){
     AA = aa ;
     BB = bb ;
