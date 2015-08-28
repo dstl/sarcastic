@@ -7,7 +7,6 @@
 .DS_Store
 ._*
 SarcasticVersion.h
-Makefile
 # Ignore user specific Xcode files
 GOSS.xcodeproj/project.xcworkspace
 GOSS.xcodeproj/xcuserdata
@@ -23,3 +22,5 @@ sarcastic.xcodeproj/xcuserdata/darren.xcuserdatad/xcschemes/xcschememanagement.p
 *.xcscheme
 Version.h
 SartraceVersion.h
+.sartracerc*
+bin

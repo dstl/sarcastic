@@ -348,6 +348,7 @@
 		955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OpenCLUtils.c; sourceTree = "<group>"; };
 		955F772D19CF0FBC00BF3039 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLUtils.h; sourceTree = "<group>"; };
 		955F773719CF1D4700BF3039 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		956026801B904152008A8B84 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToTriFile; sourceTree = BUILT_PRODUCTS_DIR; };
 		9562D9D51B48465400EC6D83 /* changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.txt; sourceTree = "<group>"; };
 		9562D9D71B48465400EC6D83 /* annotated.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = annotated.html; sourceTree = "<group>"; };
@@ -721,6 +722,7 @@
 		951F56031B6F49320036CBAC /* SARTrace */ = {
 			isa = PBXGroup;
 			children = (
+				956026801B904152008A8B84 /* Makefile */,
 				95B5F8AA1B78F9FA0095A6AB /* GenGitVersion.sh */,
 				95B5F8951B771A430095A6AB /* SARTrace.c */,
 				95B5F8961B771A430095A6AB /* SARTrace.h */,
@@ -1338,17 +1340,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */,
-				95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */,
-				95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */,
-				95B5F8A61B77355A0095A6AB /* ecef2SceneCoords.c in Sources */,
 				95B5F8A01B77348A0095A6AB /* buildKernel.c in Sources */,
 				95B5F89F1B7734630095A6AB /* BuildRopesAndBoxes.c in Sources */,
-				95B5F89E1B7724BE0095A6AB /* readKdTree.c in Sources */,
+				95B5F8A61B77355A0095A6AB /* ecef2SceneCoords.c in Sources */,
 				95B5F89B1B771A6B0095A6AB /* getSARTraceUserInput.c in Sources */,
-				95B5F8991B771A430095A6AB /* threadCore.c in Sources */,
+				95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */,
+				95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */,
+				95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */,
+				95B5F89E1B7724BE0095A6AB /* readKdTree.c in Sources */,
 				95B5F8981B771A430095A6AB /* SARTrace.c in Sources */,
 				95B5F89D1B77219F0095A6AB /* SARTracebanner.c in Sources */,
+				95B5F8991B771A430095A6AB /* threadCore.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2024,6 +2026,7 @@
 				954D03541B7BC7AD003CCB86 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9562D9D01B483FEA00EC6D83 /* Build configuration list for PBXNativeTarget "colladaToTriFile" */ = {
 			isa = XCConfigurationList;

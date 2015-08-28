@@ -43,9 +43,9 @@
 
 void SARTracebanner (){
     printf(" \n");
-    printf(DARK GREEN "                SARTrace - SAR Ray Tracer\n" NORMAL);
-    printf(BLUE       "                   Version :"RED" %s \n", FULL_VERSION);
-    printf(BLUE       "                    Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
+    printf(DARK GREEN "                   SARTrace - SAR Ray Tracer\n" NORMAL);
+    printf(BLUE       "                Version :"RED" %s \n", FULL_VERSION);
+    printf(BLUE       "            Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
     printf(BLUE       "         Copyright (c) 2015 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);
     printf(" \n");
 
