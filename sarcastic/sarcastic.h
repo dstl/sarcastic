@@ -135,18 +135,18 @@ typedef struct cplxf {
 } cplxf;
 
 typedef struct ATS {    // Accelerated Triangle Structure
-    int  triNum;    // Triangle ID
-    double d;       // Constant of plane equation
-    double nd_u;    // Normal.u / normal.k
-    double nd_v;    // normal.v / normal.k
-    int k;          // projection dimension
+    int  triNum;        // Triangle ID
+    double d;           // Constant of plane equation
+    double nd_u;        // Normal.u / normal.k
+    double nd_v;        // normal.v / normal.k
+    int k;              // projection dimension
     double kbu;
     double kbv;
     double kbd;
     double kcu;
     double kcv;
     double kcd;
-    int    matInd;  // Material Index
+    int    matInd;      // Material Index
 } ATS;
 
 typedef struct Triangle{

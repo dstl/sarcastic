@@ -266,9 +266,9 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         Lt      = LT ;          // Length of Taylor series region
         magDp   = fabs(Dp) ;
         magDq   = fabs(Dq) ;
-        e_jD0.r = cosf(D0) ; e_jD0.i = sinf(D0) ;
-        e_jDp.r = cosf(Dp) ; e_jDp.i = sinf(Dp) ;
-        e_jDq.r = cosf(Dq) ; e_jDq.i = sinf(Dq) ;
+        e_jD0.r = cos(D0) ; e_jD0.i = sin(D0) ;
+        e_jDp.r = cos(Dp) ; e_jDp.i = sin(Dp) ;
+        e_jDq.r = cos(Dq) ; e_jDq.i = sin(Dq) ;
         jDp.r   = 0;           jDp.i = Dp ;
         jD0.r   = 0;           jD0.i = D0 ;
         jDq.r   = 0;           jDq.i = Dq ;

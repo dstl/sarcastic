@@ -114,6 +114,7 @@ int main(int argc, char* argv[]) {
                 }
                 
                 Triangle t = Triangle(AA, BB, CC,triMaterial);
+                printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z);
                 tri_vec.push_back(t);
             }
         }

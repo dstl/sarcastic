@@ -42,7 +42,7 @@
 
 static char *rootpath = "/local_storage/DGM" ;
 
-int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, SPStatus *status){
+int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, int *nRaysX, int *nRaysY, SPStatus *status){
     
     char * prompt;
     SPStatus fileStat ;
@@ -53,7 +53,7 @@ int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, SP
         im_init_status(fileStat, 0) ;
         sprintf(prompt, "%s/KdTree.kdt",rootpath);
         *KdTreeFile = input_string((char *)"KdTree Filename", (char *)"KdTreeFile",
-                                   (char *)"The name of a KdTree file containing the scene.",
+                                   (char *)"The name of a KdTree file containing the scene. The KdTree is a hierarchical structure containing all the scene information and can be created from a '.dae' file using the program 'buildKdTree'",
                                    prompt);
         if( access( *KdTreeFile, F_OK ) == -1 ) {
             printf(RED "Cannot access file %s\n" RESETCOLOR,*KdTreeFile);
@@ -65,7 +65,7 @@ int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, SP
         im_init_status(fileStat, 0) ;
         sprintf(prompt, "%s/cphdFile.cph",rootpath);
         *inCPHDFile = input_string((char *)"CPHD Filename", (char *)"CPHDFile",
-                                   (char *)"The name of a CPHD file to use.",
+                                   (char *)"The name of a CPHD file to use. The CPHD file is used to position the radar sensor location and RF parameters relative to the scene",
                                    prompt);
         if( access( *inCPHDFile, R_OK ) == -1 ){
             printf(RED "Cannot access file %s\n" RESETCOLOR,*inCPHDFile);
@@ -77,13 +77,21 @@ int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, SP
         im_init_status(fileStat, 0) ;
         sprintf(prompt, "%s/rayTraceOutput",rootpath);
         *outDir = input_string((char *)"Output directory", (char *)"OutDir",
-                               (char *)"The name of a directory / folder to place bounce ray intersection information.",
+                               (char *)"The name of a directory / folder to place bounce ray intersection information. Two sets of files are created in this folder, both in ',ply' format. The first contains the locations of each ray intersection with different files showing the locations after each bounce. The second contains the actual triangles that are hit on each bounce. This is useful as the Physical Optics properties of each triangle are calculated for the whole triangle and so only one hit per triangle is required. You can therefore use this to determine how many rays are required to fully illuminate the scene.",
                                prompt);
         if( access( *outDir, R_OK ) == -1 ){
             printf(RED "Cannot access file %s\n" RESETCOLOR,*outDir);
             fileStat.status = BAD_FILE ;
         }
     } while(fileStat.status != NO_ERROR);
+    
+    *nRaysX = 1024 ;
+    *nRaysX = input_int((char *)"Number of rays in X", (char *)"nraysx",
+                        (char *)"The number of rays to cast in the X or horizontal direction. A radar beam is simulated by generating a 2D gaussian random distribution of rays that illuminate the entire scene. Larger scenes therefore require more rays to fully sample the scene", *nRaysX);
+    
+    *nRaysY = 1024 ;
+    *nRaysY = input_int((char *)"Number of rays in Y", (char *)"nraysy",
+                        (char *)"The number of rays to cast in the Y or vertical direction. A radar beam is simulated by generating a 2D gaussian random distribution of rays that illuminate the entire scene. Larger scenes therefore require more rays to fully sample the scene", *nRaysY);
     
     free(prompt);
     

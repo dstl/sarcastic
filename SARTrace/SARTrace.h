@@ -41,7 +41,7 @@
 #define SARCASTIC_SARTRACE_h
 #include "sarcastic.h"
 
-int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, SPStatus *status);
+int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, int *nRaysX, int *nRaysY, SPStatus *status);
 void * devPulseBlock ( void * threadArg ) ;
 void sartraceCore(threadData td, char *outDir) ;
 void SARTracebanner () ;

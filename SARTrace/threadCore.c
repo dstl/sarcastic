@@ -120,7 +120,7 @@ void sartraceCore ( threadData td, char *outDir ) {
     // Allocate memory for items that are needed in all kernels
     //
     int                nTriangles       = td.KDT.nTriangles;         // number of triangles in array 'triangles'
-    ATS *              accelTriangles   = td.KDT.accelTriangles;          // Array of triangles of size nTriangles
+    ATS *              accelTriangles   = td.KDT.accelTriangles;     // Array of triangles of size nTriangles
     int                nTreeNodes       = td.KDT.nTreeNodes;         // number of nodes in KdTree
     KdData *           KdTree           = td.KDT.KdTree;             // SAH - KdTree to optimise ray traversal through volume
     int                triListDataSize  = td.KDT.triListDataSize;    // size of trianglelist data
@@ -221,30 +221,131 @@ void sartraceCore ( threadData td, char *outDir ) {
         //
         oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
         endTimer(&runTimer, &status);
-
-        // Save origins of reflected rays to PLY file
-        //
-        char fname[256];
-        sprintf(fname, "%s/bounce_%d.ply",outDir,nbounce);
-        FILE *bounceFile = fopen(fname, "w");
-        fprintf(bounceFile,"ply\n");
-        fprintf(bounceFile,"format ascii 1.0\n");
-        fprintf(bounceFile,"comment bounce %d\n",nbounce);
-        fprintf(bounceFile,"element vertex %d\n",nRays);
-        fprintf(bounceFile,"property float x\n");
-        fprintf(bounceFile,"property float y\n");
-        fprintf(bounceFile,"property float z\n");
-        fprintf(bounceFile,"property uchar red\n");
-        fprintf(bounceFile,"property uchar green\n");
-        fprintf(bounceFile,"property uchar blue\n");
-        fprintf(bounceFile,"end_header\n");
         
+        int * trianglesHit = sp_calloc(td.KDT.nTriangles, sizeof(int));
         for (int i=0; i<nRays; i++){
-//            printf("%f, %f, %f\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z);
-            fprintf(bounceFile,"%f %f %f %d %d %d\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z,
-                    (int)bouncecolours[nbounce].r,(int)bouncecolours[nbounce].g,(int)bouncecolours[nbounce].b);
+            Hit h = hitArray[i] ;
+            int trinum = h.trinum;
+            trianglesHit[trinum] = 1;
         }
-        fclose(bounceFile) ;
+
+        unsigned int plyOutFlg;
+        plyOutFlg = 3 ;
+        if (plyOutFlg & 1 ) { // Point file out
+            // Save origins of reflected rays to PLY file
+            //
+            char fname[256];
+            sprintf(fname, "%s/bounce_%d.ply",outDir,nbounce);
+            FILE *bounceFile = fopen(fname, "w");
+            if (bounceFile == NULL) {
+                printf("Error : could not open file %s for writing\n",fname);
+                exit(1);
+            }
+            fprintf(bounceFile,"ply\n");
+            fprintf(bounceFile,"format ascii 1.0\n");
+            fprintf(bounceFile,"comment bounce %d - point intersections created by SARTrace\n",nbounce);
+            fprintf(bounceFile,"element vertex %d\n",nRays);
+            fprintf(bounceFile,"property float x\n");
+            fprintf(bounceFile,"property float y\n");
+            fprintf(bounceFile,"property float z\n");
+            fprintf(bounceFile,"property uchar red\n");
+            fprintf(bounceFile,"property uchar green\n");
+            fprintf(bounceFile,"property uchar blue\n");
+            fprintf(bounceFile,"end_header\n");
+            
+            for (int i=0; i<nRays; i++){
+                //            printf("%f, %f, %f\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z);
+                fprintf(bounceFile,"%f %f %f %d %d %d\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z,
+                        (int)bouncecolours[nbounce].r,(int)bouncecolours[nbounce].g,(int)bouncecolours[nbounce].b);
+            }
+            fclose(bounceFile) ;
+
+        }
+        if (plyOutFlg & 2) { // Triangles that have been hit output
+            char fname[256];
+            sprintf(fname, "%s/trianglesHit_%d.ply",outDir,nbounce);
+            FILE *fp = fopen(fname, "w");
+            if (fp == NULL) {
+                printf("Error : could not open file %s for writing\n",fname);
+                exit(1);
+            }
+            // find unique vertices
+            // newVerts is the new list of unique vertices and newVertCnt is the number of new vertices
+            //
+            int ntri=0;
+            for (int i=0; i<td.KDT.nTriangles; i++) {if (trianglesHit[i] == 1) ntri++;}
+            SPVector *v = (SPVector *)sp_malloc(sizeof(SPVector)*3*ntri);
+            int ind = 0;
+            for (int i=0; i<td.KDT.nTriangles; i++) {
+                if (trianglesHit[i] == 1){
+                    v[ind*3+0] = td.triangles[i].AA ;
+                    v[ind*3+1] = td.triangles[i].BB ;
+                    v[ind*3+2] = td.triangles[i].CC ;
+                    ind++;
+                }
+            }
+            SPVector test;
+            SPVector *newVerts = (SPVector *)sp_malloc(sizeof(SPVector) * ntri * 3);
+            int repeated;
+            int newVertCnt = 0;
+            for(int i=0; i<ntri*3; i++){
+                test = v[i] ;
+                repeated = 0;
+                for (int j=0; j<newVertCnt; j++) {
+                    if (newVerts[j].x == test.x && newVerts[j].y == test.y && newVerts[j].z == test.z ) repeated = 1;
+                }
+                if (!repeated) {
+                    newVerts[newVertCnt++] = test ;
+                }
+            }
+            
+            // rebuild triangles using unique vertices
+            //
+            int t[ntri][3] ;
+            ind = 0;
+            for (int i=0; i<td.KDT.nTriangles; i++) {
+                if(trianglesHit[i] == 1){
+                    SPVector aa,bb,cc;
+                    aa = td.triangles[i].AA ;
+                    bb = td.triangles[i].BB ;
+                    cc = td.triangles[i].CC ;
+                    
+                    for(int j=0; j<newVertCnt; j++){
+                        if (newVerts[j].x == aa.x && newVerts[j].y == aa.y && newVerts[j].z == aa.z) t[ind][0] = j;
+                        if (newVerts[j].x == bb.x && newVerts[j].y == bb.y && newVerts[j].z == bb.z) t[ind][1] = j;
+                        if (newVerts[j].x == cc.x && newVerts[j].y == cc.y && newVerts[j].z == cc.z) t[ind][2] = j;
+                    }
+                    ind++;
+                }
+            }
+            
+            fprintf(fp,"ply\n");
+            fprintf(fp,"format ascii 1.0\n");
+            fprintf(fp,"comment bounce %d - Triangles hit created by SARTrace\n",nbounce);
+            fprintf(fp,"element vertex %d\n",newVertCnt);
+            fprintf(fp,"property float x\n");
+            fprintf(fp,"property float y\n");
+            fprintf(fp,"property float z\n");
+            fprintf(fp,"element face %d\n",ntri);
+            fprintf(fp,"property list uchar int vertex_index\n");
+            fprintf(fp,"property uchar red\n");
+            fprintf(fp,"property uchar green\n");
+            fprintf(fp,"property uchar blue\n");
+            fprintf(fp,"end_header\n");
+            
+            for (int i=0; i<newVertCnt; i++) {
+                fprintf(fp,"%4.4f %4.4f %4.4f\n",newVerts[i].x,newVerts[i].y,newVerts[i].z);
+            }
+            for(int i=0; i<ntri; i++){
+                fprintf(fp, "3 %d %d %d %d %d %d\n",t[i][0], t[i][1], t[i][2],
+                        materialColours[accelTriangles[i].matInd][0],materialColours[accelTriangles[i].matInd][1],materialColours[accelTriangles[i].matInd][2]);
+            }
+            
+            fclose(fp) ;
+            free(v);
+            free(newVerts);
+            
+        }
         printf("Done (%8.2f ms = %8.2f rays/sec)\n", timeElapsedInMilliseconds(&runTimer, &status), norigrays/timeElapsedInMilliseconds(&runTimer, &status));
         
         memcpy(rayArray, reflectedRays, sizeof(Ray)*reflectCount);

@@ -45,9 +45,6 @@
 #include "colourCodes.h"
 #include "SartraceVersion.h"
 
-#define NAZBEAM 4096
-#define NELBEAM 4096
-
 int main (int argc, char **argv){
     
     CPHDHeader  hdr ;
@@ -57,8 +54,8 @@ int main (int argc, char **argv){
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8], interogPt ;
     double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl ;
     char *KdTreeFile, *inCPHDFile ;
-    int startPulse, nPulses, nTriangles, nLeaves, nTreeNodes ;
-    int useGPU, nAzBeam, nElBeam, nVec, Ropes[6] ;
+    int startPulse, nPulses, nTriangles, nLeaves, nTreeNodes, nRaysX, nRaysY ;
+    int useGPU, nVec, Ropes[6] ;
     
     cl_int      err;
     cl_uint     ndevs;
@@ -73,8 +70,6 @@ int main (int argc, char **argv){
 
     nPulses = 1;
     useGPU  = 0;
-    nAzBeam = NAZBEAM ;
-    nElBeam = NELBEAM ;
     
     SPStatus status ;
     im_init_status(status, 0) ;
@@ -84,9 +79,8 @@ int main (int argc, char **argv){
     SARTracebanner();
     
     char *outDir;
-    getSARTraceUserInput(&inCPHDFile, &KdTreeFile, &outDir, &status) ;
+    getSARTraceUserInput(&inCPHDFile, &KdTreeFile, &outDir, &nRaysX, &nRaysY, &status) ;
 
-    
     // Start timing after user input
     //
     Timer runTimer ;
@@ -208,8 +202,8 @@ int main (int argc, char **argv){
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
     printf("RayTracing beam (Az,El)     : %f deg x %f deg (%3.2f x %3.2f metres (ground plane))\n",
            GeoConsts_RADTODEG*maxBeamUsedAz,GeoConsts_RADTODEG*maxBeamUsedEl,centreRange*maxBeamUsedAz,centreRange*maxBeamUsedEl/sin(cGeom.grazingRad));
-    dAz = maxBeamUsedAz / nAzBeam;
-    dEl = maxBeamUsedEl / nElBeam;
+    dAz = maxBeamUsedAz / nRaysX;
+    dEl = maxBeamUsedEl / nRaysY;
     lambda = SIPC_c / hdr.freq_centre ;
     printf("Ray Area                    : %f m^2\n",
            (centreRange * dAz)*(centreRange*dEl));
@@ -283,8 +277,8 @@ int main (int argc, char **argv){
     threadDataArray.SceneBoundingBox       = SceneBoundingBox;
     threadDataArray.startPulse             = startPulse;
     threadDataArray.nPulses                = 1 ;
-    threadDataArray.nAzBeam                = nAzBeam ;
-    threadDataArray.nElBeam                = nElBeam ;
+    threadDataArray.nAzBeam                = nRaysX ;
+    threadDataArray.nElBeam                = nRaysY ;
     threadDataArray.beamMaxAz              = maxBeamUsedAz ;
     threadDataArray.beamMaxEl              = maxBeamUsedEl ;
     threadDataArray.TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
@@ -310,6 +304,7 @@ int main (int argc, char **argv){
     VECT_CREATE(0,0,0,threadDataArray.interogPt);
     threadDataArray.interogRad             = 0 ;
     threadDataArray.interogFP              = NULL ;
+    threadDataArray.triangles              = triangles ;
     
     printf("\n+++++++++++++++++++++++++++++++++++++++\n");
     
