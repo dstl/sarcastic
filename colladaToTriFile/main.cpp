@@ -99,13 +99,13 @@ int main(int argc, char* argv[]) {
                 VECT_CREATE(CCx, CCy, CCz, CC);
                 
                 std::string triMaterial ;
-                if (geom_vec[i].materialSide1 == std::string("material")) {
+                if (geom_vec[i].materialSide1 == std::string("material") || geom_vec[i].materialSide1 == std::string("")) {
                     if (geom_vec[i].materialSide2 != std::string("material") && geom_vec[i].materialSide2 != std::string("")) {
                         triMaterial = geom_vec[i].materialSide2;
                     }else{
                         triMaterial = materialProperties[0].matname;
                     }
-                }else if (geom_vec[i].materialSide2 == std::string("material")){
+                }else if (geom_vec[i].materialSide2 == std::string("material") || geom_vec[i].materialSide2 == std::string("")){
                     if (geom_vec[i].materialSide1 != std::string("material") && geom_vec[i].materialSide1 != std::string("")) {
                         triMaterial = geom_vec[i].materialSide1;
                     }else{
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
                 }
                 
                 Triangle t = Triangle(AA, BB, CC,triMaterial);
-                printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z);
+                printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());
                 tri_vec.push_back(t);
             }
         }
