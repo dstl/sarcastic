@@ -3,6 +3,7 @@
 #define SURFMAXN 4
 #define LT 0.04
 #define PRINTIND 6
+#define RAD2DEG(a)   ((a) * 180.0 / SIPC_pi)
 
 // materialProperties.h
 #define MATBYTES 128
@@ -98,6 +99,14 @@ typedef struct HitPoint {
 /// Convert polar complex number to cartesian complex number
 ///
 #define CMPLX_POL2CART(a,out) {out.r = a.pabs * cos(a.parg); out.i = a.pabs * sin(a.parg);}
+
+/// Calculate complex magnitude
+///
+#define CMPLX_MAG(a) (sqrt(a.r * a.r + a.i * a.i))
+
+/// Calculate the phase of a complex number
+///
+#define CMPLX_PHASE(a) (atan2(a.i, a.r))
 
 /// Find the dot product of two vectors
 ///
@@ -424,7 +433,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(t, e_jDp, t1);
             CMPLX_MULT(t1, sum, Ic);
             
-        } else if ( magDp >= Lt && magDq >= Lt && fabs(Dp - Dq) < Lt ){   // Case 4
+        } else if ( magDp >= Lt && magDq >= Lt && fabs(Dq - Dp) < Lt ){   // Case 4
             sum.r = sum.i = 0;
             // Set up zeroeth term of sum
             //
@@ -434,7 +443,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             //
             t1 = G_func0(Dq) ;
             CMPLX_SCMULT(-1, t1, t1);
-            CMPLX_ADD(t1, e_jDp, sum);
+            CMPLX_ADD(t1, e_jDq, sum);
             
             // Now sum over n
             //
@@ -457,7 +466,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_SCMULT(1.0/(double)factorial(n), t, leftPart) ;
             t1 = G_func1(Dq) ;
             CMPLX_SCMULT(-1, t1, t2);
-            CMPLX_SCMULT(1.0/(n+1.0), e_jDp, t3);
+            CMPLX_SCMULT(1.0/(n+1.0), e_jDq, t3);
             CMPLX_ADD(t2, t3, t4);
             CMPLX_MULT(leftPart, t4, t5);
             CMPLX_ADD(t5, sum, sum) ;
@@ -467,7 +476,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_SCMULT(1.0/(double)factorial(n), t, leftPart) ;
             t1 = G_func2(Dq) ;
             CMPLX_SCMULT(-1, t1, t2);
-            CMPLX_SCMULT(1.0/(n+1.0), e_jDp, t3);
+            CMPLX_SCMULT(1.0/(n+1.0), e_jDq, t3);
             CMPLX_ADD(t2, t3, t4);
             CMPLX_MULT(leftPart, t4, t5);
             CMPLX_ADD(t5, sum, sum) ;
@@ -477,7 +486,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_SCMULT(1.0/(double)factorial(n), t, leftPart) ;
             t1 = G_func3(Dq) ;
             CMPLX_SCMULT(-1, t1, t2);
-            CMPLX_SCMULT(1.0/(n+1.0), e_jDp, t3);
+            CMPLX_SCMULT(1.0/(n+1.0), e_jDq, t3);
             CMPLX_ADD(t2, t3, t4);
             CMPLX_MULT(leftPart, t4, t5);
             CMPLX_ADD(t5, sum, sum) ;
@@ -487,7 +496,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_SCMULT(1.0/(double)factorial(n), t, leftPart) ;
             t1 = G_func4(Dq) ;
             CMPLX_SCMULT(-1, t1, t2);
-            CMPLX_SCMULT(1.0/(n+1.0), e_jDp, t3);
+            CMPLX_SCMULT(1.0/(n+1.0), e_jDq, t3);
             CMPLX_ADD(t2, t3, t4);
             CMPLX_MULT(leftPart, t4, t5);
             CMPLX_ADD(t5, sum, sum) ;
@@ -522,15 +531,16 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         matmul(globalToLocalMat, uvw_ig, uvw_il, 3, 3, 1, 3);
         sin_theta_il = sqrt(uvw_il[0]*uvw_il[0] +  uvw_il[1] * uvw_il[1] ) ;
         cos_theta_il = sqrt(1 - sin_theta_il*sin_theta_il) ;
-        if(sin_theta_il <= 0.0001){
-            tan_phi_il = 0.0 ;
-            sin_phi_il = 1.0 ;
-            cos_phi_il = 0.0 ;
-        }else{
-            tan_phi_il   = atan2(uvw_il[1] , uvw_il[0]) ;
-            sin_phi_il   = uvw_il[1] / sin_theta_il ;
-            cos_phi_il   = uvw_il[0] / sin_theta_il ;
-        }
+//        if(sin_theta_il <= 0.001){
+//            tan_phi_il = 0.0 ;
+//            sin_phi_il = 1.0 ;
+//            cos_phi_il = 0.0 ;
+//            printf("SQWAWK!! - sin_theta_il:%f\n",sin_theta_il);
+//        }else{
+//            tan_phi_il   = atan2(uvw_il[1] , uvw_il[0]) ;
+//            sin_phi_il   = uvw_il[1] / sin_theta_il ;
+//            cos_phi_il   = uvw_il[0] / sin_theta_il ;
+//        }
         
         // Also convert the direction of the E field into the coordinate system
         // of the triangle
@@ -542,16 +552,30 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         matmul(globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
         VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
 
-        if(fabs(VECT_DOT(zz_hat, Raydir_l)) >=0.99){
+        if(fabs(VECT_DOT(zz_hat, Raydir_l)) >= 0.9999){
             VECT_CREATE(1, 0, 0, phi_l_hat) ;
+            VECT_CROSS(phi_l_hat, Raydir_l, theta_l_hat) ;
+            VECT_NORM(theta_l_hat, theta_l_hat) ;
+            Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
+            Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
+//            Eiphi_l = Eil.x ;
+//            Eitheta_l = Eil.y;
+            
+            tan_phi_il = 0.0 ;
+            sin_phi_il = 1.0 ;
+            cos_phi_il = 0.0 ;
         }else{
             VECT_CROSS (zz_hat, Raydir_l, phi_l_hat) ;
+            VECT_NORM(phi_l_hat, phi_l_hat) ;
+            VECT_CROSS(phi_l_hat, Raydir_l, theta_l_hat) ;
+            VECT_NORM(theta_l_hat, theta_l_hat) ;
+            
+            Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
+            Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
+            tan_phi_il   = atan2(uvw_il[1] , uvw_il[0]) ;
+            sin_phi_il   = uvw_il[1] / sin_theta_il ;
+            cos_phi_il   = uvw_il[0] / sin_theta_il ;
         }
-        VECT_CROSS(phi_l_hat, Raydir_l, theta_l_hat) ;
-        VECT_NORM(phi_l_hat, phi_l_hat) ;
-        VECT_NORM(theta_l_hat, theta_l_hat) ;
-        Eiphi_l   = VECT_DOT(Eil, phi_l_hat) ;
-        Eitheta_l = VECT_DOT(Eil, theta_l_hat) ;
 
         // Calculate Gamma_parallel and Gamma_perpendicular
         //

@@ -21,12 +21,20 @@ extern "C" {
 #include <sstream>
 
 #define ROOTPATH "/Users/Darren/Development"
+#define REPORTN 100
 
 bool VECT_EQUAL(SPVector a, SPVector b);
 void roughenPoint(SPVector *p, Triangle t);
 bool pointsColinear(SPVector p1, SPVector p2, SPVector p3);
 
 int main(int argc, const char * argv[]) {
+    double pCentDone, sexToGo;
+    time_t current,complete;
+    Timer threadTimer ;
+    int hrs,min,sec;
+    struct tm *p;
+    char ct[1000];
+
 
     SPStatus status ;
     im_init_status(status, 0);
@@ -72,8 +80,31 @@ int main(int argc, const char * argv[]) {
     
     std::vector<Triangle> newTriangleVec;
     SPVector *Points3D ;
+    startTimer(&threadTimer, &status) ;
     
     for(int t=0; t<triFile.triangles.size(); t++){
+        
+        if (t==0) {
+            if( t % REPORTN == 0 && triFile.triangles.size() != 1){
+                pCentDone = 100.0*t/triFile.triangles.size() ;
+                printf("Processing triangles %6d - %6d out of %6d [%2d%%]",
+                       t,t+((REPORTN > triFile.triangles.size()) ? (int)triFile.triangles.size() : REPORTN),(int)triFile.triangles.size(),(int)pCentDone);
+                if(t != 0){
+                    current  = time(NULL);
+                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                    hrs      = (int)floor(sexToGo/60/60) ;
+                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+                    sec      = (int)sexToGo % 60;
+                    complete = current + sexToGo ;
+                    p        = localtime(&complete) ;
+                    strftime(ct, 1000, "%a %b %d %H:%M", p);
+                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+                }else{
+                    printf("  Calculating ETC...\n");
+                }
+            }
+        }
+        
         Triangle tri = triFile.triangles[t] ;
         
         // convert 3D coords to 2D plane.

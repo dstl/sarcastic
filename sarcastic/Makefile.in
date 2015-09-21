@@ -43,7 +43,7 @@ INCLUDE = sarcastic.h readKdTree.h BuildRopesAndBoxes.h TxPowerPerRay.h ecef2Sce
 LIBS = -lSIlib -lreadline -lexpat -lfftw3f -lfftw3f_threads
 
 CC	:= _CC_
-CFLAGS = -O2 -Wall -c -g -D_REENTRANT -Wmissing-prototypes -I/usr/local/dstl/include/SIlib
+CFLAGS = -O2 -Wall -c -g -D_REENTRANT -Wmissing-prototypes -I/usr/local/dstl/include
 LFLAGS = -L/usr/local/dstl/lib
 
 OBJ = $(patsubst %.c, %.o, $(SRC))

@@ -73,6 +73,11 @@ typedef struct AABB {
     SPVector BB;
 } AABB;
 
+typedef struct SPCmplxD{
+    double r ;
+    double i ;
+} SPCmplxD;
+
 typedef union {
     struct KdTreeLeaf {
         unsigned int flagDimAndOffset;
@@ -126,7 +131,7 @@ typedef struct Ray {
 
 typedef struct rangeAndPower {
     double  range ;
-    SPCmplx Es ;
+    SPCmplxD Es ;
 } rangeAndPower ;
 
 typedef struct cplxf {
@@ -215,11 +220,6 @@ typedef struct threadData {
     double StartFrequency ;
     int bounceToShow ;
     SPStatus status ;
-    int debug;                  // Compiler the kernel with debug options
-    int debugX;                 // Which ray in X within the beam to debug
-    int debugY;                 // Which ray in Y within the beam to debug
-    double beamMaxAz;           // Maximum azimuth beamwidth to consider for scene
-    double beamMaxEl;           // Maximum azimuth beamwidth to consider for scene
     double PowPerRay ;          // Ray Power (Pp = (Pt * Gtx ))
     int interrogate ;           // Do we want to write out details about an interrogation point in the scene?
     SPVector interogPt ;        // Position in scene coordinates of a point to be interogated
@@ -229,7 +229,7 @@ typedef struct threadData {
 } threadData ;
 
 typedef struct rnpData_t {
-    SPCmplx Es;
+    SPCmplxD Es;
     double  samplingOffset;
     int     samplingOffsetInt;
     double  indexOffset ;
@@ -252,7 +252,7 @@ typedef struct threadDataBF {
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
-                 int *debug, int *debugX, int *debugY, int *interrogate, SPVector *interogPt, double *interograd,
+                 int *interrogate, SPVector *interogPt, double *interograd,
                  FILE **interogateFP, SPStatus *status) ;
 
 void * devPulseBlock ( void * threadArg ) ;

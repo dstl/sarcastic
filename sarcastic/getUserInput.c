@@ -45,7 +45,7 @@ static char *rootpath = "/local_storage/DGM" ;
 int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
-                 int *debug, int *debugX, int *debugY, int *interrogate, SPVector *interogPt, double *interogRad,
+                 int *interrogate, SPVector *interogPt, double *interogRad,
                  FILE **interrogateFP, SPStatus *status){
     
     char * prompt;
@@ -120,31 +120,6 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
         *bounceToShow = input_int((char *)"Which bounce number to show (1-8)", (char *)"bounceToShow",
                                   (char *)"Which radar bounce should be displayed? (<1 is do not show bounce info)", *bounceToShow);
         if (*bounceToShow > MAXBOUNCES || *bounceToShow < 1) *bounceToShow = 0 ;
-        
-        *debug = input_int("Debug level ?", "DEBUG",
-                           "Compile the raytracing thread with additional debug information. \n \
-    This will print out lots of information for an individual ray. \n \
-    Valid values for DEBUG are : \n \
-          0      :  No debug information \n \
-          >=10   :  Debug the main raytracing thread (highest level) \n \
-          >=15   :  Debug the stackless KdTree Traversal routines (medium level) \n \
-          >=20   :  Debug the ray-triangle intersection algorithm (low level) \n \
-          >=25   :  Debug the reflected ray power calculations (lowest level)", 0);
-        if(*debug){
-            *debugX = *nAzBeam / 2;
-            do{
-                *debugX = input_int("X coordinate of ray to debug", "debugX",
-                                    "The beam is made up of an X by Y grid of radar rays. This is the X \n \
-    coordinate (azimuth direction) of the ray to debug", *debugX);
-            }while (*debugX < 0 || *debugX >= *nAzBeam) ;
-            
-            *debugY = *nElBeam / 2 ;
-            do{
-                *debugY = input_int("Y coordinate of ray to debug", "debugY",
-                                    "The beam is made up of xan X by Y grid of radar rays. This is the Y \n \
-    coordinate (elevation direction) of the ray to debug", *debugY);
-            }while (*debugY < 0 || *debugY >= *nElBeam);
-        }
     }
     
     // To save processing time only read in the CPHDFile PHD if we are going to create a new

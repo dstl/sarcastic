@@ -52,7 +52,7 @@ int main (int argc, char **argv){
     OCLPlatform platform;
     
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8], interogPt ;
-    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl ;
+    double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl ;
     char *KdTreeFile, *inCPHDFile ;
     int startPulse, nPulses, nTriangles, nLeaves, nTreeNodes, nRaysX, nRaysY ;
     int useGPU, nVec, Ropes[6] ;
@@ -179,7 +179,7 @@ int main (int argc, char **argv){
     VECT_CROSS(unitBeamAz, rVect, unitBeamEl) ;
     VECT_NORM(unitBeamEl, unitBeamEl) ;
     
-    maxEl = maxAz = 0.0 ;
+    maxEl = maxAz = minEl = minAz = 0.0 ;
     VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[0]);
     VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[1]);
     VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[2]);
@@ -190,13 +190,15 @@ int main (int argc, char **argv){
     VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[7]);
     
     for( int k=0; k<8; k++){
-        El = fabs(VECT_DOT(boxPts[k], unitBeamEl)) ;
-        Az = fabs(VECT_DOT(boxPts[k], unitBeamAz)) ;
+        double El = VECT_DOT(boxPts[k], unitBeamEl) ;
+        double Az = VECT_DOT(boxPts[k], unitBeamAz) ;
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
+        minEl = ( minEl > El ) ? El : minEl ;
+        minAz = ( minAz > Az ) ? Az : minAz ;
     }
-    maxBeamUsedAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
-    maxBeamUsedEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedAz = (maxAz - minAz) / centreRange ;
+    maxBeamUsedEl = (maxEl - minEl) / centreRange ;
     
     collectionGeom cGeom;
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
@@ -205,8 +207,9 @@ int main (int argc, char **argv){
     dAz = maxBeamUsedAz / nRaysX;
     dEl = maxBeamUsedEl / nRaysY;
     lambda = SIPC_c / hdr.freq_centre ;
-    printf("Ray Area                    : %f m^2\n",
-           (centreRange * dAz)*(centreRange*dEl));
+    printf("Ray density                 : %3.1f x %3.1f [ %3.1f x %3.1f ground plane] rays per metre\n",
+           1.0/(dAz * centreRange), 1.0/(dEl * centreRange),
+           1.0/(dAz * centreRange), 1.0/(dEl * centreRange / sin(cGeom.grazingRad)));
 
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
@@ -279,13 +282,11 @@ int main (int argc, char **argv){
     threadDataArray.nPulses                = 1 ;
     threadDataArray.nAzBeam                = nRaysX ;
     threadDataArray.nElBeam                = nRaysY ;
-    threadDataArray.beamMaxAz              = maxBeamUsedAz ;
-    threadDataArray.beamMaxEl              = maxBeamUsedEl ;
     threadDataArray.TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
     threadDataArray.RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
     threadDataArray.Fx0s                   = NULL ;            // Pointer to beginning of Fx0s data
-    threadDataArray.FxSteps                = NULL;          // Pointer to beginning of FxSteps data
-    threadDataArray.amp_sf0                = NULL ;         // Pointer to beginning of amp_sf0 data
+    threadDataArray.FxSteps                = NULL;             // Pointer to beginning of FxSteps data
+    threadDataArray.amp_sf0                = NULL ;            // Pointer to beginning of amp_sf0 data
     threadDataArray.gainRx                 = 1.0;
     threadDataArray.PowPerRay              = 1.0 ;
     threadDataArray.phd                    = NULL ;
@@ -297,9 +298,6 @@ int main (int argc, char **argv){
     threadDataArray.StartFrequency         = 0.0;
     threadDataArray.bounceToShow           = 0 ;
     threadDataArray.status                 = status ;
-    threadDataArray.debug                  = 0 ;
-    threadDataArray.debugX                 = 0 ;
-    threadDataArray.debugY                 = 0 ;
     threadDataArray.interrogate            = 0 ;
     VECT_CREATE(0,0,0,threadDataArray.interogPt);
     threadDataArray.interogRad             = 0 ;

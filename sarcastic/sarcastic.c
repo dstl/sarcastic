@@ -66,12 +66,11 @@ int main (int argc, char **argv){
     OCLPlatform platform;
     
     SPVector SRP, unitBeamAz, unitBeamEl, rVect, zHat, boxPts[8], interogPt ;
-    double centreRange, maxEl, maxAz, El, Az, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
+    double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
     char *KdTreeFile, *inCPHDFile, *outCPHDFile ;
     int startPulse, nPulses, bounceToShow, nTriangles, nLeaves, nTreeNodes, interrogate ;
     int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
     SPImage cphd ;
-    int debug, debugX=0, debugY=0;
     FILE *interrogateFP = NULL ;
     
     cl_int      err;
@@ -95,7 +94,7 @@ int main (int argc, char **argv){
     
     banner() ;
     
-    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU, &debug, &debugX, &debugY,
+    getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU,
                  &interrogate, &interogPt, &interogRad, &interrogateFP, &status) ;
     
     // Start timing after user input
@@ -224,7 +223,7 @@ int main (int argc, char **argv){
     VECT_CROSS(unitBeamAz, rVect, unitBeamEl) ;
     VECT_NORM(unitBeamEl, unitBeamEl) ;
     
-    maxEl = maxAz = 0.0 ;
+    maxEl = maxAz = minEl = minAz = 0.0 ;
     VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[0]);
     VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[1]);
     VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[2]);
@@ -235,23 +234,26 @@ int main (int argc, char **argv){
     VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[7]);
     
     for( int k=0; k<8; k++){
-        El = fabs(VECT_DOT(boxPts[k], unitBeamEl)) ;
-        Az = fabs(VECT_DOT(boxPts[k], unitBeamAz)) ;
+        double El = VECT_DOT(boxPts[k], unitBeamEl) ;
+        double Az = VECT_DOT(boxPts[k], unitBeamAz) ;
         maxEl = ( maxEl < El ) ? El : maxEl ;
         maxAz = ( maxAz < Az ) ? Az : maxAz ;
+        minEl = ( minEl > El ) ? El : minEl ;
+        minAz = ( minAz > Az ) ? Az : minAz ;
     }
-    maxBeamUsedAz = 2.1 * maxAz / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
-    maxBeamUsedEl = 2.1 * maxEl / centreRange ;   // 2.1 to make the beam slightly wider than scene extent in case AABB exactly contains scene
+    maxBeamUsedAz = (maxAz - minAz) / centreRange ;
+    maxBeamUsedEl = (maxEl - minEl) / centreRange ;
     
     collectionGeom cGeom;
     collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
-    printf("RayTracing beam (Az,El)     : %f deg x %f deg (%3.2f x %3.2f metres (ground plane))\n",
+    printf("RayTracing beam (Az,El)     : %3.2e deg x %3.2e deg (%3.2f x %3.2f metres (ground plane))\n",
            GeoConsts_RADTODEG*maxBeamUsedAz,GeoConsts_RADTODEG*maxBeamUsedEl,centreRange*maxBeamUsedAz,centreRange*maxBeamUsedEl/sin(cGeom.grazingRad));
     dAz = maxBeamUsedAz / nAzBeam;
     dEl = maxBeamUsedEl / nElBeam;
     lambda = SIPC_c / hdr.freq_centre ;
-    printf("Ray density                 : %f rays per wavelength cell\n",
-           (lambda / (centreRange * dAz))*(lambda/ (centreRange *dEl)));
+    printf("Ray density                 : %3.1f x %3.1f [ %3.1f x %3.1f ground plane] rays per metre\n",
+           1.0/(dAz * centreRange), 1.0/(dEl * centreRange),
+           1.0/(dAz * centreRange), 1.0/(dEl * centreRange / sin(cGeom.grazingRad)));
     
     double TxPowPerRay, gainRx ;
     TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
@@ -365,8 +367,6 @@ int main (int argc, char **argv){
         threadDataArray[dev].nPulses                = pulsesPerDevice ;
         threadDataArray[dev].nAzBeam                = nAzBeam ;
         threadDataArray[dev].nElBeam                = nElBeam ;
-        threadDataArray[dev].beamMaxAz              = maxBeamUsedAz ;
-        threadDataArray[dev].beamMaxEl              = maxBeamUsedEl ;
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
         threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
@@ -387,9 +387,6 @@ int main (int argc, char **argv){
         threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length * hdr.chirp_gamma / 2) ;
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
-        threadDataArray[dev].debug                  = debug ;
-        threadDataArray[dev].debugX                 = debugX ;
-        threadDataArray[dev].debugY                 = debugY ;
         threadDataArray[dev].interrogate            = interrogate ;
         threadDataArray[dev].interogPt              = interogPt ;
         threadDataArray[dev].interogRad             = interogRad ;

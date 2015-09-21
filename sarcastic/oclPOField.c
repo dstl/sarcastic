@@ -182,7 +182,8 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
 //        printf("Ev : %e, %f\n",CMPLX_MAG(VsTmp[r]),CMPLX_PHASE(VsTmp[r]));
 //        printf("Eh : %e, %f\n",CMPLX_MAG(HsTmp[r]),CMPLX_PHASE(HsTmp[r]));
         
-        CMPLX_SCMULT(1.0 / hitsOnEachTri[hitpoints[r].tri], Ecmplx, rnp[r].Es) ;
+        rnp[r].Es.r = (double)Ecmplx.r / (double)hitsOnEachTri[hitpoints[r].tri];
+        rnp[r].Es.i = (double)Ecmplx.i / (double)hitsOnEachTri[hitpoints[r].tri];
 
     }
     
