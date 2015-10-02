@@ -168,6 +168,7 @@ int main (int argc, char **argv){
     //
     printCPHDCollectionInfo(&hdr, NULL, &status) ;
     printf("Wavelength                  : %f m\n",SIPC_c/hdr.freq_centre);
+    printf("Slant range resolution      : %f m\n",SIPC_c/(2*hdr.pulse_length*hdr.chirp_gamma));
 
     // Rotate Rx and Tx Coords to be relative to scene centre
     //

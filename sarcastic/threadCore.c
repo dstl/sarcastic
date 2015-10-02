@@ -341,9 +341,8 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
-                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;
-                
-                
+                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;                
+//                printf("+++Finished PO Call\n");
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
@@ -414,6 +413,7 @@ void * devPulseBlock ( void * threadArg ) {
                     rnpData[cnt].Es    = rnp[i].Es ;
                     rnpData[cnt].rdiff = rnp[i].range - derampRange;
                     cnt++ ;
+//                    printf("%d, %e, %e\n",i,rnp[i].range,RAD2DEG( CMPLX_PHASE(rnp[i].Es)));
                 }
             }
         
@@ -421,7 +421,6 @@ void * devPulseBlock ( void * threadArg ) {
             im_create(&pulseLine, ITYPE_CMPL_FLOAT, nx, 1, 1.0, 1.0, &status);
             double phse;
             SPCmplxD targtot = {0.0,0.0};
-
             for (int i=0; i<nrnpItems; i++){
                 rangeLabel  = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
                 if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
@@ -438,14 +437,14 @@ void * devPulseBlock ( void * threadArg ) {
             
 #ifdef TOTALRCSINPULSE
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
-            printf("%d, %e\n",pulse,cmplx_mag);
+            if(pulse%100==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
 //            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log(cmplx_mag));
 //            printf("For comparison: \n");
-//            printf("    1m^2 flat plate : %f (%f dB m^2)\n",4*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
-//            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
-//            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda));
+//            printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 8620.677
+//            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));   // 17241.354
+//            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 25862.031
 #endif // TOTALRCSINPULSE
-
+//            exit(0);
             // perform phase correction to account for deramped jitter in receiver timing
             //
             phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
@@ -463,12 +462,20 @@ void * devPulseBlock ( void * threadArg ) {
                 pulseLine.data.cmpl_f[x] = tmp;
             }
             
+//            for( int i=0; i<pulseLine.nx; i++){
+//                double m = CMPLX_MAG(pulseLine.data.cmpl_f[i]);
+//                if(m!=0.0)
+//                printf("%d %e\n",i,m);
+//            }
             im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
             im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
             im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
             im_destroy(&pulseLine, &status) ;
             
             free(rnpData);
+            
+//            exit(0);
+
             
         } // end of pulse loop
         
@@ -573,7 +580,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, int nTriang
                SPVector **rayAimPoints
                ){
     
-    int METHOD  = 4;
+    int METHOD  = 2;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene

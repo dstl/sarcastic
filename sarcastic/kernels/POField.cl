@@ -232,29 +232,51 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // r is the magnitude of the vector defining the observation point in global coordinates (not the range)
         //
         VECT_SUB(RxPnt, hitpoints[ind].hit, obsDir);
-        r = VECT_MAG(obsDir);
-        VECT_NORM(obsDir, obsDir);
         if( firstBounce == 1 ){
             r  = VECT_MAG(RxPnt);
+            r_ig = VECT_MAG(rays[ind].org);
+        }else{
+            r = VECT_MAG(obsDir);
+            VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
+            r_ig   = VECT_MAG(rayDist) + rays[ind].len;
         }
-        VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
-        r_ig   = VECT_MAG(rayDist) + rays[ind].len;
+        VECT_NORM(obsDir, obsDir);
         phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
         
         // Sort out the direction cosines for this ray, hitpoint and observation point
         // Assuming that the direction of the ray has been normalised then
         // the direction cosine is just the component of direction
         //
-        VECT_SUB(obsDir,rays[ind].dir,uvw_sg) ;
-        VECT_NORM(uvw_sg,uvw_sg);
+//        VECT_SUB(obsDir,rays[ind].dir,uvw_sg) ;
+//        VECT_NORM(uvw_sg,uvw_sg);
         
         // Calculate surface integral using Ludwig's integration algorithm [1], (modified for
         // triangular subregions by Pogorzelski [2] and then modified again for barycentric (simplex)
         // coordinates by Dos Santos [3].
         //
-        u  = uvw_sg.x ;
-        v  = uvw_sg.y ;
-        w  = uvw_sg.z ;
+//        u  = uvw_sg.x ;
+//        v  = uvw_sg.y ;
+//        w  = uvw_sg.z ;
+        
+        
+        SPVector UVWi, UVW, h, g;
+        UVWi.x = -rays[ind].dir.x ;
+        UVWi.y = -rays[ind].dir.y ;
+        UVWi.z = -rays[ind].dir.z ;
+        UVW.x  = obsDir.x ;
+        UVW.y  = obsDir.y ;
+        UVW.z  = obsDir.z ;
+//        VECT_CREATE( hitpoints[ind].hit.x * UVWi.x, hitpoints[ind].hit.y * UVWi.y , hitpoints[ind].hit.z * UVWi.z, h );
+//        VECT_CREATE( hitpoints[ind].hit.x * UVW.x,  hitpoints[ind].hit.y * UVW.y  , hitpoints[ind].hit.z * UVW.z,  g );
+        
+        u = UVWi.x + UVW.x ;
+        v = UVWi.y + UVW.y ;
+        w = UVWi.z + UVW.z ;
+        
+//        u = g.x + h.x ;
+//        v = g.y + h.y ;
+//        w = g.z + h.z ;
+        
         x1 = tris[hitpoints[ind].tri].AA.x;
         y1 = tris[hitpoints[ind].tri].AA.y ;
         z1 = tris[hitpoints[ind].tri].AA.z ;
@@ -516,6 +538,11 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(t, braces, Ic);
         }
         
+        if( firstBounce > 1 ){
+            Ic.r = CMPLX_MAG(Ic) ;
+            Ic.i = 0.0;
+        }
+        
         // At this point we have integrated the complex field over the triangular facet and have the
         // value stored in the complex number Ic
         //
@@ -549,6 +576,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         E_ig[0] = Eig.x ;
         E_ig[1] = Eig.y ;
         E_ig[2] = Eig.z ;
+        
         matmul(globalToLocalMat, E_ig, E_il, 3, 3, 1, 3) ;
         VECT_CREATE(E_il[0], E_il[1], E_il[2], Eil) ;
 
