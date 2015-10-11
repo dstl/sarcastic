@@ -51,7 +51,7 @@ void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
     VECT_CROSS(geoPoint, E, N);         // Create local North vector - tangent to Earth's surface
     VECT_NORM(N, N) ;                   // and make it a unit vector
     VECT_NORM(geoPoint, A) ;            // Create local height vector
-    double graz = DEG2RAD(0);
+//    double graz = DEG2RAD(0);
     for (int i=0; i<nPoints; i++){
         point = points[i];
         VECT_SUB(point, geoPoint, v) ;  // v is vector from point in space to geopoint

@@ -396,12 +396,27 @@ int main (int argc, char **argv){
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
+            time_t rawtime;
+            struct tm * timeinfo;
+            time ( &rawtime );
+            timeinfo = localtime ( &rawtime );
+            SPVector intOutRg, intRetRg ;
+            double intRg, intMinR, intMaxR ;
+            
+            VECT_SUB(interogPt, TxPos[0], intOutRg);
+            VECT_SUB(RxPos[0], interogPt, intRetRg);
+            intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
+            intMinR = intRg - interogRad/2.0 ;
+            intMaxR = intRg + interogRad/2.0 ;
+            
             fprintf(interrogateFP, "\tInterrogate Output (Sarcastic %s)\n",FULL_VERSION);
+            fprintf(interrogateFP, "Time of run             : %s\n",asctime (timeinfo));
             fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
+            fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
             fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
             fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);
             fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
-            fprintf(interrogateFP, "-----------------------------------------------------------------\n");
+            fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         }
         // Create thread data for each device
         //
@@ -423,7 +438,7 @@ int main (int argc, char **argv){
     }
     if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
     if (interrogate){
-        fprintf(interrogateFP, "-----------------------------------------------------------------\n");
+        fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         fclose(interrogateFP);
     }
 

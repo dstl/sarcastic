@@ -84,24 +84,22 @@ int main(int argc, const char * argv[]) {
     
     for(int t=0; t<triFile.triangles.size(); t++){
         
-        if (t==0) {
-            if( t % REPORTN == 0 && triFile.triangles.size() != 1){
-                pCentDone = 100.0*t/triFile.triangles.size() ;
-                printf("Processing triangles %6d - %6d out of %6d [%2d%%]",
-                       t,t+((REPORTN > triFile.triangles.size()) ? (int)triFile.triangles.size() : REPORTN),(int)triFile.triangles.size(),(int)pCentDone);
-                if(t != 0){
-                    current  = time(NULL);
-                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
-                    hrs      = (int)floor(sexToGo/60/60) ;
-                    min      = (int)floor(sexToGo / 60) - (hrs*60);
-                    sec      = (int)sexToGo % 60;
-                    complete = current + sexToGo ;
-                    p        = localtime(&complete) ;
-                    strftime(ct, 1000, "%a %b %d %H:%M", p);
-                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
-                }else{
-                    printf("  Calculating ETC...\n");
-                }
+        if( t % REPORTN == 0 && triFile.triangles.size() != 1){
+            pCentDone = 100.0*t/triFile.triangles.size() ;
+            printf("Processing triangles %6d - %6d out of %6d [%2d%%]",
+                   t,t+((REPORTN > triFile.triangles.size()) ? (int)triFile.triangles.size() : REPORTN),(int)triFile.triangles.size(),(int)pCentDone);
+            if(t != 0){
+                current  = time(NULL);
+                sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                hrs      = (int)floor(sexToGo/60/60) ;
+                min      = (int)floor(sexToGo / 60) - (hrs*60);
+                sec      = (int)sexToGo % 60;
+                complete = current + sexToGo ;
+                p        = localtime(&complete) ;
+                strftime(ct, 1000, "%a %b %d %H:%M", p);
+                printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+            }else{
+                printf("  Calculating ETC...\n");
             }
         }
         
@@ -198,7 +196,9 @@ int main(int argc, const char * argv[]) {
             CC = Points3D[pointind2] ;
             
             Triangle newtri = Triangle(AA, BB, CC, tri.matId);
-            newTriangleVec.push_back(newtri) ;
+            if(newtri.area != 0.0){
+                newTriangleVec.push_back(newtri) ;
+            }
         }
         free(Points3D);
     }
@@ -206,9 +206,11 @@ int main(int argc, const char * argv[]) {
     // newTriangleVec now contains new triangles.
     // write it to file
     //
+    printf("Writing triangle file...\n");
     TriangleFile dtTriFile = TriangleFile(newTriangleVec) ;
     dtTriFile.WriteFile(std::string(oustr));
     if(plyop){
+        printf("Writing .ply file...\n");
         dtTriFile.WritePLYFile(plyFname, false);
     }
     im_close_lib(&status);

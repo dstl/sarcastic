@@ -339,10 +339,12 @@ void * devPulseBlock ( void * threadArg ) {
                 hitArray    = newHits  ;
                 nShadowRays = nShadows ;
                 
+                // At this point the size of all arrays is nShadowRays not nRays
+                //
+                
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
                 oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;                
-//                printf("+++Finished PO Call\n");
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
@@ -354,10 +356,10 @@ void * devPulseBlock ( void * threadArg ) {
                     VECT_SUB(interogPt, TxPos, intOutRg);
                     VECT_SUB(RxPos, interogPt, intRetRg);
                     intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
-                    intMinR = intRg - interogRad ;
-                    intMaxR = intRg + interogRad ;
+                    intMinR = intRg - interogRad/2.0 ;
+                    intMaxR = intRg + interogRad/2.0 ;
                     
-                    for ( int i=0; i<nRays; i++){
+                    for ( int i=0; i<nShadowRays; i++){
                         
                         irp = rnp[(nRays*nbounce)+i] ;
                         

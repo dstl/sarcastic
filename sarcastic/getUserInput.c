@@ -186,8 +186,8 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                               (char *)"location in y direction of the point in the SAR image to interrogate", interogY) ;
         
         *interogRad = 1.0;
-        *interogRad = input_dbl((char *)"Radius of region around point to interrogate", (char *)"interogRad",
-                                (char *)"Radius of region around point to interrogate", *interogRad);
+        *interogRad = input_dbl((char *)"Radius (in m)  of region around point to interrogate", (char *)"interogRad",
+                                (char *)"Radius (in m) of region around point to interrogate", *interogRad);
         
         do {
             sprintf(prompt, "/local_storage/DGM/interrogate.txt");

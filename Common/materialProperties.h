@@ -53,16 +53,16 @@ typedef struct scatProps {
 // Resistivities taken from http://chemistry.about.com/od/moleculescompounds/a/Table-Of-Electrical-Resistivity-And-Conductivity.htm
 //
 static scatProps materialProperties[NMATERIALS] = {
-//   Name          corrLen      Roughness   Resistivity Specular    Diffuse     Shinyness
-    {"MATERIAL",    0.5,       0.0,        0.0,     0.9,        0.0,        50.0        },
-    {"ASPHALT",     0.01,       0.01,       1.0e18,     0.8,        0.2,        30.0        },
-    {"BRICK",       0.01,       0.01,       1.0e18,     0.7,        0.3,        20.0        },
-    {"CONCRETE",    0.01,       0.02,       120.0,      0.3,        0.7,        10.0        },
-    {"METAL",       0.01,       0.001,      1.0e-8,     1.0,        0.0,        50.0        },
-    {"ROOFING",     0.01,       0.1,        1.0e18,     0.6,        0.4,        40.0        },
+//   Name          corrLen     Roughness   Resistivity Specular    Diffuse     Shinyness
+    {"MATERIAL",    0.5,        0.0,        0.0,     0.9,        0.0,        50.0        },
+    {"ASPHALT",     0.20,       0.01,       1.0e18,     0.8,        0.2,        30.0        },
+    {"BRICK",       0.1,        0.01,       1.0e18,     0.7,        0.3,        20.0        },
+    {"CONCRETE",    0.2,        0.02,       120.0,      0.3,        0.7,        10.0        },
+    {"METAL",       1.0,        0.001,      1.0e-8,     1.0,        0.0,        50.0        },
+    {"ROOFING",     0.1,        0.1,        1.0e18,     0.6,        0.4,        40.0        },
     {"VEGETATION",  0.01,       0.03,       2000.0,     0.2,        0.8,        5.0         },
-    {"WATER",       0.01,       0.05,       2.0e1,      1.0,        0.0,        50.0        },
-    {"WOOD",        0.01,       0.01,       1.0e14,     0.6,        0.4,        10.0        }
+    {"WATER",       0.3,        0.05,       2.0e1,      1.0,        0.0,        50.0        },
+    {"WOOD",        0.1,        0.01,       1.0e14,     0.6,        0.4,        10.0        }
 } ;
 
 static int materialColours[NMATERIALS][3] = {

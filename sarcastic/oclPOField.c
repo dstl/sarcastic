@@ -159,7 +159,7 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
     // calculations assume RCS from one point. 
     //
     SPCmplx Ecmplx,cmplxsum;
-    double meanx,meany,meanz,numrs;
+    double numrs;
     double sumx,sumy,sumz;
     sumx=sumy=sumz=numrs=0.0;
     cmplxsum.r = cmplxsum.i = 0.0 ;

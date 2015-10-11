@@ -114,8 +114,13 @@ int main(int argc, char* argv[]) {
                 }
                 
                 Triangle t = Triangle(AA, BB, CC,triMaterial);
-                printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());
-                tri_vec.push_back(t);
+                if(t.area != 0.0){
+                    printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());
+                    tri_vec.push_back(t);
+                }else{
+                    printf("ERROR area is %f: A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",t.area,AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());
+
+                }
             }
         }
     }
