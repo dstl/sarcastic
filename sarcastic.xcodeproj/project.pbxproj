@@ -85,8 +85,6 @@
 		95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
 		95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
 		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
-		95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708B18C9CC9800651D97 /* libfftw3_threads.a */; };
-		95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708C18C9CC9800651D97 /* libfftw3.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
 		95CA0C181B371780007827CE /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
@@ -486,8 +484,6 @@
 				9567C8381B2F0426000742A6 /* libSIlib-1.2.a in Frameworks */,
 				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
 				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
-				95C1708D18C9CC9800651D97 /* libfftw3_threads.a in Frameworks */,
-				95C1708E18C9CC9800651D97 /* libfftw3.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
 				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
 				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
