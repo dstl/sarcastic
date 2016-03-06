@@ -255,10 +255,21 @@ void * devPulseBlock ( void * threadArg ) {
             //
             reflectCount = 0 ;
             iray         = 0 ;
-            
+            int *edgeHit = (int *)sp_malloc(sizeof(int)*nRays);
+
             // How many hits occured on this ray cast
             //
-            for(int i=0; i<nRays; i++) if ( hitArray[i].trinum != NOINTERSECTION ) reflectCount++ ;
+            for(int i=0; i<nRays; i++) if ( hitArray[i].trinum != NOINTERSECTION ) {
+                // Check to see if out hit / reflection point was near to a vertex or edge by looking at the hitpoints
+                //
+                if(hitArray[i].u < 0.001 || hitArray[i].v < 0.001 || hitArray[i].u+hitArray[i].v > 0.999){
+                    edgeHit[i] = 1;
+                }else{
+                    edgeHit[i] = 0;
+                }
+                if(edgeHit[i] == 0)
+                    reflectCount++ ;
+            }
             
             if( reflectCount == 0) break ;
             
@@ -269,7 +280,7 @@ void * devPulseBlock ( void * threadArg ) {
             reflectedRays = (Ray *)sp_malloc(reflectCount * sizeof(Ray)) ;
             
             for (int i=0; i<nRays; i++) {
-                if ( hitArray[i].trinum != NOINTERSECTION ){
+                if ( hitArray[i].trinum != NOINTERSECTION && edgeHit[i]==0 ){
                     newRays[iray] = rayArray[i] ;
                     newHits[iray] = hitArray[i] ;
                     iray++ ;
@@ -277,6 +288,7 @@ void * devPulseBlock ( void * threadArg ) {
             }
             free(rayArray) ;
             free(hitArray) ;
+            free(edgeHit) ;
             rayArray = newRays ;
             hitArray = newHits ;
             nRays    = reflectCount ;
@@ -298,13 +310,13 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Malloc space for shadowRays (arrays from a hit going back to receiver)
             //
-            shadowRays =    (Ray *)sp_malloc(reflectCount * sizeof(Ray)) ;
-            shadowHits =    (Hit *)sp_malloc(reflectCount * sizeof(Hit)) ;
-            ranges     = (double *)sp_malloc(reflectCount * sizeof(double)) ;
+            shadowRays =    (Ray *)sp_malloc(nRays * sizeof(Ray)) ;
+            shadowHits =    (Hit *)sp_malloc(nRays * sizeof(Hit)) ;
+            ranges     = (double *)sp_malloc(nRays * sizeof(double)) ;
             
             // Build Shadowrays
             //
-            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, reflectCount, RxPos, reflectedRays, shadowRays, ranges);
+            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, reflectCount, RxPos, nRays, shadowRays, ranges);
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
@@ -314,8 +326,15 @@ void * devPulseBlock ( void * threadArg ) {
             // in order to calculate power at sensor we also need the Illumination or LRays
             //
             nShadows = 0 ;
-            iray     = 0 ;
-            for(int i= 0 ; i<nRays; i++) if ( shadowHits[i].trinum == NOINTERSECTION ) nShadows++ ;
+            double *facing = (double *)sp_malloc(sizeof(double) * nRays);
+            for(int i=0; i<nRays; i++){
+                facing[i] =VECT_DOT(td->triangles[hitArray[i].trinum].NN, shadowRays[i].dir);
+            }
+            for(int i= 0 ; i<nRays; i++){
+                if ( shadowHits[i].trinum == NOINTERSECTION && (facing[i] > 0.1)){
+                    nShadows++ ;
+                }
+            }
             
             if( nShadows != 0){
                 
@@ -324,8 +343,12 @@ void * devPulseBlock ( void * threadArg ) {
                 LRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
                 RRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
                 
+                iray     = 0 ;
                 for (int i=0; i<nRays; i++) {
-                    if ( shadowHits[i].trinum == NOINTERSECTION ){
+                    // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
+                    //
+                    
+                    if ( shadowHits[i].trinum == NOINTERSECTION && (facing[i] > 0.1) ){
                         newRays[iray] = shadowRays[i] ;
                         newHits[iray] = hitArray[i] ;
                         LRays[iray]   = rayArray[i] ;
@@ -373,6 +396,7 @@ void * devPulseBlock ( void * threadArg ) {
                 free(RRays);
             }
             
+            free(facing);
             free(shadowRays);
             free(shadowHits);
             free(ranges);
@@ -395,6 +419,7 @@ void * devPulseBlock ( void * threadArg ) {
         if(td->phd != NULL){
 
             int cnt=0;
+            nrnpItems = 0;
             for (int i=0; i<nRays*MAXBOUNCES; i++){
                 if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
             }
