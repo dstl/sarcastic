@@ -206,11 +206,11 @@ int main(int argc, const char * argv[]) {
     // newTriangleVec now contains new triangles.
     // write it to file
     //
-    printf("Writing triangle file...\n");
+    printf("Writing %lu triangles to file...\n",newTriangleVec.size());
     TriangleFile dtTriFile = TriangleFile(newTriangleVec) ;
     dtTriFile.WriteFile(std::string(oustr));
     if(plyop){
-        printf("Writing .ply file...\n");
+        printf("Writing %lu triangles to .ply file...\n",newTriangleVec.size());
         dtTriFile.WritePLYFile(plyFname, false);
     }
     im_close_lib(&status);
