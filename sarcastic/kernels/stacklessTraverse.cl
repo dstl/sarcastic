@@ -439,7 +439,7 @@ OutCode ComputeOutCode(SPVector p, SPVector min, SPVector max)
 //#include "intersect.cl"
 //+++++++++++++++++++++++++++ Start of intersect.cl +++++++++++++++++++++++++++++++++++++++++++++++
 
-#define EPSILON          ((double) 0.000001)
+#define EPSILON          ((double) 0.0001)
 
 void Intersect(__global ATS *tri, __global Ray *ray, __global Hit *hit);
 

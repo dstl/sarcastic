@@ -155,7 +155,7 @@ void sartraceCore ( threadData td, char *outDir ) {
     // for the distribution
     //
     
-    printf("Ray generation......");
+    printf("Ray generation.............");
     Timer runTimer ;
     SPStatus status;
     im_init_status(status, 0) ;
