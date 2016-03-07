@@ -316,7 +316,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build Shadowrays
             //
-            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, reflectCount, RxPos, nRays, shadowRays, ranges);
+            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, nRays, RxPos, reflectedRays, shadowRays, ranges);
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
