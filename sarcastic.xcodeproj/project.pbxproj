@@ -272,7 +272,6 @@
 		953FA1C018F4289400EAD4F3 /* buildKernel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buildKernel.c; sourceTree = "<group>"; };
 		953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BuildRopesAndBoxes.c; sourceTree = "<group>"; };
 		953FA1C218F4289400EAD4F3 /* BuildRopesAndBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildRopesAndBoxes.h; sourceTree = "<group>"; };
-		953FA1C318F4289400EAD4F3 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
 		953FA1C418F4289400EAD4F3 /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.csh; path = configure; sourceTree = "<group>"; };
 		953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecef2SceneCoords.c; sourceTree = "<group>"; };
 		953FA1C618F4289400EAD4F3 /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecef2SceneCoords.h; sourceTree = "<group>"; };
@@ -439,6 +438,8 @@
 		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
 		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		958F014A1CD34B9500D24F00 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = Common/colourCodes.h; sourceTree = SOURCE_ROOT; };
+		958F014B1CD34D1900D24F00 /* materialise_version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialise_version.h; sourceTree = "<group>"; };
 		958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d.a"; sourceTree = "<group>"; };
 		95A046431AFBCD7E00FD0114 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RCS.c; sourceTree = "<group>"; };
 		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCS.h; sourceTree = "<group>"; };
@@ -757,7 +758,6 @@
 				953FA1C018F4289400EAD4F3 /* buildKernel.c */,
 				953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */,
 				953FA1C218F4289400EAD4F3 /* BuildRopesAndBoxes.h */,
-				953FA1C318F4289400EAD4F3 /* colourCodes.h */,
 				953FA1C418F4289400EAD4F3 /* configure */,
 				953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */,
 				953FA1C618F4289400EAD4F3 /* ecef2SceneCoords.h */,
@@ -818,6 +818,7 @@
 				954D03621B7DD20A003CCB86 /* ranf.h */,
 				954D035E1B7DCCDA003CCB86 /* boxMullerRandom.c */,
 				954D035F1B7DCCDA003CCB86 /* boxMullerRandom.h */,
+				958F014B1CD34D1900D24F00 /* materialise_version.h */,
 			);
 			path = materialise;
 			sourceTree = "<group>";
@@ -984,12 +985,13 @@
 		95B9D7DA1AEA63F200CEA000 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				9562D9D41B48465400EC6D83 /* tinyxml */,
+				958F014A1CD34B9500D24F00 /* colourCodes.h */,
 				953B54F31BA4523E00BFF41F /* pmath_rng.c */,
 				95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */,
 				95AE61DE1BA438DE0056AA4C /* boxMullerRandom.h */,
 				95AE61DF1BA438DE0056AA4C /* ranf.c */,
 				95AE61E01BA438DE0056AA4C /* ranf.h */,
-				9562D9D41B48465400EC6D83 /* tinyxml */,
 				9562DA501B4FFE4D00EC6D83 /* materialProperties.h */,
 				9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */,
 				9562DA521B4FFE4D00EC6D83 /* matrixMultiplication.h */,

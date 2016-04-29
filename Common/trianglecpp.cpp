@@ -121,3 +121,13 @@ void Triangle::setMaterial(std::string material){
     }
     return ;
 }
+
+void Triangle::print(){
+    std::cout << AA.x << " " << AA.y << " " << AA.z << std::endl;
+    std::cout << BB.x << " " << BB.y << " " << BB.z << std::endl;
+    std::cout << CC.x << " " << CC.y << " " << CC.z << std::endl;
+    std::cout << AA.x << " " << AA.y << " " << AA.z << std::endl;
+
+    return ;
+    
+}

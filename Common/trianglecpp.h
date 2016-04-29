@@ -52,6 +52,8 @@ public:
     Triangle(SPVector aa, SPVector bb, SPVector cc, std::string material) ;
     ~Triangle();
     
+    void print();
+    
     void setMaterial(int matId);
     void setMaterial(std::string material);
     
