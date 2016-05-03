@@ -32,7 +32,7 @@ bool anyVECT_EQUAL(SPVector v, Triangle t);
 void roughenPoint(SPVector *p, Triangle t);
 bool pointsColinear(SPVector p1, SPVector p2, SPVector p3);
 std::forward_list<Triangle> growTriangles(std::forward_list<Triangle> *triangles);
-double *trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments);
+void trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments, double **points);
 void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, int *nPoints, int *nSegs, double **holes, int *nholes);
 SPVector  createHole(int a, int b, double **points, int c, int nPoints) ;
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y);
@@ -48,6 +48,7 @@ int main(int argc, const char * argv[]) {
     int *trinds;
     int *segments ;
     double *holes ;
+    double *points ;
     int nholes ;
 
     printf(" \n");
@@ -152,7 +153,7 @@ int main(int argc, const char * argv[]) {
         }
 
        
-        double *points = trianglesToPoints(commonTris, &nCommonTris, &origin, &ordinate, &abscissa, &trinds, &segments);
+        trianglesToPoints(commonTris, &nCommonTris, &origin, &ordinate, &abscissa, &trinds, &segments, &points);
         VECT_CROSS(ordinate, abscissa, zdir);
         VECT_NORM(zdir, zdir);
 
@@ -195,7 +196,7 @@ int main(int argc, const char * argv[]) {
         double corrlen = materialProperties[commonTris.front().matId].corlen ;
         double corrArea = corrlen ;
         std::ostringstream stringstream ;
-        stringstream << "zpcD" ;
+        stringstream << "zpcqDj" ;
         if (!verbose) {
             stringstream << "Q" ;
         }
@@ -203,57 +204,66 @@ int main(int argc, const char * argv[]) {
         std::string str = stringstream.str();
         const char *triswitches = str.c_str() ;
     
-        // delauney triangulate
+        // delaunay triangulate
         //
         struct triangulateio in ;
         struct triangulateio out;
-        in.numberofpointattributes = 0;
-        in.pointmarkerlist = NULL ;
-        in.numberofcorners = 3;
-        in.numberoftriangleattributes = 0;
-        in.trianglearealist = NULL;
         in.pointlist = points ;
         in.numberofpoints = nPoints ;
-        in.segmentlist = segments ;
-        in.numberofsegments = nSegments ;
+        in.numberofpointattributes = 0;
+        in.pointmarkerlist = NULL ;
+        in.pointattributelist = NULL;
+        
         in.trianglelist = trinds ;
         in.numberoftriangles = nCommonTris ;
+        in.trianglearealist = NULL;
+        in.numberoftriangleattributes = 0;
+        in.triangleattributelist = NULL;
+        in.numberofcorners = 3;
+
+        in.segmentlist = segments ;
+        in.numberofsegments = nSegments ;
+        in.segmentmarkerlist = NULL ;
+        
         in.numberofholes = nholes;
-        in.holelist = holes ;
+        in.holelist = holes; ;
+        in.numberofregions = 0;
+        in.regionlist = NULL;
         
         out.pointlist = NULL;
         out.pointmarkerlist = NULL ;
         out.trianglelist = NULL ;
+        out.neighborlist = NULL ;
+        out.segmentlist = NULL;
+        out.segmentmarkerlist = NULL;
         
         triangulate((char *)triswitches, &in, &out, NULL);
-        
-        free(points);
-        free(trinds);
         
         SPVector OO;
         OO = origin;
         Points3D = (SPVector *)sp_malloc(sizeof(SPVector) * out.numberofpoints);
         
         for (int n=0; n<out.numberofpoints; n++){
-            double x2d,y2d, Z=0; ;
+            double x2d,y2d, Z;
             bool pntOnSegment = false ;
             SPVector v,v1,v2,v3 ;
             x2d = out.pointlist[2*n+0] ;
             y2d = out.pointlist[2*n+1] ;
             
             int s=0;
+            Z=0;
             while (s<out.numberofsegments && pntOnSegment==false) {
                 double s1x,s1y,s2x,s2y ;
                 s1x = out.pointlist[ out.segmentlist[s*2+0]*2+0] ;
                 s1y = out.pointlist[ out.segmentlist[s*2+0]*2+1] ;
                 s2x = out.pointlist[ out.segmentlist[s*2+1]*2+0] ;
                 s2y = out.pointlist[ out.segmentlist[s*2+1]*2+1] ;
-
-               if( isPointOnLine(x2d, y2d, s1x,s1y,s2x,s2y, 0.01) ){
-                   pntOnSegment=true;
-               }
+                
+                if( isPointOnLine(x2d, y2d, s1x,s1y,s2x,s2y, 0.01) ){
+                    pntOnSegment=true;
+                }
                 ++s ;
-
+                
             }
             if (!pntOnSegment) {
                 Z = box_muller(0.0, materialProperties[commonTris.front().matId].roughness) ;
@@ -284,12 +294,26 @@ int main(int argc, const char * argv[]) {
             CC = Points3D[pointind2] ;
             
             Triangle newtri = Triangle(AA, BB, CC, commonTris.front().matId);
-                        
+            
             if(newtri.area != 0.0){
                 newTriangleVec.push_back(newtri) ;
             }
         }
         free(Points3D);
+        free(points);
+        free(trinds);
+        free(segments);
+        if(nholes !=0)free(holes);
+        free(out.pointlist);
+        free(out.pointattributelist);
+        free(out.pointmarkerlist);
+        free(out.trianglelist);
+        free(out.triangleattributelist);
+        free(out.trianglearealist);
+        free(out.neighborlist);
+        free(out.segmentlist);
+        free(out.segmentmarkerlist);
+        
     }
     
     // newTriangleVec now contains new triangles.
@@ -363,67 +387,88 @@ bool pointsColinear(SPVector point, SPVector A, SPVector B){
 }
 
 bool VECT_EQUAL(SPVector a, SPVector b){
-    return (a.x == b.x && a.y == b.y && a.z == b.z) ;
+    double eps = 1.0e-6;
+    if (fabs(a.x-b.x)<eps && fabs(a.y-b.y)<eps && fabs(a.z-b.z)<eps) {
+        return true;
+    }else{
+        return false;
+    }
 }
 
 bool anyVECT_EQUAL(SPVector v, Triangle t){
     return ( VECT_EQUAL(v, t.AA) || VECT_EQUAL(v, t.BB) || VECT_EQUAL(v, t.CC) ) ;
 }
 
-std::forward_list<Triangle> growTriangles(std::forward_list<Triangle> *triangles){
-    
-    Triangle tri,tri2;
-    std::forward_list<Triangle> commonTriangles;
-    std::forward_list<Triangle> newTriangles;
-    std::forward_list<Triangle> commonChecked;
-    bool checkedFlg = false;
-    Triangle subjectTri = triangles->front();
-    commonTriangles.push_front(subjectTri) ;
-    triangles->pop_front() ;
-    
-    auto it = commonTriangles.begin();
-    while (it != commonTriangles.end()) {
-        subjectTri = *it ;
-        checkedFlg = false ;
-        while (!triangles->empty() ) {
-            tri = triangles->front() ;
-            triangles->pop_front() ;
-            int commonVerts = 0;
-            if ( VECT_EQUAL(tri.NN, subjectTri.NN) && (tri.matId == subjectTri.matId) ){
-                if ( anyVECT_EQUAL(tri.AA, subjectTri)) commonVerts++ ;
-                if ( anyVECT_EQUAL(tri.BB, subjectTri)) commonVerts++ ;
-                if ( anyVECT_EQUAL(tri.CC, subjectTri)) commonVerts++ ;
-            }
-            if (commonVerts > 1) {
-                if (!checkedFlg) {
-                    commonChecked.push_front(subjectTri);
-                    commonTriangles.pop_front();
-                    checkedFlg=true;
-                }
-                commonTriangles.push_front(tri) ;
-                it = commonTriangles.before_begin();
-            }else{
-                newTriangles.push_front(tri) ;
-            }
-        }
-        while (!newTriangles.empty()) {
-            tri = newTriangles.front() ;
-            triangles->push_front(tri);
-            newTriangles.pop_front() ;
-        }
-        ++it;
-    }
-    while (!commonChecked.empty()) {
-        tri = commonChecked.front();
-        commonChecked.pop_front() ;
-        commonTriangles.push_front(tri);
-    }
+std::forward_list<Triangle> growTriangles(std::forward_list<Triangle> *triangles)
+{
+    Triangle subjectTri, tri, cand, commonTri;
+    std::forward_list<Triangle> candidates ;
+    std::forward_list<Triangle> commonTriangles ;
+    std::forward_list<Triangle> moreCommons ;
+    std::forward_list<Triangle> beenChecked ;
+    std::forward_list<Triangle> newTriangles ;
 
+    int nCommonVerts;
+    
+    subjectTri = triangles->front() ;
+    commonTriangles.push_front(subjectTri) ;
+    triangles->pop_front();
+    
+    while (!triangles->empty()){
+        tri=triangles->front() ;
+        triangles->pop_front();
+        if ( VECT_EQUAL(tri.NN, subjectTri.NN) && (tri.matId == subjectTri.matId)) {
+            candidates.push_front(tri);
+        }else{
+            newTriangles.push_front(tri);
+        }
+    }
+    while (!newTriangles.empty()){
+        tri=newTriangles.front();
+        newTriangles.pop_front();
+        triangles->push_front(tri);
+    }
+    
+    for (auto commonIt=commonTriangles.begin(); commonIt!=commonTriangles.end(); ++commonIt) {
+        commonTri = *commonIt ;
+        while (!candidates.empty()) {
+            cand = candidates.front();
+            candidates.pop_front() ;
+            nCommonVerts = 0;
+            if ( anyVECT_EQUAL(commonTri.AA, cand)) nCommonVerts++ ;
+            if ( anyVECT_EQUAL(commonTri.BB, cand)) nCommonVerts++ ;
+            if ( anyVECT_EQUAL(commonTri.CC, cand)) nCommonVerts++ ;
+            if ( nCommonVerts == 2 ){
+                moreCommons.push_front(cand) ;
+                commonIt = commonTriangles.before_begin() ;
+            } else {
+                beenChecked.push_front(cand) ;
+            }
+        }
+        if(!moreCommons.empty()){
+            while (!beenChecked.empty()) {
+                tri=beenChecked.front() ;
+                beenChecked.pop_front() ;
+                candidates.push_front(tri) ;
+            }
+        }
+        while (!moreCommons.empty()) {
+            tri = moreCommons.front() ;
+            moreCommons.pop_front() ;
+            commonTriangles.push_front(tri) ;
+        }
+    }
+    while (!beenChecked.empty()) {
+        tri = beenChecked.front() ;
+        beenChecked.pop_front() ;
+        triangles->push_front(tri) ;
+    }
+    
     return (commonTriangles) ;
 }
 
 
-double *trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments){
+void trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments, double **points){
     
     Triangle tri,tri2;
     SPVector N,ordinate,abscissa, origin;
@@ -436,7 +481,7 @@ double *trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles
     for( auto it = triangles.begin(); it != triangles.end(); ++it) nt++ ;
     *nTriangles = nt ;
 
-    double *points = (double *)sp_malloc(sizeof(double) * nt * 6);
+    *points   = (double *)sp_malloc(sizeof(double) * nt * 6);
     *trinds   = (int *)sp_malloc(sizeof(int) * nt * 3);
     *segments = (int *)sp_malloc(sizeof(int) * nt * 3 * 2);
 
@@ -458,9 +503,9 @@ double *trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles
         
         // put 2D point in pointlist
         //
-        points[nt*6 + 0] = x0; points[nt*6 + 1] = y0;
-        points[nt*6 + 2] = x1; points[nt*6 + 3] = y1;
-        points[nt*6 + 4] = x2; points[nt*6 + 5] = y2;
+        (*points)[nt*6 + 0] = x0; (*points)[nt*6 + 1] = y0;
+        (*points)[nt*6 + 2] = x1; (*points)[nt*6 + 3] = y1;
+        (*points)[nt*6 + 4] = x2; (*points)[nt*6 + 5] = y2;
         
         // Create triangle array
         //
@@ -485,7 +530,7 @@ double *trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles
     *ord   = ordinate ;
     *absci = abscissa ;
     
-    return points ;
+    return ;
     
   
 }
@@ -499,7 +544,7 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
 //    ntriangles is the same
 //    nPoints has been modified to be number of unique points
 //    points has been reduced in size to remove duplicates and is now nPoints long (nPoints * 2 * double)
-//    trinds are the indices in teh new points array
+//    trinds are the indices in the new points array
 //    segments are now only those sides that have only one triangle connected (ie an edge)
 //
 {
@@ -545,6 +590,8 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
             (*segments)[p] = vert_remap[(*segments)[p]] ;
         }
     }
+    
+    free(vert_remap);
 
     // Now find segments that only have one triangle connected - these are edges or true segments
     //
@@ -572,7 +619,7 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
             seglist.push_front(segA);
             seglist.push_front(segB);
             
-            // find triagle owning this segment
+            // find triangle owning this segment
             //
             for (int t=0; t<ntriangles; ++t) {
                 int a,b,c ;
@@ -630,14 +677,17 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
     }
     *nholes = cnt / 2 ;
     
-    free(*holes) ;
-    *holes = (double *)sp_malloc(sizeof(double) * 2 * (*nholes));
-    cnt=0;
-    while (!hole_list.empty()){
-        double d = hole_list.front() ;
-        (*holes)[cnt++] = d;
-        hole_list.pop_front() ;
+    if(*nholes != 0){
+//        if((*holes) != NULL )free(*holes) ;
+        *holes = (double *)sp_malloc(sizeof(double) * 2 * (*nholes));
+        cnt=0;
+        while (!hole_list.empty()){
+            double d = hole_list.front() ;
+            (*holes)[cnt++] = d;
+            hole_list.pop_front() ;
+        }
     }
+    
     return ;
     
 }
@@ -652,7 +702,7 @@ SPVector  createHole(int a, int b, double **points, int c, int nPoints)
     SPVector v2,v3,AB,xpc,outdir,indir;
 
     double dist;
-    double epsi = 0.01 ; // small distance to create a hole point over a line segment
+    double epsi = 0.001 ; // small distance to create a hole point over a line segment
    
     
     
@@ -660,10 +710,7 @@ SPVector  createHole(int a, int b, double **points, int c, int nPoints)
     VECT_CREATE((*points)[b*2+0], (*points)[b*2+1], 0.0, Bb);
     VECT_CREATE((*points)[c*2+0], (*points)[c*2+1], 0.0, Cc);
     VECT_SUB(Bb, Aa, AB);
-    
-    
-    double mag = VECT_MAG(AB) ;
-    VECT_SCMULT(AB, mag/2.0, AB);
+    VECT_SCMULT(AB, 0.5, AB);
     VECT_ADD(Aa,AB,xp);
     VECT_SUB(Cc,xp,xpc);
     VECT_CROSS(AB, xpc, v1);
@@ -713,8 +760,11 @@ bool isPointOnLine(double px, double py, double x1, double y1, double x2, double
     double x,y,u,d ;
     
     if( x1==x2 && y1==y2){
-        printf("Error : coincident points in isPointOnLine()\n");
-        exit(1);
+        if(px == x1 && py == y1) {
+            return true;
+        }else{
+            return false;
+        }
     }
     if( (px==x1 && py == y1) || (px==x2 && py==y2) ){
         return true;

@@ -54,7 +54,7 @@ typedef struct scatProps {
 //
 static scatProps materialProperties[NMATERIALS] = {
 //   Name          corrLen     Roughness   Resistivity Specular    Diffuse     Shinyness
-    {"MATERIAL",    0.5,        0.0,        0.0,     0.9,        0.0,        50.0        },
+    {"MATERIAL",    0.1,        0.0,        0.0,     0.9,        0.0,        50.0        },
     {"ASPHALT",     0.20,       0.01,       1.0e18,     0.8,        0.2,        30.0        },
     {"BRICK",       0.1,        0.01,       1.0e18,     0.7,        0.3,        20.0        },
     {"CONCRETE",    0.2,        0.02,       120.0,      0.3,        0.7,        10.0        },
