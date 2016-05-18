@@ -54,7 +54,7 @@ double RCS(double PtGt, double EMagAtRx, double TxRange, double RxRange){
     // amplitude of a sinusoidal wave function. The peak amplitude is therefore twice as large
     // (hence the factor of 4 below when calculating the power (amplitude squared)
     //
-    double Ppt = EMagAtRx * EMagAtRx * 4 * ( 4.0 * SIPC_pi * RxRange * RxRange); // Watts / m^2
+    double Ppt = EMagAtRx * EMagAtRx * 4 * ( 4.0 * SIPC_pi * RxRange * RxRange); // Watts
 
     // RCS is defined as the ratio of radar reflected power in the direction of a receiver
     // compared the the power reflected isotropically
