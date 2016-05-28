@@ -1,7 +1,7 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 #define SIPC_pi 3.14159265358979323846
 #define SURFMAXN 4
-#define LT 0.04
+#define LT 0.004
 #define PRINTIND 6
 #define RAD2DEG(a)   ((a) * 180.0 / SIPC_pi)
 

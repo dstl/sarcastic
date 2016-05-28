@@ -37,6 +37,7 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
 SPVector  createHole(int a, int b, double **points, int c, int nPoints) ;
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y);
 bool isPointOnLine(double px, double py, double x1, double y1, double x2, double y2, double approxZero);
+char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
 
 
 int main(int argc, const char * argv[]) {
@@ -63,7 +64,7 @@ int main(int argc, const char * argv[]) {
     im_init_status(status, 0);
     im_init_lib(&status, "materialise", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status) ;
-    char *instr = input_string((char *)"Input triangle filename", (char *)"infilename",
+    char *instr = tryReadFile((char *)"Input triangle filename", (char *)"infilename",
                                (char *)"The name of a triangle file created with 'colladaToTriFile'",
                                (char *) ROOTPATH"/DATA/triangles.tri");
     
@@ -74,7 +75,7 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
+    char *oustr = tryReadFile((char *)"Output triangle filename", (char *)"oufilename",
                                (char *)"The name of the triangle file to be created",
                                (char *) ROOTPATH"/DATA/triangles_Delaunay.tri");
     
@@ -86,7 +87,7 @@ int main(int argc, const char * argv[]) {
     }
     
     bool plyop=false;
-    char *plyFname;
+    char *plyFname=NULL;
     plyop = input_yesno("Write out triangles as PLY file", "plyop",
                         "The PLY format is a simple-to-understand representation of the triangles",
                         plyop);
@@ -194,7 +195,8 @@ int main(int argc, const char * argv[]) {
         // find material and from it max area
         //
         double corrlen = materialProperties[commonTris.front().matId].corlen ;
-        double corrArea = corrlen ;
+        double corrArea = corrlen * corrlen * 0.5 ;
+        printf("setting max area to be %f m^2 (correlation length is %f m)\n",corrArea,corrlen);
         std::ostringstream stringstream ;
         stringstream << "zpcqDj" ;
         if (!verbose) {
@@ -783,3 +785,35 @@ bool isPointOnLine(double px, double py, double x1, double y1, double x2, double
         return false ;
     }
 }
+
+char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def)
+///  prompt  : the text to display when asking the user for input (the default value will also be displayed)
+///  key     : a unique bit of text (such az "AzPixelSize") which the input system will then use to store parameter values
+///  help    : the text to display to the user when they just enter '?'
+///  def     : the default, ie the value to take if the user just presses return
+///
+{
+    FILE *fp;
+    SPStatus fileStat ;
+    char *prmpt, *fname;
+    
+    size_t len = strlen(def);
+    prmpt = (char *)sp_malloc(sizeof(char) * len);
+    
+    do {
+        im_init_status(fileStat, 0) ;
+        strcpy(prmpt, def);
+        fname = input_string(prompt, key, help, def);
+        
+        if ( (fp = fopen(fname, "r")) == NULL){
+            printf(RED "Cannot access file %s\n" RESETCOLOR,fname);
+            fileStat.status = BAD_FILE ;
+        }
+        
+    } while(fileStat.status != NO_ERROR);
+    
+    fclose(fp);
+    
+    return(fname) ;
+}
+

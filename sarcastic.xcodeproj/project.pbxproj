@@ -7,17 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
-		9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175619DECEDE0004C4F0 /* main_POTriangle.c */; };
-		9516175B19DED0550004C4F0 /* POTriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 9516175A19DED0550004C4F0 /* POTriangle.c */; };
 		953375E219D927C100DE1C46 /* KdTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E019D927C100DE1C46 /* KdTree.m */; };
 		953375E419D927DA00DE1C46 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E319D927DA00DE1C46 /* main.m */; };
 		953375EC19D9293200DE1C46 /* AABB.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E919D9293200DE1C46 /* AABB.m */; };
 		953375FE19D929C400DE1C46 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375FD19D929C400DE1C46 /* banner.c */; };
 		953B54F41BA4523E00BFF41F /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
-		953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
-		953C58F619D3305E006D5866 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		953C591919D7F8C9006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
 		953C592019D7F8C9006D5866 /* buildKDTree.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 953C591F19D7F8C9006D5866 /* buildKDTree.1 */; };
 		953FA1E618F4289400EAD4F3 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1BF18F4289400EAD4F3 /* banner.c */; };
@@ -36,8 +31,6 @@
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
 		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
 		954D03521B7BC7AD003CCB86 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D03511B7BC7AD003CCB86 /* main.cpp */; };
-		954D03561B7BC807003CCB86 /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		954D03571B7BC8FC003CCB86 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		954D03581B7BCA08003CCB86 /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
 		954D03591B7BCAC7003CCB86 /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
 		954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
@@ -54,17 +47,32 @@
 		9562DA411B48465400EC6D83 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
 		9562DA421B48465400EC6D83 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA361B48465400EC6D83 /* tinyxmlerror.cpp */; };
 		9562DA431B48465400EC6D83 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA371B48465400EC6D83 /* tinyxmlparser.cpp */; };
-		9562DA451B48479000EC6D83 /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		9562DA4B1B48494400EC6D83 /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		9562DA5B1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		9562DA5C1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		9562DA5D1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		9562DA601B4FFE4D00EC6D83 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA541B4FFE4D00EC6D83 /* MVectorObjc.m */; };
 		9562DA651B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
-		9567C8381B2F0426000742A6 /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
-		957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
+		957A59D71CF9A6CF00981E60 /* libSIlib-1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950268461CDB6A0900CAC65F /* libSIlib-1.3.a */; };
+		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
+		957A59DA1CF9A7ED00981E60 /* libSIlib-1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950268461CDB6A0900CAC65F /* libSIlib-1.3.a */; };
+		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
+		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
+		957A59E31CF9A93100981E60 /* libSIlib-1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950268461CDB6A0900CAC65F /* libSIlib-1.3.a */; };
+		957A59E41CF9A93A00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
+		957A59E51CF9A95800981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
+		957A59E61CF9A95800981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
+		957A59E71CF9A9ED00981E60 /* libSIlib-1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950268461CDB6A0900CAC65F /* libSIlib-1.3.a */; };
+		957A59E81CF9A9F700981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
+		957A59E91CF9AA2200981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
+		957A59EA1CF9AA2200981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
+		957A59EB1CF9AA5F00981E60 /* libSIlib-1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 950268461CDB6A0900CAC65F /* libSIlib-1.3.a */; };
+		957A59EC1CF9AA6700981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
+		957A59F01CF9AAB200981E60 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59EF1CF9AAB200981E60 /* libexpat.tbd */; };
+		957A59F11CF9AAD500981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
+		957A59F21CF9AAD500981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
+		957A59F31CF9AAEF00981E60 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59EF1CF9AAB200981E60 /* libexpat.tbd */; };
+		957A59F41CF9AAFA00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840917AD25DA00B963DE /* OpenCL.framework */; };
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95ABA80E1B5F7FAB00A485BA /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
@@ -78,22 +86,14 @@
 		95B5F89E1B7724BE0095A6AB /* readKdTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DD18F4289400EAD4F3 /* readKdTree.c */; };
 		95B5F89F1B7734630095A6AB /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
 		95B5F8A01B77348A0095A6AB /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
-		95B5F8A11B7734F70095A6AB /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		95B5F8A41B7735360095A6AB /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840517AD255E00B963DE /* libexpat.dylib */; };
-		95B5F8A51B7735400095A6AB /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 957B840717AD25C600B963DE /* libreadline.dylib */; };
 		95B5F8A61B77355A0095A6AB /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */; };
 		95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
 		95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
 		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
-		95CA0C181B371780007827CE /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		95CA0C191B371795007827CE /* libSIlib-1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9567C8371B2F0426000742A6 /* libSIlib-1.2.a */; };
-		95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95D5E16C192CA57E001ABC11 /* POTest.1 */; };
 		95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
 		95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
-		95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95F276EA1A35C13A00FF9339 /* oclPOField.c */; };
-		95F276EC1A36006300FF9339 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,15 +107,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		951F56001B6F49320036CBAC /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		953C58DA19D32D1D006D5866 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -152,19 +143,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		95D5E166192CA57E001ABC11 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				95D5E16D192CA57E001ABC11 /* POTest.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		950268461CDB6A0900CAC65F /* libSIlib-1.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.3.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.3.a"; sourceTree = "<group>"; };
 		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
 		950635CC19F7972C00B83F4B /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
 		950635CF19F7ECE100B83F4B /* libmtlib-3643M.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libmtlib-3643M.a"; sourceTree = "<group>"; };
@@ -234,10 +216,6 @@
 		9516174619DAB7FA0004C4F0 /* libgdal.la */ = {isa = PBXFileReference; lastKnownFileType = text; path = libgdal.la; sourceTree = "<group>"; };
 		9516174819DAB7FA0004C4F0 /* fftw3.pc */ = {isa = PBXFileReference; lastKnownFileType = text; path = fftw3.pc; sourceTree = "<group>"; };
 		9516174919DAB7FA0004C4F0 /* fftw3f.pc */ = {isa = PBXFileReference; lastKnownFileType = text; path = fftw3f.pc; sourceTree = "<group>"; };
-		9516175519DEC6F30004C4F0 /* POCalculaton.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = POCalculaton.c; path = sarcastic/POCalculaton.c; sourceTree = SOURCE_ROOT; };
-		9516175619DECEDE0004C4F0 /* main_POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_POTriangle.c; sourceTree = "<group>"; };
-		9516175919DECFA20004C4F0 /* POTriangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POTriangle.h; sourceTree = "<group>"; };
-		9516175A19DED0550004C4F0 /* POTriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = POTriangle.c; sourceTree = "<group>"; };
 		951F56021B6F49320036CBAC /* SARTrace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SARTrace; sourceTree = BUILT_PRODUCTS_DIR; };
 		9526A0BA19E1DAF5003675FB /* Chatzigeorgiadis - PO RCS Prediction.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Chatzigeorgiadis - PO RCS Prediction.pdf"; sourceTree = "<group>"; };
 		9526A0BB19E1DAF5003675FB /* DosSantos-Ludwig with barycentrics.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DosSantos-Ludwig with barycentrics.pdf"; sourceTree = "<group>"; };
@@ -263,7 +241,6 @@
 		953375FF19D929D500DE1C46 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = colourCodes.h; sourceTree = "<group>"; };
 		9533760019D929E600DE1C46 /* Sadilac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sadilac.h; sourceTree = "<group>"; };
 		953B54F31BA4523E00BFF41F /* pmath_rng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pmath_rng.c; path = Common/pmath_rng.c; sourceTree = SOURCE_ROOT; };
-		953C58DC19D32D1D006D5866 /* testImport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testImport; sourceTree = BUILT_PRODUCTS_DIR; };
 		953C58F419D33056006D5866 /* libSIlib-1.1-2-5e675ac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-2-5e675ac.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-2-5e675ac.a"; sourceTree = "<group>"; };
 		953C591819D7F8C9006D5866 /* buildKDTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = buildKDTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		953C591E19D7F8C9006D5866 /* buildKDTree-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "buildKDTree-Prefix.pch"; sourceTree = "<group>"; };
@@ -435,8 +412,13 @@
 		9562DA581B4FFE4D00EC6D83 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Triangle.m; path = Common/Triangle.m; sourceTree = SOURCE_ROOT; };
 		9567C8351B2EFE0B000742A6 /* libSIlib-1.1-7-e17b94d-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d-dirty.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d-dirty.a"; sourceTree = "<group>"; };
 		9567C8371B2F0426000742A6 /* libSIlib-1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.2.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.2.a"; sourceTree = "<group>"; };
-		957B840517AD255E00B963DE /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = usr/lib/libexpat.dylib; sourceTree = SDKROOT; };
-		957B840717AD25C600B963DE /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
+		957A59D81CF9A7DE00981E60 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
+		957A59DB1CF9A83D00981E60 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3_threads.a; sourceTree = "<group>"; };
+		957A59DD1CF9A88400981E60 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3.a; sourceTree = "<group>"; };
+		957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		957A59DF1CF9A88400981E60 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3f.a; sourceTree = "<group>"; };
+		957A59ED1CF9AA7700981E60 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		957A59EF1CF9AAB200981E60 /* libexpat.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libexpat.tbd; path = usr/lib/libexpat.tbd; sourceTree = SDKROOT; };
 		957B840917AD25DA00B963DE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		958F014A1CD34B9500D24F00 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = Common/colourCodes.h; sourceTree = SOURCE_ROOT; };
 		958F014B1CD34D1900D24F00 /* materialise_version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialise_version.h; sourceTree = "<group>"; };
@@ -466,14 +448,10 @@
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
 		95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = reflectionPowerPO.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
-		95D5E168192CA57E001ABC11 /* POTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		95D5E16A192CA57E001ABC11 /* main_POCalculation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main_POCalculation.c; sourceTree = "<group>"; };
-		95D5E16C192CA57E001ABC11 /* POTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = POTest.1; sourceTree = "<group>"; };
 		95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trianglecpp.cpp; path = Common/trianglecpp.cpp; sourceTree = SOURCE_ROOT; };
 		95D8F8C01B5E78580057FA4C /* trianglecpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trianglecpp.h; path = Common/trianglecpp.h; sourceTree = SOURCE_ROOT; };
 		95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleFile.cpp; path = Common/TriangleFile.cpp; sourceTree = SOURCE_ROOT; };
 		95D8F8C61B5E7A280057FA4C /* TriangleFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TriangleFile.h; path = Common/TriangleFile.h; sourceTree = SOURCE_ROOT; };
-		95F276EA1A35C13A00FF9339 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
 		95F276ED1A36045900FF9339 /* POField.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = POField.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -482,12 +460,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9567C8381B2F0426000742A6 /* libSIlib-1.2.a in Frameworks */,
+				957A59F41CF9AAFA00981E60 /* libreadline.tbd in Frameworks */,
+				957A59F31CF9AAEF00981E60 /* libexpat.tbd in Frameworks */,
+				957A59D71CF9A6CF00981E60 /* libSIlib-1.3.a in Frameworks */,
 				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
 				95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
-				957B840817AD25C600B963DE /* libreadline.dylib in Frameworks */,
-				957B840617AD255E00B963DE /* libexpat.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,19 +473,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95B5F8A51B7735400095A6AB /* libreadline.dylib in Frameworks */,
-				95B5F8A41B7735360095A6AB /* libexpat.dylib in Frameworks */,
-				95B5F8A11B7734F70095A6AB /* libSIlib-1.2.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		953C58D919D32D1D006D5866 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				95CA0C191B371795007827CE /* libSIlib-1.2.a in Frameworks */,
-				953C58F619D3305E006D5866 /* libreadline.dylib in Frameworks */,
-				953C58DD19D32D1D006D5866 /* Foundation.framework in Frameworks */,
+				957A59F11CF9AAD500981E60 /* libfftw3f_threads.a in Frameworks */,
+				957A59F21CF9AAD500981E60 /* libfftw3f.a in Frameworks */,
+				957A59F01CF9AAB200981E60 /* libexpat.tbd in Frameworks */,
+				957A59EC1CF9AA6700981E60 /* libreadline.tbd in Frameworks */,
+				957A59EB1CF9AA5F00981E60 /* libSIlib-1.3.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,8 +485,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95CA0C181B371780007827CE /* libSIlib-1.2.a in Frameworks */,
-				9516174F19DD3AB60004C4F0 /* libreadline.dylib in Frameworks */,
+				957A59E91CF9AA2200981E60 /* libfftw3f_threads.a in Frameworks */,
+				957A59EA1CF9AA2200981E60 /* libfftw3f.a in Frameworks */,
+				957A59E81CF9A9F700981E60 /* libreadline.tbd in Frameworks */,
+				957A59E71CF9A9ED00981E60 /* libSIlib-1.3.a in Frameworks */,
 				953C591919D7F8C9006D5866 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -525,8 +497,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				954D03571B7BC8FC003CCB86 /* libreadline.dylib in Frameworks */,
-				954D03561B7BC807003CCB86 /* libSIlib-1.2.a in Frameworks */,
+				957A59E51CF9A95800981E60 /* libfftw3f_threads.a in Frameworks */,
+				957A59E61CF9A95800981E60 /* libfftw3f.a in Frameworks */,
+				957A59E41CF9A93A00981E60 /* libreadline.tbd in Frameworks */,
+				957A59E31CF9A93100981E60 /* libSIlib-1.3.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,15 +508,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9562DA4B1B48494400EC6D83 /* libreadline.dylib in Frameworks */,
-				9562DA451B48479000EC6D83 /* libSIlib-1.2.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		95D5E165192CA57E001ABC11 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */,
+				957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */,
+				957A59DA1CF9A7ED00981E60 /* libSIlib-1.3.a in Frameworks */,
+				957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,14 +526,11 @@
 				95C1708F18C9CCC000651D97 /* libfftw3f.a */,
 				95C1708B18C9CC9800651D97 /* libfftw3_threads.a */,
 				95C1708C18C9CC9800651D97 /* libfftw3.a */,
-				957B840717AD25C600B963DE /* libreadline.dylib */,
-				957B840517AD255E00B963DE /* libexpat.dylib */,
 				95B9D7DA1AEA63F200CEA000 /* Common */,
 				9562D9CB1B483FEA00EC6D83 /* colladaToTriFile */,
 				954D03501B7BC7AD003CCB86 /* materialise */,
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
-				95D5E169192CA57E001ABC11 /* POTest */,
 				951F56031B6F49320036CBAC /* SARTrace */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
@@ -576,8 +542,6 @@
 			isa = PBXGroup;
 			children = (
 				9504211317A24F9400A076FC /* sarcastic */,
-				95D5E168192CA57E001ABC11 /* POTest */,
-				953C58DC19D32D1D006D5866 /* testImport */,
 				953C591819D7F8C9006D5866 /* buildKDTree */,
 				9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */,
 				951F56021B6F49320036CBAC /* SARTrace */,
@@ -835,6 +799,14 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				957A59EF1CF9AAB200981E60 /* libexpat.tbd */,
+				957A59ED1CF9AA7700981E60 /* libxml2.tbd */,
+				957A59DD1CF9A88400981E60 /* libfftw3.a */,
+				957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */,
+				957A59DF1CF9A88400981E60 /* libfftw3f.a */,
+				957A59DB1CF9A83D00981E60 /* libfftw3_threads.a */,
+				957A59D81CF9A7DE00981E60 /* libreadline.tbd */,
+				950268461CDB6A0900CAC65F /* libSIlib-1.3.a */,
 				95B5F8A21B7735140095A6AB /* libxml2.2.dylib */,
 				9567C8371B2F0426000742A6 /* libSIlib-1.2.a */,
 				9567C8351B2EFE0B000742A6 /* libSIlib-1.1-7-e17b94d-dirty.a */,
@@ -1010,20 +982,6 @@
 			path = sarcastic/Common;
 			sourceTree = "<group>";
 		};
-		95D5E169192CA57E001ABC11 /* POTest */ = {
-			isa = PBXGroup;
-			children = (
-				9516175619DECEDE0004C4F0 /* main_POTriangle.c */,
-				95F276EA1A35C13A00FF9339 /* oclPOField.c */,
-				9516175A19DED0550004C4F0 /* POTriangle.c */,
-				9516175919DECFA20004C4F0 /* POTriangle.h */,
-				95D5E16A192CA57E001ABC11 /* main_POCalculation.c */,
-				9516175519DEC6F30004C4F0 /* POCalculaton.c */,
-				95D5E16C192CA57E001ABC11 /* POTest.1 */,
-			);
-			path = POTest;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1061,23 +1019,6 @@
 			name = SARTrace;
 			productName = SARTrace;
 			productReference = 951F56021B6F49320036CBAC /* SARTrace */;
-			productType = "com.apple.product-type.tool";
-		};
-		953C58DB19D32D1D006D5866 /* testImport */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 953C58E519D32D1D006D5866 /* Build configuration list for PBXNativeTarget "testImport" */;
-			buildPhases = (
-				953C58D819D32D1D006D5866 /* Sources */,
-				953C58D919D32D1D006D5866 /* Frameworks */,
-				953C58DA19D32D1D006D5866 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = testImport;
-			productName = testImport;
-			productReference = 953C58DC19D32D1D006D5866 /* testImport */;
 			productType = "com.apple.product-type.tool";
 		};
 		953C591719D7F8C9006D5866 /* buildKDTree */ = {
@@ -1132,30 +1073,13 @@
 			productReference = 9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */;
 			productType = "com.apple.product-type.tool";
 		};
-		95D5E167192CA57E001ABC11 /* POTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 95D5E170192CA57E001ABC11 /* Build configuration list for PBXNativeTarget "POTest" */;
-			buildPhases = (
-				95D5E164192CA57E001ABC11 /* Sources */,
-				95D5E165192CA57E001ABC11 /* Frameworks */,
-				95D5E166192CA57E001ABC11 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = POTest;
-			productName = POTest;
-			productReference = 95D5E168192CA57E001ABC11 /* POTest */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		9504210A17A24F9400A076FC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = Dstl;
 				TargetAttributes = {
 					951F56011B6F49320036CBAC = {
@@ -1186,8 +1110,6 @@
 				953C591719D7F8C9006D5866 /* buildKDTree */,
 				951F56011B6F49320036CBAC /* SARTrace */,
 				9504211217A24F9400A076FC /* sarcastic */,
-				95D5E167192CA57E001ABC11 /* POTest */,
-				953C58DB19D32D1D006D5866 /* testImport */,
 			);
 		};
 /* End PBXProject section */
@@ -1285,13 +1207,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		953C58D819D32D1D006D5866 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		953C591419D7F8C9006D5866 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1339,17 +1254,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		95D5E164192CA57E001ABC11 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				95F276EC1A36006300FF9339 /* buildKernel.c in Sources */,
-				9516175B19DED0550004C4F0 /* POTriangle.c in Sources */,
-				95F276EB1A35C13A00FF9339 /* oclPOField.c in Sources */,
-				9516175719DECEDE0004C4F0 /* main_POTriangle.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -1362,6 +1266,7 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1383,7 +1288,7 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -1413,7 +1318,7 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1475,8 +1380,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1512,66 +1418,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		953C58E619D32D1D006D5866 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "testImport/testImport-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/dstl/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		953C58E719D32D1D006D5866 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "testImport/testImport-Prefix.pch";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/dstl/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1600,8 +1450,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1627,8 +1478,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1660,8 +1512,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1691,8 +1544,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1728,8 +1582,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Common";
@@ -1763,64 +1618,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/dstl/lib,
+					/usr/local/Cellar/fftw/3.3.4_1/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Common";
-			};
-			name = Release;
-		};
-		95D5E16E192CA57E001ABC11 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/dstl/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		95D5E16F192CA57E001ABC11 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/dstl/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1854,15 +1657,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		953C58E519D32D1D006D5866 /* Build configuration list for PBXNativeTarget "testImport" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				953C58E619D32D1D006D5866 /* Debug */,
-				953C58E719D32D1D006D5866 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		953C592119D7F8C9006D5866 /* Build configuration list for PBXNativeTarget "buildKDTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1886,15 +1680,6 @@
 			buildConfigurations = (
 				9562D9CE1B483FEA00EC6D83 /* Debug */,
 				9562D9CF1B483FEA00EC6D83 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		95D5E170192CA57E001ABC11 /* Build configuration list for PBXNativeTarget "POTest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				95D5E16E192CA57E001ABC11 /* Debug */,
-				95D5E16F192CA57E001ABC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

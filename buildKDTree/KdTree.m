@@ -558,7 +558,7 @@
     double kbd, kcu, kcv, kcd;
     double AAx,AAy,AAz,BBx,BBy,BBz;
     double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz;
-    NSInteger ntri,nleaves,nnodes,ntex;
+    NSInteger ntri,nleaves,nnodes;
     KdTreeNode * node;
     unsigned int flagDimAndOffset;
     float splitPosition;

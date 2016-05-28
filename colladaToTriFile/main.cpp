@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     
     char * inFile, * outFile ;
     bool plyop=false;
-    char *plyFname;
+    char *plyFname=NULL;
     
     inFile = tryReadFile("Collada .dae file to read", "inFile",
                          "The pathname of a Collada file containing the scene",
