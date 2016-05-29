@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
                 
                 Triangle t = Triangle(AA, BB, CC,triMaterial);
                 if(t.area != 0.0){
-                    printf("A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());
+                    printf("A: %5.2f,%5.2f,%5.2f B: %5.2f,%5.2f,%5.2f C: %5.2f,%5.2f.%5.2f N: %5.2f,%5.2f.%5.2f - %s\n",AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z, t.NN.x,t.NN.y,t.NN.z,triMaterial.c_str());
                     tri_vec.push_back(t);
                 }else{
                     printf("ERROR area is %f: A: %f,%f,%f  B: %f,%f,%f  C: %f,%f.%f - %s\n",t.area,AA.x,AA.y,AA.z,BB.x,BB.y,BB.z,CC.x,CC.y,CC.z,triMaterial.c_str());

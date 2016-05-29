@@ -537,12 +537,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_SCMULT(2*A, e_jD0, t) ;
             CMPLX_MULT(t, braces, Ic);
         }
-        
-        if( firstBounce > 1 ){
-            Ic.r = CMPLX_MAG(Ic) ;
-            Ic.i = 0.0;
-        }
-        
+
         // At this point we have integrated the complex field over the triangular facet and have the
         // value stored in the complex number Ic
         //

@@ -61,12 +61,19 @@ int buildKernel(cl_context context,             // OpenCL Context. Already creat
     err = clBuildProgram(*program, 0, NULL, compilerOptions, NULL, NULL);
     if (err != CL_SUCCESS){
         size_t len;
-        char buffer[32768];
+        int buffsize = 32768;
+        char buffer[buffsize] ;
         printf("*** Error: Failed to build program executable for kernel \"%s\" \n",kernelCodeName);
         clGetProgramBuildInfo(*program, devID, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        printf("err: %d. Buffer:\n",err);
-        printf("%s\n", buffer);
-        return (err);
+        printf("err: %d. Buffer length is %zu bytes:\n",err,len);
+        if (len > buffsize) {
+            char bigbuffer[len] ;
+            clGetProgramBuildInfo(*program, devID, CL_PROGRAM_BUILD_LOG, sizeof(bigbuffer), bigbuffer, &len);
+            printf("%s\n", bigbuffer);
+        }else{
+            printf("%s\n", buffer);
+        }
+        return (err) ;
     }
     
     *kernel   = CL_CHECK_ERR(clCreateKernel(*program, kernelCodeName, &_err));

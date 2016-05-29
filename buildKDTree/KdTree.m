@@ -178,7 +178,7 @@
 // This is the main control function that recursively subdivides the KdTree
 //
 - (void) subDivide {
-    printf("\r  Tree depth: %d. Triangles : %lu",[self depth], (unsigned long)[[self triangles] count]);
+//    printf("\r  Tree depth: %d. Triangles : %lu",[self depth], (unsigned long)[[self triangles] count]);
     [self findBestSplitPlane];  // Sets Axis and plane pos for best split
     if( [self isLeaf] ){        // oh and it also works out if it should terminate
         return;

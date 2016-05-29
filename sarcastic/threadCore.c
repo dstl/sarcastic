@@ -114,7 +114,8 @@ void * devPulseBlock ( void * threadArg ) {
     VECT_CREATE(0, 0, 0, origin);
 
     fftwf_init_threads();
-    
+    im_init_status(status, 0) ;
+
     printf("Compiling OpenCL Kernels...");
 
     // Create OpenCL context and command queue for this device
@@ -269,6 +270,22 @@ void * devPulseBlock ( void * threadArg ) {
                 }
                 if(edgeHit[i] == 0)
                     reflectCount++ ;
+                
+                // Correct hitpoints to be hits in the centre of the triangle
+                //
+                int triNum = hitArray[i].trinum ;
+                SPVector hit,AA,BB,CC, distVec ;
+                AA = td->triangles[triNum].AA ;
+                BB = td->triangles[triNum].BB ;
+                CC = td->triangles[triNum].CC ;
+                hit.x = (AA.x + BB.x + CC.x) / 3 ;
+                hit.y = (AA.y + BB.y + CC.y) / 3 ;
+                hit.z = (AA.z + BB.z + CC.z) / 3 ;
+                VECT_SUB(hit, rayArray[i].org, distVec) ;
+                hitArray[i].dist = VECT_MAG(distVec);
+                rayArray[i].dir.x = distVec.x/hitArray[i].dist ;
+                rayArray[i].dir.y = distVec.y/hitArray[i].dist ;
+                rayArray[i].dir.z = distVec.z/hitArray[i].dist ;
             }
             
             if( reflectCount == 0) break ;
