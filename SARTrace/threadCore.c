@@ -46,7 +46,7 @@
 #define OVERSAMP (512)
 #define NOINTERSECTION -1
 static SPVector bouncecolours[MAXBOUNCES] = {
-    {178.0, 255.0, 052.0},        // 0 = Bright Green
+    {022.0, 072.0, 103.0},        // 0 = Dark Blue
     {128.0, 128.0, 128.0},        // 1 = grey
     {224.0, 224.0, 224.0},        // 2 = White
     {176.0, 019.0, 035.0},        // 3 = Red
@@ -345,7 +345,7 @@ void sartraceCore ( threadData td, char *outDir ) {
             }
             for(int i=0; i<ntri; i++){
                 fprintf(fp, "3 %d %d %d %d %d %d\n",t[i][0], t[i][1], t[i][2],
-                        materialColours[accelTriangles[i].matInd][0],materialColours[accelTriangles[i].matInd][1],materialColours[accelTriangles[i].matInd][2]);
+                        (int)bouncecolours[nbounce].r,(int)bouncecolours[nbounce].g,(int)bouncecolours[nbounce].b);
             }
             
             fclose(fp) ;
@@ -389,7 +389,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, int nTriang
                SPVector **rayAimPoints
                ){
     
-    int METHOD  = 4;
+    int METHOD  = 1;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene
