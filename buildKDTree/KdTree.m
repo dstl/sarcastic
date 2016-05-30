@@ -630,13 +630,7 @@
         kcv  = [tri kcv];
         kcd  = [tri kcd];
         tex  = [tri texture];
-        
-//        for (int i=0; i< [[self textures] count]; i++) {
-//            if( tex == [[[self textures] objectAtIndex:i] materialID]){
-//                tex = i ;
-//            }
-//        }
-        
+                
         fwrite(&d,sizeof(double),1,fp);
         fwrite(&nd_u,sizeof(double),1,fp);
         fwrite(&nd_v,sizeof(double),1,fp);

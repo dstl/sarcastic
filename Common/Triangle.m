@@ -204,6 +204,7 @@
         scatProps m = materialProperties[imat] ;
         if( !strcmp([name UTF8String], m.matname)){
             _Rs = m.resistivity ;
+            _matId = imat ;
         }
     }
     if(_Rs < 0){
