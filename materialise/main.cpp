@@ -75,7 +75,7 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    char *oustr = tryReadFile((char *)"Output triangle filename", (char *)"oufilename",
+    char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
                                (char *)"The name of the triangle file to be created",
                                (char *) ROOTPATH"/DATA/triangles_Delaunay.tri");
     
@@ -198,7 +198,7 @@ int main(int argc, const char * argv[]) {
         double corrArea = corrlen * corrlen * 0.5 ;
         printf("setting max area to be %f m^2 (correlation length is %f m)\n",corrArea,corrlen);
         std::ostringstream stringstream ;
-        stringstream << "zpcqDj" ;
+        stringstream << "zpj" ;
         if (!verbose) {
             stringstream << "Q" ;
         }
