@@ -141,7 +141,7 @@ void * devPulseBlock ( void * threadArg ) {
     static char *stackTraverseCode = OCLKERNELSPATH"/stacklessTraverse.cl" ;
     static char *reflectCode       = OCLKERNELSPATH"/reflectRays.cl" ;
     static char *buildShadowsCode  = OCLKERNELSPATH"/buildShadowRays.cl" ;
-    static char *reflectPowCode    = OCLKERNELSPATH"/POField.cl" ;
+    static char *reflectPowCode    = OCLKERNELSPATH"/POField2.cl" ;
     
     CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
     CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
