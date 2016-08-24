@@ -225,8 +225,8 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         VECT_SUB(ray.org,hp,ri);
         
         SPVector illDir,obsDir;
-        VECT_SUB(RxPnt,origin,illDir);
-        VECT_SUB(ray.org,origin,obsDir);
+        VECT_SUB(RxPnt,origin,obsDir);
+        VECT_SUB(ray.org,origin,illDir);
         VECT_NORM(illDir,illDir);
         VECT_NORM(obsDir,obsDir);
         
@@ -292,6 +292,20 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         VECT_SCMULT(ray.pol, sqrt(ray.pow / (4 * SIPC_pi * (ri_mag+ray.len)*(ri_mag+ray.len))), Eig) ;
 
         Eil = translateVector(Eig, globalToLocalMat) ;
+        
+        // Eig is the Efield vector in the direction of the hitpoint.
+        // Convert this to be in the direction of the origin. (assumes that waves are planar)
+        //
+        SPVector Eil_x_uvw_il,new_Eil_dir;
+        double Eil_mag ;
+        
+        Eil_mag = VECT_MAG(Eil);
+        VECT_CROSS(Eil, uvw_il, Eil_x_uvw_il);
+        VECT_CROSS(uvw_il, Eil_x_uvw_il, new_Eil_dir);
+        VECT_NORM(new_Eil_dir,new_Eil_dir);
+        VECT_SCMULT(new_Eil_dir, Eil_mag, Eil);
+        
+        //////////////////////////////////////////
 
         VECT_CROSS(Eil, uvw_il, Hil);
         VECT_NORM(Hil, Hil) ;
@@ -330,10 +344,10 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
 
         J_mag = VECT_MAG(Jg);
         M_mag = VECT_MAG(Mg);
-        J_par = VECT_DOT(Vdir, Jg);
-        J_per = VECT_DOT(Hdir, Jg);
-        M_par = VECT_DOT(Vdir, Mg);
-        M_per = VECT_DOT(Hdir, Mg);
+        J_par = fabs(VECT_DOT(Vdir, Jg));
+        J_per = fabs(VECT_DOT(Hdir, Jg));
+        M_par = fabs(VECT_DOT(Vdir, Mg));
+        M_per = fabs(VECT_DOT(Hdir, Mg));
         
         Jpolang = atan2(J_par,J_per);
         Mpolang = atan2(M_par,M_per);
