@@ -270,23 +270,7 @@ void * devPulseBlock ( void * threadArg ) {
                 }
                 if(edgeHit[i] == 0)
                     reflectCount++ ;
-                
-                // Correct hitpoints to be hits in the centre of the triangle
-                //
-                int triNum = hitArray[i].trinum ;
-                SPVector hit,AA,BB,CC, distVec ;
-                AA = td->triangles[triNum].AA ;
-                BB = td->triangles[triNum].BB ;
-                CC = td->triangles[triNum].CC ;
-                hit.x = (AA.x + BB.x + CC.x) / 3 ;
-                hit.y = (AA.y + BB.y + CC.y) / 3 ;
-                hit.z = (AA.z + BB.z + CC.z) / 3 ;
-                VECT_SUB(hit, rayArray[i].org, distVec) ;
-                hitArray[i].dist = VECT_MAG(distVec);
-                rayArray[i].dir.x = distVec.x/hitArray[i].dist ;
-                rayArray[i].dir.y = distVec.y/hitArray[i].dist ;
-                rayArray[i].dir.z = distVec.z/hitArray[i].dist ;
-            }
+                }
             
             if( reflectCount == 0) break ;
             
@@ -482,11 +466,11 @@ void * devPulseBlock ( void * threadArg ) {
 #ifdef TOTALRCSINPULSE
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
             if(pulse%100==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
-//            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log(cmplx_mag));
-//            printf("For comparison: \n");
-//            printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*td->oneOverLambda*td->oneOverLambda,10*log(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 8620.677
-//            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));   // 17241.354
-//            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 25862.031
+            printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log10(cmplx_mag));
+            printf("For comparison: \n");
+            printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*td->oneOverLambda*td->oneOverLambda,10*log10(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 8620.677
+            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));   // 17241.354
+            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 25862.031
 #endif // TOTALRCSINPULSE
 //            exit(0);
             // perform phase correction to account for deramped jitter in receiver timing

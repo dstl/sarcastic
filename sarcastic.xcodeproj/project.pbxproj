@@ -94,7 +94,6 @@
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
 		95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
 		95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
-		95E744C81D5248DE00B3F3FB /* POField2.cl in Sources */ = {isa = PBXBuildFile; fileRef = 95E744C71D5248DE00B3F3FB /* POField2.cl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1246,7 +1245,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				95ABA80E1B5F7FAB00A485BA /* colladainterface.cpp in Sources */,
-				95E744C81D5248DE00B3F3FB /* POField2.cl in Sources */,
 				95ABA80F1B5F7FAB00A485BA /* main.cpp in Sources */,
 				9562DA5D1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */,
 				9562DA401B48465400EC6D83 /* tinystr.cpp in Sources */,
