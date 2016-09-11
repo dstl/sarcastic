@@ -10,7 +10,7 @@
 
 #include "materialise_version.h"
 #include <iostream>
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 #include "trianglecpp.h"
 #include "TriangleFile.h"
 extern "C" {
@@ -54,8 +54,8 @@ int main(int argc, const char * argv[]) {
 
     printf(" \n");
     printf(DARK GREEN "                              Materialise\n" NORMAL);
-    printf(BLUE "                          Version :" RED" %s \n", FULL_VERSION);
-    printf(BLUE "                    Revision: " RED"%s, %s \n",REVISION, VERSION_DATE);
+    printf(BLUE "                          Version :" RED" %s \n", MATERIALISE_FULL_VERSION);
+    printf(BLUE "                    Revision: " RED"%s, %s \n",MATERIALISE_REVISION, MATERIALISE_VERSION_DATE);
     printf(BLUE "               Copyright (c) 2013 " WHITE"[" BLUE"Dstl" WHITE"]" BLUE". All rights reserved.\n" RESETCOLOR);
     printf(" \n");
 

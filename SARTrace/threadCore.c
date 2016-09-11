@@ -389,7 +389,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, int nTriang
                SPVector **rayAimPoints
                ){
     
-    int METHOD  = 1;
+    int METHOD  = 2;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene

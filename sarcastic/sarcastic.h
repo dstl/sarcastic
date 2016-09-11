@@ -40,7 +40,7 @@
 #ifndef SARCASTIC_SARCASTIC_h
 #define SARCASTIC_SARCASTIC_h
 
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 #include "SarcasticVersion.h"
 #include <string.h>
 #include <sys/time.h>
@@ -253,7 +253,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
                  int *interrogate, SPVector *interogPt, double *interograd,
-                 FILE **interogateFP, SPStatus *status) ;
+                 FILE **interogateFP, int * pulseUndersampleFactor, SPStatus *status) ;
 
 void * devPulseBlock ( void * threadArg ) ;
 void * beamForm ( void * threadArg ) ;
@@ -373,5 +373,19 @@ int buildKernel(cl_context context,             // OpenCL Context. Already creat
 );
 
 void banner () ;
+
+void cpuPOField(Triangle            *triangles,         // Array of triangles
+                int                 ntris,              // Number of triangles
+                Hit                 *hits,              // Array of hit locations to x-ref with triangles for material props
+                int                 nRays,              // The number of reflected rays being considered
+                Ray                 *rays,              // unit vector rays arriving at hitpoint
+                Ray                 *shadowRays,        // Array of reflected rays - used for their origin as its the reflection point to Rx
+                SPVector            RxPos,              // Location of Receiver in x,y,z
+                double              k,                  // Wavenumber constant k = 2 * PI / Lambda
+                double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
+                double              gainRx,             // Receiver gain used for power calculations
+                int                 firstBounce,        // if 1 then PO calcs use origin for field calculations
+                rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
+);
 
 #endif

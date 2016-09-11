@@ -9,21 +9,21 @@
 #ifndef sarcastic_materialise_version_h
 #define sarcastic_materialise_version_h
 
-#ifdef REVISION
-#undef REVISION
+#ifdef MATERIALISE_REVISION
+#undef MATERIALISE_REVISION
 #endif
-#ifdef SHORT_VERSION
-#undef SHORT_VERSION
+#ifdef MATERIALISE_SHORT_VERSION
+#undef MATERIALISE_SHORT_VERSION
 #endif
-#ifdef FULL_VERSION
-#undef FULL_VERSION
+#ifdef MATERIALISE_FULL_VERSION
+#undef MATERIALISE_FULL_VERSION
 #endif
-#ifdef VERSION_DATE
-#undef VERSION_DATE
+#ifdef MATERIALISE_VERSION_DATE
+#undef MATERIALISE_VERSION_DATE
 #endif
-#define REVISION "125"
-#define SHORT_VERSION "2.1"
-#define FULL_VERSION "2.1-3-8d7fc27-dirty"
-#define VERSION_DATE "2016-03-07 16:41:41 +0000"
+#define MATERIALISE_REVISION "125"
+#define MATERIALISE_SHORT_VERSION "2.1"
+#define MATERIALISE_FULL_VERSION "2.1-3-8d7fc27-dirty"
+#define MATERIALISE_VERSION_DATE "2016-03-07 16:41:41 +0000"
 
 #endif

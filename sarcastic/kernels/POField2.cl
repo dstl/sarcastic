@@ -272,6 +272,10 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         cos_theta_i = uvw_il.z ;
         sin_theta_i = sqrt(uvw_il.x*uvw_il.x +  uvw_il.y * uvw_il.y ) ;
 
+        if( (cos_theta_i==0 && Rs == 0)  || (cos_theta_i == 0 && Rm == 0) ){
+            cos_theta_i = 1.0e-8;
+        }
+        
         if(fabs(cos_theta_i) >= 0.9999){
             VECT_CREATE(1, 0, 0, phi_il_hat) ;
             VECT_CROSS(phi_il_hat, uvw_il, theta_il_hat) ;

@@ -39,7 +39,7 @@
  ***************************************************************************/
 
 #include "RCS.h"
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 
 double RCS(double PtGt, double EMagAtRx, double TxRange, double RxRange){
 

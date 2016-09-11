@@ -155,11 +155,11 @@ int main (int argc, char **argv){
     }
     
     for (int p = 0; p < nPulses; p++){
-        RxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
-        TxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
+        RxPos[p] = hdr.nbdata[p+startPulse].sat_ps_rx ;
+        TxPos[p] = hdr.nbdata[p+startPulse].sat_ps_rx ;
     }
     
-    SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
+    SRP = hdr.nbdata[startPulse+(nPulses/2)].srp ;
 
     ecef2SceneCoords(nPulses, RxPos, SRP);
     ecef2SceneCoords(nPulses, TxPos, SRP);
@@ -210,6 +210,9 @@ int main (int argc, char **argv){
     printf("Ray density                 : %3.1f x %3.1f [ %3.1f x %3.1f ground plane] rays per metre\n",
            1.0/(dAz * centreRange), 1.0/(dEl * centreRange),
            1.0/(dAz * centreRange), 1.0/(dEl * centreRange / sin(cGeom.grazingRad)));
+    printf("Ray seperation              : %4.3f x %4.3f [ %4.3f x %4.3f ground plane] metres between adjacent rays\n",
+           (dAz * centreRange), (dEl * centreRange),
+           (dAz * centreRange), (dEl * centreRange / sin(cGeom.grazingRad)));
 
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later

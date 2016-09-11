@@ -61,7 +61,7 @@ double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *re
 
 int main (int argc, char **argv){
     
-    CPHDHeader  hdr ;
+    CPHDHeader hdr ;
     AABB        SceneBoundingBox;
     OCLPlatform platform;
     
@@ -69,7 +69,8 @@ int main (int argc, char **argv){
     double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
     char *KdTreeFile, *inCPHDFile, *outCPHDFile ;
     int startPulse, nPulses, bounceToShow, nTriangles, nLeaves, nTreeNodes, interrogate ;
-    int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc ;
+    int useGPU, nAzBeam, nElBeam, nVec, Ropes[6], dev, rc, pulseUndersampFactor ;
+ ;
     SPImage cphd ;
     FILE *interrogateFP = NULL ;
     
@@ -95,7 +96,7 @@ int main (int argc, char **argv){
     banner() ;
     
     getUserInput(&inCPHDFile, &KdTreeFile, &outCPHDFile, &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &useGPU,
-                 &interrogate, &interogPt, &interogRad, &interrogateFP, &status) ;
+                 &interrogate, &interogPt, &interogRad, &interrogateFP, &pulseUndersampFactor, &status) ;
     
     // Start timing after user input
     //
@@ -162,52 +163,63 @@ int main (int argc, char **argv){
     // Check the cphdfile
     //
     readCPHDHeader(inCPHDFile, &hdr, &status);
-    nVec = hdr.num_azi ;
+//    read_cphd3_nb2(&hdr, &status) ;
+
+    // Reduce the Cphd data we have to deal with to make things quicker.
+    //
+    CPHDHeader newhdr = hdr ;
+    newhdr.num_azi = nPulses / pulseUndersampFactor ;
+    newhdr.nbdata  = calloc(newhdr.num_azi, sizeof(CPHD_NBData));
+    for(int p=startPulse; p<startPulse+nPulses; p+=pulseUndersampFactor){
+        newhdr.nbdata[(p-startPulse)/pulseUndersampFactor] = hdr.nbdata[p] ;
+    }
+    
+    nVec = newhdr.num_azi ;
     
     // print out info about the collection
     //
     printCPHDCollectionInfo(&hdr, NULL, &status) ;
-    printf("Wavelength                  : %f m\n",SIPC_c/hdr.freq_centre);
-    printf("Slant range resolution      : %f m\n",SIPC_c/(2*hdr.pulse_length*hdr.chirp_gamma));
+    printf("Wavelength                  : %f m\n",SIPC_c/newhdr.freq_centre);
+    printf("Slant range resolution      : %f m\n",SIPC_c/(2*newhdr.pulse_length*newhdr.chirp_gamma));
 
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
-    if((RxPos = (SPVector *)malloc(sizeof(SPVector)*nPulses))==NULL){
-        printf("Error : Malloc failed allocating %ld bytes for RxPos\n",sizeof(SPVector)*nVec);
+    if((RxPos = (SPVector *)malloc(sizeof(SPVector)*nPulses/pulseUndersampFactor))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for RxPos\n",sizeof(SPVector)*nVec/pulseUndersampFactor);
         exit(-1);
     }
-    if((TxPos = (SPVector *)malloc(sizeof(SPVector)*nPulses))==NULL){
-        printf("Error : Malloc failed allocating %ld bytes for TxPos\n",sizeof(SPVector)*nVec);
+    if((TxPos = (SPVector *)malloc(sizeof(SPVector)*nPulses/pulseUndersampFactor))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for TxPos\n",sizeof(SPVector)*nVec/pulseUndersampFactor);
         exit(-1);
     }
-    if((Fx0s = (double *)malloc(sizeof(double)*nPulses))==NULL){
-        printf("Error : Malloc failed allocating %ld bytes for Fx0s\n",sizeof(double)*nVec);
+    if((Fx0s = (double *)malloc(sizeof(double)*nPulses/pulseUndersampFactor))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for Fx0s\n",sizeof(double)*nVec/pulseUndersampFactor);
         exit(-1);
     }
-    if((FxSteps = (double *)malloc(sizeof(double)*nPulses))==NULL){
-        printf("Error : Malloc failed allocating %ld bytes for FxSteps\n",sizeof(double)*nVec);
+    if((FxSteps = (double *)malloc(sizeof(double)*nPulses/pulseUndersampFactor))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for FxSteps\n",sizeof(double)*nVec/pulseUndersampFactor);
         exit(-1);
     }
-    if((amp_sf0 = (double *)malloc(sizeof(double)*nPulses))==NULL){
-        printf("Error : Malloc failed allocating %ld bytes for amp_sf0\n",sizeof(double)*nVec);
+    if((amp_sf0 = (double *)malloc(sizeof(double)*nPulses/pulseUndersampFactor))==NULL){
+        printf("Error : Malloc failed allocating %ld bytes for amp_sf0\n",sizeof(double)*nVec/pulseUndersampFactor);
         exit(-1);
     }
     
-    for (int p = 0; p < nPulses; p++){
-        RxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
-        TxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
+    for (int p = 0; p < nVec; p++){
+        RxPos[p] = newhdr.nbdata[p].sat_ps_rx ;
+        TxPos[p] = newhdr.nbdata[p].sat_ps_rx ;
         
         // While we are looping through pulses also load up the Fx0 and FxStepSize values
         //
-        Fx0s[p]    = hdr.pulses[p+startPulse].fx0 ;
-        FxSteps[p] = hdr.pulses[p+startPulse].fx_step_size ;
-        amp_sf0[p] = hdr.pulses[p+startPulse].amp_sf0 ;
+        Fx0s[p]    = newhdr.nbdata[p].fx0 ;
+        FxSteps[p] = newhdr.nbdata[p].fx_step_size ;
+        amp_sf0[p] = newhdr.nbdata[p].amp_sf0 ;
     }
     
-    SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
+    SRP = newhdr.nbdata[(nVec/2)].srp ;
 
-    ecef2SceneCoords(nPulses, RxPos, SRP);
-    ecef2SceneCoords(nPulses, TxPos, SRP);
+    ecef2SceneCoords(nVec, RxPos, SRP);
+    ecef2SceneCoords(nVec, TxPos, SRP);
     ecef2SceneCoords(1,  &interogPt, SRP);
 
     // Calculate azbeamwidth from scene
@@ -216,8 +228,8 @@ int main (int argc, char **argv){
     // multiply by sceneBeamMargin
     // set to be beamwidth
     
-    centreRange = VECT_MAG(TxPos[nPulses/2]);
-    VECT_MINUS( TxPos[nPulses/2], rVect ) ;
+    centreRange = VECT_MAG(TxPos[nVec/2]);
+    VECT_MINUS( TxPos[nVec/2], rVect ) ;
     VECT_CREATE(0, 0, 1., zHat) ;
     VECT_CROSS(rVect, zHat, unitBeamAz);
     VECT_NORM(unitBeamAz, unitBeamAz) ;
@@ -246,19 +258,24 @@ int main (int argc, char **argv){
     maxBeamUsedEl = (maxEl - minEl) / centreRange ;
     
     collectionGeom cGeom;
-    collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
+    collectionGeometry(&hdr, nVec/2, hdr.grp, &cGeom, &status);
     printf("RayTracing beam (Az,El)     : %3.2e deg x %3.2e deg (%3.2f x %3.2f metres (ground plane))\n",
            GeoConsts_RADTODEG*maxBeamUsedAz,GeoConsts_RADTODEG*maxBeamUsedEl,centreRange*maxBeamUsedAz,centreRange*maxBeamUsedEl/sin(cGeom.grazingRad));
     dAz = maxBeamUsedAz / nAzBeam;
     dEl = maxBeamUsedEl / nElBeam;
-    lambda = SIPC_c / hdr.freq_centre ;
+    lambda = SIPC_c / newhdr.freq_centre ;
     printf("Ray density                 : %3.1f x %3.1f [ %3.1f x %3.1f ground plane] rays per metre\n",
            1.0/(dAz * centreRange), 1.0/(dEl * centreRange),
            1.0/(dAz * centreRange), 1.0/(dEl * centreRange / sin(cGeom.grazingRad)));
-    
+    printf("Ray seperation              : %4.3f x %4.3f [ %4.3f x %4.3f ground plane] metres between adjacent rays\n",
+           (dAz * centreRange), (dEl * centreRange),
+           (dAz * centreRange), (dEl * centreRange / sin(cGeom.grazingRad)));
+
     double TxPowPerRay, gainRx ;
     TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
     printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
+    double TB = TxPowPerRay * hdr.pulse_length * hdr.chirp_gamma * hdr.pulse_length ;
+    TxPowPerRay = TxPowPerRay * TB ;
 
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
@@ -341,21 +358,16 @@ int main (int argc, char **argv){
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     if(outCPHDFile != NULL){
         im_init(&cphd, &status) ;
-        load_cphd(&cphd, &hdr, 0, hdr.num_azi, &status);
-        
-        // wiping pulse data...
-        //
-        for (int i = 0; i<cphd.nx*cphd.ny; i++){
-            cphd.data.cmpl_f[i].i = cphd.data.cmpl_f[i].r = 0.0f;
-        }
+        newhdr.data_type = ITYPE_CMPL_FLOAT ;
+        im_create(&cphd, ITYPE_CMPL_FLOAT, newhdr.nsamp, newhdr.num_azi, 1.0, 1.0, &status) ;
     }
     
     // Calculate how many pulses can be processed on a device at a time
     //
     int pulsesPerDevice;
    
-    while (nPulses % ndevs != 0) nPulses-- ;
-    pulsesPerDevice = nPulses / ndevs ;
+    while (nVec % ndevs != 0) nVec-- ;
+    pulsesPerDevice = nVec / ndevs ;
     
     for (dev=0; dev<ndevs; dev++) {
         
@@ -414,7 +426,7 @@ int main (int argc, char **argv){
             fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
             fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
             fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
-            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);
+            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse/pulseUndersampFactor,(startPulse/pulseUndersampFactor)+nVec);
             fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
             fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         }
@@ -454,10 +466,9 @@ int main (int argc, char **argv){
             exit(888);
         }
         printf("Writing CPHD File \"%s\"....",outCPHDFile);
-        hdr.data_type = ITYPE_CMPL_FLOAT ;
-        writeCPHD3Header( &hdr, fp, &status ) ;
-        write_cphd3_nb_vectors(&hdr, 0, fp, &status) ;
-        write_cphd3_wb_vectors(&hdr, &cphd, 0, fp, &status) ;
+        writeCPHD3Header( &newhdr, fp, &status ) ;
+        write_cphd3_nb_vectors(&newhdr, 0, fp, &status) ;
+        write_cphd3_wb_vectors(&newhdr, &cphd, 0, fp, &status) ;
         printf("...Done\n");
     }
     

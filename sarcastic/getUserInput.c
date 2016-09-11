@@ -46,7 +46,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam, int *useGPU,
                  int *interrogate, SPVector *interogPt, double *interogRad,
-                 FILE **interrogateFP, SPStatus *status){
+                 FILE **interrogateFP, int * pulseUndersampleFactor, SPStatus *status){
     
     char * prompt;
     char * file ;
@@ -55,9 +55,10 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     FILE *fp;
     int createNewCPHD ;
     
-    *useGPU             =  0 ;
-    *bounceToShow       =  0 ;
-    createNewCPHD       =  1 ;
+    *useGPU                 =  0 ;
+    *bounceToShow           =  0 ;
+    createNewCPHD           =  1 ;
+    *pulseUndersampleFactor = 1 ;
     
     prompt  = (char *)malloc(sizeof(char)*256);
 
@@ -107,12 +108,6 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     sprintf(prompt, "Number of pulses (1-%d)",hdr.num_azi - *startPulse);
     *nPulses = hdr.num_azi ;
     *nPulses = input_int(prompt, (char *)"nPulses", (char *)"Number of pulses to reconstruct in cphdFile", *nPulses);
-    *nAzBeam = *nElBeam = 100 ;
-    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
-                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
-    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
-                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
-    
 
     if(*nPulses == 1){
         *useGPU = 0;
@@ -120,7 +115,22 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
         *bounceToShow = input_int((char *)"Which bounce number to show (1-8)", (char *)"bounceToShow",
                                   (char *)"Which radar bounce should be displayed? (<1 is do not show bounce info)", *bounceToShow);
         if (*bounceToShow > MAXBOUNCES || *bounceToShow < 1) *bounceToShow = 0 ;
+    }else{
+        
+        do {
+            *pulseUndersampleFactor = input_int("Pulse undersampling factor", (char *)"pulseUndersampFact",
+                                                (char *)"Reduces the number of azimuth pulses that are processed. This effectively reduces teh collection PRF. If the simulated scene size is small then the azimuth ambiguities will not fold in far enough to affect the simulated scene.",
+                                                *pulseUndersampleFactor);
+        } while (*pulseUndersampleFactor <= 0) ;
+
     }
+    
+    *nAzBeam = *nElBeam = 100 ;
+    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
+                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
+    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
+                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
+
     
     // To save processing time only read in the CPHDFile PHD if we are going to create a new
     // CPHD file
@@ -128,6 +138,7 @@ int getUserInput(char **inCPHDFile, char **KdTreeFile, char **outCPHDFile,
     if( createNewCPHD ){
         // change extension
         //
+        sprintf(prompt, "%s",*inCPHDFile);
         char *pExt = strrchr(file, '.');
         if (pExt != NULL)
             strcpy(pExt, ".sarc.cph");

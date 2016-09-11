@@ -72,11 +72,11 @@ void * devPulseBlock ( void * threadArg ) {
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nx, nShadowRays, tid ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
     int hrs,min,sec;
-    int reportN = 500 ;
+    int reportN = 10 ;
 
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing, *ikernel, bandwidth ;
-    double *ranges, interogRad, intMinR, intMaxR, k ;
+    double *ranges, *newranges, interogRad, intMinR, intMaxR, k ;
 
     AABB SceneBoundingBox ;
     rangeAndPower * rnp, irp ;
@@ -270,7 +270,7 @@ void * devPulseBlock ( void * threadArg ) {
                 }
                 if(edgeHit[i] == 0)
                     reflectCount++ ;
-                }
+            }
             
             if( reflectCount == 0) break ;
             
@@ -328,14 +328,18 @@ void * devPulseBlock ( void * threadArg ) {
             //
             nShadows = 0 ;
             double *facing = (double *)sp_malloc(sizeof(double) * nRays);
+            int *hitsOnEachTri  = (int *)sp_calloc(nTriangles, sizeof(int));
+
             for(int i=0; i<nRays; i++){
                 facing[i] =VECT_DOT(td->triangles[hitArray[i].trinum].NN, shadowRays[i].dir);
             }
             for(int i= 0 ; i<nRays; i++){
-                if ( shadowHits[i].trinum == NOINTERSECTION && (facing[i] > 0.1)){
+                hitsOnEachTri[ hitArray[i].trinum ]++ ;
+                if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
                     nShadows++ ;
                 }
             }
+            free(hitsOnEachTri);
             
             if( nShadows != 0){
                 
@@ -343,32 +347,40 @@ void * devPulseBlock ( void * threadArg ) {
                 newHits       = (Hit *)sp_malloc(nShadows * sizeof(Hit)) ;
                 LRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
                 RRays         = (Ray *)sp_malloc(nShadows * sizeof(Ray)) ;
+                newranges     = (double *)sp_malloc(nShadows * sizeof(double)) ;
+                hitsOnEachTri = (int *)sp_calloc(nTriangles, sizeof(int));
                 
                 iray     = 0 ;
                 for (int i=0; i<nRays; i++) {
+                    hitsOnEachTri[ hitArray[i].trinum ]++ ;
+
                     // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
                     //
-                    
-                    if ( shadowHits[i].trinum == NOINTERSECTION && (facing[i] > 0.1) ){
+                    if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
                         newRays[iray] = shadowRays[i] ;
                         newHits[iray] = hitArray[i] ;
                         LRays[iray]   = rayArray[i] ;
                         RRays[iray]   = reflectedRays[i] ;
+                        newranges[iray] = ranges[i] ;
                         iray++ ;
                     }
                 }
+                free(hitsOnEachTri);
                 free(shadowRays) ;
                 free(hitArray) ;
+                free(ranges);
                 shadowRays  = newRays  ;
                 hitArray    = newHits  ;
                 nShadowRays = nShadows ;
+                ranges      = newranges ;
                 
                 // At this point the size of all arrays is nShadowRays not nRays
                 //
                 
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
-                oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;                
+                //  oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;
+                cpuPOField(td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nxRay*nyRay*nbounce])) ;
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
                 // the point and then check to see if any scatterers are from that range
@@ -385,7 +397,7 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     for ( int i=0; i<nShadowRays; i++){
                         
-                        irp = rnp[(nRays*nbounce)+i] ;
+                        irp = rnp[(nxRay*nyRay*nbounce)+i] ;
                         
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
                             fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
@@ -421,6 +433,7 @@ void * devPulseBlock ( void * threadArg ) {
 
             int cnt=0;
             nrnpItems = 0;
+            nRays = nxRay * nyRay ;
             for (int i=0; i<nRays*MAXBOUNCES; i++){
                 if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
             }
@@ -441,7 +454,6 @@ void * devPulseBlock ( void * threadArg ) {
                     rnpData[cnt].Es    = rnp[i].Es ;
                     rnpData[cnt].rdiff = rnp[i].range - derampRange;
                     cnt++ ;
-//                    printf("%d, %e, %e\n",i,rnp[i].range,RAD2DEG( CMPLX_PHASE(rnp[i].Es)));
                 }
             }
         
@@ -465,14 +477,13 @@ void * devPulseBlock ( void * threadArg ) {
             
 #ifdef TOTALRCSINPULSE
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
-            if(pulse%100==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
+            if(pulse%1==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
             printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log10(cmplx_mag));
             printf("For comparison: \n");
             printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*td->oneOverLambda*td->oneOverLambda,10*log10(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 8620.677
             printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));   // 17241.354
             printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 25862.031
 #endif // TOTALRCSINPULSE
-//            exit(0);
             // perform phase correction to account for deramped jitter in receiver timing
             //
             phasecorr = (((td->Fx0s[pulseIndex] - td->freq_centre) / td->FxSteps[pulseIndex])) * 2.0 * M_PI / pulseLine.nx;
@@ -489,21 +500,12 @@ void * devPulseBlock ( void * threadArg ) {
                 
                 pulseLine.data.cmpl_f[x] = tmp;
             }
-            
-//            for( int i=0; i<pulseLine.nx; i++){
-//                double m = CMPLX_MAG(pulseLine.data.cmpl_f[i]);
-//                if(m!=0.0)
-//                printf("%d %e\n",i,m);
-//            }
             im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
             im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);
             im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
             im_destroy(&pulseLine, &status) ;
             
             free(rnpData);
-            
-//            exit(0);
-
             
         } // end of pulse loop
         
@@ -608,7 +610,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, int nTriang
                SPVector **rayAimPoints
                ){
     
-    int METHOD  = 1;
+    int METHOD  = 2;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene

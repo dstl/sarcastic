@@ -351,7 +351,6 @@ __kernel void reflect(__global ATS * accelTriangles,
         }
         VECT_SCMULT(N, 2.0 * VECT_DOT(I, N), v);
         VECT_SUB(I, v, R);
-//        VECT_NORM(R,R) ;
         
         VECT_SCMULT(rays[ind].dir, hits[ind].dist, hp);
         
@@ -371,7 +370,6 @@ __kernel void reflect(__global ATS * accelTriangles,
         double islf = (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);
         islf = (islf < 1 ) ? 1 : islf ;
         reflectedRays[ind].pow = rays[ind].pow * ks ;
-//        printf("power in %e, power out %e\n",rays[ind].pow,reflectedRays[ind].pow);
         
         // Calculate the polarisation of the reflected ray based upon the polarisation
         // of the incident ray
