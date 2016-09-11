@@ -36,7 +36,7 @@
  * IRELAND.
  *
  ***************************************************************************/
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 #include "TxPowerPerRay.h"
 
 double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain){

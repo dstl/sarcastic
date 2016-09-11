@@ -178,7 +178,7 @@
 // This is the main control function that recursively subdivides the KdTree
 //
 - (void) subDivide {
-    printf("\r  Tree depth: %d. Triangles : %lu",[self depth], (unsigned long)[[self triangles] count]);
+//    printf("\r  Tree depth: %d. Triangles : %lu",[self depth], (unsigned long)[[self triangles] count]);
     [self findBestSplitPlane];  // Sets Axis and plane pos for best split
     if( [self isLeaf] ){        // oh and it also works out if it should terminate
         return;
@@ -558,7 +558,7 @@
     double kbd, kcu, kcv, kcd;
     double AAx,AAy,AAz,BBx,BBy,BBz;
     double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz;
-    NSInteger ntri,nleaves,nnodes,ntex;
+    NSInteger ntri,nleaves,nnodes;
     KdTreeNode * node;
     unsigned int flagDimAndOffset;
     float splitPosition;
@@ -630,13 +630,7 @@
         kcv  = [tri kcv];
         kcd  = [tri kcd];
         tex  = [tri texture];
-        
-//        for (int i=0; i< [[self textures] count]; i++) {
-//            if( tex == [[[self textures] objectAtIndex:i] materialID]){
-//                tex = i ;
-//            }
-//        }
-        
+                
         fwrite(&d,sizeof(double),1,fp);
         fwrite(&nd_u,sizeof(double),1,fp);
         fwrite(&nd_v,sizeof(double),1,fp);

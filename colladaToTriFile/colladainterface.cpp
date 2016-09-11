@@ -169,10 +169,6 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
                 nextnode = node->FirstChildElement("node");
             }
             node = nextnode;
-            if(node != NULL){
-                std::string node_id ;
-                node_id = node->Attribute("id");
-            }
         }
         
         for(int i=0; i<16; i++)data.transform[i]=transform[i];
@@ -209,24 +205,6 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
             //
             primitive = mesh->FirstChildElement("triangles");
             std::vector<unsigned short>indices_vec ;
-            
-//            while ( primitive != NULL) {
-//                
-//                // Determine number of primitives
-//                //
-//                primitive->QueryIntAttribute("count", &prim_count);
-//                num_indices = prim_count * 3;
-//                data.index_count += num_indices;
-//                
-//                // Read the index values
-//                //
-//                std::vector<std::string> text = stringTok(std::string(primitive->FirstChildElement("p")->GetText()));
-//                for(int index=0; index<num_indices; index++) {
-//                    indices_vec.push_back((unsigned short)atoi(text[index].c_str()));
-//                }
-//                
-//                primitive = primitive->NextSiblingElement("triangles");
-//            }
             
             for(int i=0; i<7; i++) {
                 primitive = mesh->FirstChildElement(primitive_types[i]);

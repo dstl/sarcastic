@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Dstl. All rights reserved.
 //
 
-#ifndef GOSS_colourCodes_h
-#define GOSS_colourCodes_h
+#ifndef arcastic_colourCodes_h
+#define arcastic_colourCodes_h
 
 #define RESETCOLOR  "\033[0m"
 #define BLACK       "\033[30m"

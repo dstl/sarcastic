@@ -8,7 +8,7 @@
 
 #ifndef sarcastic_matrixMultiplication_h
 #define sarcastic_matrixMultiplication_h
-#include <SILib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 
 void matmul(double *A,double *B, double *O, int Ax, int Ay,int Bx, int By) ;
 void mat3by3inv(double *A, double *O) ;

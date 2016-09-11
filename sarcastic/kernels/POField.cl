@@ -229,17 +229,32 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         SPCmplx jkZ0_o_4PIr, e_jkr;
         SPCmplx sum, tmp, tmp1,t, t1, t2, t3,t4,t5, term1,term2,term3, braces ;
         
+        SPVector origin;
+        origin.x = (tris[hitpoints[ind].tri].AA.x + tris[hitpoints[ind].tri].BB.x + tris[hitpoints[ind].tri].CC.x) / 3;
+        origin.y = (tris[hitpoints[ind].tri].AA.y + tris[hitpoints[ind].tri].BB.y + tris[hitpoints[ind].tri].CC.y) / 3;
+        origin.z = (tris[hitpoints[ind].tri].AA.z + tris[hitpoints[ind].tri].BB.z + tris[hitpoints[ind].tri].CC.z) / 3;
+        
+        VECT_SUB(tris[hitpoints[ind].tri].AA,origin,tris[hitpoints[ind].tri].AA);
+        VECT_SUB(tris[hitpoints[ind].tri].BB,origin,tris[hitpoints[ind].tri].BB);
+        VECT_SUB(tris[hitpoints[ind].tri].CC,origin,tris[hitpoints[ind].tri].CC);
+        VECT_SUB(RxPnt, origin, RxPnt);
+        VECT_SUB(rays[ind].org, origin, rays[ind].org);
+        VECT_SUB(hitpoints[ind].hit, origin,hitpoints[ind].hit);
+        
+        
         // r is the magnitude of the vector defining the observation point in global coordinates (not the range)
         //
         VECT_SUB(RxPnt, hitpoints[ind].hit, obsDir);
-        if( firstBounce == 1 ){
+//        if( firstBounce == 1 ){
             r  = VECT_MAG(RxPnt);
-            r_ig = VECT_MAG(rays[ind].org);
-        }else{
-            r = VECT_MAG(obsDir);
-            VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
-            r_ig   = VECT_MAG(rayDist) + rays[ind].len;
-        }
+            VECT_DOT(rays[ind].dir,rays[ind].org);
+             r_ig = (-1*VECT_DOT(rays[ind].dir,rays[ind].org))+ rays[ind].len ;
+//            r_ig = VECT_MAG(rays[ind].org) + rays[ind].len ;
+//        }else{
+//            r = VECT_MAG(obsDir);
+//            VECT_SUB(hitpoints[ind].hit, rays[ind].org, rayDist);
+//            r_ig   = VECT_MAG(rayDist) + rays[ind].len;
+//        }
         VECT_NORM(obsDir, obsDir);
         phs_ig = -(k * r_ig) - (SIPC_pi/2.0) ;
         
@@ -277,7 +292,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
 //        v = g.y + h.y ;
 //        w = g.z + h.z ;
         
-        x1 = tris[hitpoints[ind].tri].AA.x;
+        x1 = tris[hitpoints[ind].tri].AA.x ;
         y1 = tris[hitpoints[ind].tri].AA.y ;
         z1 = tris[hitpoints[ind].tri].AA.z ;
         x2 = tris[hitpoints[ind].tri].BB.x ;
@@ -538,10 +553,10 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
             CMPLX_MULT(t, braces, Ic);
         }
         
-        if( firstBounce > 1 ){
-            Ic.r = CMPLX_MAG(Ic) ;
-            Ic.i = 0.0;
-        }
+//        if( firstBounce > 1 ){
+//            Ic.r = CMPLX_MAG(Ic) ;
+//            Ic.i = 0.0;
+//        }
         
         // At this point we have integrated the complex field over the triangular facet and have the
         // value stored in the complex number Ic
@@ -615,8 +630,8 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // Now calculate Jx_local and Jy_local and convert them to global
         // vectors.
         //
-        J_l[0] = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * cos_theta_il ;
-        J_l[1] = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * cos_theta_il ;
+        J_l[0] = ((-1.0 * Eitheta_l * cos_phi_il * GamParr / Z0) + (Eiphi_l * sin_phi_il * GamPerp / Z0)) * 2 * cos_theta_il ;
+        J_l[1] = ((-1.0 * Eitheta_l * sin_phi_il * GamParr / Z0) - (Eiphi_l * cos_phi_il * GamPerp / Z0)) * 2 * cos_theta_il ;
         J_l[2] = 0.0  ;
 
         matmul(localToGlobalMat, J_l, J_g, 3, 3, 1, 3) ;

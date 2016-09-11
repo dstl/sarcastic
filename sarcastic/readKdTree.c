@@ -153,35 +153,6 @@ void readKdTree(const char *filename,
         (*accelTriangles)[i].matInd = tex;
     }
     
-//    if(fread(nTextures, sizeof(int), 1, fp)!=1){
-//        printf("ERROR: Failed to read nTextures from file %s\n",filename);
-//        exit(-1);
-//    }
-//    *textures = (Texture *)sp_malloc(sizeof(Texture) * *nTextures);
-//    
-//    int matID;
-//    int matNameLen;
-//    char *matName = "";
-//    for (i=0; i < *nTextures; i++){
-//        if(fread(&matID, sizeof(int), 1, fp)!=1){
-//            printf("ERROR: Failed to read materialID texture param from file %s\n",filename);
-//            exit(-1);
-//        }
-//        if(fread(&matNameLen, sizeof(int), 1, fp)!=1){
-//            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
-//            exit(-1);
-//        }
-//        matName = (char *)sp_malloc(sizeof (char)*matNameLen);
-//        if(fread(matName, sizeof(char), matNameLen, fp)!=matNameLen){
-//            printf("ERROR: Failed to read material name length texture param from file %s\n",filename);
-//            exit(-1);
-//        }
-//        (*textures)[i].ka = 0.0 ;
-//        (*textures)[i].kd = materialProperties[matID].diffuse ;
-//        (*textures)[i].ks = materialProperties[matID].specular ;
-//        (*textures)[i].n  = materialProperties[matID].shinyness ;
-//    }
-    
     if(fread(nLeaves, sizeof(int), 1, fp)!=1){
         printf("ERROR: Failed to read nleaves from file %s\n",filename);
         exit(-1);
@@ -333,3 +304,72 @@ void readKdTree(const char *filename,
     
 }
 
+void printKdTree(int nNodes, KdData *tree, int *triListData, int *triPtrs){
+    
+    KdData *node;
+    
+    for(int n=0; n<nNodes; n++){
+        
+        node = &(tree[n]) ;
+        int isleaf = KDT_ISLEAF(node);
+        
+        printf("\n                           KdTree Node [%06d] \n",n);
+        printf("                        -------------------------------\n");
+        if (isleaf) {
+            printf("Node is a leaf\n");
+            printf("Node has the following ropes: [%06d], [%06d], [%06d], [%06d], [%06d], [%06d] \n",
+                   node->leaf.Ropes[0], node->leaf.Ropes[1], node->leaf.Ropes[2], node->leaf.Ropes[3], node->leaf.Ropes[4], node->leaf.Ropes[5] );
+            printf("Node is a leaf and contains the following triangles:  ");
+    
+            int leafIndex = KDT_OFFSET(node) ;
+            int indexOfFirstForLeaf = triPtrs[leafIndex] ;
+            int trisInLeaf = triListData[indexOfFirstForLeaf] ;
+            
+            for (int t=0; t<trisInLeaf; t++){
+                int triIndex = triListData[indexOfFirstForLeaf+t];
+                printf(" %d", triIndex);
+            }
+            printf("\n");
+            
+            printf("      AABB:\n");
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.AA.y, node->leaf.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.BB.x, node->leaf.aabb.AA.y, node->leaf.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.BB.x, node->leaf.aabb.BB.y, node->leaf.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.BB.y, node->leaf.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.AA.y, node->leaf.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.AA.y, node->leaf.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.BB.x, node->leaf.aabb.AA.y, node->leaf.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.BB.x, node->leaf.aabb.BB.y, node->leaf.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.BB.y, node->leaf.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->leaf.aabb.AA.x, node->leaf.aabb.AA.y, node->leaf.aabb.BB.z) ;
+            printf("--------------------------------------\n");
+        }else{
+            printf("Node is a branch\n");
+            printf("Split dimension is          : %d", KDT_DIMENSION(node));
+            switch(KDT_DIMENSION(node)){
+                    case 0: printf(" [x]\n"); break;
+                    case 1: printf(" [y]\n"); break;
+                    case 2: printf(" [z]\n"); break;
+            }
+            printf("split position is           : %f\n", node->branch.splitPosition);
+            printf("First child node            : [%06d] \n", KDT_OFFSET(node));
+            printf("Second child node           : [%06d] \n", KDT_OFFSET(node)+1);
+            printf("      AABB:\n");
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.AA.y, node->branch.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.BB.x, node->branch.aabb.AA.y, node->branch.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.BB.x, node->branch.aabb.BB.y, node->branch.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.BB.y, node->branch.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.AA.y, node->branch.aabb.AA.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.AA.y, node->branch.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.BB.x, node->branch.aabb.AA.y, node->branch.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.BB.x, node->branch.aabb.BB.y, node->branch.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.BB.y, node->branch.aabb.BB.z) ;
+            printf("   %f,%f,%f \n", node->branch.aabb.AA.x, node->branch.aabb.AA.y, node->branch.aabb.BB.z) ;
+            printf("--------------------------------------\n");
+
+            
+        }
+        
+        
+    }
+}

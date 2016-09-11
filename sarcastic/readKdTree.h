@@ -52,4 +52,7 @@ void readKdTree(const char *filename,           // Filename for KdTree
                     int * nTreeNodes,           // Number of nodes in KdTree
                     KdData ** KdTree);          // KdTree returned.);
 
+void printKdTree(int nNodes, KdData *tree, int *triListData, int *triPtrs) ;
+
+
 #endif

@@ -41,7 +41,7 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 
 class Triangle {
    
@@ -51,6 +51,8 @@ public:
     Triangle(SPVector aa, SPVector bb, SPVector cc, int material) ;
     Triangle(SPVector aa, SPVector bb, SPVector cc, std::string material) ;
     ~Triangle();
+    
+    void print();
     
     void setMaterial(int matId);
     void setMaterial(std::string material);

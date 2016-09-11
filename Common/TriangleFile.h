@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 #include "trianglecpp.h"
 
 class TriangleFile {

@@ -63,7 +63,7 @@
         _triId        = 0 ;
         _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
-        _Rs           = materialProperties[_matId].resistivity ;
+        _Rs           = materialProperties[_matId].Rs ;
         x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
         l             = [x mag] ;
         _area         = l * 0.5 ;
@@ -110,7 +110,7 @@
         _triId        = val ;
         _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
-        _Rs           = materialProperties[_matId].resistivity ;
+        _Rs           = materialProperties[_matId].Rs ;
         x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
         l             = [x mag] ;
         _area         = l * 0.5 ;
@@ -158,7 +158,7 @@
         _triId        = 0 ;
         _materialName = [NSString stringWithUTF8String: materialProperties[0].matname ] ;
         _matId        = 0 ;
-        _Rs           = materialProperties[_matId].resistivity ;
+        _Rs           = materialProperties[_matId].Rs ;
         x             = [[MVector alloc] initWithMVector:[[b subtract:a] cross:[c subtract:a]]] ;
         l             = [x mag] ;
         _area         = l * 0.5 ;
@@ -203,7 +203,8 @@
     for(int imat=0; imat < NMATERIALS; imat++){
         scatProps m = materialProperties[imat] ;
         if( !strcmp([name UTF8String], m.matname)){
-            _Rs = m.resistivity ;
+            _Rs = m.Rs ;
+            _matId = imat ;
         }
     }
     if(_Rs < 0){

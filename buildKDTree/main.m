@@ -36,7 +36,7 @@
 #import "MVectorObjc.h"
 #import "KdTree.h"
 #import "Triangle.h"
-#include <SIlib/SIlib.h>
+#include <SIlib2/SIlib2.h>
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
 #define SHOWTRIANGLES 0

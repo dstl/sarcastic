@@ -183,33 +183,15 @@ void oclPOField(cl_context          context,            // OpenCL context - alre
             E_mag = VECT_MAG(E) ;
             CMPLX_F_MAKE(E_mag*cos(p), E_mag*sin(p), Ecmplx);
         }
-        
-//        if(firstBounce == 2){
-//        printf("%f, %f, %f\n",CMPLX_PHASE(Ecmplx),hitpoints[r].hit.y,hitpoints[r].hit.z);
 
-//        double p = -k * 2 * rnp[r].range ;
-//        SPCmplx c = { cos(p), sin(p) } ;
-//        printf("%f, %f, %f\n", CMPLX_PHASE(c), hitpoints[r].hit.y,hitpoints[r].hit.z);
-        
-//        if(hitpoints[r].tri == 0){
-//            CMPLX_ADD(Ecmplx, cmplxsum, cmplxsum);
-//            sumx += CMPLX_PHASE(Ecmplx) ;
-//            sumy += hitpoints[r].hit.y ;
-//            sumz += hitpoints[r].hit.z ;
-//            numrs = numrs + 1.0 ;
-//        }
-//        }
-        
-
-//        printf("Ev : %e, %f\n",CMPLX_MAG(VsTmp[r]),CMPLX_PHASE(VsTmp[r]));
-//        printf("Eh : %e, %f\n",CMPLX_MAG(HsTmp[r]),CMPLX_PHASE(HsTmp[r]));
+        // printf("[bounce %d ray %d] range : %f, Ev : %e, %f\n",firstBounce, r,rnp[r].range, CMPLX_MAG(VsTmp[r]),CMPLX_PHASE(VsTmp[r]));
+        // printf("[bounce %d ray %d] range : %f, Eh : %e, %f\n",firstBounce, r,rnp[r].range, CMPLX_MAG(HsTmp[r]),CMPLX_PHASE(HsTmp[r]));
         
         rnp[r].Es.r = (double)Ecmplx.r / (double)hitsOnEachTri[hitpoints[r].tri];
         rnp[r].Es.i = (double)Ecmplx.i / (double)hitsOnEachTri[hitpoints[r].tri];
 
     }
-//    printf("Mean         is %f,%f,%f \n", sumx / numrs, sumy/numrs, sumz/numrs);
-//    printf("complex Mean is %f,%f,%f \n", CMPLX_PHASE(cmplxsum), sumy/numrs, sumz/numrs);
+
     // Clear down OpenCL allocations
     //
     clReleaseMemObject(dTriangles);
