@@ -54,7 +54,6 @@
 		9562DA601B4FFE4D00EC6D83 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA541B4FFE4D00EC6D83 /* MVectorObjc.m */; };
 		9562DA651B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
-		956C57541D8EA37F0043A880 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 956C57521D8EA37F0043A880 /* TriangleMesh.cpp */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
@@ -96,6 +95,7 @@
 		95E745A61D74D93C00B3F3FB /* libSIlib2-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E745A21D74D65A00B3F3FB /* libSIlib2-1.0.a */; };
 		95E745A71D74D95200B3F3FB /* libSIlib2-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E745A21D74D65A00B3F3FB /* libSIlib2-1.0.a */; };
 		95E745A81D74D96800B3F3FB /* libSIlib2-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E745A21D74D65A00B3F3FB /* libSIlib2-1.0.a */; };
+		95E9AE5E1D91B1000063993D /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -415,8 +415,6 @@
 		9562DA581B4FFE4D00EC6D83 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Triangle.m; path = Common/Triangle.m; sourceTree = SOURCE_ROOT; };
 		9567C8351B2EFE0B000742A6 /* libSIlib-1.1-7-e17b94d-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d-dirty.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d-dirty.a"; sourceTree = "<group>"; };
 		9567C8371B2F0426000742A6 /* libSIlib-1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.2.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.2.a"; sourceTree = "<group>"; };
-		956C57521D8EA37F0043A880 /* TriangleMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleMesh.cpp; path = ../../../../../../usr/local/lib/TriangleMesh.cpp; sourceTree = "<group>"; };
-		956C57531D8EA37F0043A880 /* TriangleMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TriangleMesh.hpp; path = ../../../../../../usr/local/lib/TriangleMesh.hpp; sourceTree = "<group>"; };
 		957A59D81CF9A7DE00981E60 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
 		957A59DB1CF9A83D00981E60 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		957A59DD1CF9A88400981E60 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3.a; sourceTree = "<group>"; };
@@ -460,6 +458,8 @@
 		95E744C71D5248DE00B3F3FB /* POField2.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = POField2.cl; sourceTree = "<group>"; };
 		95E745A01D74D63C00B3F3FB /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../usr/local/dstl/lib; sourceTree = "<group>"; };
 		95E745A21D74D65A00B3F3FB /* libSIlib2-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-1.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-1.0.a"; sourceTree = "<group>"; };
+		95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleMesh.cpp; path = Common/TriangleMesh.cpp; sourceTree = SOURCE_ROOT; };
+		95E9AE5D1D91B1000063993D /* TriangleMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TriangleMesh.hpp; path = Common/TriangleMesh.hpp; sourceTree = SOURCE_ROOT; };
 		95F276ED1A36045900FF9339 /* POField.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = POField.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -989,8 +989,8 @@
 				95D8F8C01B5E78580057FA4C /* trianglecpp.h */,
 				95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */,
 				95D8F8C61B5E7A280057FA4C /* TriangleFile.h */,
-				956C57521D8EA37F0043A880 /* TriangleMesh.cpp */,
-				956C57531D8EA37F0043A880 /* TriangleMesh.hpp */,
+				95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */,
+				95E9AE5D1D91B1000063993D /* TriangleMesh.hpp */,
 			);
 			name = Common;
 			path = sarcastic/Common;
@@ -1259,9 +1259,9 @@
 			files = (
 				95ABA80E1B5F7FAB00A485BA /* colladainterface.cpp in Sources */,
 				95ABA80F1B5F7FAB00A485BA /* main.cpp in Sources */,
+				95E9AE5E1D91B1000063993D /* TriangleMesh.cpp in Sources */,
 				9562DA5D1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */,
 				9562DA401B48465400EC6D83 /* tinystr.cpp in Sources */,
-				956C57541D8EA37F0043A880 /* TriangleMesh.cpp in Sources */,
 				9562DA411B48465400EC6D83 /* tinyxml.cpp in Sources */,
 				9562DA421B48465400EC6D83 /* tinyxmlerror.cpp in Sources */,
 				9562DA431B48465400EC6D83 /* tinyxmlparser.cpp in Sources */,
