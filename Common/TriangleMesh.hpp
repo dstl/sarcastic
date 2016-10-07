@@ -18,31 +18,54 @@
 #include <SIlib2/SIlib2.h>
 #include <set>
 
+void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, float *distance) ;
+
+class halfEdge {
+public:
+    int vertex = -1 ;    // index of vertex owning (starting) this halfEdge
+    int nextVertex = -1 ;
+    int face = -1 ;      // index of face (triangle) associated with this halfEdge
+    int nextHalfEdge     = -1 ;
+    int oppositeHalfEdge = -1 ;
+    
+    halfEdge(){} ;
+    
+    bool operator<(const halfEdge &o) const {
+        if(vertex != o.vertex){
+            return vertex < o.vertex;
+        }
+        return nextVertex < o.nextVertex ;
+    }
+    
+    bool operator==(const halfEdge &o) const {
+        if(vertex == o.vertex && nextVertex == o.nextVertex){
+            return true;
+        }
+        return false;
+    }
+    
+};
+
+
 class rawTri {
 public:
     SPVector aa, bb, cc, N;
-    int mat ; // matreial index
-    float A ; // area
-    float d ; // distance
+    int mat=0 ; // material index
+    float A=0 ; // area
+    float d=0 ; // distance
     
     rawTri(){}
     
     rawTri(SPVector vertA, SPVector vertB, SPVector vertC) : aa(vertA), bb(vertB), cc(vertC)  {
-        SPVector ab; VECT_SUB(bb, aa, ab);
-        SPVector bc; VECT_SUB(cc, bb, bc);
-        SPVector x;  VECT_CROSS(ab, bc, x);
-        double l ; l = VECT_MAG(x);
-        A = l * 0.5;
-        VECT_SCMULT(x, (1/l), N);
-        d = VECT_DOT(aa, N) ;
+        nad(aa, bb, cc, &N, &A, &d) ;
     } ;
     rawTri(SPVector vertA, SPVector vertB, SPVector vertC, std::string material) : aa(vertA), bb(vertB), cc(vertC) {
-        *this = rawTri(vertA, vertB, vertC) ;
+        nad(aa, bb, cc, &N, &A, &d) ;
         setMaterial(material) ;
         return ;
     };
     rawTri(SPVector vertA, SPVector vertB, SPVector vertC, int material) : aa(vertA), bb(vertB), cc(vertC), mat(material) {
-        *this = rawTri(vertA, vertB, vertC) ;
+        nad(aa, bb, cc, &N, &A, &d) ;
         setMaterial(material) ;
         return ;
     };
@@ -74,9 +97,11 @@ public:
     double x;
     double y;
     double z;
+    
     Triangle3DVec() {}
     Triangle3DVec(double x, double y, double z) : x(x), y(y), z(z) {}
     Triangle3DVec(SPVector N) : x(N.x), y(N.y), z(N.z) {}
+    SPVector asSPVector(){SPVector v; VECT_CREATE(x, y, z, v); return v;}
     
     bool operator<(const Triangle3DVec &o) const {
         if (x != o.x) {
@@ -102,60 +127,107 @@ public:
     int a,b,c;          // Index of Vertices in a seperate list of xyz positions (eg TriangleVertex's)
     int mat=0;          // Index of material type
     Triangle3DVec N;    // Triangle Normal
-    double d;           // Distance of triangle plane from origin (a.N) Useful for sorting
-    double A;           // Area
+    float dist=0;       // Distance of triangle plane from origin (a.N) Useful for sorting
+    float Area=0;       // Area
     
     Triangle(){}
-    Triangle(int vertexA, int vertexB, int vertexC): a(vertexA), b(vertexB), c(vertexC) {}
+    Triangle(int vertexA, int vertexB, int vertexC): a(vertexA), b(vertexB), c(vertexC) {
+    }
     Triangle(int vertexA, int vertexB, int vertexC, int matID): a(vertexA), b(vertexB), c(vertexC), mat(matID) {}
-    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N): a(vertexA), b(vertexB), c(vertexC), N(N) {}
-    Triangle(int vertexA, int vertexB, int vertexC, SPVector N): a(vertexA), b(vertexB), c(vertexC), N(N) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N) {}
-
+    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
+    Triangle(int vertexA, int vertexB, int vertexC, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
     
     // Sort in following order : Material, normal, d, a,b,c
     //
     bool operator<(const Triangle &o) const {
         if( mat != o.mat)   return mat < o.mat ;
         if( ! (N == o.N))   return N < o.N ;
-        if( d != o.d )      return d < o.d ;
-        if( a != o.a )      return a < o.a ;
-        if( b != o.b )      return b < o.b ;
-        return c < o.c ;
+        if( dist != o.dist )      return dist < o.dist ;
+        return Area < o.Area;
     }
     
     // Triangles are equal if the have the same material, normal, d and verts in any order
     //
     bool operator==(const Triangle &o) const {
         if (mat != o.mat)   return false;
-        if ( d !=o.d )      return false ;
+        if ( dist !=o.dist )      return false ;
         if (!(N == o.N))    return false ;
         std::set<int> s1, s2;
         s1.insert(a); s1.insert(b); s1.insert(c);
         s2.insert(o.a); s2.insert(o.b); s2.insert(o.c);
-        return (s1==s2);
+        if(s1==s2){
+            return (s1==s2);
+        }else{
+            return (s1==s2);
+        }
+    }
+    
+    bool coplanar(const Triangle &o) const {
+        if ( mat != o.mat ) return false ;
+        if (!(N == o.N))    return false ;
+        if ( fabs(dist-o.dist) > 1e-8 ) return false ;
+        return true;
     }
 };
 
 class TriangleMesh {
 private:
     std::vector<rawTri> rawTriBuff ;
-    void sortTrianglesAndPoints() ;
     bool sorted ;
+    bool halfEdgesBuilt ;
     
 public:
     std::vector<Triangle3DVec> vertices ;
     std::vector<Triangle> triangles;
+    std::vector<halfEdge> halfedges;
     
     TriangleMesh(){}
+    
+    TriangleMesh(std::vector<rawTri> rawTriangles) : rawTriBuff(rawTriangles){
+        sortTrianglesAndPoints() ;
+        return;
+    }
+    
+    TriangleMesh(std::vector<Triangle> tris, std::vector<Triangle3DVec> verts) {
+        SPVector vertA, vertB, vertC;
+        auto it = tris.begin() ;
+        while (it != tris.end()){
+            VECT_CREATE(verts[it->a].x, verts[it->a].y, verts[it->a].z, vertA);
+            VECT_CREATE(verts[it->b].x, verts[it->b].y, verts[it->b].z, vertB);
+            VECT_CREATE(verts[it->c].x, verts[it->c].y, verts[it->c].z, vertC);
+            rawTri t = rawTri(vertA, vertB, vertC, it->mat) ;
+            rawTriBuff.push_back(t) ;
+            ++it;
+        }
+        sortTrianglesAndPoints() ;
+        return ;
+    }
+    
+    ~TriangleMesh(){
+        rawTriBuff.clear() ;
+        vertices.clear() ;
+        triangles.clear() ;
+        halfedges.clear() ;
+    }
     
     void readDAEFile  ( std::string filename );
     void readPLYFile  ( std::string filename );
     void writePLYFile ( std::string filename );
     void readTriFile  ( std::string filename );
     void writeTriFile ( std::string filename );
-    
+    void addTriangle  ( int a, int b, int c  );
+    void addTriangle  ( int a, int b, int c, int mat );
+    void addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat) ;
+    void addTriangle  (Triangle tri );
+    void addTriangle  (rawTri tri );
+    void sortTrianglesAndPoints() ;
+    void buildHalfEdges() ;
+    rawTri asRawTriangle(long int triangleIndex);
+    std::vector<halfEdge> edges();
+
+
 };
 
 

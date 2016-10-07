@@ -187,11 +187,11 @@ void TriangleMesh::readPLYFile  ( std::string filename ){
         std::getline(file, line) ;
         std::stringstream linestream(line) ;
         linestream >> t[0] >> t[1] >> t[2] >> t[3] >> t[4] >> t[5] >> t[6] >> t[7] ;
-        Triangle tri = Triangle(t[1], t[2], t[3], t[7]) ;
-        triangles.push_back(tri);
+        addTriangle(t[1], t[2], t[3], t[7]);
     }
     
     file.close() ;
+    
     return ;
     
 }
@@ -246,11 +246,6 @@ void TriangleMesh::sortTrianglesAndPoints(){
     Triangle tr;
     int idxA, idxB, idxC;
     
-    int npoints = (int)rawTriBuff.size() * 3 ;
-    
-    vertices.reserve(npoints) ;
-    triangles.reserve(rawTriBuff.size()) ;
-    
     // Create a vector of triangle vertices
     //
     for(int t=0; t<rawTriBuff.size(); ++t){
@@ -278,18 +273,164 @@ void TriangleMesh::sortTrianglesAndPoints(){
         idxC = (int) (lower_bound(vertices.begin(), vertices.end(), p) - vertices.begin()) ;
         
         p = Triangle3DVec(rawTriBuff[t].N.x, rawTriBuff[t].N.y, rawTriBuff[t].N.z);
-        tr = Triangle(idxA, idxB, idxC, rawTriBuff[t].mat, rawTriBuff[t].N);
-        tr.A = rawTriBuff[t].A ;
+        tr = Triangle(idxA, idxB, idxC, rawTriBuff[t].mat, rawTriBuff[t].N, rawTriBuff[t].d);
+        tr.Area = rawTriBuff[t].A ;
         
         triangles.push_back(tr);
     }
     
     // sort the triangle references vector and remove any duplicate triangles
     //
+    
     sort(triangles.begin(), triangles.end());
     triangles.erase( unique(triangles.begin(), triangles.end()), triangles.end()) ;
-    
     sorted = true;
     return ;
     
+}
+
+void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, float *distance)
+// helper function to take coordinates of a triangle and calculate the
+// Normal, Area and Distance (of the triangle plane to the origin) of it
+//
+{
+    SPVector N, ab, bc, x;
+    double l;
+    VECT_SUB(bb, aa, ab);
+    VECT_SUB(cc, bb, bc);
+    VECT_CROSS(ab, bc, x);
+    l = VECT_MAG(x);
+    *area = l * 0.5;
+    VECT_SCMULT(x, (1/l), N);
+    *distance = VECT_DOT(aa, N) ;
+    *normal = N ;
+    return ;
+}
+
+void TriangleMesh::addTriangle(int a, int b, int c)
+{
+    if( a > vertices.size() || b > vertices.size() || c > vertices.size()){
+        printf("Possible error: Triangle has indices larger than number of vertices in mesh\n");
+    }
+    addTriangle(a, b, c, 0) ;
+    return ;
+}
+
+void TriangleMesh::addTriangle(Triangle tri){
+    addTriangle(tri.a, tri.b, tri.c, tri.mat);
+    return ;
+}
+
+void TriangleMesh::addTriangle(int a, int b, int c, int mat)
+{
+    SPVector aa, bb, cc, NN ;
+    float area, distance ;
+    if( a > vertices.size() || b > vertices.size() || c > vertices.size()){
+        printf("Possible error: Triangle has indices larger than number of vertices in mesh - not adding it\n");
+        return ;
+    }else{
+        VECT_CREATE(vertices[a].x, vertices[a].y, vertices[a].z, aa);
+        VECT_CREATE(vertices[b].x, vertices[b].y, vertices[b].z, bb);
+        VECT_CREATE(vertices[c].x, vertices[c].y, vertices[c].z, cc);
+        nad(aa, bb, cc, &NN, &area, &distance) ;
+        Triangle t = Triangle(a, b, c, mat, NN, distance) ;
+        t.Area = area ;
+        triangles.push_back(t) ;
+        sorted = false ;
+        return ;
+    }
+}
+
+void TriangleMesh::addTriangle(rawTri tri){
+    rawTriBuff.push_back(tri) ;
+    sorted = false ;
+    return ;
+}
+
+
+void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
+{
+    rawTri tri(AA,BB,CC,mat);
+    rawTriBuff.push_back(tri) ;
+    sorted = false ;
+    return ;
+}
+
+void TriangleMesh::buildHalfEdges(){
+    halfEdge heA, heB, heC;
+
+    if (!sorted)
+        sortTrianglesAndPoints() ;
+    if(halfEdgesBuilt)
+        return ;
+    
+//    halfedges.reserve(triangles.size()*3) ;
+    
+    for(int t=0; t<triangles.size(); ++t){
+        Triangle tri = triangles[t] ;
+        
+        heA.vertex = tri.a ;
+        heA.face = t ;
+        heA.nextVertex = tri.b ;
+        halfedges.push_back(heA) ;
+        
+        heB.vertex = tri.b ;
+        heB.face = t ;
+        heB.nextVertex = tri.c ;
+        halfedges.push_back(heB) ;
+        
+        heC.vertex = tri.c ;
+        heC.face = t ;
+        heC.nextVertex = tri.a ;
+        halfedges.push_back(heC) ;
+    }
+    
+    for(int it = 0; it < halfedges.size()-1; ++it){
+        halfedges[it].nextHalfEdge = it+1 ;
+    }
+
+    // For each halfedge find its opposite side
+    //
+    halfEdge h;
+    for(int i = 0; i < halfedges.size(); ++i){
+        h.vertex = halfedges[i].nextVertex ;
+        h.nextVertex = halfedges[i].vertex ;
+        auto v = std::find(halfedges.begin(), halfedges.end(), h);
+        if(v != halfedges.end()){
+            halfedges[i].oppositeHalfEdge = (int)(v-halfedges.begin()) ;
+        }
+    }
+    
+    halfEdgesBuilt = true ;
+    return ;
+    
+}
+
+std::vector<halfEdge> TriangleMesh::edges(){
+    if(!halfEdgesBuilt){
+        buildHalfEdges() ;
+    }
+    
+    std::vector<halfEdge> matches;
+    halfEdge h;
+    for(int i = 0; i < halfedges.size(); ++i){
+        h = halfedges[i] ;
+        if (h.oppositeHalfEdge == -1) {
+            matches.push_back(h) ;
+        }
+    }
+   
+    return(matches);
+}
+
+rawTri TriangleMesh::asRawTriangle(long int triangleIndex){
+    if(triangleIndex > triangles.size()){
+        printf("Error : requested a triangle that does not exist in mesh\n");
+        exit(1);
+    }
+    rawTri t = rawTri(vertices[triangles[triangleIndex].a].asSPVector(),
+                      vertices[triangles[triangleIndex].b].asSPVector(),
+                      vertices[triangles[triangleIndex].c].asSPVector(),
+                      triangles[triangleIndex].mat);
+    return t ;
 }

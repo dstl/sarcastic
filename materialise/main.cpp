@@ -11,8 +11,9 @@
 #include "materialise_version.h"
 #include <iostream>
 #include <SIlib2/SIlib2.h>
-#include "trianglecpp.h"
-#include "TriangleFile.h"
+//#include "trianglecpp.h"
+//#include "TriangleFile.h"
+#include "TriangleMesh.hpp"
 extern "C" {
 #include "matrixMultiplication.h"
 #include "JRStriangle.h"
@@ -23,34 +24,33 @@ extern "C" {
 #include <sstream>
 #include <forward_list>
 
-#define ROOTPATH "/Users/Darren/Development"
+#define ROOTPATH "/tmp"
 #define REPORTN 100
-#define VERBOSE ((int) 0)
+#define VERBOSE ((int) 1)
 
-bool VECT_EQUAL(SPVector a, SPVector b);
-bool anyVECT_EQUAL(SPVector v, Triangle t);
+using namespace std;
+
 void roughenPoint(SPVector *p, Triangle t);
-bool pointsColinear(SPVector p1, SPVector p2, SPVector p3);
-std::forward_list<Triangle> growTriangles(std::forward_list<Triangle> *triangles);
-void trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments, double **points);
+TriangleMesh growTriangles(TriangleMesh *mesh) ;
+void meshTo2D(TriangleMesh mesh, SPVector *org, SPVector *ord, SPVector *absci,
+              int **trinds,int **segments,int *nsegments, double **points);
 void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, int *nPoints, int *nSegs, double **holes, int *nholes);
-SPVector  createHole(int a, int b, double **points, int c, int nPoints) ;
+SPVector  createHole(int a, int b, double *points, int nPoints) ;
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y);
 bool isPointOnLine(double px, double py, double x1, double y1, double x2, double y2, double approxZero);
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
+void printProgress(int percentDone, int nChars) ;
 
 
 int main(int argc, const char * argv[]) {
     
     int verbose = VERBOSE ;
-    int nCommonTris ;
-    int nPoints, nSegments ;
-    SPVector origin, abscissa, ordinate,zdir;
+    int nSegments ;
+    SPVector origin, abscissa, ordinate, zdir, *Points3D;
     int *trinds;
     int *segments ;
     double *holes ;
     double *points ;
-    int nholes ;
 
     printf(" \n");
     printf(DARK GREEN "                              Materialise\n" NORMAL);
@@ -66,7 +66,11 @@ int main(int argc, const char * argv[]) {
     CHECK_STATUS_NON_PTR(status) ;
     char *instr = tryReadFile((char *)"Input triangle filename", (char *)"infilename",
                                (char *)"The name of a triangle file created with 'colladaToTriFile'",
-                               (char *) ROOTPATH"/DATA/triangles.tri");
+                               (char *) ROOTPATH"/triangles.ply");
+    
+    char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
+                               (char *)"The name of the triangle file to be created",
+                               (char *) ROOTPATH"/delaunay.ply");
     
     FILE *fpin ;
     fpin = fopen(instr, "r");
@@ -75,10 +79,6 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
-                               (char *)"The name of the triangle file to be created",
-                               (char *) ROOTPATH"/DATA/triangles_Delaunay.tri");
-    
     FILE *fpout ;
     fpout = fopen(oustr, "w");
     if (fpout == NULL) {
@@ -86,143 +86,88 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    bool plyop=false;
-    char *plyFname=NULL;
-    plyop = input_yesno("Write out triangles as PLY file", "plyop",
-                        "The PLY format is a simple-to-understand representation of the triangles",
-                        plyop);
-    if(plyop){
-        plyFname = input_string("name of PLY file to create", "plyFname",
-                                "Full path name of the PLY file to create", plyFname);
-    }
-
+    TriangleMesh mesh, newMesh;
+    mesh.readPLYFile(string(instr));
+    mesh.sortTrianglesAndPoints() ;
+    long int orgNTris;
+    float percentDone;
+    orgNTris = mesh.triangles.size() ;
+    Timer timer;
+    startTimer(&timer, &status);
     
-    
-    srand((unsigned int)time(NULL));
-
-    TriangleFile triFile = TriangleFile(std::string(instr));
-    
-    std::vector<Triangle> newTriangleVec;
-    SPVector *Points3D ;
-    
-    std::vector<Triangle> triangles = triFile.triangles ;
-    size_t nTriangles = triangles.size() ;
-    
-    std::forward_list<Triangle> triList ;
-    for(int tt=0; tt<nTriangles; tt++){
-        triList.push_front(triangles[tt]);
-    }
-    
-    while (!triList.empty()) {
+    while (!mesh.triangles.empty()) {
         
-        std::forward_list<Triangle> commonTris ;
-        int i;
+        percentDone = 100.0 * (float)(orgNTris - mesh.triangles.size()) / (float)orgNTris ;
+        printProgress(percentDone, 80);
         
-        if(verbose){
-            printf("                             Materialise the following triangles:\n");
-            printf("                             ====================================\n");
-            i=0;
-            for (auto it=triList.begin(); it != triList.end(); ++it) {
-                printf("                                          Triangle %03d \n",i++);
-                printf("                                          ------------- \n");
-                it->print();
-            }
-        }
-        commonTris = growTriangles(&triList) ; // Reduces triList as triangles are added to commonTris
-        if(verbose){
-            i=0;
-            printf("\n");
-            printf("                             Triangles grown from Triangle 000 above\n");
-            printf("                             ========================================\n");
-            
-            for (auto it=commonTris.begin(); it != commonTris.end(); ++it) {
-                printf("                                          Triangle %03d \n",i++);
-                printf("                                          ~~~~~~~~~~~~~ \n");
-                it->print();
-            }
-            printf("\n");
-            printf("                                 Remaining Triangles to Process\n");
-            printf("                                 ==============================\n");
-            
-            i=0;
-            for (auto it=triList.begin(); it != triList.end(); ++it) {
-                printf("                                          Triangle %03d \n",i++);
-                printf("                                          +++++++++++++ \n");
-                it->print();
-            }
-            printf("                             ====================================\n\n");
-        }
-
-       
-        trianglesToPoints(commonTris, &nCommonTris, &origin, &ordinate, &abscissa, &trinds, &segments, &points);
+        // Take the first triangle in mesh.triangles and calculate all triangles that
+        // are common to it (on the same plane and joined togethr
+        //
+        TriangleMesh commonMesh = growTriangles(&mesh) ;
+        
+        // Convert to 2Dpoints
+        //
+        meshTo2D(commonMesh, &origin, &ordinate, &abscissa, &trinds, &segments, &nSegments, &points);
         VECT_CROSS(ordinate, abscissa, zdir);
         VECT_NORM(zdir, zdir);
-
-        cleanPoints(nCommonTris, &points, &trinds, &segments, &nPoints, &nSegments, &holes, &nholes);
         
-        if(verbose){
-            printf("                     The unique set of points for this growth region are:\n");
-            printf("                     ====================================================\n");
-            for(int i=0; i< nPoints; i++){
-                printf("%f, %f\n",points[i*2+0],points[i*2+1]);
-            }
-            
-            if(nSegments > 0){
-                printf("                            The following segments bound this region:\n");
-                printf("                            =========================================\n");
-                for(int i=0; i<nSegments; i++){
-                    printf("                                 %05.2f,%05.2f ----> %05.2f,%05.2f\n",points[segments[i*2+0]*2+0], points[segments[i*2+0]*2+1],
-                           points[segments[i*2+1]*2+0],points[segments[i*2+1]*2+1]);
-                }
-            }else{
-                printf("\n");
-                printf("                                ++++ This region has no segments +++\n");
-                printf("\n");
-            }
-            
-            if(nholes > 0){
-                printf("                              The following holes are in this region:\n");
-                printf("                              =======================================\n");
-                for(int i=0; i<nholes; i++){
-                    printf("%f,%f \n",holes[2*i+0],holes[2*i+1]);
-                }
-            }else{
-                printf("\n");
-                printf("                                ++++ This region has no holes +++\n");
-                printf("\n");
+        // create holes
+        //
+        std::vector<SPVector> holesVec ;
+        for(int i=0; i<nSegments; ++i){
+            SPVector hole;
+            hole = createHole(segments[i*2+0], segments[i*2+1], points, (int)commonMesh.vertices.size()) ;
+            if (hole.z != -666 ) {
+                holesVec.push_back(hole);
             }
         }
+        if(!holesVec.empty()){
+            holes = (double *)sp_malloc(sizeof(double) * 2 * holesVec.size());
+            for(int i=0; i<holesVec.size(); ++i){
+                holes[i*2+0] = holesVec[i].x ;
+                holes[i*2+1] = holesVec[i].y ;
+            }
+        }else{
+            holes = NULL;
+        }
+        
         // find material and from it max area
         //
-        double corrlen = materialProperties[commonTris.front().matId].corlen ;
+        double corrlen = materialProperties[commonMesh.triangles[0].mat].corlen ;
         double corrArea = corrlen * corrlen * 0.5 ;
-        printf("setting max area to be %f m^2 (correlation length is %f m)\n",corrArea,corrlen);
+        if(verbose)printf("setting max area to be %f m^2 (correlation length is %f m)\n",corrArea,corrlen);
+        
+        // Set up switches for Delaunay triangulation
+        //
         std::ostringstream stringstream ;
-        stringstream << "zpj" ;
+        stringstream << "zpjV" ;
         if (!verbose) {
             stringstream << "Q" ;
         }
         stringstream << "a" << corrArea ;
         std::string str = stringstream.str();
         const char *triswitches = str.c_str() ;
-    
-        // delaunay triangulate
+        
+        // Perform Delaunay triangulation
         //
+        int npoints = (int)commonMesh.vertices.size() ;
+        int ntrinds = (int)commonMesh.triangles.size() ;
+        int nholes  = (int)holesVec.size();
         struct triangulateio in ;
         struct triangulateio out;
         in.pointlist = points ;
-        in.numberofpoints = nPoints ;
+        in.numberofpoints = npoints ;
         in.numberofpointattributes = 0;
         in.pointmarkerlist = NULL ;
         in.pointattributelist = NULL;
         
         in.trianglelist = trinds ;
-        in.numberoftriangles = nCommonTris ;
+        in.numberoftriangles = ntrinds ;
         in.trianglearealist = NULL;
         in.numberoftriangleattributes = 0;
         in.triangleattributelist = NULL;
         in.numberofcorners = 3;
-
+        
         in.segmentlist = segments ;
         in.numberofsegments = nSegments ;
         in.segmentmarkerlist = NULL ;
@@ -238,9 +183,12 @@ int main(int argc, const char * argv[]) {
         out.neighborlist = NULL ;
         out.segmentlist = NULL;
         out.segmentmarkerlist = NULL;
+        out.holelist = NULL;
         
         triangulate((char *)triswitches, &in, &out, NULL);
         
+        // Roughen surface corresponding to material type
+        //
         SPVector OO;
         OO = origin;
         Points3D = (SPVector *)sp_malloc(sizeof(SPVector) * out.numberofpoints);
@@ -261,31 +209,28 @@ int main(int argc, const char * argv[]) {
                 s2x = out.pointlist[ out.segmentlist[s*2+1]*2+0] ;
                 s2y = out.pointlist[ out.segmentlist[s*2+1]*2+1] ;
                 
-                if( isPointOnLine(x2d, y2d, s1x,s1y,s2x,s2y, 0.01) ){
+                if( isPointOnLine(x2d, y2d, s1x,s1y,s2x,s2y, 0.001) ){
                     pntOnSegment=true;
                 }
                 ++s ;
-                
             }
             if (!pntOnSegment) {
-                Z = box_muller(0.0, materialProperties[commonTris.front().matId].roughness) ;
+                Z = box_muller(0.0, materialProperties[commonMesh.triangles[0].mat].roughness) ;
             }
             
             VECT_SCMULT(ordinate, x2d, v1);
             VECT_SCMULT(abscissa, y2d, v2);
             VECT_SCMULT(zdir, Z, v3);
-
+            
             VECT_ADD(v1, v2, v);
             VECT_ADD(v3, v, v);
             VECT_ADD(v, OO, v);
             Points3D[n] = v ;
         }
         
-        // and put into newtri vector
+        // Add to output triangleMesh
         //
-        int ntri = out.numberoftriangles ;
-        for (int n=0; n<ntri; n++){
-            
+        for (int n=0; n<out.numberoftriangles; n++){
             int pointind0 = out.trianglelist[n*3+0] ;
             int pointind1 = out.trianglelist[n*3+1] ;
             int pointind2 = out.trianglelist[n*3+2] ;
@@ -295,17 +240,14 @@ int main(int argc, const char * argv[]) {
             BB = Points3D[pointind1] ;
             CC = Points3D[pointind2] ;
             
-            Triangle newtri = Triangle(AA, BB, CC, commonTris.front().matId);
-            
-            if(newtri.area != 0.0){
-                newTriangleVec.push_back(newtri) ;
-            }
+            newMesh.addTriangle(AA, BB, CC, commonMesh.triangles[0].mat);
         }
+        
         free(Points3D);
         free(points);
         free(trinds);
         free(segments);
-        if(nholes !=0)free(holes);
+        if(!holesVec.empty())free(holes);
         free(out.pointlist);
         free(out.pointattributelist);
         free(out.pointmarkerlist);
@@ -316,216 +258,85 @@ int main(int argc, const char * argv[]) {
         free(out.segmentlist);
         free(out.segmentmarkerlist);
         
+        // Next triangle
+        //
     }
     
-    // newTriangleVec now contains new triangles.
-    // write it to file
-    //
-    printf("Writing %lu triangles to file...\n",newTriangleVec.size());
-    TriangleFile dtTriFile = TriangleFile(newTriangleVec) ;
-    dtTriFile.WriteFile(std::string(oustr));
-    if(plyop){
-        printf("Writing %lu triangles to .ply file...\n",newTriangleVec.size());
-        dtTriFile.WritePLYFile(plyFname, false);
-    }
+    newMesh.sortTrianglesAndPoints() ;
+    printf("Sorting new triangle mesh of %lu triangles...\n",newMesh.triangles.size()) ;
+    
+    printf("Writing %lu triangles to file...\n",newMesh.triangles.size());
+    newMesh.writePLYFile(std::string(oustr)) ;
+    
+    endTimer(&timer, &status);
     im_close_lib(&status);
-    std::cout << "Done" << std::endl;
-
+    std::cout << "Done in " << timeElapsedInSeconds(&timer, &status) << " seconds." << std::endl;
+    
     return 0;
 }
 
-void roughenPoint(SPVector *p, Triangle t){
-    SPVector V ;
-    SPVector vin;
-    
-    vin.x = p->x ;
-    vin.y = p->y ;
-    vin.z = p->z ;
-
-    if ((!VECT_EQUAL(vin, t.AA)) && (!VECT_EQUAL(vin, t.BB)) && (!VECT_EQUAL(vin, t.CC)) ) {
-        
-        // Check that vin is not on one of the borders of the original triangle
-        //
-        if ( !(pointsColinear(vin, t.AA, t.BB) || pointsColinear(vin, t.BB, t.CC) || pointsColinear(vin, t.CC, t.AA))) {
-            
-            float dist = box_muller(0.0, materialProperties[t.matId].roughness) ;
-            VECT_SCMULT(t.NN, dist, V);
-            VECT_ADD(V, vin, vin);
-            p->x = vin.x ;
-            p->y = vin.y ;
-            p->z = vin.z ;
-        }
-    }
-    return ;
+bool coplanar(const Triangle &a, const Triangle &b)  {
+    if ( a.mat != b.mat ) return a.mat < b.mat ;
+    if (!(a.N == b.N))    return a.N < b.N ;
+    return a.dist<b.dist ;
 }
 
-bool pointsColinear(SPVector point, SPVector A, SPVector B){
-    double EPSILON = 1.0e-6;
-    
-    SPVector AB, Ap, Bp, v;
-    
-    VECT_SUB(B, A, AB) ;
-    VECT_SUB(point, A, Ap) ;
-    VECT_SUB(point, B, Bp) ;
-    
-    if (VECT_MAG(Ap) > EPSILON) {
-        v=Ap ;
-    }else if(VECT_MAG(Bp) > EPSILON){
-        v=Bp ;
-    }else{
-        return true;
-    }
-    
-    VECT_NORM(v, v) ;
-    VECT_NORM(AB, AB) ;
-    
-    double dot = fabs(VECT_DOT(v, AB)) ;
-    
-    if( fabs(dot-1.0) < EPSILON ){
-        return true;
-    }else{
-        return false;
-    }
-}
-
-bool VECT_EQUAL(SPVector a, SPVector b){
-    double eps = 1.0e-6;
-    if (fabs(a.x-b.x)<eps && fabs(a.y-b.y)<eps && fabs(a.z-b.z)<eps) {
-        return true;
-    }else{
-        return false;
-    }
-}
-
-bool anyVECT_EQUAL(SPVector v, Triangle t){
-    return ( VECT_EQUAL(v, t.AA) || VECT_EQUAL(v, t.BB) || VECT_EQUAL(v, t.CC) ) ;
-}
-
-std::forward_list<Triangle> growTriangles(std::forward_list<Triangle> *triangles)
+TriangleMesh growTriangles(TriangleMesh *mesh)
+// Takes the first triangle from the Triangles list and finds all the coplanar triangles
+// inside 'triangles'. These are removed from 'triangles' and returned as a vector
+//
 {
-    Triangle subjectTri, tri, cand, commonTri;
-    std::forward_list<Triangle> candidates ;
-    std::forward_list<Triangle> commonTriangles ;
-    std::forward_list<Triangle> moreCommons ;
-    std::forward_list<Triangle> beenChecked ;
-    std::forward_list<Triangle> newTriangles ;
-
-    int nCommonVerts;
-    
-    subjectTri = triangles->front() ;
-    commonTriangles.push_front(subjectTri) ;
-    triangles->pop_front();
-    
-    while (!triangles->empty()){
-        tri=triangles->front() ;
-        triangles->pop_front();
-        if ( VECT_EQUAL(tri.NN, subjectTri.NN) && (tri.matId == subjectTri.matId)) {
-            candidates.push_front(tri);
-        }else{
-            newTriangles.push_front(tri);
-        }
-    }
-    while (!newTriangles.empty()){
-        tri=newTriangles.front();
-        newTriangles.pop_front();
-        triangles->push_front(tri);
-    }
-    
-    for (auto commonIt=commonTriangles.begin(); commonIt!=commonTriangles.end(); ++commonIt) {
-        commonTri = *commonIt ;
-        while (!candidates.empty()) {
-            cand = candidates.front();
-            candidates.pop_front() ;
-            nCommonVerts = 0;
-            if ( anyVECT_EQUAL(commonTri.AA, cand)) nCommonVerts++ ;
-            if ( anyVECT_EQUAL(commonTri.BB, cand)) nCommonVerts++ ;
-            if ( anyVECT_EQUAL(commonTri.CC, cand)) nCommonVerts++ ;
-            if ( nCommonVerts == 2 ){
-                moreCommons.push_front(cand) ;
-                commonIt = commonTriangles.before_begin() ;
-            } else {
-                beenChecked.push_front(cand) ;
-            }
-        }
-        if(!moreCommons.empty()){
-            while (!beenChecked.empty()) {
-                tri=beenChecked.front() ;
-                beenChecked.pop_front() ;
-                candidates.push_front(tri) ;
-            }
-        }
-        while (!moreCommons.empty()) {
-            tri = moreCommons.front() ;
-            moreCommons.pop_front() ;
-            commonTriangles.push_front(tri) ;
-        }
-    }
-    while (!beenChecked.empty()) {
-        tri = beenChecked.front() ;
-        beenChecked.pop_front() ;
-        triangles->push_front(tri) ;
-    }
-    
-    return (commonTriangles) ;
+    Triangle objectTri(mesh->triangles.front());
+    auto bounds = std::equal_range(mesh->triangles.begin(), mesh->triangles.end(), objectTri, coplanar) ;
+    vector<Triangle> commonTriangles(bounds.first,bounds.second);
+    mesh->triangles.erase(bounds.first, bounds.second);
+    TriangleMesh newMesh(commonTriangles, mesh->vertices);
+    return newMesh ;
 }
 
-
-void trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, SPVector *org, SPVector *ord, SPVector *absci, int **trinds, int **segments, double **points){
+void meshTo2D(TriangleMesh mesh, SPVector *org, SPVector *ord, SPVector *absci,
+              int **trinds,int **segments,int *nsegments, double **points)
+{
     
     Triangle tri,tri2;
     SPVector N,ordinate,abscissa, origin;
-    double x0,y0,x1,y1,x2,y2;
-    int nt;
+    double x0,y0;
+    
+    *points   = (double *)sp_malloc(sizeof(double) * mesh.vertices.size()*2);
+    *trinds   = (int *)sp_malloc(sizeof(int) * mesh.triangles.size() * 3);
 
-    // Work out the number of triangles
-    //
-    nt = 0 ;
-    for( auto it = triangles.begin(); it != triangles.end(); ++it) nt++ ;
-    *nTriangles = nt ;
-
-    *points   = (double *)sp_malloc(sizeof(double) * nt * 6);
-    *trinds   = (int *)sp_malloc(sizeof(int) * nt * 3);
-    *segments = (int *)sp_malloc(sizeof(int) * nt * 3 * 2);
-
-    tri = *(triangles.begin()) ;
-    N = tri.NN;
-    origin = tri.AA ;
-    VECT_SUB(tri.BB, tri.AA, ordinate);
+    tri = *(mesh.triangles.begin()) ;
+    N = tri.N.asSPVector();
+    origin = mesh.vertices[tri.a].asSPVector() ;
+    VECT_SUB(mesh.vertices[tri.b].asSPVector(), mesh.vertices[tri.a].asSPVector(), ordinate);
     VECT_NORM(ordinate, ordinate);
     VECT_CROSS(N, ordinate, abscissa);
     VECT_NORM(abscissa, abscissa);
 
-    nt = 0;
-    for( auto it = triangles.begin(); it != triangles.end(); ++it){
-        tri = *it ;
-        
-        PointTo2D(tri.AA, origin, ordinate, abscissa, &x0, &y0) ;
-        PointTo2D(tri.BB, origin, ordinate, abscissa, &x1, &y1) ;
-        PointTo2D(tri.CC, origin, ordinate, abscissa, &x2, &y2) ;
-        
-        // put 2D point in pointlist
-        //
-        (*points)[nt*6 + 0] = x0; (*points)[nt*6 + 1] = y0;
-        (*points)[nt*6 + 2] = x1; (*points)[nt*6 + 3] = y1;
-        (*points)[nt*6 + 4] = x2; (*points)[nt*6 + 5] = y2;
-        
-        // Create triangle array
-        //
-        (*trinds)[nt * 3 + 0] = nt*3+0 ;
-        (*trinds)[nt * 3 + 1] = nt*3+1 ;
-        (*trinds)[nt * 3 + 2] = nt*3+2 ;
-        
-        // Create array of triangle sides
-        //
-        (*segments)[nt * 6 + 0 ] = nt*3+0 ;
-        (*segments)[nt * 6 + 1 ] = nt*3+1 ;
-        (*segments)[nt * 6 + 2 ] = nt*3+1 ;
-        (*segments)[nt * 6 + 3 ] = nt*3+2 ;
-        (*segments)[nt * 6 + 4 ] = nt*3+2 ;
-        (*segments)[nt * 6 + 5 ] = nt*3+0 ;
-        
-        nt++;
-
+    // Convert vertices to 2D points
+    //
+    for (int iv=0; iv < mesh.vertices.size(); ++iv){
+        PointTo2D(mesh.vertices[iv].asSPVector(), origin, ordinate, abscissa, &x0, &y0);
+        (*points)[2*iv + 0] = x0 ;
+        (*points)[2*iv + 1] = y0 ;
+    }
+    
+    // Return triangle indices in mesh as trinds
+    //
+    for(int it=0; it<mesh.triangles.size(); ++it){
+        (*trinds)[it*3+0] = mesh.triangles[it].a ;
+        (*trinds)[it*3+1] = mesh.triangles[it].b ;
+        (*trinds)[it*3+2] = mesh.triangles[it].c ;
+    }
+    
+    // Return edges in mesh as segments
+    //
+    std::vector<halfEdge> edges = mesh.edges() ;
+    *nsegments = (int)edges.size() ;
+    *segments = (int *)sp_malloc(sizeof(int) * edges.size() * 2);
+    for(int ie=0; ie<edges.size(); ++ie){
+        (*segments)[2*ie+0] = edges[ie].vertex ;
+        (*segments)[2*ie+1] = edges[ie].nextVertex ;
     }
     
     *org   = origin ;
@@ -533,192 +344,27 @@ void trianglesToPoints(std::forward_list<Triangle> triangles, int *nTriangles, S
     *absci = abscissa ;
     
     return ;
-    
-  
 }
 
-void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, int *nPoints, int *nSegs, double **holes, int *nholes)
-// Going in
-//    points is ntriangles * (3 vertices) * (2 doubles per vertex)
-//    trinds are the indices into points of the triangle vertices
-//    segments is each side of the triangle (ntriangles * 3 sides * 2 ints per side)
-// On output:
-//    ntriangles is the same
-//    nPoints has been modified to be number of unique points
-//    points has been reduced in size to remove duplicates and is now nPoints long (nPoints * 2 * double)
-//    trinds are the indices in the new points array
-//    segments are now only those sides that have only one triangle connected (ie an edge)
-//
-{
-    
-    int np = ntriangles*3 ;
-    int nSegments = ntriangles * 3;
-    int * vert_remap = (int *)sp_malloc(sizeof(int)*np);
-    for( int p=0; p<np; p++)vert_remap[p] = -1;
-    
-    double *uniquePoints = (double *)sp_malloc(sizeof(double) * np * 2);
-    for( int p=0; p<np*2; p++) uniquePoints[p] = -666666.0 ;
-
-    int pntsInList = 0;
-    for( int p=0; p<np; p++){
-        int q = 0;
-        while( !((*points)[2*p+0]==uniquePoints[2*q+0] &&  (*points)[2*p+1]==uniquePoints[2*q+1]) && q<pntsInList ){
-            ++q ;
-        }
-        if(q==pntsInList){
-            uniquePoints[2*pntsInList+0] = (*points)[2*p+0] ;
-            uniquePoints[2*pntsInList+1] = (*points)[2*p+1] ;
-            ++pntsInList ;
-        }
-        vert_remap[p] = q ;
-        
-    }
-    
-    *nPoints = pntsInList ;
-    free(*points) ;
-    *points = (double *)sp_malloc(sizeof(double) * 2 * *nPoints);
-    for(int p=0; p< *nPoints*2; ++p) {
-        (*points)[p] = uniquePoints[p] ;
-    }
-    free(uniquePoints) ;
-
-    for( int p=0; p<ntriangles*3; p++){
-        if( vert_remap[(*trinds)[p]] != -1 ){
-            (*trinds)[p] = vert_remap[(*trinds)[p]] ;
-        }
-    }
-    for( int p=0; p<nSegments*2; p++){
-        if( vert_remap[(*segments)[p]] != -1 ){
-            (*segments)[p] = vert_remap[(*segments)[p]] ;
-        }
-    }
-    
-    free(vert_remap);
-
-    // Now find segments that only have one triangle connected - these are edges or true segments
-    //
-    int segA, segB, segAA, segBB ;
-    std::forward_list<int> seglist ;
-    std::forward_list<double> hole_list ;
-
-    int cnt;
-    for( int p=0; p<nSegments; p++){
-        cnt = 0;
-        segA = (*segments)[2*p+0] ;
-        segB = (*segments)[2*p+1] ;
-        for( int q=0; q<nSegments; q++){
-            if( q!=p){
-                segAA = (*segments)[2*q+0] ;
-                segBB = (*segments)[2*q+1] ;
-                
-                if( (segAA == segA && segBB == segB) || (segAA == segB && segBB == segA) ){
-                    cnt++;
-                }
-            }
-        }
-        if (cnt == 0) {
-            // Egde found
-            seglist.push_front(segA);
-            seglist.push_front(segB);
-            
-            // find triangle owning this segment
-            //
-            for (int t=0; t<ntriangles; ++t) {
-                int a,b,c ;
-                a = (*trinds)[t*3+0] ;
-                b = (*trinds)[t*3+1] ;
-                c = (*trinds)[t*3+2] ;
-                
-                SPVector hole ;
-                hole.z = -666.0;
-                if ( (segA == a && segB == b) ){
-                    hole = createHole(a,b,points,c, *nPoints) ;
-                    
-                }else if ( segA == b && segB == c){
-                    hole = createHole(b,c,points,a, *nPoints) ;
-                    
-                }else if( segA == c && segB == a){
-                    hole = createHole(c,a,points,b, *nPoints) ;
-                    
-                }else if( segA == a && segB == c){
-                    hole = createHole(a,c,points,b, *nPoints) ;
-                    
-                }else if( segA == c && segB == b){
-                    hole = createHole(c,b,points,a, *nPoints) ;
-                    
-                }else if( segA == b && segB == a){
-                    hole = createHole(b,a,points,c, *nPoints) ;
-                    
-                }
-                if (hole.z != -666 ) {
-                    hole_list.push_front(hole.x);
-                    hole_list.push_front(hole.y);
-                }
-            }
-        }
-    }
-    seglist.reverse() ;
-    cnt = 0;
-    for( auto it = seglist.begin(); it != seglist.end(); ++it){
-        cnt++ ;
-    }
-    *nSegs = cnt / 2;
-    
-    free(*segments);
-    *segments = (int *)sp_malloc(sizeof(int) * 2 * (*nSegs)) ;
-    cnt=0;
-    while (!seglist.empty()){
-        (*segments)[cnt++] = seglist.front() ;
-        seglist.pop_front() ;
-    }
-    
-    hole_list.reverse() ;
-    cnt = 0;
-    for( auto it = hole_list.begin(); it != hole_list.end(); ++it){
-        cnt++;
-    }
-    *nholes = cnt / 2 ;
-    
-    if(*nholes != 0){
-//        if((*holes) != NULL )free(*holes) ;
-        *holes = (double *)sp_malloc(sizeof(double) * 2 * (*nholes));
-        cnt=0;
-        while (!hole_list.empty()){
-            double d = hole_list.front() ;
-            (*holes)[cnt++] = d;
-            hole_list.pop_front() ;
-        }
-    }
-    
-    return ;
-    
-}
-    
-
-SPVector  createHole(int a, int b, double **points, int c, int nPoints)
+SPVector  createHole(int a, int b, double *points, int nPoints)
 // Creates a hole coordinate outside of the triangle specified by abc on the
 // side of ab
 //
 {
-    SPVector Aa,Bb,Cc,v1,xp,hole;
-    SPVector v2,v3,AB,xpc,outdir,indir;
+    SPVector Aa,Bb,v1,xp,hole;
+    SPVector v2,v3,AB,outdir,zhat;
 
     double dist;
     double epsi = 0.001 ; // small distance to create a hole point over a line segment
-   
     
-    
-    VECT_CREATE((*points)[a*2+0], (*points)[a*2+1], 0.0, Aa);
-    VECT_CREATE((*points)[b*2+0], (*points)[b*2+1], 0.0, Bb);
-    VECT_CREATE((*points)[c*2+0], (*points)[c*2+1], 0.0, Cc);
+    VECT_CREATE((points)[a*2+0], (points)[a*2+1], 0.0, Aa);
+    VECT_CREATE((points)[b*2+0], (points)[b*2+1], 0.0, Bb);
+    VECT_CREATE(0,0,1,zhat);
     VECT_SUB(Bb, Aa, AB);
     VECT_SCMULT(AB, 0.5, AB);
+    VECT_CROSS(AB,zhat, outdir) ;
     VECT_ADD(Aa,AB,xp);
-    VECT_SUB(Cc,xp,xpc);
-    VECT_CROSS(AB, xpc, v1);
-    VECT_CROSS(AB, v1, outdir);
     VECT_NORM(outdir, outdir);
-    VECT_MINUS(outdir, indir);
     VECT_SCMULT(outdir, 0.01, v1);
     
     bool pointFurther = false;
@@ -726,7 +372,7 @@ SPVector  createHole(int a, int b, double **points, int c, int nPoints)
     while (p < nPoints && pointFurther == false){
         // Only make a hole if there is another point further away from cp (central point on segment
         //
-        VECT_CREATE((*points)[p*2+0], (*points)[p*2+1], 0.0, v2);
+        VECT_CREATE((points)[p*2+0], (points)[p*2+1], 0.0, v2);
         VECT_SUB(v2, xp, v3);
         dist = VECT_DOT(v3, outdir);
         if (dist > epsi) pointFurther = true ;
@@ -755,7 +401,7 @@ void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscis
 bool isPointOnLine(double px, double py, double x1, double y1, double x2, double y2, double approxZero)
 // Line is defined as the segment between points x1,y1 and x2,y2
 // point px,py is the point being tested
-// approx zero is a small number. if teh distance of the point p from the line is less than this then
+// approx zero is a small number. if the distance of the point p from the line is less than this then
 // it is assumed the point is on the line
 //
 {
@@ -813,7 +459,22 @@ char * tryReadFile(const char *prompt, const char * key, const char * help, cons
     } while(fileStat.status != NO_ERROR);
     
     fclose(fp);
-    
+    free(prmpt) ;
     return(fname) ;
+}
+
+void printProgress(int percentDone, int nChars)
+{
+    int ppc = (float)100 / nChars ; // Percent per character
+    putchar('\r');
+    for (int i=0; i<nChars; ++i){
+        if (i * ppc < percentDone) {
+            putchar('>');
+        }else{
+            putchar('.');
+        }
+//        putchar('\n');
+    }
+    std::cout.flush();
 }
 
