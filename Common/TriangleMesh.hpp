@@ -114,7 +114,8 @@ public:
     }
     
     bool operator==(const Triangle3DVec &o) const {
-        if(x == o.x && y==o.y && z==o.z){
+        double epsi = 0.0000001;
+        if(fabs(x-o.x)<epsi && fabs(y-o.y)<epsi && fabs(z-o.z)<epsi){
             return true;
         }
         return false;
@@ -175,10 +176,10 @@ public:
 class TriangleMesh {
 private:
     std::vector<rawTri> rawTriBuff ;
-    bool sorted ;
-    bool halfEdgesBuilt ;
+    bool halfEdgesBuilt = false ;
     
 public:
+    bool sorted = false ;
     std::vector<Triangle3DVec> vertices ;
     std::vector<Triangle> triangles;
     std::vector<halfEdge> halfedges;
@@ -222,8 +223,12 @@ public:
     void addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat) ;
     void addTriangle  (Triangle tri );
     void addTriangle  (rawTri tri );
+    void buildMeshFromRaw (std::vector<rawTri> rawTriangles);
+    void buildRawTris();
     void sortTrianglesAndPoints() ;
     void buildHalfEdges() ;
+    void printTriangles() ;
+    void checkIntegrityAndRepair() ;
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
 

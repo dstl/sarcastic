@@ -26,26 +26,28 @@ extern "C" {
 
 #define ROOTPATH "/tmp"
 #define REPORTN 100
-#define VERBOSE ((int) 1)
+#define VERBOSE ((int) 0)
 
 using namespace std;
 
 void roughenPoint(SPVector *p, Triangle t);
 TriangleMesh growTriangles(TriangleMesh *mesh) ;
-void meshTo2D(TriangleMesh mesh, SPVector *org, SPVector *ord, SPVector *absci,
-              int **trinds,int **segments,int *nsegments, double **points);
+void meshTo2D(TriangleMesh *mesh, SPVector *org, SPVector *ord, SPVector *absci,
+              int **trinds,int **segments,int *nsegments, double **points, int *nholes, double **holes) ;
 void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, int *nPoints, int *nSegs, double **holes, int *nholes);
-SPVector  createHole(int a, int b, double *points, int nPoints) ;
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y);
 bool isPointOnLine(double px, double py, double x1, double y1, double x2, double y2, double approxZero);
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
 void printProgress(int percentDone, int nChars) ;
+bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y);
+bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y, int *nleft, int *nright);
+void testcommonmesh(TriangleMesh *mesh) ;
 
 
 int main(int argc, const char * argv[]) {
     
     int verbose = VERBOSE ;
-    int nSegments ;
+    int nSegments, nholes ;
     SPVector origin, abscissa, ordinate, zdir, *Points3D;
     int *trinds;
     int *segments ;
@@ -88,13 +90,17 @@ int main(int argc, const char * argv[]) {
     
     TriangleMesh mesh, newMesh;
     mesh.readPLYFile(string(instr));
+    mesh.checkIntegrityAndRepair();
+    
+    mesh.writePLYFile(std::string("/tmp/junk.ply"));
+
     mesh.sortTrianglesAndPoints() ;
     long int orgNTris;
     float percentDone;
     orgNTris = mesh.triangles.size() ;
     Timer timer;
     startTimer(&timer, &status);
-    
+    int cnt=0;
     while (!mesh.triangles.empty()) {
         
         percentDone = 100.0 * (float)(orgNTris - mesh.triangles.size()) / (float)orgNTris ;
@@ -105,31 +111,16 @@ int main(int argc, const char * argv[]) {
         //
         TriangleMesh commonMesh = growTriangles(&mesh) ;
         
+        commonMesh.writePLYFile(std::string("/tmp/dbg")+to_string(cnt)+std::string(".ply"));
+        
         // Convert to 2Dpoints
         //
-        meshTo2D(commonMesh, &origin, &ordinate, &abscissa, &trinds, &segments, &nSegments, &points);
+        meshTo2D(&commonMesh, &origin, &ordinate, &abscissa, &trinds, &segments, &nSegments, &points, &nholes, &holes);
         VECT_CROSS(ordinate, abscissa, zdir);
         VECT_NORM(zdir, zdir);
         
-        // create holes
-        //
-        std::vector<SPVector> holesVec ;
-        for(int i=0; i<nSegments; ++i){
-            SPVector hole;
-            hole = createHole(segments[i*2+0], segments[i*2+1], points, (int)commonMesh.vertices.size()) ;
-            if (hole.z != -666 ) {
-                holesVec.push_back(hole);
-            }
-        }
-        if(!holesVec.empty()){
-            holes = (double *)sp_malloc(sizeof(double) * 2 * holesVec.size());
-            for(int i=0; i<holesVec.size(); ++i){
-                holes[i*2+0] = holesVec[i].x ;
-                holes[i*2+1] = holesVec[i].y ;
-            }
-        }else{
-            holes = NULL;
-        }
+        int npoints = (int)commonMesh.vertices.size() ;
+        int ntrinds = (int)commonMesh.triangles.size() ;
         
         // find material and from it max area
         //
@@ -140,7 +131,7 @@ int main(int argc, const char * argv[]) {
         // Set up switches for Delaunay triangulation
         //
         std::ostringstream stringstream ;
-        stringstream << "zpjV" ;
+        stringstream << "zpj" ;
         if (!verbose) {
             stringstream << "Q" ;
         }
@@ -150,9 +141,6 @@ int main(int argc, const char * argv[]) {
         
         // Perform Delaunay triangulation
         //
-        int npoints = (int)commonMesh.vertices.size() ;
-        int ntrinds = (int)commonMesh.triangles.size() ;
-        int nholes  = (int)holesVec.size();
         struct triangulateio in ;
         struct triangulateio out;
         in.pointlist = points ;
@@ -173,7 +161,7 @@ int main(int argc, const char * argv[]) {
         in.segmentmarkerlist = NULL ;
         
         in.numberofholes = nholes;
-        in.holelist = holes; ;
+        in.holelist = holes;
         in.numberofregions = 0;
         in.regionlist = NULL;
         
@@ -185,7 +173,79 @@ int main(int argc, const char * argv[]) {
         out.segmentmarkerlist = NULL;
         out.holelist = NULL;
         
+        if(verbose) {
+            printf("Triangles\n");
+            for (int i=0; i<in.numberoftriangles; ++i) {
+                printf(" %f,%f\n %f,%f\n %f,%f\n %f,%f\n",
+                       in.pointlist[in.trianglelist[i*3+0]*2+0], in.pointlist[in.trianglelist[i*3+0]*2+1],
+                       in.pointlist[in.trianglelist[i*3+1]*2+0], in.pointlist[in.trianglelist[i*3+1]*2+1],
+                       in.pointlist[in.trianglelist[i*3+2]*2+0], in.pointlist[in.trianglelist[i*3+2]*2+1],
+                       in.pointlist[in.trianglelist[i*3+0]*2+0], in.pointlist[in.trianglelist[i*3+0]*2+1]);
+
+            }
+            printf("Done\n");
+            printf("segments\n");
+            for (int i=0; i<in.numberofsegments; ++i) {
+                printf(" %f,%f\n %f,%f\n",
+                       in.pointlist[in.segmentlist[i*2+0]*2+0], in.pointlist[in.segmentlist[i*2+0]*2+1],
+                       in.pointlist[in.segmentlist[i*2+1]*2+0], in.pointlist[in.segmentlist[i*2+1]*2+1]);
+                
+            }
+            printf("Done\n");
+            printf("Holes\n");
+            for (int i=0; i<in.numberofholes; ++i) {
+                printf(" %f,%f\n",
+                       in.holelist[i*2+0], in.holelist[i*2+1]);
+            }
+            printf("Done\n");
+        }
+        
         triangulate((char *)triswitches, &in, &out, NULL);
+        
+        if(verbose) {
+            printf("Triangles\n");
+            for (int i=0; i<out.numberoftriangles; ++i) {
+                printf(" %f,%f\n %f,%f\n %f,%f\n %f,%f\n",
+                       out.pointlist[out.trianglelist[i*3+0]*2+0], out.pointlist[out.trianglelist[i*3+0]*2+1],
+                       out.pointlist[out.trianglelist[i*3+1]*2+0], out.pointlist[out.trianglelist[i*3+1]*2+1],
+                       out.pointlist[out.trianglelist[i*3+2]*2+0], out.pointlist[out.trianglelist[i*3+2]*2+1],
+                       out.pointlist[out.trianglelist[i*3+0]*2+0], out.pointlist[out.trianglelist[i*3+0]*2+1]);
+                
+            }
+            printf("Done\n");
+            printf("segments\n");
+            for (int i=0; i<out.numberofsegments; ++i) {
+                printf(" %f,%f\n %f,%f\n",
+                       out.pointlist[out.segmentlist[i*2+0]*2+0], out.pointlist[out.segmentlist[i*2+0]*2+1],
+                       out.pointlist[out.segmentlist[i*2+1]*2+0], out.pointlist[out.segmentlist[i*2+1]*2+1]);
+                
+            }
+            printf("Done\n");
+            printf("Holes\n");
+            for (int i=0; i<out.numberofholes; ++i) {
+                printf(" %f,%f\n",
+                       out.holelist[i*2+0], out.holelist[i*2+1]);
+            }
+            printf("Done\n");
+        }
+
+        if(out.numberoftriangles < in.numberoftriangles){
+            if(verbose)printf("error fewer tris buit than input\n");
+            out.numberofpoints = in.numberofpoints ;
+            out.numberofsegments = in.numberofsegments ;
+            out.numberoftriangles = in.numberoftriangles ;
+            free(out.pointlist);
+            free(out.segmentlist);
+            free(out.trianglelist);
+            out.pointlist = (double *)sp_malloc(sizeof(double) * out.numberofpoints * 2) ;
+            memcpy(out.pointlist, in.pointlist, sizeof(double) * out.numberofpoints * 2) ;
+            out.segmentlist = (int *)sp_malloc(sizeof(int) * out.numberofsegments * 2) ;
+            memcpy(out.segmentlist,in.segmentlist,sizeof(int) * out.numberofsegments * 2) ;
+            out.trianglelist = (int *)sp_malloc(sizeof(int) * out.numberoftriangles * 3) ;
+            memcpy(out.trianglelist, in.trianglelist, sizeof(int) * out.numberoftriangles * 3) ;
+        }
+        
+        
         
         // Roughen surface corresponding to material type
         //
@@ -239,7 +299,7 @@ int main(int argc, const char * argv[]) {
             AA = Points3D[pointind0] ;
             BB = Points3D[pointind1] ;
             CC = Points3D[pointind2] ;
-            
+
             newMesh.addTriangle(AA, BB, CC, commonMesh.triangles[0].mat);
         }
         
@@ -247,7 +307,7 @@ int main(int argc, const char * argv[]) {
         free(points);
         free(trinds);
         free(segments);
-        if(!holesVec.empty())free(holes);
+        if(nholes!=0)free(holes);
         free(out.pointlist);
         free(out.pointattributelist);
         free(out.pointmarkerlist);
@@ -260,12 +320,11 @@ int main(int argc, const char * argv[]) {
         
         // Next triangle
         //
+        cnt++;
     }
     
-    newMesh.sortTrianglesAndPoints() ;
-    printf("Sorting new triangle mesh of %lu triangles...\n",newMesh.triangles.size()) ;
-    
-    printf("Writing %lu triangles to file...\n",newMesh.triangles.size());
+
+    printf("Writing %lu triangles to file %s...\n",newMesh.triangles.size(),oustr);
     newMesh.writePLYFile(std::string(oustr)) ;
     
     endTimer(&timer, &status);
@@ -294,44 +353,44 @@ TriangleMesh growTriangles(TriangleMesh *mesh)
     return newMesh ;
 }
 
-void meshTo2D(TriangleMesh mesh, SPVector *org, SPVector *ord, SPVector *absci,
-              int **trinds,int **segments,int *nsegments, double **points)
+void meshTo2D(TriangleMesh *mesh, SPVector *org, SPVector *ord, SPVector *absci,
+              int **trinds,int **segments,int *nsegments, double **points, int *nholes, double **holes)
 {
     
     Triangle tri,tri2;
     SPVector N,ordinate,abscissa, origin;
     double x0,y0;
     
-    *points   = (double *)sp_malloc(sizeof(double) * mesh.vertices.size()*2);
-    *trinds   = (int *)sp_malloc(sizeof(int) * mesh.triangles.size() * 3);
+    *points   = (double *)sp_malloc(sizeof(double) * mesh->vertices.size()*2);
+    *trinds   = (int *)sp_malloc(sizeof(int) * mesh->triangles.size() * 3);
 
-    tri = *(mesh.triangles.begin()) ;
+    tri = *(mesh->triangles.begin()) ;
     N = tri.N.asSPVector();
-    origin = mesh.vertices[tri.a].asSPVector() ;
-    VECT_SUB(mesh.vertices[tri.b].asSPVector(), mesh.vertices[tri.a].asSPVector(), ordinate);
+    origin = mesh->vertices[tri.a].asSPVector() ;
+    VECT_SUB(mesh->vertices[tri.b].asSPVector(), mesh->vertices[tri.a].asSPVector(), ordinate);
     VECT_NORM(ordinate, ordinate);
     VECT_CROSS(N, ordinate, abscissa);
     VECT_NORM(abscissa, abscissa);
 
     // Convert vertices to 2D points
     //
-    for (int iv=0; iv < mesh.vertices.size(); ++iv){
-        PointTo2D(mesh.vertices[iv].asSPVector(), origin, ordinate, abscissa, &x0, &y0);
+    for (int iv=0; iv < mesh->vertices.size(); ++iv){
+        PointTo2D(mesh->vertices[iv].asSPVector(), origin, ordinate, abscissa, &x0, &y0);
         (*points)[2*iv + 0] = x0 ;
         (*points)[2*iv + 1] = y0 ;
     }
     
     // Return triangle indices in mesh as trinds
     //
-    for(int it=0; it<mesh.triangles.size(); ++it){
-        (*trinds)[it*3+0] = mesh.triangles[it].a ;
-        (*trinds)[it*3+1] = mesh.triangles[it].b ;
-        (*trinds)[it*3+2] = mesh.triangles[it].c ;
+    for(int it=0; it<mesh->triangles.size(); ++it){
+        (*trinds)[it*3+0] = mesh->triangles[it].a ;
+        (*trinds)[it*3+1] = mesh->triangles[it].b ;
+        (*trinds)[it*3+2] = mesh->triangles[it].c ;
     }
     
     // Return edges in mesh as segments
     //
-    std::vector<halfEdge> edges = mesh.edges() ;
+    std::vector<halfEdge> edges = mesh->edges() ;
     *nsegments = (int)edges.size() ;
     *segments = (int *)sp_malloc(sizeof(int) * edges.size() * 2);
     for(int ie=0; ie<edges.size(); ++ie){
@@ -339,52 +398,59 @@ void meshTo2D(TriangleMesh mesh, SPVector *org, SPVector *ord, SPVector *absci,
         (*segments)[2*ie+1] = edges[ie].nextVertex ;
     }
     
+    SPVector Aa,Bb,dummyHole,xp;
+    SPVector AB,outdir,zhat;
+    int a,b, nleft,nright;
+    bool withinPoly ;
+    std::vector<double> holeVect ;
+    
+    for(int ie=0; ie<edges.size(); ++ie){
+        // create a 'dummy' hole just over the halfedge away from its triangle
+        //
+        a = edges[ie].vertex ;
+        b = edges[ie].nextVertex ;
+        
+        VECT_CREATE((*points)[a*2+0], (*points)[a*2+1], 0.0, Aa);
+        VECT_CREATE((*points)[b*2+0], (*points)[b*2+1], 0.0, Bb);
+        VECT_CREATE(0,0,1,zhat);
+        VECT_SUB(Bb, Aa, AB);
+        VECT_SCMULT(AB, 0.5, AB);
+        VECT_CROSS(AB,zhat,outdir) ;
+        VECT_ADD(Aa,AB,xp);
+        VECT_NORM(outdir, outdir);
+        VECT_SCMULT(outdir, 0.01, dummyHole);
+        VECT_ADD(xp, dummyHole, dummyHole);
+        
+        // Now see if the 'dummyHole' is outside the closed polygon defined
+        // by the halfedges of this mesh.
+
+        withinPoly = pointInPolygon((int)mesh->vertices.size(), *points, *nsegments, *segments, dummyHole.x, dummyHole.y, &nleft, &nright) ;
+
+        if(!withinPoly){
+            if(nleft != 0 && nright != 0){
+                holeVect.push_back(dummyHole.x);
+                holeVect.push_back(dummyHole.y);
+            }
+        }
+    }
+    
+    *nholes = (int) holeVect.size() / 2 ;
+    if(*nholes > 0){
+        *holes = (double *)sp_malloc(sizeof(double) * *nholes * 2) ;
+        
+        for (int i=0; i < *nholes ; ++i) {
+            (*holes)[2*i+0] = holeVect[2*i+0] ;
+            (*holes)[2*i+1] = holeVect[2*i+1] ;
+        }
+    }else{
+        *holes = NULL ;
+    }
+    
     *org   = origin ;
     *ord   = ordinate ;
     *absci = abscissa ;
     
     return ;
-}
-
-SPVector  createHole(int a, int b, double *points, int nPoints)
-// Creates a hole coordinate outside of the triangle specified by abc on the
-// side of ab
-//
-{
-    SPVector Aa,Bb,v1,xp,hole;
-    SPVector v2,v3,AB,outdir,zhat;
-
-    double dist;
-    double epsi = 0.001 ; // small distance to create a hole point over a line segment
-    
-    VECT_CREATE((points)[a*2+0], (points)[a*2+1], 0.0, Aa);
-    VECT_CREATE((points)[b*2+0], (points)[b*2+1], 0.0, Bb);
-    VECT_CREATE(0,0,1,zhat);
-    VECT_SUB(Bb, Aa, AB);
-    VECT_SCMULT(AB, 0.5, AB);
-    VECT_CROSS(AB,zhat, outdir) ;
-    VECT_ADD(Aa,AB,xp);
-    VECT_NORM(outdir, outdir);
-    VECT_SCMULT(outdir, 0.01, v1);
-    
-    bool pointFurther = false;
-    int p=0;
-    while (p < nPoints && pointFurther == false){
-        // Only make a hole if there is another point further away from cp (central point on segment
-        //
-        VECT_CREATE((points)[p*2+0], (points)[p*2+1], 0.0, v2);
-        VECT_SUB(v2, xp, v3);
-        dist = VECT_DOT(v3, outdir);
-        if (dist > epsi) pointFurther = true ;
-        ++p;
-    }
-    if(pointFurther){
-        VECT_ADD(xp, v1, hole);
-    }else{
-        VECT_CREATE(0,0, -666, hole);
-    }
-    
-    return hole;
 }
 
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y){
@@ -476,5 +542,75 @@ void printProgress(int percentDone, int nChars)
 //        putchar('\n');
     }
     std::cout.flush();
+}
+
+bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y)
+{
+    bool  oddNodes=false   ;
+    
+    for(int i=0; i<nsegments; i++){
+        int is, ie;
+        is = segments[2*i+0] ;
+        ie = segments[2*i+1] ;
+        double psx, psy, pex, pey;
+        psx = points[2*is+0] ;
+        psy = points[2*is+1] ;
+        pex = points[2*ie+0] ;
+        pey = points[2*ie+1] ;
+    
+        if( ((psy < y && pey >= y) || (pey < y && psy >= y )) && (psx <=x || pex <=x ) ){
+            oddNodes ^= ((psx + ((y-psy) / (pey - psy )) * (pex - psx )) < x) ;
+        }
+        
+    }
+    return oddNodes;
+}
+
+bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y, int *nleft, int *nright)
+{
+    bool  oddNodes=false   ;
+    int l=0,r=0;
+    
+    for(int i=0; i<nsegments; i++){
+        int is, ie;
+        is = segments[2*i+0] ;
+        ie = segments[2*i+1] ;
+        double psx, psy, pex, pey;
+        psx = points[2*is+0] ;
+        psy = points[2*is+1] ;
+        pex = points[2*ie+0] ;
+        pey = points[2*ie+1] ;
+        
+        if( ((psy < y && pey >= y) || (pey < y && psy >= y )) && (psx <=x || pex <=x ) ){
+            if((psx + ((y-psy) / (pey - psy )) * (pex - psx )) < x){
+                ++l;
+                oddNodes = !oddNodes ;
+            }else{
+                ++r;
+            }
+        }
+    }
+    *nleft = l;
+    *nright = r;
+    return oddNodes;
+}
+
+
+void testcommonmesh(TriangleMesh *mesh){
+    SPVector N = mesh->triangles[0].N.asSPVector() ;
+    double dist = mesh->triangles[0].dist ;
+    int mat = mesh->triangles[0].mat ;
+    bool pass = true;
+    
+    for (int i=0 ; i< mesh->triangles.size(); ++i){
+        if(!(mesh->triangles[i].N == N) || mesh->triangles[i].dist != dist || mesh->triangles[i].mat != mat){
+            printf("Error: Triangles not the same in mesh\n");
+            printf("[%d] N: %f,%f,%f (should be (%f,%f,%f), dist: %f (should be %f), mat: %d (should be %d)\n",i
+                   ,mesh->triangles[i].N.x,mesh->triangles[i].N.y,mesh->triangles[i].N.z,N.x,N.y,N.z,mesh->triangles[i].dist,dist,
+                   mesh->triangles[i].mat, mat);
+            pass = false;
+        }
+    }
+    if (!pass )exit(1);
 }
 

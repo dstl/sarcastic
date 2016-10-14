@@ -240,11 +240,39 @@ void TriangleMesh::writePLYFile ( std::string filename ){
     return ;
 }
 
+
+void TriangleMesh::buildRawTris(){
+    if(rawTriBuff.size() !=0){
+        rawTriBuff.clear() ;
+    }
+    for (int i=0; i<triangles.size(); ++i){
+        rawTri rt = rawTri(vertices[triangles[i].a].asSPVector(),
+                           vertices[triangles[i].b].asSPVector(),
+                           vertices[triangles[i].c].asSPVector(),
+                           triangles[i].mat) ;
+        rawTriBuff.push_back(rt) ;
+    }
+    return ;
+}
+
 void TriangleMesh::sortTrianglesAndPoints(){
+    
+    // This only works if there are raw triangles in the triangle buffer.
+    // Otherwise it can delete vertices and so the triangle indices are wrong
+    //
     
     Triangle3DVec p;
     Triangle tr;
     int idxA, idxB, idxC;
+    
+    if(sorted){
+        return;
+    }
+    if(rawTriBuff.size() == 0){
+        buildRawTris();
+    }
+    vertices.clear();
+    triangles.clear();
     
     // Create a vector of triangle vertices
     //
@@ -273,6 +301,7 @@ void TriangleMesh::sortTrianglesAndPoints(){
         idxC = (int) (lower_bound(vertices.begin(), vertices.end(), p) - vertices.begin()) ;
         
         p = Triangle3DVec(rawTriBuff[t].N.x, rawTriBuff[t].N.y, rawTriBuff[t].N.z);
+
         tr = Triangle(idxA, idxB, idxC, rawTriBuff[t].mat, rawTriBuff[t].N, rawTriBuff[t].d);
         tr.Area = rawTriBuff[t].A ;
         
@@ -281,9 +310,11 @@ void TriangleMesh::sortTrianglesAndPoints(){
     
     // sort the triangle references vector and remove any duplicate triangles
     //
-    
     sort(triangles.begin(), triangles.end());
     triangles.erase( unique(triangles.begin(), triangles.end()), triangles.end()) ;
+    
+    checkIntegrityAndRepair() ;
+    
     sorted = true;
     return ;
     
@@ -342,27 +373,67 @@ void TriangleMesh::addTriangle(int a, int b, int c, int mat)
 }
 
 void TriangleMesh::addTriangle(rawTri tri){
+    SPVector NN;
+    float area, distance ;
+    int s ;
+    
     rawTriBuff.push_back(tri) ;
+    s = (int)vertices.size() ;
+    vertices.push_back(tri.aa);
+    vertices.push_back(tri.bb);
+    vertices.push_back(tri.cc);
+    nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
+    Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    triangles.push_back(t) ;
+    
     sorted = false ;
     return ;
 }
 
+double pround(double x, int precision)
+{
+    if (x == 0.)
+        return x;
+    double a = pow(10,precision);
+    double b = x * a ;
+    int c = (int)floor(b+0.5);
+    double ans = ((double)c) / a ;
+    return ans;
+}
 
 void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
 {
-    rawTri tri(AA,BB,CC,mat);
-    rawTriBuff.push_back(tri) ;
+    SPVector NN, AAx,BBx,CCx;
+    float area, distance ;
+    int s ;
+    
+    AAx.x = pround(AA.x, 6);
+    AAx.y = pround(AA.y, 6);
+    AAx.z = pround(AA.z, 6);
+    BBx.x = pround(BB.x, 6);
+    BBx.y = pround(BB.y, 6);
+    BBx.z = pround(BB.z, 6);
+    CCx.x = pround(CC.x, 6);
+    CCx.y = pround(CC.y, 6);
+    CCx.z = pround(CC.z, 6);
+
+    
+    rawTri tri(AAx,BBx,CCx,mat);
+    rawTriBuff.push_back(tri);
+    s = (int)vertices.size() ;
+    vertices.push_back(tri.aa);
+    vertices.push_back(tri.bb);
+    vertices.push_back(tri.cc);
+    nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
+    Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    triangles.push_back(t) ;
+    
     sorted = false ;
     return ;
 }
 
 void TriangleMesh::buildHalfEdges(){
     halfEdge heA, heB, heC;
-
-    if (!sorted)
-        sortTrianglesAndPoints() ;
-    if(halfEdgesBuilt)
-        return ;
     
 //    halfedges.reserve(triangles.size()*3) ;
     
@@ -434,3 +505,43 @@ rawTri TriangleMesh::asRawTriangle(long int triangleIndex){
                       triangles[triangleIndex].mat);
     return t ;
 }
+void TriangleMesh::printTriangles()
+{
+    for(auto it=rawTriBuff.begin(); it!=rawTriBuff.end(); ++it){
+        it->print();
+    }
+    return ;
+}
+
+void TriangleMesh::checkIntegrityAndRepair(){
+    int aa, bb, cc;
+    SPVector A,B,Cc,Nclcv;
+    Triangle3DVec Ntri, Ncalc;
+    float area,distance;
+    std::vector<Triangle> newtriangles;
+    
+    for (int i=0 ; i< triangles.size(); ++i){
+        aa = triangles[i].a ;
+        bb = triangles[i].b ;
+        cc = triangles[i].c ;
+        
+        A = vertices[aa].asSPVector() ;
+        B = vertices[bb].asSPVector() ;
+        Cc = vertices[cc].asSPVector() ;
+        Ntri = triangles[i].N ;
+        
+        nad(A, B, Cc, &Nclcv, &area, &distance);
+        Ncalc = Triangle3DVec(Nclcv) ;
+        
+        if (!(Ncalc == Ntri) || area == 0.0 || isnan(distance) ) {
+            printf("Mesh integrity check failed for triangle %d\n",i);
+            printf("(Naughty triangle has Normal: %f,%f,%f, Planar Distace: %f, Area: %f)\n",
+                   Nclcv.x, Nclcv.y, Nclcv.z, distance, area) ;
+            printf("Repairing ....\n");
+            triangles.erase(triangles.begin()+i);
+            --i;
+        }
+    }
+    return ;
+}
+
