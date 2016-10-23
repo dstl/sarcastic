@@ -110,9 +110,7 @@ int main(int argc, const char * argv[]) {
         // are common to it (on the same plane and joined togethr
         //
         TriangleMesh commonMesh = growTriangles(&mesh) ;
-        
-        commonMesh.writePLYFile(std::string("/tmp/dbg")+to_string(cnt)+std::string(".ply"));
-        
+                
         // Convert to 2Dpoints
         //
         meshTo2D(&commonMesh, &origin, &ordinate, &abscissa, &trinds, &segments, &nSegments, &points, &nholes, &holes);
