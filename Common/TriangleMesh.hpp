@@ -144,8 +144,8 @@ public:
     //
     bool operator<(const Triangle &o) const {
         if( mat != o.mat)   return mat < o.mat ;
+        if( dist != o.dist ) return dist < o.dist ;
         if( ! (N == o.N))   return N < o.N ;
-        if( dist != o.dist )      return dist < o.dist ;
         return Area < o.Area;
     }
     
@@ -167,8 +167,8 @@ public:
     
     bool coplanar(const Triangle &o) const {
         if ( mat != o.mat ) return false ;
+        if (fabs(dist-o.dist) > 1e-8 ) return false ;
         if (!(N == o.N))    return false ;
-        if ( fabs(dist-o.dist) > 1e-8 ) return false ;
         return true;
     }
 };

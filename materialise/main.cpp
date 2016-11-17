@@ -91,9 +91,6 @@ int main(int argc, const char * argv[]) {
     TriangleMesh mesh, newMesh;
     mesh.readPLYFile(string(instr));
     mesh.checkIntegrityAndRepair();
-    
-    mesh.writePLYFile(std::string("/tmp/junk.ply"));
-
     mesh.sortTrianglesAndPoints() ;
     long int orgNTris;
     float percentDone;
@@ -172,7 +169,7 @@ int main(int argc, const char * argv[]) {
         out.holelist = NULL;
         
         if(verbose) {
-            printf("Triangles\n");
+            printf("Triangles : %d\n",in.numberoftriangles);
             for (int i=0; i<in.numberoftriangles; ++i) {
                 printf(" %f,%f\n %f,%f\n %f,%f\n %f,%f\n",
                        in.pointlist[in.trianglelist[i*3+0]*2+0], in.pointlist[in.trianglelist[i*3+0]*2+1],
@@ -182,15 +179,15 @@ int main(int argc, const char * argv[]) {
 
             }
             printf("Done\n");
-            printf("segments\n");
+            printf("segments: %d\n",in.numberofsegments);
             for (int i=0; i<in.numberofsegments; ++i) {
-                printf(" %f,%f\n %f,%f\n",
+                printf(" %f,%f,0\n %f,%f,1\n",
                        in.pointlist[in.segmentlist[i*2+0]*2+0], in.pointlist[in.segmentlist[i*2+0]*2+1],
                        in.pointlist[in.segmentlist[i*2+1]*2+0], in.pointlist[in.segmentlist[i*2+1]*2+1]);
                 
             }
             printf("Done\n");
-            printf("Holes\n");
+            printf("Holes: %d\n",in.numberofholes);
             for (int i=0; i<in.numberofholes; ++i) {
                 printf(" %f,%f\n",
                        in.holelist[i*2+0], in.holelist[i*2+1]);
@@ -334,8 +331,8 @@ int main(int argc, const char * argv[]) {
 
 bool coplanar(const Triangle &a, const Triangle &b)  {
     if ( a.mat != b.mat ) return a.mat < b.mat ;
-    if (!(a.N == b.N))    return a.N < b.N ;
-    return a.dist<b.dist ;
+    if( fabs(a.dist - b.dist) > 1e-7 ) return a.dist < b.dist ;
+    return a.N < b.N ;
 }
 
 TriangleMesh growTriangles(TriangleMesh *mesh)
@@ -344,9 +341,19 @@ TriangleMesh growTriangles(TriangleMesh *mesh)
 //
 {
     Triangle objectTri(mesh->triangles.front());
+    vector<Triangle> commonTriangles;
+    commonTriangles.push_back(objectTri) ;
+    mesh->triangles.erase(mesh->triangles.begin()) ;
+    
     auto bounds = std::equal_range(mesh->triangles.begin(), mesh->triangles.end(), objectTri, coplanar) ;
-    vector<Triangle> commonTriangles(bounds.first,bounds.second);
-    mesh->triangles.erase(bounds.first, bounds.second);
+    int s = (int)(bounds.first-mesh->triangles.begin()) ;
+    int e = (int)(bounds.second-mesh->triangles.begin());
+    
+    for(int i=s; i<e; ++i){
+        commonTriangles.push_back(mesh->triangles[i]);
+    }
+    mesh->triangles.erase(bounds.first, bounds.second) ;
+
     TriangleMesh newMesh(commonTriangles, mesh->vertices);
     return newMesh ;
 }

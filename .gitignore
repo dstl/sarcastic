@@ -27,3 +27,4 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 *.xcuserstate
+Common/tinyxml
