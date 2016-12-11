@@ -155,11 +155,11 @@ int main (int argc, char **argv){
     }
     
     for (int p = 0; p < nPulses; p++){
-        RxPos[p] = hdr.nbdata[p+startPulse].sat_ps_rx ;
-        TxPos[p] = hdr.nbdata[p+startPulse].sat_ps_rx ;
+        RxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
+        TxPos[p] = hdr.pulses[p+startPulse].sat_ps_rx ;
     }
     
-    SRP = hdr.nbdata[startPulse+(nPulses/2)].srp ;
+    SRP = hdr.pulses[startPulse+(nPulses/2)].srp ;
 
     ecef2SceneCoords(nPulses, RxPos, SRP);
     ecef2SceneCoords(nPulses, TxPos, SRP);
