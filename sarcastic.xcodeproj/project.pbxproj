@@ -54,6 +54,9 @@
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		956B7CF51DFD7D6300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		956B7CF61DFD7DCD00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
+		956B7CF71DFD8EA700FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
+		956B7CF81DFD8ED300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
+		956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
@@ -498,6 +501,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
 				957A59E91CF9AA2200981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59EA1CF9AA2200981E60 /* libfftw3f.a in Frameworks */,
 				957A59E81CF9A9F700981E60 /* libreadline.tbd in Frameworks */,
@@ -509,6 +513,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956B7CF81DFD8ED300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
 				957A59E51CF9A95800981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59E61CF9A95800981E60 /* libfftw3f.a in Frameworks */,
 				957A59E41CF9A93A00981E60 /* libreadline.tbd in Frameworks */,
@@ -519,6 +524,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956B7CF71DFD8EA700FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
 				957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */,
 				957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */,
