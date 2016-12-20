@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
 		95209B191D7AEF8E008ACDD1 /* cpuPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95209B181D7AEF8E008ACDD1 /* cpuPOField.c */; };
+		953221F41E084FA400A736F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221F31E084FA400A736F9 /* main.cpp */; };
+		953221FE1E084FE800A736F9 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221F81E084FE800A736F9 /* splitCandidate.cpp */; };
+		953221FF1E084FE800A736F9 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221FA1E084FE800A736F9 /* AABB.cpp */; };
+		953222001E084FE800A736F9 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221FC1E084FE800A736F9 /* kdTreeNode.cpp */; };
 		953375E219D927C100DE1C46 /* KdTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E019D927C100DE1C46 /* KdTree.m */; };
 		953375E419D927DA00DE1C46 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E319D927DA00DE1C46 /* main.m */; };
 		953375EC19D9293200DE1C46 /* AABB.m in Sources */ = {isa = PBXBuildFile; fileRef = 953375E919D9293200DE1C46 /* AABB.m */; };
@@ -113,6 +117,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		951F56001B6F49320036CBAC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		953221EF1E084FA400A736F9 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -234,6 +247,14 @@
 		9526A0C019E1DAF5003675FB /* Nikolaos Faros-RCS for planar surfaces.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Nikolaos Faros-RCS for planar surfaces.pdf"; sourceTree = "<group>"; };
 		9526A0C119E1DAF5003675FB /* pogorzelski - Ludwig with triangles.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pogorzelski - Ludwig with triangles.pdf"; sourceTree = "<group>"; };
 		9526A0C219E1DAF5003675FB /* Waddell- Rough Surface Scattering.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Waddell- Rough Surface Scattering.pdf"; sourceTree = "<group>"; };
+		953221F11E084FA400A736F9 /* fastKdTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fastKdTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		953221F31E084FA400A736F9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		953221F81E084FE800A736F9 /* splitCandidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = splitCandidate.cpp; sourceTree = "<group>"; };
+		953221F91E084FE800A736F9 /* splitCandidate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = splitCandidate.hpp; sourceTree = "<group>"; };
+		953221FA1E084FE800A736F9 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AABB.cpp; sourceTree = "<group>"; };
+		953221FB1E084FE800A736F9 /* AABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AABB.hpp; sourceTree = "<group>"; };
+		953221FC1E084FE800A736F9 /* kdTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kdTreeNode.cpp; sourceTree = "<group>"; };
+		953221FD1E084FE800A736F9 /* kdTreeNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kdTreeNode.hpp; sourceTree = "<group>"; };
 		953375E019D927C100DE1C46 /* KdTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KdTree.m; sourceTree = "<group>"; };
 		953375E119D927C100DE1C46 /* KdTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KdTree.h; sourceTree = "<group>"; };
 		953375E319D927DA00DE1C46 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -497,6 +518,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		953221EE1E084FA400A736F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		953C591519D7F8C9006D5866 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -548,6 +576,7 @@
 				953C591A19D7F8C9006D5866 /* buildKDTree */,
 				953FA1BE18F4289400EAD4F3 /* sarcastic */,
 				951F56031B6F49320036CBAC /* SARTrace */,
+				953221F21E084FA400A736F9 /* fastKdTree */,
 				955F773619CF1D4700BF3039 /* Frameworks */,
 				9504211417A24F9400A076FC /* Products */,
 				9526A0B919E1DAF5003675FB /* Documents */,
@@ -562,6 +591,7 @@
 				9562D9CA1B483FEA00EC6D83 /* colladaToTriFile */,
 				951F56021B6F49320036CBAC /* SARTrace */,
 				954D034F1B7BC7AD003CCB86 /* materialise */,
+				953221F11E084FA400A736F9 /* fastKdTree */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -694,6 +724,20 @@
 			);
 			name = Documents;
 			path = sarcastic/Documents;
+			sourceTree = "<group>";
+		};
+		953221F21E084FA400A736F9 /* fastKdTree */ = {
+			isa = PBXGroup;
+			children = (
+				953221F31E084FA400A736F9 /* main.cpp */,
+				953221F81E084FE800A736F9 /* splitCandidate.cpp */,
+				953221F91E084FE800A736F9 /* splitCandidate.hpp */,
+				953221FA1E084FE800A736F9 /* AABB.cpp */,
+				953221FB1E084FE800A736F9 /* AABB.hpp */,
+				953221FC1E084FE800A736F9 /* kdTreeNode.cpp */,
+				953221FD1E084FE800A736F9 /* kdTreeNode.hpp */,
+			);
+			path = fastKdTree;
 			sourceTree = "<group>";
 		};
 		953C591A19D7F8C9006D5866 /* buildKDTree */ = {
@@ -1047,6 +1091,23 @@
 			productReference = 951F56021B6F49320036CBAC /* SARTrace */;
 			productType = "com.apple.product-type.tool";
 		};
+		953221F01E084FA400A736F9 /* fastKdTree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 953221F71E084FA400A736F9 /* Build configuration list for PBXNativeTarget "fastKdTree" */;
+			buildPhases = (
+				953221ED1E084FA400A736F9 /* Sources */,
+				953221EE1E084FA400A736F9 /* Frameworks */,
+				953221EF1E084FA400A736F9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = fastKdTree;
+			productName = fastKdTree;
+			productReference = 953221F11E084FA400A736F9 /* fastKdTree */;
+			productType = "com.apple.product-type.tool";
+		};
 		953C591719D7F8C9006D5866 /* buildKDTree */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 953C592119D7F8C9006D5866 /* Build configuration list for PBXNativeTarget "buildKDTree" */;
@@ -1111,6 +1172,10 @@
 					951F56011B6F49320036CBAC = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
+					953221F01E084FA400A736F9 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
 					954D034E1B7BC7AD003CCB86 = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
@@ -1136,6 +1201,7 @@
 				953C591719D7F8C9006D5866 /* buildKDTree */,
 				951F56011B6F49320036CBAC /* SARTrace */,
 				9504211217A24F9400A076FC /* sarcastic */,
+				953221F01E084FA400A736F9 /* fastKdTree */,
 			);
 		};
 /* End PBXProject section */
@@ -1231,6 +1297,17 @@
 				95B5F8981B771A430095A6AB /* SARTrace.c in Sources */,
 				95B5F89D1B77219F0095A6AB /* SARTracebanner.c in Sources */,
 				95B5F8991B771A430095A6AB /* threadCore.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		953221ED1E084FA400A736F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953222001E084FE800A736F9 /* kdTreeNode.cpp in Sources */,
+				953221FF1E084FE800A736F9 /* AABB.cpp in Sources */,
+				953221FE1E084FE800A736F9 /* splitCandidate.cpp in Sources */,
+				953221F41E084FA400A736F9 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1459,6 +1536,67 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		953221F51E084FA400A736F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		953221F61E084FA400A736F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1700,6 +1838,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		953221F71E084FA400A736F9 /* Build configuration list for PBXNativeTarget "fastKdTree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				953221F51E084FA400A736F9 /* Debug */,
+				953221F61E084FA400A736F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		953C592119D7F8C9006D5866 /* Build configuration list for PBXNativeTarget "buildKDTree" */ = {
 			isa = XCConfigurationList;
