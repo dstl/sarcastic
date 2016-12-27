@@ -15,27 +15,39 @@
 #include "splitCandidate.hpp"
 
 TriangleMesh globalMesh;
+int * kdTreeTriangleIndicesOutput ;
 
-typedef struct packedNode {
-    int splitDim;
-    float splitPos;
-    int leftIndex;
-    int rghtIndex;
-    int nTriangles;
-    int *triIndices;
-} packedNode ;
+typedef union {
+    struct KdTreeLeaf {
+        unsigned int flagDimAndOffset;
+        // bits 0..1        : splitting dimension
+        // bits 2..30       : offset bits to 'leaf list'
+        // bits 31 (sign)   : flag whether node is a leaf
+        float splitPosition;
+    } leaf;
+    
+    struct KdTreeBranch {
+        unsigned int flagDimAndOffset;
+        // bits 0..30       : offset to first child
+        // bit 31 (sign)    : flag whether node is a leaf
+        float splitPosition;
+    } branch;
+} KdData ;
+
+KdData * kdTreeOutput ;
 
 class kdTreeNode {
     
 public:
-    int size;
-    int leftAddress;                // Array index of leftchild
+    int size;                       // Number of triangles in this node +1 (used to calc memory reqs)
+    int leftAddress;                // Array index of leftchild node
+    int triangleIndex ;             // index of first triangle
     AABB                            aabb ;
     std::vector<AABB>               triAABBs ;
     std::vector<splitCandidate>     splitList ;
     std::vector<int>                triangles ;     // index of triangle in global Mesh
     std::vector<int>                triangleMask;   // bit mask indicating if triangles[x] is in this node
-
+    
     bool    isLeaf=false;
     float   splitPos;
     int     dim;        // Dimension of split axis, 0,1,2 = x,y,z

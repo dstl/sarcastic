@@ -65,10 +65,10 @@ void kdTreeNode::split(int k, float pos, kdTreeNode &left, kdTreeNode &rght)
     rght.triangleMask.reserve(triangleMask.size());
     
     for(int t=0; t<triangles.size(); ++t){
-
+        
         left.triangleMask[t] = triangleMask[t] & (triAABBs[t].AA.cell[k] <= pos) ;
         rght.triangleMask[t] = triangleMask[t] & (triAABBs[t].BB.cell[k] >= pos) ;
-                
+        
     }
     
     left.splitList = splitList ;
@@ -121,7 +121,7 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
     rght.aabb.AA = aabb.AA;
     rght.aabb.BB = aabb.BB;
     rght.aabb.AA.cell[maxAxis] = pos ;
-
+    
     // sort the triangles in the mesh in this node into the mesh for each of the child nodes.
     //
     

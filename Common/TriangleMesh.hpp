@@ -17,6 +17,7 @@
 #include <vector>
 #include <SIlib2/SIlib2.h>
 #include <set>
+#include "AABB.hpp"
 
 void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, float *distance) ;
 
@@ -69,7 +70,7 @@ public:
         setMaterial(material) ;
         return ;
     };
-
+    
     void setMaterial(int matId) { mat = matId; };
     
     void setMaterial(std::string material){
@@ -123,7 +124,7 @@ public:
 };
 
 class Triangle {
-
+    
 public:
     int a,b,c;          // Index of Vertices in a seperate list of xyz positions (eg TriangleVertex's)
     int mat=0;          // Index of material type
@@ -144,8 +145,8 @@ public:
     //
     bool operator<(const Triangle &o) const {
         if( mat != o.mat)   return mat < o.mat ;
-        if( dist != o.dist ) return dist < o.dist ;
         if( ! (N == o.N))   return N < o.N ;
+        if( dist != o.dist )      return dist < o.dist ;
         return Area < o.Area;
     }
     
@@ -167,8 +168,8 @@ public:
     
     bool coplanar(const Triangle &o) const {
         if ( mat != o.mat ) return false ;
-        if (fabs(dist-o.dist) > 1e-8 ) return false ;
         if (!(N == o.N))    return false ;
+        if ( fabs(dist-o.dist) > 1e-8 ) return false ;
         return true;
     }
 };
@@ -183,6 +184,7 @@ public:
     std::vector<Triangle3DVec> vertices ;
     std::vector<Triangle> triangles;
     std::vector<halfEdge> halfedges;
+    std::vector<AABB> AABBs ;  // array of AABBs for each triangle
     
     TriangleMesh(){}
     
@@ -231,8 +233,9 @@ public:
     void checkIntegrityAndRepair() ;
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
-
-
+    void buildTriangleAABBs();
+    void buildTriangleAABBs(int dim, float pos);
+    
 };
 
 

@@ -19,7 +19,7 @@ void AABB::clipToTriangle(SPVector vertA, SPVector vertB, SPVector vertC, double
     kvals.push_back(vertA.cell[k]);
     kvals.push_back(vertB.cell[k]);
     kvals.push_back(vertC.cell[k]);
-   
+    
     sort(kvals.begin(),kvals.end());
     
     // make sure min of triangle is left of splitPos and max is right of splitPos else return

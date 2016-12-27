@@ -15,7 +15,7 @@
 class splitCandidate {
     
 public:
-
+    
     float pos;                              // position for this event
     int dim;                                // dimension of this splitcandidate
     int owner;                              // index of owning triangle

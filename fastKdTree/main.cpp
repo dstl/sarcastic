@@ -27,8 +27,11 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist) ;
 int reduce(std::vector<unsigned char> list);
 int reduce(std::vector<int> list);
 void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextlist);
-void UpPass(vector<kdTreeNode> &activelist, int level) ;
+void buildSizes(vector<kdTreeNode> &nodelist, int level) ;
 void scanInclusive(int *in, int *out, int n) ;
+void indexTriangles( vector<kdTreeNode> &nodelist);
+void preOrderTraversalNode(vector<kdTreeNode> &nodelist) ;
+void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist) ;
 
 int main(int argc, const char * argv[]) {
     
@@ -86,12 +89,133 @@ int main(int argc, const char * argv[]) {
     }
     
     
-    preOrderTraversal(nodelist);
+    preOrderTraversalNode(nodelist) ;
     
     // Write out data to KdTree file
     //
+    writeKdTreeToFile(string(oustr), nodelist) ;
     
     return 0;
+}
+
+void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
+{
+    FILE *fp;
+    double AAx,AAy,AAz,BBx,BBy,BBz;
+    
+    fp = fopen(filename.c_str(), "wb");
+    if( fp==NULL){
+        printf("ERROR: Failed to open file %s for writing\n",filename.c_str()) ;
+        exit(1);
+    }
+    printf("Writing KdTree to file %s...\n", filename.c_str());
+    
+    AABB aabb = nodelist[0].boundingVolume() ;
+    AAx = aabb.AA.x ;
+    AAy = aabb.AA.y ;
+    AAz = aabb.AA.z ;
+    BBx = aabb.BB.x ;
+    BBy = aabb.BB.y ;
+    BBz = aabb.BB.z ;
+    
+    fwrite(&AAx,sizeof(double),1,fp);
+    fwrite(&AAy,sizeof(double),1,fp);
+    fwrite(&AAz,sizeof(double),1,fp);
+    fwrite(&BBx,sizeof(double),1,fp);
+    fwrite(&BBy,sizeof(double),1,fp);
+    fwrite(&BBz,sizeof(double),1,fp);
+    
+    int ntri = (int)globalMesh.triangles.size() ;
+    fwrite(&ntri,sizeof(int),1,fp);
+    
+    SPVector aa,bb,cc,nn ;
+    double nx,ny,nz, nd_u, nd_v, d, denom, kbu, kbv, kbd, kcu, kcv, kcd ;
+    int k,u,v,tex;
+    const unsigned int quickmodulo[] = {0,1,2,0,1};
+    
+    printf("Packing %d triangles\n",ntri);
+    
+    for(int i=0; i<ntri; ++i){
+        
+        aa = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
+        bb = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
+        cc = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
+        
+        // Create accelerated triangle structure
+        //
+        SPVector ab; VECT_SUB(bb, aa, ab);
+        SPVector bc; VECT_SUB(cc, bb, bc);
+        SPVector ac; VECT_SUB(cc, aa, ac);
+        SPVector x;  VECT_CROSS(ab, bc, x);
+        double l ; l = VECT_MAG(x);
+        VECT_SCMULT(x, (1/l), nn);
+        
+        nx = fabs(nn.x) ;
+        ny = fabs(nn.y) ;
+        nz = fabs(nn.z) ;
+        
+        if( nx > ny ){
+            if (nx > nz) k = 0; /* X */ else k=2; /* Z */
+        }else{
+            if ( ny > nz) k=1; /* Y */ else k=2; /* Z */
+        }
+        u = quickmodulo[k+1];
+        v = quickmodulo[k+2];
+        nd_u = nn.cell[u] / nn.cell[k] ;
+        nd_v = nn.cell[v] / nn.cell[k] ;
+        d =  (aa.x * ( nn.x / nn.cell[k] )) + (aa.y* ( nn.y / nn.cell[k])) + (aa.z* (nn.z / nn.cell[k])) ;
+        denom = 1./((ac.cell[u]*ab.cell[v]) - (ac.cell[v]*ab.cell[u]));
+        kbu     = -ac.cell[v] * denom;
+        kbv     =  ac.cell[u] * denom;
+        kbd     =  ((ac.cell[v] * aa.cell[u]) - (ac.cell[u] * aa.cell[v])) * denom;
+        kcu     =  ab.cell[v] * denom;
+        kcv     = -ab.cell[u] * denom;
+        kcd     =  ((ab.cell[u] * aa.cell[v]) - (ab.cell[v] * aa.cell[u])) * denom;
+        tex     =  globalMesh.triangles[i].mat ;
+        
+        fwrite(&d,sizeof(double),1,fp);
+        fwrite(&nd_u,sizeof(double),1,fp);
+        fwrite(&nd_v,sizeof(double),1,fp);
+        fwrite(&k,sizeof(double),1,fp);
+        fwrite(&kbu,sizeof(double),1,fp);
+        fwrite(&kbv,sizeof(double),1,fp);
+        fwrite(&kbd,sizeof(double),1,fp);
+        fwrite(&kcu,sizeof(double),1,fp);
+        fwrite(&kcv,sizeof(double),1,fp);
+        fwrite(&kcd,sizeof(double),1,fp);
+        fwrite(&tex, sizeof(int), 1, fp);
+        
+    }
+    
+    // Calculate the number of leaves and then for each leaf write the index of each triangle in the leaf
+    //
+    
+    int nleaves = 0;
+    int indexOfTri ;
+    for(int i=0; i<nodelist.size(); ++i){
+        if (nodelist[i].isLeaf) {
+            nleaves++;
+        }
+    }
+    fwrite(&nleaves,sizeof(int),1,fp);
+    printf("Packing %d Leaves\n",nleaves);
+    
+    for(int i=0; i<nodelist.size(); ++i){
+        if (nodelist[i].isLeaf) {
+            ntri = kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] ;
+            fwrite(&ntri,sizeof(int),1,fp);
+            for(int j=0; j<ntri; ++j){
+                indexOfTri = kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+j+1] ;
+                fwrite(&indexOfTri,sizeof(int),1,fp);
+            }
+        }
+    }
+    
+    long nnodes = nodelist.size() ;
+    printf("Packing %ld Nodes\n",nnodes);
+    
+    
+    
 }
 
 void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist)
@@ -268,25 +392,104 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
     //
     adoption( nodelist );
     
-    kdTreeNode node = *nodelist.end() ;
-    int level = node.level ;
-    
-    for (int i=level-1; i>= 0; --i){
-        UpPass(nodelist, i) ;
-    }
-    // Allocate size of tree based upon size just calculated
+    // Starting from bottom of tree and working up calculate the size of each node
     //
+    int level = nodelist.end()->level ;
+    for (int i=level-1; i>= 0; --i){
+        buildSizes(nodelist, i) ;
+    }
     
+    // Calculate the index to each triangle using the triangleIndex
+    // algorithm and put it in the nodelist
+    //
+    indexTriangles( nodelist ) ;
     
+    // Allocate size of tree
+    //
+    kdTreeTriangleIndicesOutput = new int [nodelist[0].size] ;
+    
+    // Load triangles into output array
+    //
+    for(int i=0; i<nodelist.size(); ++i){
+        if (nodelist[i].isLeaf) {
+            
+            // convert triangleMask into indices for each triangle
+            //
+            vector<int> triangleIndices;
+            for(int n=0; n<nodelist[i].triangleMask.size(); ++n){
+                if(nodelist[i].triangleMask[n] == 1){
+                    triangleIndices.push_back(n);
+                }
+            }
+            
+            // Now install triangle indices into global output array
+            //
+            kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] = nodelist[i].size-1 ;
+            for(int n=0; n<triangleIndices.size(); ++n){
+                kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex + n + 1] = triangleIndices[n] ;
+            }
+        }
+    }
+    
+    // build KdTree
+    //
+    kdTreeOutput = (KdData *)sp_malloc(sizeof(KdData) * nodelist.size()) ;
+    unsigned int flagDimAndOffset ;
+    float splitPosition;
+    unsigned int splitDim ;
+    unsigned int offset ;
+    for(int i=0; i< nodelist.size(); ++i){
+        splitPosition = nodelist[i].splitPos ;
+        splitDim = nodelist[i].dim ;
+        
+        if (nodelist[i].isLeaf) {
+            flagDimAndOffset = (unsigned int)0x80000000 ;
+            offset = nodelist[i].triangleIndex ;
+            flagDimAndOffset = flagDimAndOffset | (offset << 2) ;
+            flagDimAndOffset = flagDimAndOffset | splitDim ;
+            kdTreeOutput[i].leaf.flagDimAndOffset = flagDimAndOffset ;
+            kdTreeOutput[i].leaf.splitPosition    = splitPosition ;
+        }else{
+            flagDimAndOffset = (unsigned int)0x0 ;
+            offset = nodelist[i].leftAddress ;
+            flagDimAndOffset = flagDimAndOffset | (offset << 2) ;
+            flagDimAndOffset = flagDimAndOffset | splitDim ;
+            kdTreeOutput[i].branch.flagDimAndOffset = flagDimAndOffset ;
+            kdTreeOutput[i].branch.splitPosition    = splitPosition ;
+        }
+    }
+    
+    return ;
 }
 
-void UpPass(vector<kdTreeNode> &nodelist, int level){
+void indexTriangles( vector<kdTreeNode> &nodelist)
+{
+    int *a = new int [nodelist.size()] ;
+    int *b = new int [nodelist.size()] ;
+    int *c = new int [nodelist.size()] ;
+    
+    for (int i=0; i< nodelist.size(); ++i){
+        a[i] = nodelist[i].isLeaf;
+        b[i] = a[i] * nodelist[i].size ;
+    }
+    scanInclusive(b, c, (int)nodelist.size() );
+    for (int i=0; i< nodelist.size(); ++i){
+        nodelist[i].triangleIndex = a[i] * c[i] ;
+    }
+    
+    return ;
+}
+
+
+void buildSizes(vector<kdTreeNode> &nodelist, int level){
     
     for(int i=0; i<nodelist.size(); ++i){
-        if (!nodelist[i].isLeaf) {
-            nodelist[i].size = nodelist[nodelist[i].leftAddress].size + nodelist[nodelist[i].leftAddress+1].size + 1 ;
-        }else{
-            nodelist[i].size = (int)nodelist[i].triangles.size() + 1 ;
+        if(nodelist[i].level == i){
+            if (!nodelist[i].isLeaf) {
+                nodelist[i].size = nodelist[nodelist[i].leftAddress].size + nodelist[nodelist[i].leftAddress+1].size ;
+            }else{
+                nodelist[i].size = reduce(nodelist[i].triangleMask) + 1 ;
+            }
         }
     }
 }
@@ -344,11 +547,27 @@ char * tryReadFile(const char *prompt, const char * key, const char * help, cons
 void scanInclusive(int *in, int *out, int n){
     out[0] = in[0];
     for (int k=1; k<n; ++k){
-        out[k] = in[k] + out[k-1] ;
+        out[k] = in[k] + in[k-1] ;
     }
 }
 
+
 float reduceSum(float *arr, int nProcs)
+{
+    int a1,a2 ;
+    for(int p=0; p<nProcs; ++p){
+        for(int i=0; i<log2(nProcs)-1; i++){
+            a1 = pow(2,i+1)*p;
+            a2 = a1 + pow(2,i);
+            if(a2<nProcs){
+                arr[a1] = arr[a1] + arr[a2] ;
+            }
+        }
+    }
+    return arr[a1] ;
+}
+
+int reduceSum(int *arr, int nProcs)
 {
     int a1,a2 ;
     for(int p=0; p<nProcs; ++p){
@@ -377,6 +596,7 @@ float reduceMin(float *arr, int nProcs)
     }
     return arr[a1] ;
 }
+
 float reduceMax(float *arr, int nProcs)
 {
     int a1,a2 ;
