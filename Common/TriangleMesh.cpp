@@ -589,6 +589,9 @@ void TriangleMesh::buildTriangleAABBs()
 }
 
 void TriangleMesh::buildTriangleAABBs(int dim, float pos)
+// function for calculating the AAB for each triangle in the mesh and clips it against
+// a split position
+//
 {
     SPVector aa, bb, cc;
     SPVector min, max;
@@ -606,38 +609,54 @@ void TriangleMesh::buildTriangleAABBs(int dim, float pos)
         std::vector<double> ys;
         std::vector<double> zs;
         
-        for(int k=0; k<3; ++k){
-            xs.push_back(aa.cell[k]);
-            xs.push_back(bb.cell[k]);
-            xs.push_back(cc.cell[k]);
-            std::sort(xs.begin(), xs.end());
-            min.cell[k] = xs[0];
-            max.cell[k] = xs[2];
-        }
+        int k = dim;
+        xs.push_back(aa.cell[k]);
+        xs.push_back(bb.cell[k]);
+        xs.push_back(cc.cell[k]);
+        std::sort(xs.begin(), xs.end());
+        min.cell[k] = xs[0];
+        max.cell[k] = xs[2];
         
-        if(min.cell[dim] < pos && max.cell[dim] > pos)
+        
+        // if this triangle straddles the split plane then set the
+        // split plane to be the max or min
+        // This may then change the AABB on each side of teh split plane
+        // so the min and max in the other two dims need to be reconsidered
+        //
+        if(min.cell[dim] < pos && max.cell[dim] > pos){
+            
             
             min.x = (aa.x < min.x) ? aa.x : min.x ;
-        min.x = (bb.x < min.x) ? bb.x : min.x ;
-        min.x = (cc.x < min.x) ? cc.x : min.x ;
-        min.y = (aa.y < min.y) ? aa.y : min.y ;
-        min.y = (bb.y < min.y) ? bb.y : min.y ;
-        min.y = (cc.y < min.y) ? cc.y : min.y ;
-        min.z = (aa.z < min.z) ? aa.z : min.z ;
-        min.z = (bb.z < min.z) ? bb.z : min.z ;
-        min.z = (cc.z < min.z) ? cc.z : min.z ;
+            min.x = (bb.x < min.x) ? bb.x : min.x ;
+            min.x = (cc.x < min.x) ? cc.x : min.x ;
+            min.y = (aa.y < min.y) ? aa.y : min.y ;
+            min.y = (bb.y < min.y) ? bb.y : min.y ;
+            min.y = (cc.y < min.y) ? cc.y : min.y ;
+            min.z = (aa.z < min.z) ? aa.z : min.z ;
+            min.z = (bb.z < min.z) ? bb.z : min.z ;
+            min.z = (cc.z < min.z) ? cc.z : min.z ;
+            
+            max.x = (aa.x > max.x) ? aa.x : max.x ;
+            max.x = (bb.x > max.x) ? bb.x : max.x ;
+            max.x = (cc.x > max.x) ? cc.x : max.x ;
+            max.y = (aa.y > max.y) ? aa.y : max.y ;
+            max.y = (bb.y > max.y) ? bb.y : max.y ;
+            max.y = (cc.y > max.y) ? cc.y : max.y ;
+            max.z = (aa.z > max.z) ? aa.z : max.z ;
+            max.z = (bb.z > max.z) ? bb.z : max.z ;
+            max.z = (cc.z > max.z) ? cc.z : max.z ;
         
-        max.x = (aa.x > max.x) ? aa.x : max.x ;
-        max.x = (bb.x > max.x) ? bb.x : max.x ;
-        max.x = (cc.x > max.x) ? cc.x : max.x ;
-        max.y = (aa.y > max.y) ? aa.y : max.y ;
-        max.y = (bb.y > max.y) ? bb.y : max.y ;
-        max.y = (cc.y > max.y) ? cc.y : max.y ;
-        max.z = (aa.z > max.z) ? aa.z : max.z ;
-        max.z = (bb.z > max.z) ? bb.z : max.z ;
-        max.z = (cc.z > max.z) ? cc.z : max.z ;
+        }
+        
+        // If the triangle does not straddle teh split plane then
+        // we can just use teh calculated AABB
+        //
+        
+        
+        
         
     }
     
-    
-    
+}
+
+

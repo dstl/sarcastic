@@ -16,8 +16,6 @@ kdTreeNode::kdTreeNode(std::string plyFileName)
     globalMesh.checkIntegrityAndRepair();
     globalMesh.buildTriangleAABBs();
     
-    leftChild = NULL;
-    rghtChild = NULL;
     triAABBs = globalMesh.AABBs ;
     for(int i=0; i< globalMesh.triangles.size(); ++i){
         triangles.push_back(i) ;
