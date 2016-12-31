@@ -239,7 +239,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
-        rnp = (rangeAndPower *)sp_calloc(nRays*MAXBOUNCES, sizeof(rangeAndPower));
+        rnp = (rangeAndPower *)sp_calloc(nxRay*nyRay*MAXBOUNCES, sizeof(rangeAndPower));
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
