@@ -16,7 +16,7 @@
 #define ROOTPATH "/tmp"
 #define TRAVERSALCOST ((float)(15.0))
 #define INTERSECTIONCOST ((float)(20.0))
-#define SMALLSIZE (64)
+#define SMALLSIZE (16)
 #define Ce (0.25)
 
 using namespace std;
@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
     //
     SPStatus status ;
     im_init_status(status, 0);
-    im_init_lib(&status, (char *)"buildKDTree", argc, (char **)argv);
+    im_init_lib(&status, (char *)"fastKDTree", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status);
     
     // Read in triangle data
@@ -65,20 +65,29 @@ int main(int argc, const char * argv[]) {
     vector<kdTreeNode> smalllist ;
     vector<kdTreeNode> nextlist ;
     kdTreeNode rootnode((string(instr))) ;
+
     activelist.push_back(rootnode);
     
+    int dpth=0;
+    printf("Processing Large Nodes...\n");
     while(!activelist.empty()){
         for(auto it=activelist.begin(); it<activelist.end(); ++it){
             nodelist.push_back(*it);
         }
         nextlist.clear() ;
         processLargeNodes(&activelist, &smalllist, &nextlist) ;
+        printf("[%d] active list size: %ld. Smalllist size %ld, nextlist size: %ld\n",dpth++,activelist.size(),smalllist.size(),nextlist.size());
+
         nextlist.swap(activelist);
     }
+    printf("Done!\n");
     
+    printf("PreProcessing Small Nodes ...\n");
     preProcessSmallNodes(smalllist);
     activelist = smalllist ;
+    printf("Done!\n");
     
+    printf("Processing Small Nodes...\n");
     while(!activelist.empty()){
         for(auto it=activelist.begin(); it<activelist.end(); ++it){
             nodelist.push_back(*it);
@@ -87,6 +96,7 @@ int main(int argc, const char * argv[]) {
         processSmallNodes(activelist, nextlist);
         nextlist.swap(activelist);
     }
+    printf("Done!\n");
     
     
     preOrderTraversalNode(nodelist) ;
@@ -110,7 +120,7 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     }
     printf("Writing KdTree to file %s...\n", filename.c_str());
     
-    AABB aabb = nodelist[0].boundingVolume() ;
+    AABB aabb = nodelist[0].BVforAllTris() ;
     AAx = aabb.AA.x ;
     AAy = aabb.AA.y ;
     AAz = aabb.AA.z ;
@@ -220,27 +230,29 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
 
 void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist)
 {
-    vector<AABB> tightAABBs;
+    // BV4TrisInNode is the AABB that tightly bounds all the triangles in the node
+    //
+    vector<AABB> BV4TrisInNode;
     AABB aabb ;
     // Compute the AABB for each node in activelist
     //
     for(auto it=activelist->begin(); it!= activelist->end(); ++it){
-        aabb = it->boundingVolume() ;
-        tightAABBs.push_back(aabb) ;
+        aabb = it->BVforAllTris() ;
+        BV4TrisInNode.push_back(aabb) ;
     }
     
     // split large nodes
     //
     // Start by clipping away empty space in node around triangles that are in the node
     //
-    double s; // size of node
-    double ldist, hdist;
+    double s; // size of node in a given dimansion
+    double ldist, hdist; // low and high distances from the BV containing the triangles and the node BV
     kdTreeNode node;
     for (int i=0; i<activelist->size(); ++i) {
         node = activelist->at(i);
         for(int j=0; j<3; ++j){
             s = node.aabb.BB.cell[j] - node.aabb.AA.cell[j] ;
-            aabb = tightAABBs[i] ;
+            aabb = BV4TrisInNode[i] ;
             ldist = aabb.AA.cell[j] - node.aabb.AA.cell[j] ;
             if( (ldist/s) > Ce){
                 node.aabb.AA.cell[j] = aabb.AA.cell[j] ;
@@ -253,10 +265,12 @@ void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *small
         
         kdTreeNode leftNode;
         kdTreeNode rghtNode;
+        
         node.medianSplit(leftNode, rghtNode) ;
         
         int numLeftChild  = (int)leftNode.triangles.size();
         int numRightChild = (int)rghtNode.triangles.size();
+        printf("tri count- Parent: %ld, leftChild: %ld, rightChild %ld\n",node.triangles.size(),leftNode.triangles.size(),rghtNode.triangles.size());
         
         if (numLeftChild < SMALLSIZE) {
             smalllist->push_back(leftNode) ;
@@ -275,6 +289,7 @@ void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *small
 void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
 // This function generates a list of split candidates for each node
 // in smalllist.
+//
 {
     
     int ntris;
@@ -288,6 +303,10 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
             smalllist[i].triangleMask[j] = 1;
         }
         
+        // Create split candidates based upon the AABBs of the triangles in this node
+        // two for each triangle (low and high), and for each dimension.
+        // Store them all in splitList for this node
+        //
         for (int k=0; k<3; ++k){
             
             for(int j=0; j<ntris; ++j){
@@ -554,7 +573,7 @@ void scanInclusive(int *in, int *out, int n){
 
 float reduceSum(float *arr, int nProcs)
 {
-    int a1,a2 ;
+    int a1=0,a2 ;
     for(int p=0; p<nProcs; ++p){
         for(int i=0; i<log2(nProcs)-1; i++){
             a1 = pow(2,i+1)*p;
@@ -569,7 +588,7 @@ float reduceSum(float *arr, int nProcs)
 
 int reduceSum(int *arr, int nProcs)
 {
-    int a1,a2 ;
+    int a1 = 0,a2 ;
     for(int p=0; p<nProcs; ++p){
         for(int i=0; i<log2(nProcs)-1; i++){
             a1 = pow(2,i+1)*p;
@@ -584,7 +603,7 @@ int reduceSum(int *arr, int nProcs)
 
 float reduceMin(float *arr, int nProcs)
 {
-    int a1,a2 ;
+    int a1 = 0,a2 ;
     for(int p=0; p<nProcs; ++p){
         for(int i=0; i<log2(nProcs)-1; i++){
             a1 = pow(2,i+1)*p;
@@ -599,7 +618,7 @@ float reduceMin(float *arr, int nProcs)
 
 float reduceMax(float *arr, int nProcs)
 {
-    int a1,a2 ;
+    int a1= 0,a2 ;
     for(int p=0; p<nProcs; ++p){
         for(int i=0; i<log2(nProcs)-1; i++){
             a1 = pow(2,i+1)*p;

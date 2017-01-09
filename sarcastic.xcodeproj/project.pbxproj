@@ -106,6 +106,12 @@
 		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+		95D43AA11E200D8200B66E58 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
+		95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
+		95D43AA31E200D9F00B66E58 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
+		95D43AA41E200D9F00B66E58 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA361B48465400EC6D83 /* tinyxmlerror.cpp */; };
+		95D43AA51E200D9F00B66E58 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA371B48465400EC6D83 /* tinyxmlparser.cpp */; };
+		95D43AA61E200DBA00B66E58 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
 		95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
 		95E9AE5E1D91B1000063993D /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
@@ -1315,6 +1321,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95D43AA61E200DBA00B66E58 /* matrixMultiplication.c in Sources */,
+				95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */,
+				95D43AA31E200D9F00B66E58 /* tinyxml.cpp in Sources */,
+				95D43AA41E200D9F00B66E58 /* tinyxmlerror.cpp in Sources */,
+				95D43AA51E200D9F00B66E58 /* tinyxmlparser.cpp in Sources */,
+				95D43AA11E200D8200B66E58 /* colladainterface.cpp in Sources */,
 				95584C391E12A72500C7AFDB /* TriangleMesh.cpp in Sources */,
 				953222001E084FE800A736F9 /* kdTreeNode.cpp in Sources */,
 				953221FF1E084FE800A736F9 /* AABB.cpp in Sources */,

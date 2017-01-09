@@ -7,6 +7,14 @@
 //
 
 #include "kdTreeNode.hpp"
+TriangleMesh globalMesh;
+int * kdTreeTriangleIndicesOutput ;
+KdData * kdTreeOutput ;
+
+kdTreeNode::kdTreeNode(std::vector<int> tris):triangles(tris) {
+    aabb = BVforAllTris() ;
+    level = 0;
+}
 
 kdTreeNode::kdTreeNode(std::string plyFileName)
 // Initialise the root KdTreeNode using a .plyFile
@@ -20,10 +28,12 @@ kdTreeNode::kdTreeNode(std::string plyFileName)
     for(int i=0; i< globalMesh.triangles.size(); ++i){
         triangles.push_back(i) ;
     }
+    
+    aabb = BVforAllTris() ;
     level = 0;
 }
 
-AABB kdTreeNode::boundingVolume()
+AABB kdTreeNode::BVforAllTris()
 {
     SPVector triaa, tribb;
     AABB ans;
@@ -83,6 +93,10 @@ void kdTreeNode::split(int k, float pos, kdTreeNode &left, kdTreeNode &rght)
 }
 
 void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
+// medianSplit() splits the node at the median point of the largest axis
+// and returns two child nodes that have their AABB's set and the triAABB's correctly clipped to the split plane.
+// In addition the triangles array in each child correctly holds the index of each triangle
+//
 {
     
     // Set level for the children
@@ -104,7 +118,7 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
     }else{
         maxAxis = 2;
     }
-    pos = aabb.AA.cell[maxAxis]+(len[maxAxis] /2) ;
+    pos = aabb.AA.cell[maxAxis]+(len[maxAxis] /2.0) ;
     
     splitPos = pos ;
     dim      = maxAxis;
@@ -129,13 +143,16 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
     
     for (int t=0; t<triangles.size(); ++t){
         triIdx = triangles[t] ;
-        if(triAABBs[t].AA.cell[maxAxis] > pos ){
+        if(triAABBs[t].AA.cell[maxAxis] >= pos ){
             rght.triangles.push_back(triIdx);
             rght.triAABBs.push_back(triAABBs[t]) ;
-        }else if(triAABBs[t].BB.cell[maxAxis] <= pos){
+        }
+        if(triAABBs[t].BB.cell[maxAxis] <= pos){
             left.triangles.push_back(triIdx);
             left.triAABBs.push_back(triAABBs[t]) ;
-        }else{
+        }
+        if( (triAABBs[t].AA.cell[maxAxis] < pos) && (triAABBs[t].BB.cell[maxAxis] > pos) )
+        {
             // Triangle straddles the split
             //
             left.triangles.push_back(triIdx);
@@ -146,6 +163,11 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
             vertC = globalMesh.vertices[globalMesh.triangles[triIdx].c].asSPVector() ;
             
             triAABBs[t].clipToTriangle(vertA, vertB, vertC, pos, maxAxis, ablft, abrgt);
+            
+            if(ablft == NULL || abrgt == NULL){
+                printf("Error: Bounding box for triangle after clipping is NULL\n");
+                exit(1);
+            }
             
             left.triAABBs.push_back(ablft) ;
             rght.triAABBs.push_back(abrgt) ;

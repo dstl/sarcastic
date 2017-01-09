@@ -14,8 +14,8 @@
 #include "AABB.hpp"
 #include "splitCandidate.hpp"
 
-TriangleMesh globalMesh;
-int * kdTreeTriangleIndicesOutput ;
+extern TriangleMesh globalMesh;
+extern int * kdTreeTriangleIndicesOutput ;
 
 typedef union {
     struct KdTreeLeaf {
@@ -34,14 +34,14 @@ typedef union {
     } branch;
 } KdData ;
 
-KdData * kdTreeOutput ;
+extern KdData * kdTreeOutput ;
 
 class kdTreeNode {
     
 public:
-    int size;                       // Number of triangles in this node +1 (used to calc memory reqs)
-    int leftAddress;                // Array index of leftchild node
-    int triangleIndex ;             // index of first triangle
+    int size=0;                       // Number of triangles in this node +1 (used to calc memory reqs)
+    int leftAddress=0;                // Array index of leftchild node
+    int triangleIndex=0 ;             // index of first triangle
     AABB                            aabb ;
     std::vector<AABB>               triAABBs ;
     std::vector<splitCandidate>     splitList ;
@@ -54,10 +54,10 @@ public:
     int     level;
     
     kdTreeNode(){};
-    kdTreeNode(std::vector<int> tris):triangles(tris) {} ;
+    kdTreeNode(std::vector<int> tris) ;
     kdTreeNode(std::string plyFileName) ;
     
-    AABB boundingVolume();
+    AABB BVforAllTris();
     void medianSplit(kdTreeNode &left, kdTreeNode &rght);
     void split(int dim, float pos, kdTreeNode &left, kdTreeNode &rght) ;
     
