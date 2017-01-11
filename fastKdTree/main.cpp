@@ -32,6 +32,7 @@ void scanInclusive(int *in, int *out, int n) ;
 void indexTriangles( vector<kdTreeNode> &nodelist);
 void preOrderTraversalNode(vector<kdTreeNode> &nodelist) ;
 void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist) ;
+void writeAABBtoPlyFile(AABB bv, std::string filename);
 
 int main(int argc, const char * argv[]) {
     
@@ -65,6 +66,7 @@ int main(int argc, const char * argv[]) {
     vector<kdTreeNode> smalllist ;
     vector<kdTreeNode> nextlist ;
     kdTreeNode rootnode((string(instr))) ;
+//    writeAABBtoPlyFile(rootnode.aabb, string("/tmp/AABBs/root.ply"));
 
     activelist.push_back(rootnode);
     
@@ -76,6 +78,13 @@ int main(int argc, const char * argv[]) {
         }
         nextlist.clear() ;
         processLargeNodes(&activelist, &smalllist, &nextlist) ;
+        
+//        for (int i=0; i<nextlist.size(); ++i) {
+//            AABB ab = nextlist[i].aabb ;
+//            char fn[255] ;
+//            sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",dpth+1,i);
+//            writeAABBtoPlyFile(ab, string(fn));
+//        }
         printf("[%d] active list size: %ld. Smalllist size %ld, nextlist size: %ld\n",dpth++,activelist.size(),smalllist.size(),nextlist.size());
 
         nextlist.swap(activelist);
@@ -94,13 +103,22 @@ int main(int argc, const char * argv[]) {
         }
         nextlist.clear() ;
         processSmallNodes(activelist, nextlist);
+        
         nextlist.swap(activelist);
     }
     printf("Done!\n");
     
     
-    preOrderTraversalNode(nodelist) ;
+    for (int i=0; i<nodelist.size(); ++i) {
+        AABB ab = nodelist[i].aabb ;
+        char fn[255] ;
+        sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",nodelist[i].level,i);
+        writeAABBtoPlyFile(ab, string(fn));
+    }
+
     
+    preOrderTraversalNode(nodelist) ;
+
     // Write out data to KdTree file
     //
     writeKdTreeToFile(string(oustr), nodelist) ;
@@ -293,6 +311,7 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
 {
     
     int ntris;
+    unsigned char ltrue, rtrue;
     
     for(int i=0; i< smalllist.size(); ++i){
         ntris = (int)smalllist[i].triangles.size() ;
@@ -300,7 +319,7 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
         smalllist[i].triangleMask.reserve(ntris) ;
         
         for(int j=0; j<ntris; ++j){
-            smalllist[i].triangleMask[j] = 1;
+            smalllist[i].triangleMask.push_back(1);
         }
         
         // Create split candidates based upon the AABBs of the triangles in this node
@@ -323,10 +342,10 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
             int k = smalllist[i].splitList[j].dim ;
             
             for(int t=0; t<ntris; ++t){
-                smalllist[i].splitList[j].leftTris[t] =
-                (smalllist[i].triAABBs[t].AA.cell[k] <= smalllist[i].splitList[j].pos) ;
-                smalllist[i].splitList[j].rghtTris[t] =
-                (smalllist[i].triAABBs[t].BB.cell[k] >= smalllist[i].splitList[j].pos) ;
+                ltrue = (smalllist[i].triAABBs[t].AA.cell[k] <= smalllist[i].splitList[j].pos) ;
+                smalllist[i].splitList[j].leftTris.push_back(ltrue);
+                rtrue = (smalllist[i].triAABBs[t].BB.cell[k] >= smalllist[i].splitList[j].pos) ;
+                smalllist[i].splitList[j].rghtTris.push_back(rtrue) ;
             }
         }
         
@@ -355,10 +374,12 @@ void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextli
                 
                 int Cl = reduce(activelist[i].splitList[j].leftTris) ;
                 int Cr = reduce(activelist[i].splitList[j].rghtTris) ;
+                SPVector AA = activelist[i].aabb.AA;
                 SPVector BB = activelist[i].aabb.BB;
+                AA.cell[activelist[i].splitList[j].dim] = activelist[i].splitList[j].pos ;
                 BB.cell[activelist[i].splitList[j].dim] = activelist[i].splitList[j].pos ;
                 AABB Vleft = AABB(activelist[i].aabb.AA, BB);
-                AABB Vrght = AABB(BB, activelist[i].aabb.BB);
+                AABB Vrght = AABB(AA, activelist[i].aabb.BB);
                 float Al = Vleft.surfaceArea();
                 float Ar = Vrght.surfaceArea();
                 float ProbL = Al / A0 ;
@@ -668,4 +689,51 @@ void segReduceMax(float *data, int *owner, int nElements, float **results)
     return ;
 }
 
+void writeAABBtoPlyFile(AABB bv, std::string filename){
+    
+    int verticesInAABB = 8;
+    int facesInAABB = 6;
+    
+    FILE *fp = fopen(filename.c_str(), "w");
+
+    if (fp == NULL) {
+        printf("Error : could not open file %s for writing\n",filename.c_str());
+        exit(1);
+    }
+    
+    fprintf(fp,"ply\n");
+    fprintf(fp,"format ascii 1.0\n");
+    fprintf(fp,"comment AABB PLY File by fastKDTree\n");
+    fprintf(fp,"element vertex %d\n",verticesInAABB);
+    fprintf(fp,"property float x\n");
+    fprintf(fp,"property float y\n");
+    fprintf(fp,"property float z\n");
+    fprintf(fp,"element face %d\n",facesInAABB);
+    fprintf(fp,"property list uchar int vertex_index\n");
+    fprintf(fp,"end_header\n");
+    
+    // vertex info for AABB
+    //
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.AA.y,bv.AA.z);  // Vertex 0
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.AA.y,bv.AA.z);  // Vertex 1
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.BB.y,bv.AA.z);  // Vertex 2
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.BB.y,bv.AA.z);  // Vertex 3
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.AA.y,bv.BB.z);  // Vertex 4
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.AA.y,bv.BB.z);  // Vertex 5
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.BB.y,bv.BB.z);  // Vertex 6
+    fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.BB.y,bv.BB.z);  // Vertex 7
+    
+    // face info for AABB
+    //
+    fprintf(fp, "4 0 1 2 3\n");
+    fprintf(fp, "4 4 5 6 7\n");
+    fprintf(fp, "4 0 1 5 4\n");
+    fprintf(fp, "4 1 2 6 5\n");
+    fprintf(fp, "4 2 3 7 6\n");
+    fprintf(fp, "4 3 0 4 7\n");
+    
+    fclose(fp) ;
+    return ;
+    
+}
 

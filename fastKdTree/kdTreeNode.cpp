@@ -164,7 +164,7 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
             
             triAABBs[t].clipToTriangle(vertA, vertB, vertC, pos, maxAxis, ablft, abrgt);
             
-            if(ablft == NULL || abrgt == NULL){
+            if(ablft.surfaceArea() == 0 || abrgt.surfaceArea() == 0){
                 printf("Error: Bounding box for triangle after clipping is NULL\n");
                 exit(1);
             }

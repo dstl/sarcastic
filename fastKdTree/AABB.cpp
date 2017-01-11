@@ -16,9 +16,19 @@ void AABB::clipToTriangle(SPVector vertA, SPVector vertB, SPVector vertC, double
 // dimension and a split plane position. The Axis-Aligned Bounding Box (AABB) for the triangle is calculated and returned
 // in either leftBox or rightBox depending on whether it is before or after the split plane.
 // If the triangle straddles the split plane in the indicated dimension then two bounding boxes are calculated with
-// each one limited by the split plane and bounding only the parts of teh triangle on the boxes corresponding
+// each one limited by the split plane and bounding only the parts of the triangle on the boxe's corresponding
 // side of the plane.
 //
+// line does not cross the split plane
+// Have to check for both va and vb as one of them may be on the splitpos
+// Also both va and vb might be on split plane.
+//                         va:
+//                left     on     right
+//              -------------------------
+//      left    |   l   |   l   |   b   |
+//  vb: on      |   l   |   b   |   r   |
+//      rght    |   b   |   r   |   r   |
+
 {
     int k = splitDim ;
     std::vector<double> kvals;
@@ -61,38 +71,40 @@ void AABB::clipToTriangle(SPVector vertA, SPVector vertB, SPVector vertC, double
         // Find when each side of the triangle crosses the splitplane
         //
         SPVector ABxp = crossingPoint(k, splitPos, va, vb) ;
-        if ( (ABxp.x != vb.x) && (ABxp.y != vb.y) && (ABxp.z != vb.z) ) // ie line AB does pass through plane
+        if ( ! ( ((ABxp.x == va.x) && (ABxp.y == va.y) && (ABxp.z == va.z)) || ((ABxp.x == vb.x) && (ABxp.y == vb.y) && (ABxp.z == vb.z)) ) )
+            // ie line AB does pass through plane
         {
             leftBoxPoints.push_back(ABxp)  ;
             rghtBoxPoints.push_back(ABxp)  ;
-            if(va.cell[k] <= splitPos) {
-                leftBoxPoints.push_back(va) ;
-                rghtBoxPoints.push_back(vb) ;
-            }else{
-                rghtBoxPoints.push_back(va) ;
-                leftBoxPoints.push_back(vb) ;
-            }
-        }else // line does not cross the split plane
-        {
-            if(va.cell[k] <= splitPos) {
-                leftBoxPoints.push_back(va) ;
-                leftBoxPoints.push_back(vb) ;
-            }
-            if(va.cell[k] >= splitPos) {
-                rghtBoxPoints.push_back(va) ;
-                rghtBoxPoints.push_back(vb) ;
-            }
+        }
+        
+        if(va.cell[k] <= splitPos){
+            // put va in left
+            leftBoxPoints.push_back(va)  ;
+        }
+        if (va.cell[k] >= splitPos) {
+            // put va in right
+            rghtBoxPoints.push_back(va)  ;
+            
+        }
+        if(vb.cell[k] <= splitPos){
+            // put vb in left
+            leftBoxPoints.push_back(vb)  ;
+        }
+        if (vb.cell[k] >= splitPos) {
+            // put vb in right
+            rghtBoxPoints.push_back(vb)  ;
         }
     }
     
+        
     if(leftBoxPoints.size() > 1){
     	leftBox  = AABB(leftBoxPoints);
 	}
     if(rghtBoxPoints.size() > 1){
     	rightBox = AABB(rghtBoxPoints);
     }
-    delete verts ;
-    
+    delete[] verts ;
     return;
 }
 
@@ -110,7 +122,7 @@ AABB::AABB(std::vector<SPVector> points) {
     sort(zs.begin(), zs.end()) ;
     
     VECT_CREATE(xs[0], ys[0], zs[0], AA);
-    VECT_CREATE(*xs.end(), *ys.end(), *zs.end(), BB) ;
+    VECT_CREATE(xs.back(), ys.back(), zs.back(), BB) ;
 }
 
 AABB::AABB(std::vector<SPVector> points, int maxDim, float boundMin, float boundMax){
