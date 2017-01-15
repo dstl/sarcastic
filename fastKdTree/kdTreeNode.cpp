@@ -11,9 +11,22 @@ TriangleMesh globalMesh;
 int * kdTreeTriangleIndicesOutput ;
 KdData * kdTreeOutput ;
 
+kdTreeNode::kdTreeNode(){
+    size = 0 ;
+    leftAddress = 0;
+    triangleIndex = 0 ;
+    isLeaf = 0 ;
+    dim = 0 ;
+    level = 0 ;
+    smallroot = -1 ;
+    smallntris = 0 ;
+    triangleMask = NULL;
+}
 kdTreeNode::kdTreeNode(std::vector<int> tris):triangles(tris) {
     aabb = BVforAllTris() ;
     level = 0;
+    smallroot = -1;
+    smallntris = 0;
 }
 
 kdTreeNode::kdTreeNode(std::string plyFileName)
@@ -31,6 +44,41 @@ kdTreeNode::kdTreeNode(std::string plyFileName)
     
     aabb = BVforAllTris() ;
     level = 0;
+    smallroot = -1;
+    smallntris = 0;
+}
+
+// Copy constructor
+//
+kdTreeNode::kdTreeNode(const kdTreeNode &node){
+    size = node.size ;
+    leftAddress = node.leftAddress ;
+    triangleIndex = node.triangleIndex ;
+    aabb = node.aabb ;
+    triAABBs = node.triAABBs ;
+    for (int i=0; i<node.splitList.size(); ++i){
+        splitCandidate s(node.splitList[i]) ;
+        splitList.push_back(s) ;
+    }
+//    splitList = node.splitList ;
+    triangles = node.triangles ;
+    isLeaf = node.isLeaf ;
+    splitPos = node.splitPos ;
+    dim = node.dim ;
+    level = node.level ;
+    smallroot = node.smallroot ;
+    smallntris = node.smallntris ;
+    
+    if (smallntris > 0) {
+        triangleMask = new unsigned char [smallntris] ;
+        memcpy(triangleMask, node.triangleMask, smallntris * sizeof(unsigned char)) ;
+    }
+}
+
+kdTreeNode::~kdTreeNode(){
+    if (smallntris > 0) {
+        delete [] triangleMask ;
+    }
 }
 
 AABB kdTreeNode::BVforAllTris()
@@ -58,6 +106,11 @@ AABB kdTreeNode::BVforAllTris()
 
 void kdTreeNode::split(int k, float pos, kdTreeNode &left, kdTreeNode &rght)
 {
+    if (smallroot == -1) {
+        printf("Error: split() function only works on small nodes. Did you mean medianSplit()?\n");
+        exit(1) ;
+    }
+    
     // Set the AABBs for the kids
     //
     left.aabb.AA = aabb.AA ;
@@ -69,20 +122,25 @@ void kdTreeNode::split(int k, float pos, kdTreeNode &left, kdTreeNode &rght)
     
     // Sort triangles from this node into child nodes using bit mask
     //
-    left.triangleMask.reserve(triangleMask.size());
-    rght.triangleMask.reserve(triangleMask.size());
+    left.triangleMask = new unsigned char [smallntris] ;
+    rght.triangleMask = new unsigned char [smallntris] ;
     
-    for(int t=0; t<triangles.size(); ++t){
-        
+//    left.triangleMask = (unsigned char *)sp_malloc(smallntris * sizeof(unsigned char) ) ;
+//    rght.triangleMask = (unsigned char *)sp_malloc(smallntris * sizeof(unsigned char) ) ;
+    
+    for(int t=0; t<smallntris; ++t){
         left.triangleMask[t] = triangleMask[t] & (triAABBs[t].AA.cell[k] <= pos) ;
         rght.triangleMask[t] = triangleMask[t] & (triAABBs[t].BB.cell[k] >= pos) ;
-        
     }
     
-    left.splitList = splitList ;
-    left.triAABBs  = triAABBs  ;
-    rght.splitList = splitList ;
-    rght.triAABBs  = triAABBs  ;
+    left.splitList  = splitList  ;
+    left.triAABBs   = triAABBs   ;
+    left.smallroot  = smallroot  ;
+    left.smallntris = smallntris ;
+    rght.splitList  = splitList  ;
+    rght.triAABBs   = triAABBs   ;
+    rght.smallroot  = smallroot  ;
+    rght.smallntris = smallntris ;
     
     // Set level for the children
     //

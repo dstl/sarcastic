@@ -23,12 +23,13 @@ using namespace std;
 
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
 void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist);
-void preProcessSmallNodes(vector<kdTreeNode> &smalllist) ;
-int reduce(std::vector<unsigned char> list);
-int reduce(std::vector<int> list);
-void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextlist);
+void preProcessSmallNodes(vector<kdTreeNode> &smalllist, long int smalllistOffset) ;
+int reduce(unsigned char *list, long int size) ;
+int  reduce(std::vector<int> list);
+void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> &nextlist);
 void buildSizes(vector<kdTreeNode> &nodelist, int level) ;
 void scanInclusive(int *in, int *out, int n) ;
+void scanExclusive(int *in, int *out, int n) ;
 void indexTriangles( vector<kdTreeNode> &nodelist);
 void preOrderTraversalNode(vector<kdTreeNode> &nodelist) ;
 void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist) ;
@@ -92,20 +93,31 @@ int main(int argc, const char * argv[]) {
     printf("Done!\n");
     
     printf("PreProcessing Small Nodes ...\n");
-    preProcessSmallNodes(smalllist);
+    preProcessSmallNodes(smalllist, nodelist.size());
     activelist = smalllist ;
     printf("Done!\n");
     
+    for(int i=0; i<activelist.size(); ++i){
+        if(activelist[i].smallroot == -1){
+            printf("Error: node %d in activelist is not a small node in function main()\n",i) ;
+            exit(1);
+        }
+    }
+    
     printf("Processing Small Nodes...\n");
     while(!activelist.empty()){
+        
+        nextlist.clear() ;
+        
+        processSmallNodes(activelist, nextlist);
+        
         for(auto it=activelist.begin(); it<activelist.end(); ++it){
             nodelist.push_back(*it);
         }
-        nextlist.clear() ;
-        processSmallNodes(activelist, nextlist);
         
         nextlist.swap(activelist);
     }
+    
     printf("Done!\n");
     
     
@@ -115,7 +127,6 @@ int main(int argc, const char * argv[]) {
         sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",nodelist[i].level,i);
         writeAABBtoPlyFile(ab, string(fn));
     }
-
     
     preOrderTraversalNode(nodelist) ;
 
@@ -304,22 +315,35 @@ void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *small
     return ;
 }
 
-void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
+void preProcessSmallNodes(vector<kdTreeNode> &smalllist, long int smalllistOffset)
 // This function generates a list of split candidates for each node
 // in smalllist.
+// smalllistOffset is the index of the first small node in the output nodelist
 //
 {
-    
-    int ntris;
-    unsigned char ltrue, rtrue;
-    
     for(int i=0; i< smalllist.size(); ++i){
-        ntris = (int)smalllist[i].triangles.size() ;
         
-        smalllist[i].triangleMask.reserve(ntris) ;
+        // set the index for the smallroot in the final nodelist so that we can refer back to its
+        // triangle contents later. This allows us to just use a triangle mask for all the children
+        // of the smallroot
+        //
+        smalllist[i].smallroot  = (int)smalllistOffset + i ;
+        smalllist[i].smallntris = (int)smalllist[i].triangles.size() ;
         
-        for(int j=0; j<ntris; ++j){
-            smalllist[i].triangleMask.push_back(1);
+        // Set the triangle mask to be all '1's to start with showing that each triangle in
+        // triangles is actually in this smallnode
+        //
+        if(smalllist[i].smallntris <=0){
+            printf("error : smallroot with zero triangles in preProcessSmallNodes\n");
+            exit(1);
+        }
+        if(smalllist[i].smallroot == -1){
+            printf("Error: node %d in activelist is not a small node in function preProcessSmallNodes()\n",i) ;
+            exit(1);
+        }
+        smalllist[i].triangleMask = new unsigned char [smalllist[i].smallntris] ;
+        for (int j=0; j<smalllist[i].triangles.size(); ++j) {
+            smalllist[i].triangleMask[j] = 1 ;
         }
         
         // Create split candidates based upon the AABBs of the triangles in this node
@@ -328,9 +352,9 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
         //
         for (int k=0; k<3; ++k){
             
-            for(int j=0; j<ntris; ++j){
-                splitCandidate eA(smalllist[i].triAABBs[j].AA.cell[k], j, k, ntris) ;
-                splitCandidate eB(smalllist[i].triAABBs[j].BB.cell[k], j, k, ntris) ;
+            for(int j=0; j<smalllist[i].smallntris; ++j){
+                splitCandidate eA(smalllist[i].triAABBs[j].AA.cell[k], j, k, smalllist[i].smallntris) ;
+                splitCandidate eB(smalllist[i].triAABBs[j].BB.cell[k], j, k, smalllist[i].smallntris) ;
                 
                 smalllist[i].splitList.push_back(eA);
                 smalllist[i].splitList.push_back(eB);
@@ -341,26 +365,33 @@ void preProcessSmallNodes(vector<kdTreeNode> &smalllist)
             
             int k = smalllist[i].splitList[j].dim ;
             
-            for(int t=0; t<ntris; ++t){
-                ltrue = (smalllist[i].triAABBs[t].AA.cell[k] <= smalllist[i].splitList[j].pos) ;
-                smalllist[i].splitList[j].leftTris.push_back(ltrue);
-                rtrue = (smalllist[i].triAABBs[t].BB.cell[k] >= smalllist[i].splitList[j].pos) ;
-                smalllist[i].splitList[j].rghtTris.push_back(rtrue) ;
+            for(int t=0; t<smalllist[i].smallntris; ++t){
+                smalllist[i].splitList[j].leftTris[t] = (smalllist[i].triAABBs[t].AA.cell[k] <= smalllist[i].splitList[j].pos) ;
+                smalllist[i].splitList[j].rghtTris[t] = (smalllist[i].triAABBs[t].BB.cell[k] >= smalllist[i].splitList[j].pos) ;
             }
         }
-        
     }
     return ;
 }
 
-void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextlist)
+void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> &nextlist)
 {
+    int Cl, Cr ;
+    SPVector AA, BB ;
+    AABB Vleft,Vrght ;
+    float Al,Ar,ProbL,ProbR,SAHp ;
+    
     for(int i=0; i<activelist.size(); ++i){
+        
+        if(activelist[i].smallroot == -1){
+            printf("Error: node %d in activelist is not a small node in function processSmallNodes()\n",i) ;
+            exit(1);
+        }
+        
         float A0 = activelist[i].aabb.surfaceArea() ;
         int minId = -1;
         
-        vector<int> s = activelist[i].triangleMask ;
-        int ntrisInThisNode = reduce(activelist[i].triangleMask);
+        int ntrisInThisNode = reduce(activelist[i].triangleMask, activelist[i].smallntris );
         float SAH0 = INTERSECTIONCOST * ntrisInThisNode ;
         float minSAH = SAH0;
         
@@ -372,19 +403,20 @@ void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextli
             int tri = activelist[i].splitList[j].owner ;
             if(activelist[i].triangleMask[tri] != 0){
                 
-                int Cl = reduce(activelist[i].splitList[j].leftTris) ;
-                int Cr = reduce(activelist[i].splitList[j].rghtTris) ;
-                SPVector AA = activelist[i].aabb.AA;
-                SPVector BB = activelist[i].aabb.BB;
+                Cl = reduce(activelist[i].splitList[j].leftTris, activelist[i].smallntris) ;
+                Cr = reduce(activelist[i].splitList[j].rghtTris, activelist[i].smallntris) ;
+
+                AA = activelist[i].aabb.AA;
+                BB = activelist[i].aabb.BB;
                 AA.cell[activelist[i].splitList[j].dim] = activelist[i].splitList[j].pos ;
                 BB.cell[activelist[i].splitList[j].dim] = activelist[i].splitList[j].pos ;
-                AABB Vleft = AABB(activelist[i].aabb.AA, BB);
-                AABB Vrght = AABB(AA, activelist[i].aabb.BB);
-                float Al = Vleft.surfaceArea();
-                float Ar = Vrght.surfaceArea();
-                float ProbL = Al / A0 ;
-                float ProbR = Ar / A0 ;
-                float SAHp = TRAVERSALCOST + ((Cl * ProbL + Cr * ProbR) * INTERSECTIONCOST);
+                Vleft = AABB(activelist[i].aabb.AA, BB);
+                Vrght = AABB(AA, activelist[i].aabb.BB);
+                Al = Vleft.surfaceArea();
+                Ar = Vrght.surfaceArea();
+                ProbL = Al / A0 ;
+                ProbR = Ar / A0 ;
+                SAHp = TRAVERSALCOST + ((Cl * ProbL + Cr * ProbR) * INTERSECTIONCOST);
                 if(SAHp < minSAH){
                     minSAH = SAHp ;
                     minId = j;
@@ -397,11 +429,13 @@ void processSmallNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> nextli
         }else{
             kdTreeNode leftNode;
             kdTreeNode rghtNode;
+        
             activelist[i].split(activelist[i].splitList[minId].dim, activelist[i].splitList[minId].pos, leftNode, rghtNode) ;
             nextlist.push_back(leftNode);
             nextlist.push_back(rghtNode);
         }
     }
+    
     return ;
 }
 
@@ -422,19 +456,67 @@ void adoption(vector<kdTreeNode> &nodelist)
         nodelist[i].leftAddress = 2*c[i] - 1;
     }
     
+    // Useful DEBUG to print out the Adoption algorithm output
+    //
+    printf("ind:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",i);
+    }
+    printf("\n");
+    
+    printf("lef:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",nodelist[i].isLeaf);
+    }
+    printf("\n");
+    printf("a[]:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",a[i]);
+    }
+    printf("\n");
+    
+    printf("b[]:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",b[i]);
+    }
+    printf("\n");
+    printf("c[]:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",c[i]);
+    }
+    printf("\n");
+    printf("add:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",nodelist[i].leftAddress);
+    }
+    printf("\n");
+    
     return ;
 }
 
 
 void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
 {
+    int level ;
+    
     // Connect nodelist pointers using adoption algorithm
     //
     adoption( nodelist );
     
+    printf("lev:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",nodelist[i].level);
+    }
+    printf("\n");
+    
     // Starting from bottom of tree and working up calculate the size of each node
     //
-    int level = nodelist.end()->level ;
+    if (!nodelist.empty()) {
+        level = nodelist.back().level ;
+    }else{
+        printf("Error : Empty nodelist in preOrderTraversalNode. Exiting...\n");
+        exit(1);
+    }
     for (int i=level-1; i>= 0; --i){
         buildSizes(nodelist, i) ;
     }
@@ -446,6 +528,10 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
     
     // Allocate size of tree
     //
+    if(nodelist[0].size == 0){
+        printf("Error: tree size is zero\n");
+        exit(1);
+    }
     kdTreeTriangleIndicesOutput = new int [nodelist[0].size] ;
     
     // Load triangles into output array
@@ -453,22 +539,53 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
     for(int i=0; i<nodelist.size(); ++i){
         if (nodelist[i].isLeaf) {
             
+            kdTreeNode smallrootnode(nodelist[nodelist[i].smallroot]) ;
+
             // convert triangleMask into indices for each triangle
             //
             vector<int> triangleIndices;
-            for(int n=0; n<nodelist[i].triangleMask.size(); ++n){
+            for(int n=0; n<nodelist[i].smallntris; ++n){
                 if(nodelist[i].triangleMask[n] == 1){
-                    triangleIndices.push_back(n);
+                    int tri = smallrootnode.triangles[n] ;
+                    triangleIndices.push_back(tri);
                 }
             }
             
             // Now install triangle indices into global output array
             //
             kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] = nodelist[i].size-1 ;
+            printf("node %d has %d triangles\n",i,nodelist[i].size-1) ;
             for(int n=0; n<triangleIndices.size(); ++n){
+                printf("writing triInd %d to location %d\n",triangleIndices[n],nodelist[i].triangleIndex + n + 1);
                 kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex + n + 1] = triangleIndices[n] ;
             }
         }
+    }
+    
+    printf("Triangle Indexing Information\n");
+    printf("-----------------------------\n");
+    for(int i=0; i<nodelist[0].size; ++i){
+        printf("[%03d]  %02d\n",i,kdTreeTriangleIndicesOutput[i]);
+    }
+    printf("KdTree\n");
+    printf("------\n");
+    for(int i=0; i<nodelist.size(); ++i){
+        printf("[%02d]",i);
+        for(int j=0;j<nodelist[i].level;++j){
+            printf("-");
+        }
+        if(nodelist[i].isLeaf){
+            printf("X");
+//            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
+//            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
+//                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+k]);
+//            }
+//            printf("]");
+        }else{
+            printf("|");
+            printf("  [%02d][%02d]",nodelist[i].leftAddress,nodelist[i].leftAddress+1);
+        }
+        printf("\n");
     }
     
     // build KdTree
@@ -512,10 +629,35 @@ void indexTriangles( vector<kdTreeNode> &nodelist)
         a[i] = nodelist[i].isLeaf;
         b[i] = a[i] * nodelist[i].size ;
     }
-    scanInclusive(b, c, (int)nodelist.size() );
+    scanExclusive(b, c, (int)nodelist.size() );
     for (int i=0; i< nodelist.size(); ++i){
         nodelist[i].triangleIndex = a[i] * c[i] ;
     }
+    
+    printf("siz:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",nodelist[i].size);
+    }
+    printf("\n");
+    printf("b[]:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",b[i]);
+    }
+    printf("\n");
+    printf("c[]:");
+    for (int i=0; i< nodelist.size(); ++i){
+        printf("  %02d",c[i]);
+    }
+    printf("\n");
+    printf("tri:");
+    for (int i=0; i< nodelist.size(); ++i){
+        if(nodelist[i].isLeaf){
+            printf("  %02d",nodelist[i].triangleIndex);
+        }else{
+            printf("  --");
+        }
+    }
+    printf("\n");
     
     return ;
 }
@@ -524,19 +666,19 @@ void indexTriangles( vector<kdTreeNode> &nodelist)
 void buildSizes(vector<kdTreeNode> &nodelist, int level){
     
     for(int i=0; i<nodelist.size(); ++i){
-        if(nodelist[i].level == i){
+        if(nodelist[i].level == level){
             if (!nodelist[i].isLeaf) {
                 nodelist[i].size = nodelist[nodelist[i].leftAddress].size + nodelist[nodelist[i].leftAddress+1].size ;
             }else{
-                nodelist[i].size = reduce(nodelist[i].triangleMask) + 1 ;
+                nodelist[i].size = reduce(nodelist[i].triangleMask, nodelist[i].smallntris) + 1 ;
             }
         }
     }
 }
 
-int reduce(std::vector<unsigned char> list){
+int reduce(unsigned char *list, long int size){
     int sum =0;
-    for(int i=0; i<list.size(); ++i){
+    for(long int i=0; i<size; ++i){
         sum += list[i] ;
     }
     return sum;
@@ -587,10 +729,16 @@ char * tryReadFile(const char *prompt, const char * key, const char * help, cons
 void scanInclusive(int *in, int *out, int n){
     out[0] = in[0];
     for (int k=1; k<n; ++k){
-        out[k] = in[k] + in[k-1] ;
+        out[k] = in[k] + out[k-1] ;
     }
 }
 
+void scanExclusive(int *in, int *out, int n){
+    out[0] = 0;
+    for (int k=1; k<n; ++k){
+        out[k] = in[k-1] + out[k-1] ;
+    }
+}
 
 float reduceSum(float *arr, int nProcs)
 {

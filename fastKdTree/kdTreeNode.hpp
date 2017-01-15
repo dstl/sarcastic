@@ -46,16 +46,22 @@ public:
     std::vector<AABB>               triAABBs ;
     std::vector<splitCandidate>     splitList ;
     std::vector<int>                triangles ;     // index of triangle in global Mesh
-    std::vector<int>                triangleMask;   // bit mask indicating if triangles[x] is in this node
     
     bool    isLeaf=false;
     float   splitPos;
     int     dim;        // Dimension of split axis, 0,1,2 = x,y,z
     int     level;
     
-    kdTreeNode(){};
+    int             smallroot  = -1;        // This is the index into nodelist of teh root of the smalllist tree for this node
+    int             smallntris =0 ;         // Number of triangles in this small node. Determines length of triangleMask
+    unsigned char  *triangleMask;           // bit mask indicating if triangles[x] is in this node
+
+    
+    kdTreeNode();
     kdTreeNode(std::vector<int> tris) ;
     kdTreeNode(std::string plyFileName) ;
+    kdTreeNode(const kdTreeNode &node) ;    // copy constructor as we malloc in this class
+    ~kdTreeNode() ;
     
     AABB BVforAllTris();
     void medianSplit(kdTreeNode &left, kdTreeNode &rght);
