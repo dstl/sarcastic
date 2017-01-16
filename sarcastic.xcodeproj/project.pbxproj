@@ -61,10 +61,7 @@
 		9562DA601B4FFE4D00EC6D83 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA541B4FFE4D00EC6D83 /* MVectorObjc.m */; };
 		9562DA651B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
-		956B7CF51DFD7D6300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		956B7CF61DFD7DCD00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
-		956B7CF71DFD8EA700FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
-		956B7CF81DFD8ED300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
@@ -104,6 +101,9 @@
 		95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
 		95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
 		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
+		95B927751E2D04CB00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
+		95B927761E2D052900FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
+		95B927771E2D185D00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
 		95D43AA11E200D8200B66E58 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
@@ -509,7 +509,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956B7CF51DFD7D6300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
+				95B927771E2D185D00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */,
 				957A59F41CF9AAFA00981E60 /* libreadline.tbd in Frameworks */,
 				957A59F31CF9AAEF00981E60 /* libexpat.tbd in Frameworks */,
 				95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */,
@@ -557,7 +557,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956B7CF81DFD8ED300FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
+				95B927761E2D052900FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */,
 				957A59E51CF9A95800981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59E61CF9A95800981E60 /* libfftw3f.a in Frameworks */,
 				957A59E41CF9A93A00981E60 /* libreadline.tbd in Frameworks */,
@@ -568,7 +568,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956B7CF71DFD8EA700FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
+				95B927751E2D04CB00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */,
 				957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */,
 				957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */,

@@ -67,6 +67,9 @@ int main(int argc, const char * argv[]) {
     vector<kdTreeNode> smalllist ;
     vector<kdTreeNode> nextlist ;
     kdTreeNode rootnode((string(instr))) ;
+    
+    printf("Input Mesh has %ld triangles\n",globalMesh.triangles.size()) ;
+    
 //    writeAABBtoPlyFile(rootnode.aabb, string("/tmp/AABBs/root.ply"));
 
     activelist.push_back(rootnode);
@@ -253,7 +256,9 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     long nnodes = nodelist.size() ;
     printf("Packing %ld Nodes\n",nnodes);
     
-    
+    for(int i=0; i<nodelist.size(); ++i){
+        
+    }
     
 }
 
@@ -517,7 +522,7 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
         printf("Error : Empty nodelist in preOrderTraversalNode. Exiting...\n");
         exit(1);
     }
-    for (int i=level-1; i>= 0; --i){
+    for (int i=level; i>= 0; --i){
         buildSizes(nodelist, i) ;
     }
     
@@ -576,11 +581,11 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
         }
         if(nodelist[i].isLeaf){
             printf("X");
-//            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
-//            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
-//                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+k]);
-//            }
-//            printf("]");
+            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
+            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
+                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+1+k]);
+            }
+            printf(" ]");
         }else{
             printf("|");
             printf("  [%02d][%02d]",nodelist[i].leftAddress,nodelist[i].leftAddress+1);
