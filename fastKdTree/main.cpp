@@ -254,12 +254,49 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     }
     
     long nnodes = nodelist.size() ;
-    printf("Packing %ld Nodes\n",nnodes);
     
+    printf("Packing %ld Nodes\n",nnodes);
+    fwrite(&nnodes,sizeof(int),1,fp);
+
     for(int i=0; i<nodelist.size(); ++i){
-        
+        fwrite(&(kdTreeOutput[i].branch.flagDimAndOffset), sizeof(unsigned int),1,fp);
+        fwrite(&(kdTreeOutput[i].branch.splitPosition),sizeof(float),1,fp);
     }
     
+    printf("Writing triangle coords\n");
+    double x,y,z ;
+    for(int i=0; i<ntri; ++i){
+        x = globalMesh.vertices[globalMesh.triangles[i].a].x ;
+        y = globalMesh.vertices[globalMesh.triangles[i].a].y ;
+        z = globalMesh.vertices[globalMesh.triangles[i].a].z ;
+        fwrite(&x,sizeof(double),1,fp);
+        fwrite(&y,sizeof(double),1,fp);
+        fwrite(&z,sizeof(double),1,fp);
+        
+        x = globalMesh.vertices[globalMesh.triangles[i].b].x ;
+        y = globalMesh.vertices[globalMesh.triangles[i].b].y ;
+        z = globalMesh.vertices[globalMesh.triangles[i].b].z ;
+        fwrite(&x,sizeof(double),1,fp);
+        fwrite(&y,sizeof(double),1,fp);
+        fwrite(&z,sizeof(double),1,fp);
+        
+        x = globalMesh.vertices[globalMesh.triangles[i].c].x ;
+        y = globalMesh.vertices[globalMesh.triangles[i].c].y ;
+        z = globalMesh.vertices[globalMesh.triangles[i].c].z ;
+        fwrite(&x,sizeof(double),1,fp);
+        fwrite(&y,sizeof(double),1,fp);
+        fwrite(&z,sizeof(double),1,fp);
+        
+        // get area
+        
+        // get normal
+        
+        // get global to local matrix
+        
+        // get local to global matrix
+        
+        // get material
+    }
 }
 
 void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist)
