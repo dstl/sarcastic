@@ -141,8 +141,14 @@ public:
     Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
     Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
     
-    void globalToLocalMatrix(double &matrix) ;
-    void localToGlobalMatrix(double &matrix) ;
+    // matrices is a function that calculates the coordinate tranformation matrices
+    // for converting from a global coordinate system to a local system where the
+    // 'a' vertex is the origin and the side AB is the ordinate axis.
+    // This is useful for calculating the surface integral of a triangle
+    // localToGlobal and globalToLocal are both 9 element (3x3) arrays. The
+    // memory for them must be allocated before calling this function
+    //
+    void matrices(double *localToGlobal, double *globalToLocal) ;
     
     // Sort in following order : Material, normal, d, a,b,c
     //
@@ -237,7 +243,7 @@ public:
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
     void buildTriangleAABBs();
-    void buildTriangleAABBs(int dim, float pos);
+//    void buildTriangleAABBs(int dim, float pos);
     
 };
 

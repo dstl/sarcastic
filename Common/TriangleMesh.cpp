@@ -588,7 +588,7 @@ void TriangleMesh::buildTriangleAABBs()
     return ;
 }
 
-void TriangleMesh::buildTriangleAABBs(int dim, float pos)
+/*void TriangleMesh::buildTriangleAABBs(int dim, float pos)
 // function for calculating the AAB for each triangle in the mesh and clips it against
 // a split position
 //
@@ -657,6 +657,51 @@ void TriangleMesh::buildTriangleAABBs(int dim, float pos)
         
     }
     
+}*/
+
+// matrices is a function that calculates the coordinate tranformation matrices
+// for converting from a global coordinate system to a local system where the
+// 'a' vertex is the origin and the side AB is the ordinate axis.
+// This is useful for calculating the surface integral of a triangle
+// localToGlobal and globalToLocal are both 9 element (3x3) arrays. The
+// memory for them must be allocated before calling this function
+//
+void Triangle::matrices(double *localToGlobal, double *globalToLocal){
+    
+    double alpha, beta, T_dash[9], T_dashdash[9] ;
+    SPVector zhat = {0,0,1.0} ;
+    
+    if (localToGlobal == NULL || globalToLocal == NULL) {
+        printf("Error matrices must be allocated before calling Triangle::matrices()\n");
+        exit(1);
+    }
+    
+    alpha         = atan2(N.y, N.x);
+    beta          = acos(VECT_DOT(zhat, N)) ;
+    T_dash[0]     = cos(alpha);
+    T_dash[1]     = sin(alpha);
+    T_dash[2]     = 0;
+    T_dash[3]     = -sin(alpha);
+    T_dash[4]     = cos(alpha);
+    T_dash[5]     = 0;
+    T_dash[6]     = 0;
+    T_dash[7]     = 0;
+    T_dash[8]     = 1;
+    T_dashdash[0] = cos(beta);
+    T_dashdash[1] = 0;
+    T_dashdash[2] = -sin(beta);
+    T_dashdash[3] = 0;
+    T_dashdash[4] = 1;
+    T_dashdash[5] = 0;
+    T_dashdash[6] = sin(beta);
+    T_dashdash[7] = 0;
+    T_dashdash[8] = cos(beta);
+    
+    matmul(T_dashdash, T_dash, globalToLocal, 3, 3, 3, 3);
+    mat3by3inv(globalToLocal, localToGlobal) ;
+    
+    return ;
 }
+
 
 

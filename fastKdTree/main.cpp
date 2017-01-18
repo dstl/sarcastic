@@ -180,8 +180,8 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     for(int i=0; i<ntri; ++i){
         
         aa = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
-        bb = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
-        cc = globalMesh.vertices[globalMesh.triangles[i].a].asSPVector() ;
+        bb = globalMesh.vertices[globalMesh.triangles[i].b].asSPVector() ;
+        cc = globalMesh.vertices[globalMesh.triangles[i].c].asSPVector() ;
         
         // Create accelerated triangle structure
         //
@@ -234,6 +234,7 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     
     int nleaves = 0;
     int indexOfTri ;
+    int nnodetris;
     for(int i=0; i<nodelist.size(); ++i){
         if (nodelist[i].isLeaf) {
             nleaves++;
@@ -244,9 +245,9 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     
     for(int i=0; i<nodelist.size(); ++i){
         if (nodelist[i].isLeaf) {
-            ntri = kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] ;
-            fwrite(&ntri,sizeof(int),1,fp);
-            for(int j=0; j<ntri; ++j){
+            nnodetris = kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] ;
+            fwrite(&nnodetris,sizeof(int),1,fp);
+            for(int j=0; j<nnodetris; ++j){
                 indexOfTri = kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+j+1] ;
                 fwrite(&indexOfTri,sizeof(int),1,fp);
             }
@@ -265,7 +266,10 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     
     printf("Writing triangle coords\n");
     double x,y,z ;
+    double localToGlobal[9] ;
+    double globalToLocal[9] ;
     for(int i=0; i<ntri; ++i){
+        printf("burning triangle %d\n",i);
         x = globalMesh.vertices[globalMesh.triangles[i].a].x ;
         y = globalMesh.vertices[globalMesh.triangles[i].a].y ;
         z = globalMesh.vertices[globalMesh.triangles[i].a].z ;
@@ -289,9 +293,9 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
         
        	// get normal
        	//
-       	x = globalMesh.triangles[i].N.asSPVector().x ;
-       	y = globalMesh.triangles[i].N.asSPVector().y ;
-       	z = globalMesh.triangles[i].N.asSPVector().z ;
+       	x = globalMesh.triangles[i].N.x ;
+       	y = globalMesh.triangles[i].N.y ;
+       	z = globalMesh.triangles[i].N.z ;
         fwrite(&x,sizeof(double),1,fp);
         fwrite(&y,sizeof(double),1,fp);
         fwrite(&z,sizeof(double),1,fp);
@@ -301,13 +305,24 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
         x = globalMesh.triangles[i].Area ;
         fwrite(&x,sizeof(double),1,fp);        
         
-        // get global to local matrix
+        // get global to local matrix and local to global matrix
         //
-        
-        // get local to global matrix
+        globalMesh.triangles[i].matrices(localToGlobal, globalToLocal) ;
+        for (int j=0; j<9; j++){
+            fwrite(&(globalToLocal[j]),sizeof(double),1,fp);
+        }
+        for (int j=0; j<9; j++){
+            fwrite(&(localToGlobal[j]),sizeof(double),1,fp);
+        }
         
         // get material
+        //
+        fwrite(&(globalMesh.triangles[i].mat), sizeof(int), 1, fp);
     }
+    
+    fclose(fp);
+    
+    return ;
 }
 
 void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist)

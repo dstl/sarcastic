@@ -204,8 +204,9 @@ void readKdTree(const char *filename,
     *triangles = (Triangle *)sp_malloc(sizeof(Triangle) * *nTriangles);
     double dub;
     int ind;
+    long int status;
     for (i=0; i< *nTriangles; i++){
-        if(fread(&dub, sizeof(double), 1, fp)!=1){
+        if((status=fread(&dub, sizeof(double), 1, fp)) !=1){
             printf("ERROR: Failed to read A for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
