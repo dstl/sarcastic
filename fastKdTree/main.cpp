@@ -287,11 +287,22 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
         fwrite(&y,sizeof(double),1,fp);
         fwrite(&z,sizeof(double),1,fp);
         
-        // get area
+       	// get normal
+       	//
+       	x = globalMesh.triangles[i].N.asSPVector().x ;
+       	y = globalMesh.triangles[i].N.asSPVector().y ;
+       	z = globalMesh.triangles[i].N.asSPVector().z ;
+        fwrite(&x,sizeof(double),1,fp);
+        fwrite(&y,sizeof(double),1,fp);
+        fwrite(&z,sizeof(double),1,fp);
         
-        // get normal
+        // get area
+        //
+        x = globalMesh.triangles[i].Area ;
+        fwrite(&x,sizeof(double),1,fp);        
         
         // get global to local matrix
+        //
         
         // get local to global matrix
         

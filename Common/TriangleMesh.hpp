@@ -141,6 +141,9 @@ public:
     Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
     Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
     
+    void globalToLocalMatrix(double &matrix) ;
+    void localToGlobalMatrix(double &matrix) ;
+    
     // Sort in following order : Material, normal, d, a,b,c
     //
     bool operator<(const Triangle &o) const {
