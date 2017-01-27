@@ -1,4 +1,4 @@
-//
+ //
 //  main.cpp
 //  fastKdTree
 //
@@ -22,7 +22,7 @@
 using namespace std;
 
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
-void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist);
+void processLargeNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> &smalllist, vector<kdTreeNode> &nextlist);
 void preProcessSmallNodes(vector<kdTreeNode> &smalllist, long int smalllistOffset) ;
 int reduce(unsigned char *list, long int size) ;
 int  reduce(std::vector<int> list);
@@ -77,11 +77,14 @@ int main(int argc, const char * argv[]) {
     int dpth=0;
     printf("Processing Large Nodes...\n");
     while(!activelist.empty()){
+        
+        nextlist.clear() ;
+        
+        processLargeNodes(activelist, smalllist, nextlist) ;
+        
         for(auto it=activelist.begin(); it<activelist.end(); ++it){
             nodelist.push_back(*it);
         }
-        nextlist.clear() ;
-        processLargeNodes(&activelist, &smalllist, &nextlist) ;
         
 //        for (int i=0; i<nextlist.size(); ++i) {
 //            AABB ab = nextlist[i].aabb ;
@@ -132,6 +135,8 @@ int main(int argc, const char * argv[]) {
     }
     
     preOrderTraversalNode(nodelist) ;
+
+    printKdTreeData() ;
 
     // Write out data to KdTree file
     //
@@ -218,7 +223,7 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
         fwrite(&d,sizeof(double),1,fp);
         fwrite(&nd_u,sizeof(double),1,fp);
         fwrite(&nd_v,sizeof(double),1,fp);
-        fwrite(&k,sizeof(double),1,fp);
+        fwrite(&k,sizeof(int),1,fp);
         fwrite(&kbu,sizeof(double),1,fp);
         fwrite(&kbv,sizeof(double),1,fp);
         fwrite(&kbd,sizeof(double),1,fp);
@@ -325,7 +330,7 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     return ;
 }
 
-void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *smalllist, vector<kdTreeNode> *nextlist)
+void processLargeNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> &smalllist, vector<kdTreeNode> &nextlist)
 {
     // BV4TrisInNode is the AABB that tightly bounds all the triangles in the node
     //
@@ -333,7 +338,7 @@ void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *small
     AABB aabb ;
     // Compute the AABB for each node in activelist
     //
-    for(auto it=activelist->begin(); it!= activelist->end(); ++it){
+    for(auto it=activelist.begin(); it!= activelist.end(); ++it){
         aabb = it->BVforAllTris() ;
         BV4TrisInNode.push_back(aabb) ;
     }
@@ -344,40 +349,38 @@ void processLargeNodes(vector<kdTreeNode> *activelist, vector<kdTreeNode> *small
     //
     double s; // size of node in a given dimansion
     double ldist, hdist; // low and high distances from the BV containing the triangles and the node BV
-    kdTreeNode node;
-    for (int i=0; i<activelist->size(); ++i) {
-        node = activelist->at(i);
+    for (int i=0; i<activelist.size(); ++i) {
         for(int j=0; j<3; ++j){
-            s = node.aabb.BB.cell[j] - node.aabb.AA.cell[j] ;
+            s = activelist[i].aabb.BB.cell[j] - activelist[i].aabb.AA.cell[j] ;
             aabb = BV4TrisInNode[i] ;
-            ldist = aabb.AA.cell[j] - node.aabb.AA.cell[j] ;
+            ldist = aabb.AA.cell[j] - activelist[i].aabb.AA.cell[j] ;
             if( (ldist/s) > Ce){
-                node.aabb.AA.cell[j] = aabb.AA.cell[j] ;
+                activelist[i].aabb.AA.cell[j] = aabb.AA.cell[j] ;
             }
-            hdist = node.aabb.BB.cell[j] - aabb.BB.cell[j] ;
+            hdist = activelist[i].aabb.BB.cell[j] - aabb.BB.cell[j] ;
             if( (hdist/s) > Ce){
-                node.aabb.BB.cell[j] = aabb.BB.cell[j] ;
+                activelist[i].aabb.BB.cell[j] = aabb.BB.cell[j] ;
             }
         }
         
         kdTreeNode leftNode;
         kdTreeNode rghtNode;
         
-        node.medianSplit(leftNode, rghtNode) ;
+        activelist[i].medianSplit(leftNode, rghtNode) ;
         
         int numLeftChild  = (int)leftNode.triangles.size();
         int numRightChild = (int)rghtNode.triangles.size();
-        printf("tri count- Parent: %ld, leftChild: %ld, rightChild %ld\n",node.triangles.size(),leftNode.triangles.size(),rghtNode.triangles.size());
+        printf("tri count- Parent: %ld, leftChild: %ld, rightChild %ld\n",activelist[i].triangles.size(),leftNode.triangles.size(),rghtNode.triangles.size());
         
         if (numLeftChild < SMALLSIZE) {
-            smalllist->push_back(leftNode) ;
+            smalllist.push_back(leftNode) ;
         }else{
-            nextlist->push_back(leftNode) ;
+            nextlist.push_back(leftNode) ;
         }
         if (numRightChild < SMALLSIZE) {
-            smalllist->push_back(rghtNode) ;
+            smalllist.push_back(rghtNode) ;
         }else{
-            nextlist->push_back(rghtNode) ;
+            nextlist.push_back(rghtNode) ;
         }
     }
     return ;
@@ -600,7 +603,9 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
         printf("Error: tree size is zero\n");
         exit(1);
     }
-    kdTreeTriangleIndicesOutput = new int [nodelist[0].size] ;
+    
+    numOfTriangleIndices = nodelist[0].size ;
+    kdTreeTriangleIndicesOutput = new int [numOfTriangleIndices] ;
     
     // Load triangles into output array
     //
@@ -630,50 +635,59 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
         }
     }
     
-    printf("Triangle Indexing Information\n");
-    printf("-----------------------------\n");
-    for(int i=0; i<nodelist[0].size; ++i){
-        printf("[%03d]  %02d\n",i,kdTreeTriangleIndicesOutput[i]);
-    }
-    printf("KdTree\n");
-    printf("------\n");
-    for(int i=0; i<nodelist.size(); ++i){
-        printf("[%02d]",i);
-        for(int j=0;j<nodelist[i].level;++j){
-            printf("-");
-        }
-        if(nodelist[i].isLeaf){
-            printf("X");
-            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
-            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
-                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+1+k]);
-            }
-            printf(" ]");
-        }else{
-            printf("|");
-            printf("  [%02d][%02d]",nodelist[i].leftAddress,nodelist[i].leftAddress+1);
-        }
-        printf("\n");
-    }
+    printKdTreeNodes(nodelist) ;
+    
+//    printf("Triangle Indexing Information\n");
+//    printf("-----------------------------\n");
+//    for(int i=0; i<nodelist[0].size; ++i){
+//        printf("[%03d]  %02d\n",i,kdTreeTriangleIndicesOutput[i]);
+//    }
+//    printf("KdTree\n");
+//    printf("------\n");
+//    for(int i=0; i<nodelist.size(); ++i){
+//        printf("[%02d]",i);
+//        for(int j=0;j<nodelist[i].level;++j){
+//            printf("-");
+//        }
+//        if(nodelist[i].isLeaf){
+//            printf("X");
+//            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
+//            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
+//                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+1+k]);
+//            }
+//            printf(" ]");
+//        }else{
+//            printf("|");
+//            printf("  [%02d][%02d]",nodelist[i].leftAddress,nodelist[i].leftAddress+1);
+//        }
+//        printf("\n");
+//    }
     
     // build KdTree
     //
-    kdTreeOutput = (KdData *)sp_malloc(sizeof(KdData) * nodelist.size()) ;
+    numOfKdTreeNodes = (int)nodelist.size() ;
+    kdTreeOutput = (KdData *)sp_malloc(sizeof(KdData) * numOfKdTreeNodes) ;
     unsigned int flagDimAndOffset ;
     float splitPosition;
     unsigned int splitDim ;
-    unsigned int offset ;
+    unsigned int offset=0 ;
+    unsigned int leafoffset = 0;
     for(int i=0; i< nodelist.size(); ++i){
         splitPosition = nodelist[i].splitPos ;
         splitDim = nodelist[i].dim ;
         
         if (nodelist[i].isLeaf) {
             flagDimAndOffset = (unsigned int)0x80000000 ;
-            offset = nodelist[i].triangleIndex ;
-            flagDimAndOffset = flagDimAndOffset | (offset << 2) ;
+            // For compatability with the old buildKdTree Code we just sepcify the
+            // offset as the index of the leaf. We can improve of this by directly writing the
+            // offset as the offset into the triangle array
+            // offset = nodelist[i].triangleIndex ;
+            //
+            flagDimAndOffset = flagDimAndOffset | (leafoffset << 2) ;
             flagDimAndOffset = flagDimAndOffset | splitDim ;
             kdTreeOutput[i].leaf.flagDimAndOffset = flagDimAndOffset ;
             kdTreeOutput[i].leaf.splitPosition    = splitPosition ;
+            leafoffset++;
         }else{
             flagDimAndOffset = (unsigned int)0x0 ;
             offset = nodelist[i].leftAddress ;

@@ -16,6 +16,11 @@
 
 extern TriangleMesh globalMesh;
 extern int * kdTreeTriangleIndicesOutput ;
+extern int numOfTriangleIndices ;
+
+#define KDT_ISLEAF(n)    (n->leaf.flagDimAndOffset & (unsigned int)(1<<31))
+#define KDT_DIMENSION(n) (n->leaf.flagDimAndOffset & 0x3)
+#define KDT_OFFSET(n)    ((n->leaf.flagDimAndOffset & (0x7FFFFFFC))>>2)
 
 typedef union {
     struct KdTreeLeaf {
@@ -35,6 +40,7 @@ typedef union {
 } KdData ;
 
 extern KdData * kdTreeOutput ;
+extern int numOfKdTreeNodes ;
 
 class kdTreeNode {
     
@@ -68,5 +74,8 @@ public:
     void split(int dim, float pos, kdTreeNode &left, kdTreeNode &rght) ;
     
 };
+
+void printKdTreeNodes(std::vector<kdTreeNode> nodelist);
+void printKdTreeData() ;
 
 #endif /* kdTreeNode_hpp */

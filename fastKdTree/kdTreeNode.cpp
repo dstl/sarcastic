@@ -10,6 +10,8 @@
 TriangleMesh globalMesh;
 int * kdTreeTriangleIndicesOutput ;
 KdData * kdTreeOutput ;
+int numOfTriangleIndices ;
+int numOfKdTreeNodes ;
 
 kdTreeNode::kdTreeNode(){
     size = 0 ;
@@ -110,6 +112,9 @@ void kdTreeNode::split(int k, float pos, kdTreeNode &left, kdTreeNode &rght)
         printf("Error: split() function only works on small nodes. Did you mean medianSplit()?\n");
         exit(1) ;
     }
+    
+    splitPos = pos;
+    dim = k;
     
     // Set the AABBs for the kids
     //
@@ -235,5 +240,64 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
     return;
 }
 
+void printKdTreeNodes(std::vector<kdTreeNode> nodelist){
+    
+    printf("Triangle Indexing Information\n");
+    printf("-----------------------------\n");
+    for(int i=0; i<nodelist[0].size; ++i){
+        printf("[%03d]  %02d\n",i,kdTreeTriangleIndicesOutput[i]);
+    }
+    printf("KdTree\n");
+    printf("------\n");
+    for(int i=0; i<nodelist.size(); ++i){
+        printf("[%02d]",i);
+        for(int j=0;j<nodelist[i].level;++j){
+            printf("-");
+        }
+        if(nodelist[i].isLeaf){
+            printf("X");
+            printf(" <%02d> #%02d = [",nodelist[i].triangleIndex,kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]);
+            for(int k=0; k<kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex]; ++k){
+                printf(" %02d",kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex+1+k]);
+            }
+            printf(" ]");
+        }else{
+            printf("|");
+            printf("  [%02d][%02d]",nodelist[i].leftAddress,nodelist[i].leftAddress+1);
+        }
+        printf("\n");
+    }
+    return;
+}
 
+void printKdTreeData(){
+    
+    KdData * node;
+    
+    printf("Triangle Indexing Information\n");
+    printf("-----------------------------\n");
+    for(int i=0; i<numOfTriangleIndices; ++i){
+        printf("[%03d]  %02d\n",i,kdTreeTriangleIndicesOutput[i]);
+    }
+    printf("KdTree\n");
+    printf("------\n");
+    for(int i=0; i<numOfKdTreeNodes; ++i){
+        
+        node = &(kdTreeOutput[i]) ;
+        printf("[%02d]",i);
+        if(KDT_ISLEAF( node ) ){
+            printf("X");
+            printf(" <%02d> #%02d = [",KDT_OFFSET(node),kdTreeTriangleIndicesOutput[KDT_OFFSET(node)]);
+            for(int k=0; k<kdTreeTriangleIndicesOutput[KDT_OFFSET(node)]; ++k){
+                printf(" %02d",kdTreeTriangleIndicesOutput[KDT_OFFSET(node)+1+k]);
+            }
+            printf(" ]");
+        }else{
+            printf("|");
+            printf("  [%02d][%02d]",KDT_OFFSET(node),KDT_OFFSET(node)+1);
+        }
+        printf("\n");
+    }
+
+}
 

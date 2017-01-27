@@ -151,8 +151,6 @@ int main (int argc, char **argv){
     for (int i=0; i<nLeaves; i++) { free(triangleLists[i]); }
     free(triangleLists);
     
-    printKdTree(nTreeNodes, KdTree, triListData, triPtrs) ;
-    
     KdTreeStruct KDT ;
     KDT.KdTree           = KdTree ;
     KDT.nLeaves          = nLeaves ;

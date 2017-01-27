@@ -53,7 +53,8 @@ void readKdTree(const char *filename,
     
     FILE *fp;
     int i,trisInLeaf,tex;
-    double d,nd_u,nd_v,k,kbu,kbv,kbd,kcu,kcv,kcd;
+    double d,nd_u,nd_v,kbu,kbv,kbd,kcu,kcv,kcd;
+    int k;
     
     fp=fopen(filename, "r");
     if (fp==NULL){
@@ -107,7 +108,7 @@ void readKdTree(const char *filename,
             printf("ERROR: Failed to read nd_v for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
-        if(fread(&k, sizeof(double), 1, fp)!=1){
+        if(fread(&k, sizeof(int), 1, fp)!=1){
             printf("ERROR: Failed to read k for triangle %d from file %s\n",i,filename);
             exit(-1);
         }
@@ -327,7 +328,7 @@ void printKdTree(int nNodes, KdData *tree, int *triListData, int *triPtrs){
             int trisInLeaf = triListData[indexOfFirstForLeaf] ;
             
             for (int t=0; t<trisInLeaf; t++){
-                int triIndex = triListData[indexOfFirstForLeaf+t];
+                int triIndex = triListData[indexOfFirstForLeaf+t+1];
                 printf(" %d", triIndex);
             }
             printf("\n");
