@@ -150,7 +150,7 @@ void TriangleMesh::readPLYFile  ( std::string filename ){
     int t[8];
     int nvertices = 0;
     int ntriangles = 0;
-
+    
     do {
         std::getline(file, line) ;
         std::stringstream linestream(line) ;
@@ -301,7 +301,7 @@ void TriangleMesh::sortTrianglesAndPoints(){
         idxC = (int) (lower_bound(vertices.begin(), vertices.end(), p) - vertices.begin()) ;
         
         p = Triangle3DVec(rawTriBuff[t].N.x, rawTriBuff[t].N.y, rawTriBuff[t].N.z);
-
+        
         tr = Triangle(idxA, idxB, idxC, rawTriBuff[t].mat, rawTriBuff[t].N, rawTriBuff[t].d);
         tr.Area = rawTriBuff[t].A ;
         
@@ -416,7 +416,7 @@ void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
     CCx.x = pround(CC.x, 6);
     CCx.y = pround(CC.y, 6);
     CCx.z = pround(CC.z, 6);
-
+    
     
     rawTri tri(AAx,BBx,CCx,mat);
     rawTriBuff.push_back(tri);
@@ -435,7 +435,7 @@ void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
 void TriangleMesh::buildHalfEdges(){
     halfEdge heA, heB, heC;
     
-//    halfedges.reserve(triangles.size()*3) ;
+    //    halfedges.reserve(triangles.size()*3) ;
     
     for(int t=0; t<triangles.size(); ++t){
         Triangle tri = triangles[t] ;
@@ -459,7 +459,7 @@ void TriangleMesh::buildHalfEdges(){
     for(int it = 0; it < halfedges.size()-1; ++it){
         halfedges[it].nextHalfEdge = it+1 ;
     }
-
+    
     // For each halfedge find its opposite side
     //
     halfEdge h;
@@ -490,7 +490,7 @@ std::vector<halfEdge> TriangleMesh::edges(){
             matches.push_back(h) ;
         }
     }
-   
+    
     return(matches);
 }
 
@@ -544,4 +544,164 @@ void TriangleMesh::checkIntegrityAndRepair(){
     }
     return ;
 }
+
+void TriangleMesh::buildTriangleAABBs()
+// function that calculates the axis-aligned bounding box (AABB) for each triangle and
+// stores it in a vector
+//
+{
+    SPVector aa, bb, cc;
+    SPVector min, max;
+    
+    AABBs.clear();
+    
+    for(int i=0; i<triangles.size(); ++i){
+        
+        VECT_CREATE( 9e9,  9e9,  9e9, min);
+        VECT_CREATE(-9e9, -9e9, -9e9, max);
+        aa = vertices[triangles[i].a].asSPVector() ;
+        bb = vertices[triangles[i].b].asSPVector() ;
+        cc = vertices[triangles[i].c].asSPVector() ;
+        min.x = (aa.x < min.x) ? aa.x : min.x ;
+        min.x = (bb.x < min.x) ? bb.x : min.x ;
+        min.x = (cc.x < min.x) ? cc.x : min.x ;
+        min.y = (aa.y < min.y) ? aa.y : min.y ;
+        min.y = (bb.y < min.y) ? bb.y : min.y ;
+        min.y = (cc.y < min.y) ? cc.y : min.y ;
+        min.z = (aa.z < min.z) ? aa.z : min.z ;
+        min.z = (bb.z < min.z) ? bb.z : min.z ;
+        min.z = (cc.z < min.z) ? cc.z : min.z ;
+        
+        max.x = (aa.x > max.x) ? aa.x : max.x ;
+        max.x = (bb.x > max.x) ? bb.x : max.x ;
+        max.x = (cc.x > max.x) ? cc.x : max.x ;
+        max.y = (aa.y > max.y) ? aa.y : max.y ;
+        max.y = (bb.y > max.y) ? bb.y : max.y ;
+        max.y = (cc.y > max.y) ? cc.y : max.y ;
+        max.z = (aa.z > max.z) ? aa.z : max.z ;
+        max.z = (bb.z > max.z) ? bb.z : max.z ;
+        max.z = (cc.z > max.z) ? cc.z : max.z ;
+        
+        AABB aabb = AABB(min,max) ;
+        AABBs.push_back(aabb);
+    }
+    return ;
+}
+
+/*void TriangleMesh::buildTriangleAABBs(int dim, float pos)
+// function for calculating the AAB for each triangle in the mesh and clips it against
+// a split position
+//
+{
+    SPVector aa, bb, cc;
+    SPVector min, max;
+    
+    AABBs.clear() ;
+    
+    for(int i=0; i<triangles.size(); ++i){
+        VECT_CREATE( 9e9,  9e9,  9e9, min);
+        VECT_CREATE(-9e9, -9e9, -9e9, max);
+        aa = vertices[triangles[i].a].asSPVector() ;
+        bb = vertices[triangles[i].b].asSPVector() ;
+        cc = vertices[triangles[i].c].asSPVector() ;
+        
+        std::vector<double> xs;
+        std::vector<double> ys;
+        std::vector<double> zs;
+        
+        int k = dim;
+        xs.push_back(aa.cell[k]);
+        xs.push_back(bb.cell[k]);
+        xs.push_back(cc.cell[k]);
+        std::sort(xs.begin(), xs.end());
+        min.cell[k] = xs[0];
+        max.cell[k] = xs[2];
+        
+        
+        // if this triangle straddles the split plane then set the
+        // split plane to be the max or min
+        // This may then change the AABB on each side of teh split plane
+        // so the min and max in the other two dims need to be reconsidered
+        //
+        if(min.cell[dim] < pos && max.cell[dim] > pos){
+            
+            
+            min.x = (aa.x < min.x) ? aa.x : min.x ;
+            min.x = (bb.x < min.x) ? bb.x : min.x ;
+            min.x = (cc.x < min.x) ? cc.x : min.x ;
+            min.y = (aa.y < min.y) ? aa.y : min.y ;
+            min.y = (bb.y < min.y) ? bb.y : min.y ;
+            min.y = (cc.y < min.y) ? cc.y : min.y ;
+            min.z = (aa.z < min.z) ? aa.z : min.z ;
+            min.z = (bb.z < min.z) ? bb.z : min.z ;
+            min.z = (cc.z < min.z) ? cc.z : min.z ;
+            
+            max.x = (aa.x > max.x) ? aa.x : max.x ;
+            max.x = (bb.x > max.x) ? bb.x : max.x ;
+            max.x = (cc.x > max.x) ? cc.x : max.x ;
+            max.y = (aa.y > max.y) ? aa.y : max.y ;
+            max.y = (bb.y > max.y) ? bb.y : max.y ;
+            max.y = (cc.y > max.y) ? cc.y : max.y ;
+            max.z = (aa.z > max.z) ? aa.z : max.z ;
+            max.z = (bb.z > max.z) ? bb.z : max.z ;
+            max.z = (cc.z > max.z) ? cc.z : max.z ;
+        
+        }
+        
+        // If the triangle does not straddle teh split plane then
+        // we can just use teh calculated AABB
+        //
+        
+        
+        
+        
+    }
+    
+}*/
+
+// matrices is a function that calculates the coordinate tranformation matrices
+// for converting from a global coordinate system to a local system where the
+// 'a' vertex is the origin and the side AB is the ordinate axis.
+// This is useful for calculating the surface integral of a triangle
+// localToGlobal and globalToLocal are both 9 element (3x3) arrays. The
+// memory for them must be allocated before calling this function
+//
+void Triangle::matrices(double *localToGlobal, double *globalToLocal){
+    
+    double alpha, beta, T_dash[9], T_dashdash[9] ;
+    SPVector zhat = {0,0,1.0} ;
+    
+    if (localToGlobal == NULL || globalToLocal == NULL) {
+        printf("Error matrices must be allocated before calling Triangle::matrices()\n");
+        exit(1);
+    }
+    
+    alpha         = atan2(N.y, N.x);
+    beta          = acos(VECT_DOT(zhat, N)) ;
+    T_dash[0]     = cos(alpha);
+    T_dash[1]     = sin(alpha);
+    T_dash[2]     = 0;
+    T_dash[3]     = -sin(alpha);
+    T_dash[4]     = cos(alpha);
+    T_dash[5]     = 0;
+    T_dash[6]     = 0;
+    T_dash[7]     = 0;
+    T_dash[8]     = 1;
+    T_dashdash[0] = cos(beta);
+    T_dashdash[1] = 0;
+    T_dashdash[2] = -sin(beta);
+    T_dashdash[3] = 0;
+    T_dashdash[4] = 1;
+    T_dashdash[5] = 0;
+    T_dashdash[6] = sin(beta);
+    T_dashdash[7] = 0;
+    T_dashdash[8] = cos(beta);
+    
+    matmul(T_dashdash, T_dash, globalToLocal, 3, 3, 3, 3);
+    mat3by3inv(globalToLocal, localToGlobal) ;
+    
+    return ;
+}
+
+
 

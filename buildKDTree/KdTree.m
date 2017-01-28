@@ -554,7 +554,8 @@
 
 }
 - (void) PacktoFile: (NSString *) filename {
-    double d, nd_u, nd_v, k , kbu , kbv;
+    double d, nd_u, nd_v, kbu , kbv;
+    int k;
     double kbd, kcu, kcv, kcd;
     double AAx,AAy,AAz,BBx,BBy,BBz;
     double Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz;
@@ -634,7 +635,7 @@
         fwrite(&d,sizeof(double),1,fp);
         fwrite(&nd_u,sizeof(double),1,fp);
         fwrite(&nd_v,sizeof(double),1,fp);
-        fwrite(&k,sizeof(double),1,fp);
+        fwrite(&k,sizeof(int),1,fp);
         fwrite(&kbu,sizeof(double),1,fp);
         fwrite(&kbv,sizeof(double),1,fp);
         fwrite(&kbd,sizeof(double),1,fp);
