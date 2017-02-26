@@ -16,7 +16,7 @@
 #define ROOTPATH "/tmp"
 #define TRAVERSALCOST ((float)(15.0))
 #define INTERSECTIONCOST ((float)(20.0))
-#define SMALLSIZE (16)
+#define SMALLSIZE (72)
 #define Ce (0.25)
 
 using namespace std;
@@ -70,9 +70,12 @@ int main(int argc, const char * argv[]) {
     
     printf("Input Mesh has %ld triangles\n",globalMesh.triangles.size()) ;
     
-//    writeAABBtoPlyFile(rootnode.aabb, string("/tmp/AABBs/root.ply"));
-
     activelist.push_back(rootnode);
+    
+    // Initialise and start timer
+    //
+    Timer runTimer ;
+    startTimer(&runTimer, &status) ;
     
     int dpth=0;
     printf("Processing Large Nodes...\n");
@@ -86,13 +89,7 @@ int main(int argc, const char * argv[]) {
             nodelist.push_back(*it);
         }
         
-//        for (int i=0; i<nextlist.size(); ++i) {
-//            AABB ab = nextlist[i].aabb ;
-//            char fn[255] ;
-//            sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",dpth+1,i);
-//            writeAABBtoPlyFile(ab, string(fn));
-//        }
-        printf("[%d] active list size: %ld. Smalllist size %ld, nextlist size: %ld\n",dpth++,activelist.size(),smalllist.size(),nextlist.size());
+        printf("[%3d] active list size: %4ld\tSmalllist size %4ld\tnextlist size: %4ld\n",dpth++,activelist.size(),smalllist.size(),nextlist.size());
 
         nextlist.swap(activelist);
     }
@@ -127,21 +124,32 @@ int main(int argc, const char * argv[]) {
     printf("Done!\n");
     
     
-    for (int i=0; i<nodelist.size(); ++i) {
+    /*for (int i=0; i<nodelist.size(); ++i) {
         AABB ab = nodelist[i].aabb ;
         char fn[255] ;
         sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",nodelist[i].level,i);
         writeAABBtoPlyFile(ab, string(fn));
-    }
+    }*/
     
     preOrderTraversalNode(nodelist) ;
 
-    printKdTreeData() ;
+    // end timer
+    //
+    endTimer(&runTimer, &status);
+
+    printKdTreeNodes(nodelist) ;
 
     // Write out data to KdTree file
     //
     writeKdTreeToFile(string(oustr), nodelist) ;
     
+#define USECOLOR 0
+    if (USECOLOR==1) {
+        printf("KdTree constructed in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+    }else{
+        printf("KdTree constructed in  %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+    }
+
     return 0;
 }
 
@@ -274,7 +282,6 @@ void writeKdTreeToFile(string filename, vector<kdTreeNode> &nodelist)
     double localToGlobal[9] ;
     double globalToLocal[9] ;
     for(int i=0; i<ntri; ++i){
-        printf("burning triangle %d\n",i);
         x = globalMesh.vertices[globalMesh.triangles[i].a].x ;
         y = globalMesh.vertices[globalMesh.triangles[i].a].y ;
         z = globalMesh.vertices[globalMesh.triangles[i].a].z ;
@@ -370,7 +377,7 @@ void processLargeNodes(vector<kdTreeNode> &activelist, vector<kdTreeNode> &small
         
         int numLeftChild  = (int)leftNode.triangles.size();
         int numRightChild = (int)rghtNode.triangles.size();
-        printf("tri count- Parent: %ld, leftChild: %ld, rightChild %ld\n",activelist[i].triangles.size(),leftNode.triangles.size(),rghtNode.triangles.size());
+//        printf("tri count- Parent: %ld, leftChild: %ld, rightChild %ld\n",activelist[i].triangles.size(),leftNode.triangles.size(),rghtNode.triangles.size());
         
         if (numLeftChild < SMALLSIZE) {
             smalllist.push_back(leftNode) ;
@@ -529,7 +536,7 @@ void adoption(vector<kdTreeNode> &nodelist)
     
     // Useful DEBUG to print out the Adoption algorithm output
     //
-    printf("ind:");
+    /*printf("ind:");
     for (int i=0; i< nodelist.size(); ++i){
         printf("  %02d",i);
     }
@@ -561,6 +568,7 @@ void adoption(vector<kdTreeNode> &nodelist)
         printf("  %02d",nodelist[i].leftAddress);
     }
     printf("\n");
+    */
     
     return ;
 }
@@ -574,16 +582,22 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
     //
     adoption( nodelist );
     
+    /*
     printf("lev:");
     for (int i=0; i< nodelist.size(); ++i){
         printf("  %02d",nodelist[i].level);
     }
     printf("\n");
+    */
     
     // Starting from bottom of tree and working up calculate the size of each node
     //
+    level = 0 ;
     if (!nodelist.empty()) {
-        level = nodelist.back().level ;
+        for (int i=0; i< nodelist.size(); ++i){
+            level = ( nodelist[i].level > level) ? nodelist[i].level : level ;
+        }
+//        level = nodelist.back().level ;
     }else{
         printf("Error : Empty nodelist in preOrderTraversalNode. Exiting...\n");
         exit(1);
@@ -627,9 +641,17 @@ void preOrderTraversalNode(vector<kdTreeNode> &nodelist)
             // Now install triangle indices into global output array
             //
             kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex] = nodelist[i].size-1 ;
+            if(nodelist[i].triangleIndex > numOfTriangleIndices){
+                printf("ERROR : out of index range exception in kdTreeTriangleIndicesOutput\n");
+                printf("Tried to assign to position %d in %d length array\n",nodelist[i].triangleIndex, numOfTriangleIndices);
+            }
             printf("node %d has %d triangles\n",i,nodelist[i].size-1) ;
             for(int n=0; n<triangleIndices.size(); ++n){
-                printf("writing triInd %d to location %d\n",triangleIndices[n],nodelist[i].triangleIndex + n + 1);
+                if( nodelist[i].triangleIndex + n + 1 > numOfTriangleIndices){
+                    printf("ERROR Exception : attempting to write beyond end of array\n");
+                    printf("Tried to write to position %d (node[%d].triIndex is %d, n is %d) in array of length %d\n",
+                           nodelist[i].triangleIndex + n + 1, i,nodelist[i].triangleIndex,n,   numOfTriangleIndices ) ;
+                }
                 kdTreeTriangleIndicesOutput[nodelist[i].triangleIndex + n + 1] = triangleIndices[n] ;
             }
         }
@@ -716,6 +738,7 @@ void indexTriangles( vector<kdTreeNode> &nodelist)
         nodelist[i].triangleIndex = a[i] * c[i] ;
     }
     
+    /*
     printf("siz:");
     for (int i=0; i< nodelist.size(); ++i){
         printf("  %02d",nodelist[i].size);
@@ -740,6 +763,7 @@ void indexTriangles( vector<kdTreeNode> &nodelist)
         }
     }
     printf("\n");
+     */
     
     return ;
 }

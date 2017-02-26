@@ -57,13 +57,15 @@ kdTreeNode::kdTreeNode(const kdTreeNode &node){
     leftAddress = node.leftAddress ;
     triangleIndex = node.triangleIndex ;
     aabb = node.aabb ;
-    triAABBs = node.triAABBs ;
-    for (int i=0; i<node.splitList.size(); ++i){
-        splitCandidate s(node.splitList[i]) ;
-        splitList.push_back(s) ;
+    for (int i=0; i<node.triAABBs.size(); ++i){
+        triAABBs.push_back(node.triAABBs[i]);
     }
-//    splitList = node.splitList ;
-    triangles = node.triangles ;
+    for (int i=0; i<node.splitList.size(); ++i){
+        splitList.push_back(node.splitList[i]) ;
+    }
+    for (int i=0; i<node.triangles.size(); ++i){
+        triangles.push_back(node.triangles[i]);
+    }
     isLeaf = node.isLeaf ;
     splitPos = node.splitPos ;
     dim = node.dim ;
@@ -218,22 +220,21 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
         {
             // Triangle straddles the split
             //
-            left.triangles.push_back(triIdx);
-            rght.triangles.push_back(triIdx);
-            
             vertA = globalMesh.vertices[globalMesh.triangles[triIdx].a].asSPVector() ;
             vertB = globalMesh.vertices[globalMesh.triangles[triIdx].b].asSPVector() ;
             vertC = globalMesh.vertices[globalMesh.triangles[triIdx].c].asSPVector() ;
             
             triAABBs[t].clipToTriangle(vertA, vertB, vertC, pos, maxAxis, ablft, abrgt);
             
-            if(ablft.surfaceArea() == 0 || abrgt.surfaceArea() == 0){
-                printf("Error: Bounding box for triangle after clipping is NULL\n");
-                exit(1);
+            if(ablft.surfaceArea() > 0.0001 ){
+                left.triangles.push_back(triIdx);
+                left.triAABBs.push_back(ablft) ;
             }
-            
-            left.triAABBs.push_back(ablft) ;
-            rght.triAABBs.push_back(abrgt) ;
+            if(abrgt.surfaceArea() > 0.0001 ){
+                rght.triangles.push_back(triIdx);
+                rght.triAABBs.push_back(abrgt) ;
+            }
+    
         }
     }
     
@@ -241,6 +242,8 @@ void kdTreeNode:: medianSplit(kdTreeNode &left, kdTreeNode &rght)
 }
 
 void printKdTreeNodes(std::vector<kdTreeNode> nodelist){
+    
+    if(nodelist[0].size == 0)return ;
     
     printf("Triangle Indexing Information\n");
     printf("-----------------------------\n");
