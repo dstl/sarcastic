@@ -15,8 +15,10 @@ splitCandidate::splitCandidate(float pos, int o, int dim, int ntris): pos(pos), 
 }
 
 splitCandidate::~splitCandidate() {
-    delete [] leftTris ;
-    delete [] rghtTris ;
+    if(ntris>0){
+        delete [] leftTris ;
+        delete [] rghtTris ;
+    }
 }
 
 // Copy constructor - required as constructor dynamically allocates memory
