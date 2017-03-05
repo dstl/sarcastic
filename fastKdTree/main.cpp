@@ -113,6 +113,9 @@ int main(int argc, const char * argv[]) {
     }else{
         printf("KdTree constructed in  %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     }
+    
+    rayTrace(&mesh, &tree, &treeSize) ;
+    
     return 0;
 }
 

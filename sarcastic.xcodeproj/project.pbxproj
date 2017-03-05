@@ -87,6 +87,7 @@
 		9582589A1D99370300335811 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95A1F1E31E6C2F8B00FF4A20 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */; };
+		95A1F1E61E6C7C3F00FF4A20 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
 		95ABA80E1B5F7FAB00A485BA /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
 		95ABA80F1B5F7FAB00A485BA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80D1B5F7FAB00A485BA /* main.cpp */; };
 		95AE61E11BA438DE0056AA4C /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
@@ -472,6 +473,8 @@
 		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCS.h; sourceTree = "<group>"; };
 		95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildTree.cpp; sourceTree = "<group>"; };
 		95A1F1E21E6C2F8B00FF4A20 /* buildTree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildTree.hpp; sourceTree = "<group>"; };
+		95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rayTrace.cpp; sourceTree = "<group>"; };
+		95A1F1E51E6C7C3F00FF4A20 /* rayTrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rayTrace.hpp; sourceTree = "<group>"; };
 		95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = colladaToTriFile/colladainterface.cpp; sourceTree = SOURCE_ROOT; };
 		95ABA80C1B5F7FAB00A485BA /* colladainterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colladainterface.h; path = colladaToTriFile/colladainterface.h; sourceTree = SOURCE_ROOT; };
 		95ABA80D1B5F7FAB00A485BA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = main.cpp; path = colladaToTriFile/main.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -757,6 +760,8 @@
 				953221FD1E084FE800A736F9 /* kdTreeNode.hpp */,
 				95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */,
 				95A1F1E21E6C2F8B00FF4A20 /* buildTree.hpp */,
+				95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */,
+				95A1F1E51E6C7C3F00FF4A20 /* rayTrace.hpp */,
 			);
 			path = fastKdTree;
 			sourceTree = "<group>";
@@ -1327,6 +1332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95D43AA61E200DBA00B66E58 /* matrixMultiplication.c in Sources */,
+				95A1F1E61E6C7C3F00FF4A20 /* rayTrace.cpp in Sources */,
 				95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */,
 				95D43AA31E200D9F00B66E58 /* tinyxml.cpp in Sources */,
 				95D43AA41E200D9F00B66E58 /* tinyxmlerror.cpp in Sources */,
