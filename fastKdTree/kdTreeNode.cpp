@@ -1,25 +1,59 @@
-//
-//  kdTreeNode.cpp
-//  sarcastic
-//
-//  Created by Darren on 23/10/2016.
-//  Copyright © 2016 Dstl. All rights reserved.
-//
+/***************************************************************************
+ *
+ *       Module:    kdTreeNode.cpp
+ *      Program:    fastKdTree
+ *   Created by:    Darren on 05/03/2017.
+ *                  Copyright (c) 2017 Dstl. All rights reserved.
+ *
+ *   Description:
+ *      Programme to build a K-Dimensional tree quicker and more scalably than the pevious implementation
+ *      This version uses the approach detailed in [1]. The previous approach uses that of [2]
+ *
+ *      1. Zhou, Kun, et al. "Real-time kd-tree construction on graphics hardware."
+ *         ACM Transactions on Graphics (TOG) 27.5 (2008): 126.
+ *
+ *      2. Wald, Ingo, and Vlastimil Havran. "On building fast kd-trees for ray tracing,
+ *         and on doing that in O (N log N)." Interactive Ray Tracing 2006, IEEE Symposium
+ *         on. IEEE, 2006.
+ *
+ *
+ *   CLASSIFICATION        :  UNCLASSIFIED
+ *   Date of CLASSN        :  15/01/2014
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
+ * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
+ * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
+ * IRELAND.
+ *
+ ***************************************************************************/
 
 #include "kdTreeNode.hpp"
-TriangleMesh globalMesh;
-int * kdTreeTriangleIndicesOutput ;
-KdData * kdTreeOutput ;
-int numOfTriangleIndices ;
-int numOfKdTreeNodes ;
-std::vector<kdTreeNode *> nodelist ;
 
-kdTreeNode::kdTreeNode(){
+
+kdTree::kdTreeNode::kdTreeNode(){
     // default constructor
     // this is to allow us to create an object without any initialization
 }
 
-kdTreeNode::kdTreeNode(const kdTreeNode *node){
+kdTree::kdTreeNode::kdTreeNode(const kdTreeNode *node){
     data.size = node->data.size;
     data.address = node->data.address ;
     data.triangleIndex = node->data.triangleIndex;
@@ -46,32 +80,14 @@ kdTreeNode::kdTreeNode(const kdTreeNode *node){
     
 }
 
-// Copy constructor
-//
-//kdTreeNode::kdTreeNode(const kdTreeNode &node){
-//    
-//    
-//    data = node.data ;
-//    next = node.next ;
-//    leftChild = node.leftChild ;
-//    rghtChild = node.rghtChild ;
-//    smallroot = node.smallroot ;
-//    
-//    if (node.data.smallntris > 0) {
-//        data.triangleMask = new unsigned char [node.data.smallntris] ;
-//        memcpy(data.triangleMask, node.data.triangleMask, node.data.smallntris * sizeof(unsigned char)) ;
-//    }
-//}
-
-
-kdTreeNode::kdTreeNode(std::vector<int> tris) {
+kdTree::kdTreeNode::kdTreeNode(std::vector<int> tris) {
     data.triangles = tris ;
     data.aabb = BVforAllTris() ;
 }
 
 // Initialise the root KdTreeNode using a .plyFile
 //
-kdTreeNode::kdTreeNode(std::string plyFileName)
+kdTree::kdTreeNode::kdTreeNode(std::string plyFileName)
 {
     globalMesh.readPLYFile(plyFileName);
     globalMesh.checkIntegrityAndRepair();
@@ -84,8 +100,19 @@ kdTreeNode::kdTreeNode(std::string plyFileName)
     data.aabb = BVforAllTris() ;
 }
 
+kdTree::kdTreeNode::kdTreeNode(const TriangleMesh *mesh)
+{
+    globalMesh = *mesh ;
+    data.triAABBs = globalMesh.AABBs ;
+    for(int i=0; i< globalMesh.triangles.size(); ++i){
+        data.triangles.push_back(i) ;
+    }
+    data.aabb = BVforAllTris() ;
+    
+}
 
-kdTreeNode::~kdTreeNode(){
+
+kdTree::kdTreeNode::~kdTreeNode(){
     
     if (data.smallntris > 0) {
         delete [] data.triangleMask ;
@@ -97,7 +124,7 @@ kdTreeNode::~kdTreeNode(){
 //
 
 
-AABB kdTreeNode::BVforAllTris()
+AABB kdTree::kdTreeNode::BVforAllTris()
 {
     SPVector triaa, tribb;
     AABB ans;
@@ -120,7 +147,7 @@ AABB kdTreeNode::BVforAllTris()
     return ans;
 }
 
-void kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *rght)
+void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *rght)
 {
     if (smallroot == NULL) {
         printf("Error: split() function only works on small nodes. Did you mean medianSplit()?\n");
@@ -170,7 +197,7 @@ void kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *rght)
     return ;
 }
 
-void kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght)
+void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght)
 // medianSplit() splits the node at the median point of the largest axis
 // and returns two child nodes that have their AABB's set and the triAABB's correctly clipped to the split plane.
 // In addition the triangles array in each child correctly holds the index of each triangle
@@ -254,105 +281,17 @@ void kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght)
     return;
 }
 
-void printKdTreeNodes(std::vector<kdTreeNode *> nodelist){
-    
-    kdTreeNode *p,*q,*n;
-
-    for (int i=0; i<nodelist.size(); ++i){
-        p = nodelist[i] ;
-        printf("[<%p>]",p);
-        for(int j=0;j<p->data.level;++j){
-            printf("-");
-        }
-        if(p->data.isLeaf){
-            printf("X");
-            printf(" #%02d = [",p->data.smallntris);
-            for(int k=0; k<p->data.smallntris; ++k){
-                if (p->data.triangleMask[k] == 1) {
-                    printf(" %02d", p->smallroot->data.triangles[k]);
-                }
-            }
-            printf(" ]");
-        }else{
-            printf("|");
-            printf("  [%p][%p]",p->leftChild ,p->rghtChild);
-        }
-        printf("\n");
-    }
-    
-    return;
-}
-
-void printKdTreeData(){
-    
-    KdData * node;
-    
-    printf("\n\n");
-    printf("                        KdTree Data Output (post Pre-Traversal Correction)\n");
-    printf("| --------------------------------------------------------------------------------------------------|\n");
-    printf("| --------------------------------------------------------------------------------------------------|\n");
-    printf("|                                       Key                                                         |\n");
-    printf("| --------------------------------------------------------------------------------------------------|\n");
-    printf("| [IDX]         : Index/address of each node in the tree                                            |\n");
-    printf("| [A]           : If a branch then dimension of split plane. If Leaf then **LEAF**                  |\n");
-    printf("| [BBBB]        : If branch the the position ofthe split plane                                      |\n");
-    printf("| [CCCCCCCCCCC] : If branch then the index/address of left and right children.                      |\n");
-    printf("|               : If Leaf then the number of triangles in the leaf followed by the triangle indices |\n");
-    printf(" -------------------------------------------------------------------------------------------------- |\n");
-    printf("[IDX] [A][BBBB]  = [CCCCCCCCCCC]\n");
-    printf("--------------------------------\n");
-
-    for(int i=0; i<numOfKdTreeNodes; ++i){
-        
-        node = &(kdTreeOutput[i]) ;
-        if(KDT_ISLEAF( node ) ){
-            if(KDT_NUMTRIS(node) > 0){
-                printf("[%03d]  ",i);
-                printf("**LEAF**  = # %d ",KDT_NUMTRIS(node));
-                printf("[");
-                for(int j=0; j<KDT_NUMTRIS(node);++j){
-                    printf(" %d",kdTreeOutput[i+j+1].leaf.triangleIndex);
-                }
-                printf(" ]");
-                printf("\n");
-            }
-
-        }else{
-            printf("[%03d]  ",i);
-            switch (KDT_DIMENSION(node)) {
-                case 0:
-                    printf("X ");
-                    break;
-                case 1:
-                    printf("Y ");
-                    break;
-                case 2:
-                    printf("Z ");
-                    break;
-                default:
-                    printf("Unusual dimension ! %d\n ", (unsigned int)KDT_DIMENSION(node)) ;
-                    break;
-            }
-            printf(" %-6.2f = ",KDT_SPLITPOS(node)) ;
-            printf("LEFT= [%02d], RGHT=[%02d]\n",KDT_LEFTCHILD(node),KDT_RGHTCHILD(node));
-
-        }
-
-    }
-    return ;
-}
-
 // Member functions related to handling the linked list follow
 //
-treeList::treeList(){
+kdTree::treeList::treeList(){
     head = NULL ;
     length = 0 ;
 }
 
 
-int treeList::size(){ return length; };
+int kdTree::treeList::size(){ return length; };
 
-bool treeList::indexCheck(int position){
+bool kdTree::treeList::indexCheck(int position){
     if ( (position < 0) || (position >= length) ){
         std::cout << "\nIndex error : position " << position << " out of range ( list size:"<<size()<<" )\n" ;
         return false ;
@@ -360,7 +299,7 @@ bool treeList::indexCheck(int position){
     return	true;
 }
 
-bool treeList::insertNode(kdTreeNode *node, int position) {
+bool kdTree::treeList::insertNode(kdTreeNode *node, int position) {
     if( !indexCheck(position) ) {
         exit(1);
     }
@@ -387,7 +326,7 @@ bool treeList::insertNode(kdTreeNode *node, int position) {
     return false;
 } ;
 
-bool treeList::removeNode(int position) {
+bool kdTree::treeList::removeNode(int position) {
     if( !indexCheck(position) ) {
         exit(1);
     }
@@ -413,7 +352,7 @@ bool treeList::removeNode(int position) {
     return false;
 }
 
-kdTreeNode * treeList::at(int position){
+kdTree::kdTreeNode * kdTree::treeList::at(int position){
     if( !indexCheck(position) ) {
         exit(1);
     }
@@ -441,15 +380,15 @@ kdTreeNode * treeList::at(int position){
     return NULL;
 }
 
-kdTreeNode * treeList::front(){
+kdTree::kdTreeNode * kdTree::treeList::front(){
     return head;
 }
 
-kdTreeNode * treeList::back(){
+kdTree::kdTreeNode * kdTree::treeList::back(){
     return tail;
 }
 
-void treeList::push_back(kdTreeNode *node){
+void kdTree::treeList::push_back(kdTreeNode *node){
     
     // Create a new node pointer with allocated memory
     // so that when this function scope ends the memory
@@ -479,7 +418,7 @@ void treeList::push_back(kdTreeNode *node){
     return ;
 }
 
-void treeList::clear() {
+void kdTree::treeList::clear() {
     kdTreeNode *p = head;
     while (p) {
         head = tail->next;
@@ -489,7 +428,7 @@ void treeList::clear() {
     return ;
 }
 
-void treeList::erase() {
+void kdTree::treeList::erase() {
     kdTreeNode * p = head;
     while (p) {
         head = head->next;
@@ -500,15 +439,7 @@ void treeList::erase() {
     return ;
 }
 
-void swapLists(treeList **a, treeList **b) {
-    treeList *t;
-    t = *a ;
-    *a = *b ;
-    *b = t ;
-    return  ;
-}
-
-void treeList::printList() {
+void kdTree::treeList::printList() {
     kdTreeNode * p ;
     kdTreeNode * q = head;
     int count = 0 ;
@@ -529,13 +460,13 @@ void treeList::printList() {
     return ;
 }
 
-bool treeList::empty(){
+bool kdTree::treeList::empty(){
     if (length == 0) return true;
     return false;
 }
 
 
-treeList::~treeList(){
+kdTree::treeList::~treeList(){
     clear();
     return ;
 }

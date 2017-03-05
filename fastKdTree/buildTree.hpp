@@ -1,6 +1,6 @@
 /***************************************************************************
  *
- *       Module:    splitCandidate.hpp
+ *       Module:    buildTree.hpp
  *      Program:    fastKdTree
  *   Created by:    Darren on 05/03/2017.
  *                  Copyright (c) 2017 Dstl. All rights reserved.
@@ -44,29 +44,61 @@
  * IRELAND.
  *
  ***************************************************************************/
-
-#ifndef splitCandidate_hpp
-#define splitCandidate_hpp
+#ifndef buildTree_hpp
+#define buildTree_hpp
 
 #include <stdio.h>
-#include <vector>
-#include <SIlib2/SIlib2.h>
+#include <sys/stat.h>
+#include "kdTreeNode.hpp"
+#include "splitCandidate.hpp"
+#include "TriangleMesh.hpp"
 
-class splitCandidate {
+namespace kdTree {
     
-public:
     
-    float pos;                              // position for this event
-    int dim;                                // dimension of this splitcandidate
-    int owner;                              // index of owning triangle
-    int ntris;
-    unsigned char  *leftTris ;              // Array mask of triangles to left of this event
-    unsigned char  *rghtTris ;              // Array mask of triangles to right of this event
+#define TRAVERSALCOST ((float)(15.0))
+#define INTERSECTIONCOST ((float)(20.0))
+#define SMALLSIZE (64)
+#define Ce (0.25)           // Percentage empty space in a node
+#define MAXTREELEVEL 10
+#define KDT_ISLEAF(n)       ((n->leaf.leafDim & (unsigned char)(0x4))>>2)
+#define KDT_DIMENSION(n)    (n->leaf.leafDim & 0x3)
+#define KDT_NUMTRIS(n)      (n->leaf.ntriangles)
+#define KDT_LEFTCHILD(n)    (n->brch.leftaddress)
+#define KDT_RGHTCHILD(n)    (n->brch.rghtaddress)
+#define KDT_SPLITPOS(n)     (n->leaf.splitPosition)
+#define KDT_TRIINDEX(n)     (n->leaf.triangleIndex)
     
-    splitCandidate(){};
-    splitCandidate(float pos, int o, int dim, int ntris);
-    ~splitCandidate();
-    splitCandidate(const splitCandidate &split) ;   // Copy constructor
-};
+    enum  TREEOUTPUT {
+        OUTPUTNO   = 0,
+        OUTPUTDATA = 1,
+        OUTPUTNODE = 2,
+        OUTPUTAABB = 4,
+        OUTPUTSUMM = 8
+    } ;
+    
+    void processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist);
+    void preProcessSmallNodes(treeList **smalllist) ;
+    int reduce(unsigned char *list, long int size) ;
+    int reduce(std::vector<int> list);
+    void processSmallNodes(treeList **activelist, treeList **nextlist);
+    void buildSizes(std::vector<kdTreeNode *> *nodelist, int level) ;
+    void buildAddresses(std::vector<kdTreeNode *> *nodelist, int level);
+    void scanInclusive(int *in, int *out, int n) ;
+    void scanExclusive(int *in, int *out, int n) ;
+    void preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData **tree, int *numNodesInTree) ;
+    void dumpsmall(treeList **list) ;
+    void writeAABBtoPlyFile(AABB bv, std::string filename);
+    void swapLists(treeList **a, treeList **b) ;
+    void printKdTreeNodes(std::vector<kdTreeNode *> nodelist);
+    void printKdTreeData(KdData **kdTree, int *numNodesInTree) ;
+    void printSummary(std::vector<kdTreeNode *> nodelist) ;
 
-#endif /* splitCandidate_hpp */
+    void buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
+    
+    extern TriangleMesh globalMesh;
+    extern std::vector<kdTree::kdTreeNode *> nodelist ;
+    
+}
+
+#endif /* buildTree_hpp */
