@@ -453,7 +453,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
             (*kdTreeOutput)[address].leaf.splitPosition = p->data.splitPos ;
             (*kdTreeOutput)[address].leaf.leafDim = (unsigned char)0x4 ;
             (*kdTreeOutput)[address].leaf.leafDim = ((*kdTreeOutput)[address].leaf.leafDim) | p->data.dim ;
-            (*kdTreeOutput)[address].leaf.triangleIndex = 999999999 ;
+            (*kdTreeOutput)[address].leaf.triangleIndex = i ;
             kdTreeNode *s = p->smallroot ;
             std::vector<int> triangles = s->data.triangles ;
             // check
@@ -784,7 +784,7 @@ void kdTree::printKdTreeData(KdData **kdTree, int *numOfKdTreeNodes){
         node = &((*kdTree)[i]) ;
         if(KDT_ISLEAF( node ) ){
             if(KDT_NUMTRIS(node) > 0){
-                printf("[%03d]  ",i);
+                printf("[%03d]  ",KDT_INDEX(node));
                 printf("**LEAF**  = # %d ",KDT_NUMTRIS(node));
                 printf("[");
                 for(int j=0; j<KDT_NUMTRIS(node);++j){

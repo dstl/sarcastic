@@ -90,7 +90,7 @@ namespace kdTree {
             float           splitPosition ; // splitposition for node
             unsigned char   leafDim ;       // lsb 2 = leaf flag. Bits 0 + 1 are for dimension (above)
             unsigned int    ntriangles ;    // num of triangles in this leaf
-            unsigned int    triangleIndex ; // used to store the triangle index info
+            unsigned int    triangleIndex ; // used to store the triangle index info. If a leaf used for index of this node
         } leaf;
         struct KdTreeBrch {
             float           splitPosition ; // splitposition for node

@@ -68,6 +68,7 @@ namespace kdTree {
 #define KDT_RGHTCHILD(n)    (n->brch.rghtaddress)
 #define KDT_SPLITPOS(n)     (n->leaf.splitPosition)
 #define KDT_TRIINDEX(n)     (n->leaf.triangleIndex)
+#define KDT_INDEX(n)        (n->leaf.triangleIndex)
     
     enum  TREEOUTPUT {
         OUTPUTNO   = 0,

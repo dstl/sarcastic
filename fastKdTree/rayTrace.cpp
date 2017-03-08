@@ -18,18 +18,18 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData **kdTree, int *numNodesInTree)
     
 }
 
-__kernel void stacklessTraverse(__global KdData * KdTree,
-                                __global int * triangleListData,
-                                __global int * triangleListPtrs,
-                                __global ATS * accelTriangles,
-                                const    AABB SceneBoundingBox,
-                                const    int nRays,                 // Number of rays
-                                __global Ray * rays,                // array of rays to process.
-                                __global Hit *hits                  // Location of ray hits
+void stacklessTraverse(kdTree::KdData * KdTree,
+                                 int * triangleListData,
+                                 int * triangleListPtrs,
+                                 ATS * accelTriangles,
+                                 const    AABB SceneBoundingBox,
+                                 const    int nRays,                 // Number of rays
+                                 Ray * rays,                // array of rays to process.
+                                 Hit *hits                  // Location of ray hits
 
 
 ){
-    int ind = get_global_id(0) ;
+//    int ind = get_global_id(0) ;
     int dimToUse ;
     int cnt, i ;
     int trisInLeaf ;
@@ -38,9 +38,10 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
     
     SPVector volumeEntry, volumeExit, PEntry, hp, dirInverse, v ;
     
-    __global KdData * node ;
+     kdTree::KdData * node ;
     
-    if (ind >=0 && ind < nRays ) {
+    for(int ind =0; i<nRays; ++ind) {
+//    if (ind >=0 && ind < nRays ) {
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -88,10 +89,10 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             while (!KDT_ISLEAF(node)){  // Branch node
                 hp.x = hp.y = hp.z = -666;
                 
-                if (PEntry.cell[KDT_DIMENSION(node)] < (node->branch.splitPosition-EPSILON)) {
-                    node = &(KdTree[KDT_OFFSET(node)]);
-                }else if (PEntry.cell[KDT_DIMENSION(node)] > (node->branch.splitPosition+EPSILON)) {
-                    node = &(KdTree[KDT_OFFSET(node)+1]);
+                if (PEntry.cell[KDT_DIMENSION(node)] < (node->brch.splitPosition-EPSILON)) {
+                    node = &(KdTree[KDT_LEFTCHILD(node)]);
+                }else if (PEntry.cell[KDT_DIMENSION(node)] > (node->brch.splitPosition+EPSILON)) {
+                    node = &(KdTree[KDT_RGHTCHILD(node)]);
                 }else{
                     // PEntry is on splitposition
                     // Two different situations here:
@@ -99,20 +100,19 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
                     // 2. PEntry is on the split plane having arrived from pos side.
                     // in Case 1. next node is node
                     // in Case 2. next node is node+1
-                    if (rays[ind].org.cell[KDT_DIMENSION(node)] < node->branch.splitPosition-EPSILON){
-                        node = &(KdTree[KDT_OFFSET(node)]);
-                    } else if (rays[ind].org.cell[KDT_DIMENSION(node)] > node->branch.splitPosition+EPSILON){
-                        node = &(KdTree[KDT_OFFSET(node)+1]);
+                    if (rays[ind].org.cell[KDT_DIMENSION(node)] < node->brch.splitPosition-EPSILON){
+                        node = &(KdTree[KDT_LEFTCHILD(node)]);
+                    } else if (rays[ind].org.cell[KDT_DIMENSION(node)] > node->brch.splitPosition+EPSILON){
+                        node = &(KdTree[KDT_RGHTCHILD(node)]);
                     } else {
                         // ray origin on split plane. Determine next node by direction of ray
                         //
                         if(rays[ind].dir.cell[KDT_DIMENSION(node)] > 0 ){
-                            
-                            node = &(KdTree[KDT_OFFSET(node)+1]);
+                            node = &(KdTree[KDT_RGHTCHILD(node)]);
                         }else {
                             // Includes situation where origin is on split position and ray is travelling parallel to split position
                             //
-                            node = &(KdTree[KDT_OFFSET(node)]);
+                            node = &(KdTree[KDT_LEFTCHILD(node)]);
                         }
                     }
                 }
@@ -120,12 +120,13 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             
             // Have a leaf now
             //
-            trisInLeaf = triangleListData[triangleListPtrs[KDT_OFFSET(node)]];
+            trisInLeaf = KDT_NUMTRIS(node) ;
             hits[ind].dist   = 10e6;
             hits[ind].trinum = NOINTERSECTION ;
             
             for (i=0; i<trisInLeaf; i++){
-                __global ATS * tri = &(accelTriangles[triangleListData[triangleListPtrs[KDT_OFFSET(node)]+i+1]]);
+                
+                ATS * tri = &(accelTriangles[KDT_INDEX(node)+1]) ;
                 Intersect(tri, &(rays[ind]), &(hits[ind]));
             }
             
@@ -136,6 +137,7 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
                 //
                 VECT_SCMULT(rays[ind].dir, hits[ind].dist,hp);
                 VECT_ADD(rays[ind].org, hp, hp);
+                
                 if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
                    && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON))
@@ -189,5 +191,51 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
         }
         return ;
     }
+    return ;
+}
+
+int clipToAABB(AABB boundingBox, SPVector *lineStart, SPVector *lineEnd){
+    
+    int status=0;
+    ClipToBox(lineStart, lineEnd, boundingBox.AA, boundingBox.BB, &status);
+    if (status == NOINTERSECTION) return 0;     // No intersect in any dim means no intersection with volume
+    
+    return 1;
+    
+}
+
+void Intersect(ATS *tri, Ray *ray, Hit *hit){
+    unsigned int modulo[5];
+    modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
+    
+    int ku = modulo[tri->k+1];
+    int kv = modulo[tri->k+2];
+    
+    const double nd = 1.0/(ray->dir.cell[tri->k] + ((tri->nd_u) * ray->dir.cell[ ku ]) + ((tri->nd_v) * ray->dir.cell[ kv ]) );
+    const double thit = (tri->d - ray->org.cell[tri->k] - tri->nd_u * ray->org.cell[ ku ] - tri->nd_v * ray->org.cell[ kv ]) * nd;
+    
+    // check for valid distance.
+    if ( !(hit->dist > thit && thit >  EPSILON  ) ) return;
+    
+    // compute hitpoint positions on uv plane
+    const double hu = (ray->org.cell[ku] + thit * ray->dir.cell[ ku ]);
+    const double hv = (ray->org.cell[kv] + thit * ray->dir.cell[ kv ]);
+    
+    // check first barycentric coordinate
+    const double beta = (hu * tri->kbu + hv * tri->kbv + tri->kbd);
+    if (beta < 0.0f) return ;
+    
+    // check second barycentric coordinate￼
+    const double gamma = (hu * tri->kcu + hv * tri->kcv + tri->kcd);
+    if (gamma < 0.0f) return;
+    
+    // check third barycentric coordinate
+    if (beta+gamma > 1.0f) return ;
+    
+    // have a valid hitpoint here. store it.
+    hit->dist = thit;
+    hit->trinum = tri->triNum;
+    hit->u = beta;
+    hit->v = gamma;
     return ;
 }

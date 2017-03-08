@@ -3,7 +3,7 @@
  *       Module:    kdTreeNode.cpp
  *      Program:    fastKdTree
  *   Created by:    Darren on 05/03/2017.
- *                  Copyright (c) 2017 Dstl. All rights reserved.
+*                  Copyright (c) 2017 Dstl. All rights reserved.
  *
  *   Description:
  *      Programme to build a K-Dimensional tree quicker and more scalably than the pevious implementation
