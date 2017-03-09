@@ -472,6 +472,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
                 }
             }
             (*kdTreeOutput)[address].leaf.ntriangles =  tcount;
+            (*kdTreeOutput)[address].leaf.aabb = p->data.aabb ;
             
         }else{
             (*kdTreeOutput)[address].brch.splitPosition = p->data.splitPos ;
@@ -479,6 +480,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
             (*kdTreeOutput)[address].brch.leafDim = ((*kdTreeOutput)[address].leaf.leafDim)| p->data.dim ;
             (*kdTreeOutput)[address].brch.leftaddress = p->leftChild->data.address ;
             (*kdTreeOutput)[address].brch.rghtaddress = p->rghtChild->data.address ;
+            (*kdTreeOutput)[address].brch.aabb = p->data.aabb ;
         }
         
     }

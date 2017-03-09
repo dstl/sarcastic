@@ -69,6 +69,7 @@ namespace kdTree {
 #define KDT_SPLITPOS(n)     (n->leaf.splitPosition)
 #define KDT_TRIINDEX(n)     (n->leaf.triangleIndex)
 #define KDT_INDEX(n)        (n->leaf.triangleIndex)
+#define NILROPE ((int) -666666 )
     
     enum  TREEOUTPUT {
         OUTPUTNO   = 0,

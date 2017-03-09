@@ -8,19 +8,48 @@
 
 #include "rayTrace.hpp"
 #include <SIlib2/SIlib2.h>
+#include "clipToAABB.hpp"
+#include "boxMullerRandom.h"
 
+void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) {
+    
+    kdTree::KdData node;
+    
+    node = kdTree[0] ;
+    
+    // build Ropes and Boxes
+    //
+    int Ropes[6] ;
+    AABB sceneAABB = kdTree[0].brch.aabb ;
 
-void  rayTrace(TriangleMesh *mesh, kdTree::KdData **kdTree, int *numNodesInTree) {
+    for(int i=0; i<6; i++) Ropes[i] = NILROPE;
+    BuildRopesAndBoxes(&node, Ropes, sceneAABB, kdTree);
     
     // generate rays
+    //
+    Ray *rays;
+    int nAzRays = 4;
+    int nElRays = 4;
+    int nRays = nAzRays * nElRays ;
+    SPVector TxPos;
+    VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
+
+    buildRays(&rays, nAzRays, nElRays, TxPos, sceneAABB) ;
     
-    // traverse tree for intersection and return coords
+    // generate triangles
+    //
+    ATS *accelTriangles;
+    buildTriangles(mesh,&accelTriangles) ;
+    Hit * hits = new Hit [nRays] ;
+    
+    stacklessTraverse(kdTree, accelTriangles, sceneAABB, nRays, rays, hits);
+    
+    
+    return ;
     
 }
 
 void stacklessTraverse(kdTree::KdData * KdTree,
-                                 int * triangleListData,
-                                 int * triangleListPtrs,
                                  ATS * accelTriangles,
                                  const    AABB SceneBoundingBox,
                                  const    int nRays,                 // Number of rays
@@ -29,7 +58,6 @@ void stacklessTraverse(kdTree::KdData * KdTree,
 
 
 ){
-//    int ind = get_global_id(0) ;
     int dimToUse ;
     int cnt, i ;
     int trisInLeaf ;
@@ -38,10 +66,9 @@ void stacklessTraverse(kdTree::KdData * KdTree,
     
     SPVector volumeEntry, volumeExit, PEntry, hp, dirInverse, v ;
     
-     kdTree::KdData * node ;
+    kdTree::KdData * node ;
     
-    for(int ind =0; i<nRays; ++ind) {
-//    if (ind >=0 && ind < nRays ) {
+    for(int ind=0; ind < nRays ; ++ind) {
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -151,11 +178,11 @@ void stacklessTraverse(kdTree::KdData * KdTree,
             //
             float t_max = 10e6;
             float tpos;
-            int ropeInd=0, ropeIndSide, ropeIndOff;
+            int ropeInd=0, ropeIndSide, ropeIndOff=0;
             for(int i=0; i<3; i++){
                 if (dirInverse.cell[i] != 0){
-                    t1 = (node->branch.aabb.AA.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
-                    t2 = (node->branch.aabb.BB.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
+                    t1 = (node->brch.aabb.AA.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
+                    t2 = (node->brch.aabb.BB.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];
                     if(t2-t1 > EPSILON && t2 >= 0){
                         tpos = t2;
                         ropeIndSide = 1;
@@ -181,12 +208,12 @@ void stacklessTraverse(kdTree::KdData * KdTree,
             
             // Follow the rope for this side to jump across to adjacent node
             //
-            if ( node->branch.Ropes[2*ropeInd+ropeIndOff] == NILROPE ) {
+            if ( node->brch.Ropes[2*ropeInd+ropeIndOff] == NILROPE ) {
                 hits[ind].trinum = NOINTERSECTION;
                 return ;
             }
             
-            node = &(KdTree[node->branch.Ropes[2*ropeInd+ropeIndOff]]);
+            node = &(KdTree[node->brch.Ropes[2*ropeInd+ropeIndOff]]);
             
         }
         return ;
@@ -194,15 +221,6 @@ void stacklessTraverse(kdTree::KdData * KdTree,
     return ;
 }
 
-int clipToAABB(AABB boundingBox, SPVector *lineStart, SPVector *lineEnd){
-    
-    int status=0;
-    ClipToBox(lineStart, lineEnd, boundingBox.AA, boundingBox.BB, &status);
-    if (status == NOINTERSECTION) return 0;     // No intersect in any dim means no intersection with volume
-    
-    return 1;
-    
-}
 
 void Intersect(ATS *tri, Ray *ray, Hit *hit){
     unsigned int modulo[5];
@@ -239,3 +257,116 @@ void Intersect(ATS *tri, Ray *ray, Hit *hit){
     hit->v = gamma;
     return ;
 }
+
+void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree){
+    
+    int Sl, Sr; //SplitPosLeft, SPlitPosRight;
+    float V;
+    int RSLeft[6], RSRight[6]; // Ropes for left and right side
+    AABB aabbLeft, aabbRight;
+    kdTree::KdData * Nr, * Nl;
+    
+    if( KDT_ISLEAF(Node) ){
+        for(int i=0; i<3; i++){
+            Node->leaf.aabb.AA.cell[i] = aabb.AA.cell[i];
+            Node->leaf.aabb.BB.cell[i] = aabb.BB.cell[i];
+            Node->leaf.Ropes[2*i] = RS[2*i];
+            Node->leaf.Ropes[2*i+1] = RS[2*i+1];
+        }
+    } else {
+        for(int i=0; i<3; i++){
+            Node->brch.aabb.AA.cell[i] = aabb.AA.cell[i];
+            Node->brch.aabb.BB.cell[i] = aabb.BB.cell[i];
+        }
+        
+        Sl = KDT_DIMENSION(Node) * 2;
+        Sr = KDT_DIMENSION(Node) * 2 + 1;
+        V  = Node->brch.splitPosition;
+        for(int i=0; i<6; i++)RSLeft[i]=RSRight[i]=RS[i];
+        
+        RSLeft[Sr] = KDT_RGHTCHILD(Node); // Right child for Node
+        aabbLeft = aabb;
+        aabbLeft.BB.cell[KDT_DIMENSION(Node)] = V;
+        Nl = &(KdTree[KDT_LEFTCHILD(Node)]);
+        
+        BuildRopesAndBoxes(Nl, RSLeft, aabbLeft, KdTree);
+        
+        RSRight[Sl] = KDT_LEFTCHILD(Node); // Left child for Node
+        aabbRight = aabb;
+        aabbRight.AA.cell[KDT_DIMENSION(Node)] = V;
+        Nr = &(KdTree[KDT_RGHTCHILD(Node)]);
+        
+        BuildRopesAndBoxes(Nr, RSRight, aabbRight, KdTree);
+        
+    }
+    
+    return ;
+}
+
+void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox){
+    int nAzBeam = nAzRays;
+    int nElBeam = nElRays;
+    
+    double PowPerRay = 1.0;
+    int nRays = nAzBeam*nElBeam ;
+    
+    SPVector rVect,zHat,unitBeamAz,unitBeamEl;
+    VECT_MINUS( TxPos, rVect ) ;
+    VECT_CREATE(0, 0, 1., zHat) ;
+    VECT_CROSS(rVect, zHat, unitBeamAz);
+    VECT_NORM(unitBeamAz, unitBeamAz) ;
+    VECT_CROSS(unitBeamAz, rVect, unitBeamEl) ;
+    VECT_NORM(unitBeamEl, unitBeamEl) ;
+    
+    double maxEl,maxAz, minEl, minAz;
+    maxEl = maxAz = minEl = minAz = 0.0 ;
+    
+    SPVector boxPts[8];
+    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[0]);
+    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[1]);
+    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[2]);
+    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[3]);
+    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[4]);
+    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.BB.z, boxPts[5]);
+    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.BB.z, boxPts[6]);
+    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[7]);
+    
+    for( int k=0; k<8; k++){
+        double El = VECT_DOT(boxPts[k], unitBeamEl) ;
+        double Az = VECT_DOT(boxPts[k], unitBeamAz) ;
+        maxEl = ( maxEl < El ) ? El : maxEl ;
+        maxAz = ( maxAz < Az ) ? Az : maxAz ;
+        minEl = ( minEl > El ) ? El : minEl ;
+        minAz = ( minAz > Az ) ? Az : minAz ;
+    }
+    
+    SPVector aimpoint;
+    VECT_CREATE(SceneBoundingBox.AA.x+((SceneBoundingBox.BB.x - SceneBoundingBox.AA.x)/2),
+                SceneBoundingBox.AA.y+((SceneBoundingBox.BB.y - SceneBoundingBox.AA.y)/2),
+                SceneBoundingBox.AA.z+((SceneBoundingBox.BB.z - SceneBoundingBox.AA.z)/2), aimpoint);
+    
+    *rayArray = (Ray *)sp_malloc(nRays * sizeof(Ray));
+    SPVector elVect, azVect, aimpnt,Opnt,Hdir,Vdir;
+    
+    for( int i=0; i < nRays; i++){
+        double el, az;
+        el = box_muller(minEl+((maxEl-minEl)/2), (maxEl-minEl)/2 );
+        az = box_muller(minAz+((maxAz-minAz)/2), (maxAz-minAz)/2 );
+        VECT_SCMULT(unitBeamEl, el, elVect);
+        VECT_SCMULT(unitBeamAz, az, azVect);
+        VECT_ADD(elVect, azVect, aimpnt);
+        Opnt = TxPos ;
+        VECT_ADD(Opnt, elVect, Opnt);
+        VECT_ADD(Opnt, azVect, Opnt);
+        VECT_SUB(aimpnt, Opnt, (*rayArray)[i].dir );
+        VECT_NORM((*rayArray)[i].dir, (*rayArray)[i].dir) ;
+        (*rayArray)[i].org = Opnt ;
+        (*rayArray)[i].pow = PowPerRay ;
+        (*rayArray)[i].len = 0 ;
+        VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
+        VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
+        VECT_NORM(Vdir, (*rayArray)[i].pol) ;
+    }
+
+}
+

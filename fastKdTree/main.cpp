@@ -49,6 +49,7 @@
 #include <SIlib2/SIlib2.h>
 #include "colourCodes.h"
 #include "buildTree.hpp"
+#include "rayTrace.hpp"
 
 #define ROOTPATH "/tmp"
 #define USECOLOR 0

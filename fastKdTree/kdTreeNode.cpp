@@ -50,7 +50,18 @@
 
 kdTree::kdTreeNode::kdTreeNode(){
     // default constructor
-    // this is to allow us to create an object without any initialization
+    data.size = 0 ;
+    data.address = 0 ;
+    data.triangleIndex = 0 ;
+    data.isLeaf = false ;
+    data.dim = -1 ;
+    data.level = 0 ;
+    data.smallntris = 0 ;
+    data.triangleMask = NULL;
+    next = NULL ;
+    leftChild = NULL ;
+    rghtChild = NULL ;
+    smallroot = NULL ;
 }
 
 kdTree::kdTreeNode::kdTreeNode(const kdTreeNode *node){

@@ -61,6 +61,7 @@
 		9562DA601B4FFE4D00EC6D83 /* MVectorObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA541B4FFE4D00EC6D83 /* MVectorObjc.m */; };
 		9562DA651B4FFE4D00EC6D83 /* radarMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */; };
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
+		9564CF461E71897000D37207 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
 		956B7CF61DFD7DCD00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
@@ -453,6 +454,8 @@
 		9562DA561B4FFE4D00EC6D83 /* radarMaterial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = radarMaterial.m; path = Common/radarMaterial.m; sourceTree = SOURCE_ROOT; };
 		9562DA571B4FFE4D00EC6D83 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Triangle.h; path = Common/Triangle.h; sourceTree = SOURCE_ROOT; };
 		9562DA581B4FFE4D00EC6D83 /* Triangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Triangle.m; path = Common/Triangle.m; sourceTree = SOURCE_ROOT; };
+		9564CF441E71897000D37207 /* clipToAABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = clipToAABB.cpp; sourceTree = "<group>"; };
+		9564CF451E71897000D37207 /* clipToAABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = clipToAABB.hpp; sourceTree = "<group>"; };
 		9567C8351B2EFE0B000742A6 /* libSIlib-1.1-7-e17b94d-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d-dirty.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d-dirty.a"; sourceTree = "<group>"; };
 		9567C8371B2F0426000742A6 /* libSIlib-1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.2.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.2.a"; sourceTree = "<group>"; };
 		956B7CC31DFAC85500FF87F3 /* libSIlib2-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-2.0.a"; sourceTree = "<group>"; };
@@ -756,6 +759,8 @@
 				953221F91E084FE800A736F9 /* splitCandidate.hpp */,
 				953221FA1E084FE800A736F9 /* AABB.cpp */,
 				953221FB1E084FE800A736F9 /* AABB.hpp */,
+				9564CF441E71897000D37207 /* clipToAABB.cpp */,
+				9564CF451E71897000D37207 /* clipToAABB.hpp */,
 				953221FC1E084FE800A736F9 /* kdTreeNode.cpp */,
 				953221FD1E084FE800A736F9 /* kdTreeNode.hpp */,
 				95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */,
@@ -1343,6 +1348,7 @@
 				953222001E084FE800A736F9 /* kdTreeNode.cpp in Sources */,
 				953221FF1E084FE800A736F9 /* AABB.cpp in Sources */,
 				953221FE1E084FE800A736F9 /* splitCandidate.cpp in Sources */,
+				9564CF461E71897000D37207 /* clipToAABB.cpp in Sources */,
 				953221F41E084FA400A736F9 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

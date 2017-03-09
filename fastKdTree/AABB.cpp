@@ -225,3 +225,4 @@ SPVector crossingPoint(int dim, double linePos, SPVector start, SPVector end)
 
     return ans;
 }
+

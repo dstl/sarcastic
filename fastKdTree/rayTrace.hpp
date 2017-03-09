@@ -44,7 +44,7 @@ typedef struct Ray {
 } Ray;
 
 void  rayTrace(TriangleMesh *mesh, kdTree::KdData **kdTree, int *numNodesInTree) ;
-int clipToAABB(AABB boundingBox, SPVector *lineStart, SPVector *lineEnd) ;
 void Intersect(ATS *tri, Ray *ray, Hit *hit) ;
+void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree) ;
 
 #endif /* rayTrace_hpp */

@@ -81,22 +81,6 @@ public:
     
 };
 
-/*
- // Axis Aligned Bounding Box
- @interface AABB : NSObject <NSCopying>
- @property (copy, nonatomic) MVector * AA;   // Lower coord of box
- @property (copy, nonatomic) MVector * BB;   // Upper coord of box
- - (id) initWithTriangle: (Triangle *) triangle;
- - (id) initWithTriangleArray: (NSArray *) triangles;
- - (NSUInteger) maxDim; // largest dimension of AABB
- - (void) clipToTriangle: (Triangle *) t ;
- - (BOOL) isPlanarInDimension: (NSUInteger) dim ;
- - (AABB *) CopyAndSplitLeftDim: (NSUInteger) dim Pos: (float) splitPosition ;
- - (AABB *) CopyAndSplitRightDim: (NSUInteger) dim Pos: (float) splitPosition ;
- - (float) SurfaceArea ;
- - (BOOL) clipLineStart: (MVector *) start End: (MVector *) end ;
- @end
- */
 
 
 #endif /* AABB_hpp */

@@ -91,12 +91,17 @@ namespace kdTree {
             unsigned char   leafDim ;       // lsb 2 = leaf flag. Bits 0 + 1 are for dimension (above)
             unsigned int    ntriangles ;    // num of triangles in this leaf
             unsigned int    triangleIndex ; // used to store the triangle index info. If a leaf used for index of this node
+            AABB            aabb;           // Axis aligned bounding box for node
+            int Ropes[6];                   // array of ropes. Each rope contains the index of the adjacent node in the tree
+
         } leaf;
         struct KdTreeBrch {
             float           splitPosition ; // splitposition for node
             unsigned char   leafDim ;       // lsb 2 = leaf flag. Bits 0 + 1 are for dimension (above)
             unsigned int    leftaddress ;   // index of left child in structure
             unsigned int    rghtaddress ;   // index of right child in structure
+            AABB            aabb;           // Axis aligned bounding box for node
+            int Ropes[6];                   // array of ropes. Each rope contains the index of the adjacent node in the tree
         } brch;
         
     } KdData ;
