@@ -429,7 +429,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
     }
     
     *numOfKdTreeNodes = nodelist->front()->data.size ;
-    *kdTreeOutput = new KdData [*numOfKdTreeNodes] ;
+    *kdTreeOutput = (KdData *)malloc(sizeof(KdData) * (*numOfKdTreeNodes) ) ;
     
     int address ;
     for(int i=0; i<nodelist->size(); ++i){

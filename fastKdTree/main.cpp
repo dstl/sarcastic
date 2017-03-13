@@ -51,6 +51,7 @@
 #include "buildTree.hpp"
 #include "rayTrace.hpp"
 
+
 #define ROOTPATH "/tmp"
 #define USECOLOR 0
 
@@ -115,7 +116,9 @@ int main(int argc, const char * argv[]) {
         printf("KdTree constructed in  %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     }
     
-    rayTrace(&mesh, &tree, &treeSize) ;
+    printf("Ray tracing through tree...\n");
+    rayTrace(&mesh, tree, &treeSize) ;
+    
     
     return 0;
 }

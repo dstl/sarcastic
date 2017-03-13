@@ -8,14 +8,16 @@
 
 #include "rayTrace.hpp"
 #include <SIlib2/SIlib2.h>
-#include "clipToAABB.hpp"
-#include "boxMullerRandom.h"
+
+
+void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox) ;
+void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) ;
 
 void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) {
     
-    kdTree::KdData node;
+    kdTree::KdData *node;
     
-    node = kdTree[0] ;
+    node = &(kdTree[0]) ;
     
     // build Ropes and Boxes
     //
@@ -23,38 +25,51 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     AABB sceneAABB = kdTree[0].brch.aabb ;
 
     for(int i=0; i<6; i++) Ropes[i] = NILROPE;
-    BuildRopesAndBoxes(&node, Ropes, sceneAABB, kdTree);
+    BuildRopesAndBoxes(node, Ropes, sceneAABB, kdTree);
     
     // generate rays
     //
     Ray *rays;
-    int nAzRays = 4;
-    int nElRays = 4;
+    int nAzRays = 10;
+    int nElRays = 10;
     int nRays = nAzRays * nElRays ;
     SPVector TxPos;
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
 
     buildRays(&rays, nAzRays, nElRays, TxPos, sceneAABB) ;
+//    for (int i=0; i<nAzRays*nElRays; ++i) {
+//        SPVector h;
+//        VECT_SCMULT(rays[i].dir, sqrt(100*100+100*100), h);
+//        VECT_ADD(h, rays[i].org, h) ;
+//        printf("%f,%f,%f\n", h.x,h.y,h.z) ;
+//    }
     
     // generate triangles
     //
     ATS *accelTriangles;
-    buildTriangles(mesh,&accelTriangles) ;
+    accelerateTriangles(mesh,&accelTriangles) ;
     Hit * hits = new Hit [nRays] ;
     
-    stacklessTraverse(kdTree, accelTriangles, sceneAABB, nRays, rays, hits);
+    shootRay(kdTree, accelTriangles, nRays, rays, hits);
     
-    
+    delete [] accelTriangles ;
     return ;
     
 }
 
-void stacklessTraverse(kdTree::KdData * KdTree,
-                                 ATS * accelTriangles,
-                                 const    AABB SceneBoundingBox,
-                                 const    int nRays,                 // Number of rays
-                                 Ray * rays,                // array of rays to process.
-                                 Hit *hits                  // Location of ray hits
+void shootRay(kdTree::KdData * KdTree,ATS * accelTriangles,const int nRays, Ray * rays, Hit *hits){
+    for (int ind=0; ind<nRays; ++ind) {
+        stacklessTraverse(ind, KdTree, accelTriangles, nRays, rays, hits);
+    }
+}
+
+
+void stacklessTraverse(const int ind,
+                       kdTree::KdData * KdTree,
+                       ATS * accelTriangles,
+                       const int nRays,        // Number of rays
+                       Ray * rays,                // array of rays to process.
+                       Hit *hits                  // Location of ray hits
 
 
 ){
@@ -65,10 +80,14 @@ void stacklessTraverse(kdTree::KdData * KdTree,
     float t_entry, t_exit ;
     
     SPVector volumeEntry, volumeExit, PEntry, hp, dirInverse, v ;
+    AABB sceneBoundingBox ;
     
     kdTree::KdData * node ;
     
-    for(int ind=0; ind < nRays ; ++ind) {
+    sceneBoundingBox = KdTree[0].brch.aabb ;
+    
+    if (ind >=0 && ind < nRays ) {
+        printf("Ray %d \n",ind);
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -84,7 +103,7 @@ void stacklessTraverse(kdTree::KdData * KdTree,
         // Calculate the ray segment within the scene volume
         // Do this early to reduce calcs for ray misses
         //
-        if(!clipToAABB(SceneBoundingBox, &volumeEntry, &volumeExit)) return ;
+        if(!clipToAABB(sceneBoundingBox, &volumeEntry, &volumeExit)) return ;
         
         // Calc inverse direction so only multiplies (not divides) in loop (cheaper)
         //
@@ -167,8 +186,10 @@ void stacklessTraverse(kdTree::KdData * KdTree,
                 
                 if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
-                   && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON))
+                   && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)){
+                    printf("%f,%f,%f\n",hp.x,hp.y,hp.z);
                     return ;
+                }
             }
             
             // If ray doesnt intersect triangle in this leaf then propagate the
@@ -216,7 +237,7 @@ void stacklessTraverse(kdTree::KdData * KdTree,
             node = &(KdTree[node->brch.Ropes[2*ropeInd+ropeIndOff]]);
             
         }
-        return ;
+//        return ;
     }
     return ;
 }
@@ -368,5 +389,70 @@ void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB Sc
         VECT_NORM(Vdir, (*rayArray)[i].pol) ;
     }
 
+}
+
+void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) {
+
+    SPVector tmp,b,c;
+    
+    *accelTriangles = new ATS [mesh->triangles.size()] ;
+    if (*accelTriangles == NULL) {
+        printf("Error allocating memory for accelTriangles \n");
+        exit(1);
+    }
+    
+    for(int i=0; i<mesh->triangles.size(); ++i){
+        SPVector Aa = mesh->vertices[mesh->triangles[i].a].asSPVector() ;
+        SPVector Bb = mesh->vertices[mesh->triangles[i].b].asSPVector() ;
+        SPVector Cc = mesh->vertices[mesh->triangles[i].c].asSPVector() ;
+        SPVector N  = mesh->triangles[i].N.asSPVector() ;
+        
+        // calculate the projection dimension
+        //
+        float nx = N.x ;
+        float ny = N.y ;
+        float nz = N.z ;
+        float anx = fabs(nx);
+        float any = fabs(ny);
+        float anz = fabs(nz);
+        
+        if( anx > any ){
+            if (anx > anz){
+                (*accelTriangles)[i].k=0;           /* X */
+            }else{
+                (*accelTriangles)[i].k=2;           /* Z */
+            }
+        }else{
+            if ( any > anz){
+                (*accelTriangles)[i].k=1;           /* Y */
+            }else{
+                (*accelTriangles)[i].k=2;           /* Z */
+            }
+        }
+    
+        int u = quickmodulo[(*accelTriangles)[i].k+1];
+        int v = quickmodulo[(*accelTriangles)[i].k+2];
+    
+        (*accelTriangles)[i].nd_u = N.cell[u] / N.cell[(*accelTriangles)[i].k] ;
+        (*accelTriangles)[i].nd_v = N.cell[v] / N.cell[(*accelTriangles)[i].k] ;
+        VECT_SCMULT(N, 1/N.cell[(*accelTriangles)[i].k], tmp) ;
+        (*accelTriangles)[i].d = VECT_DOT(Aa, tmp) ;
+        
+        VECT_SUB(Cc, Aa, b) ;
+        VECT_SUB(Bb, Aa, c) ;
+    
+        float denom = 1.0/((b.cell[u]*c.cell[v]) - (b.cell[v]*c.cell[u]));
+        
+        (*accelTriangles)[i].kbu        = -b.cell[v] * denom ;
+        (*accelTriangles)[i].kbv        =  b.cell[u] * denom ;
+        (*accelTriangles)[i].kbd        = ((b.cell[v] * Aa.cell[u]) - (b.cell[u] * Aa.cell[v])) * denom;
+        (*accelTriangles)[i].kcu        =  c.cell[v] * denom;
+        (*accelTriangles)[i].kcv        = -c.cell[u] * denom;
+        (*accelTriangles)[i].kcd        =  ((c.cell[u] * Aa.cell[v]) - (c.cell[v] * Aa.cell[u])) * denom;
+        (*accelTriangles)[i].textureInd = mesh->triangles[i].mat ;
+        
+    }
+
+    return ;
 }
 

@@ -11,6 +11,11 @@
 
 #include <stdio.h>
 #include "buildTree.hpp"
+#include "clipToAABB.hpp"
+extern "C" {
+#include "boxMullerRandom.h"
+}
+
 #define NOINTERSECTION -1
 #define MAXTRAVERSAL 1000           // Maximum kdTree traversal steps before we blow up
 #define EPSILON          ((double) 0.0001)
@@ -43,8 +48,12 @@ typedef struct Ray {
     SPVector pol ;   // unit vector of direction of E field of ray
 } Ray;
 
-void  rayTrace(TriangleMesh *mesh, kdTree::KdData **kdTree, int *numNodesInTree) ;
+static const unsigned int quickmodulo[] = {0,1,2,0,1};
+
+void rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) ;
 void Intersect(ATS *tri, Ray *ray, Hit *hit) ;
 void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree) ;
+void shootRay(kdTree::KdData * KdTree,ATS * accelTriangles,const int nRays, Ray * rays, Hit *hits);
+void stacklessTraverse(const int ind, kdTree::KdData * KdTree, ATS * accelTriangles, const int nRays, Ray * rays, Hit *hits );
 
 #endif /* rayTrace_hpp */

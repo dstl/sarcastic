@@ -20,6 +20,7 @@
 		953B54F41BA4523E00BFF41F /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
 		953C591919D7F8C9006D5866 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F773719CF1D4700BF3039 /* Foundation.framework */; };
 		953C592019D7F8C9006D5866 /* buildKDTree.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 953C591F19D7F8C9006D5866 /* buildKDTree.1 */; };
+		953F9EDB1E72B1DD007BEA89 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
 		953FA1E618F4289400EAD4F3 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1BF18F4289400EAD4F3 /* banner.c */; };
 		953FA1E718F4289400EAD4F3 /* buildKernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C018F4289400EAD4F3 /* buildKernel.c */; };
 		953FA1E818F4289400EAD4F3 /* BuildRopesAndBoxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C118F4289400EAD4F3 /* BuildRopesAndBoxes.c */; };
@@ -35,6 +36,9 @@
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
 		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
+		95497AA81E72EDF3008E5861 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
+		95497AAA1E72EE17008E5861 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95497AA91E72EE17008E5861 /* libSIlib2-2.1.2.a */; };
+		95497AAB1E72EE60008E5861 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
 		954D03521B7BC7AD003CCB86 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D03511B7BC7AD003CCB86 /* main.cpp */; };
 		954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		954D035D1B7CF461003CCB86 /* JRStriangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 954D035B1B7CF461003CCB86 /* JRStriangle.c */; };
@@ -45,7 +49,6 @@
 		95538E271BB06538009E8117 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
 		95538E281BB06538009E8117 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
 		95538E291BB065ED009E8117 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
-		95584C351E12A69D00C7AFDB /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95584C361E12A6BE00C7AFDB /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		95584C371E12A6BE00C7AFDB /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
 		95584C381E12A6CA00C7AFDB /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
@@ -325,6 +328,7 @@
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = TxPowerPerRay.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
 		95492F391A74EFC90061FCF7 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
+		95497AA91E72EE17008E5861 /* libSIlib2-2.1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.2.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.1.2.a"; sourceTree = "<group>"; };
 		954D034F1B7BC7AD003CCB86 /* materialise */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = materialise; sourceTree = BUILT_PRODUCTS_DIR; };
 		954D03511B7BC7AD003CCB86 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = main.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		954D035B1B7CF461003CCB86 /* JRStriangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = JRStriangle.c; sourceTree = "<group>"; };
@@ -543,10 +547,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95497AAA1E72EE17008E5861 /* libSIlib2-2.1.2.a in Frameworks */,
 				95584C381E12A6CA00C7AFDB /* libreadline.tbd in Frameworks */,
 				95584C361E12A6BE00C7AFDB /* libfftw3f_threads.a in Frameworks */,
 				95584C371E12A6BE00C7AFDB /* libfftw3f.a in Frameworks */,
-				95584C351E12A69D00C7AFDB /* libSIlib2-2.1.2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,6 +896,7 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95497AA91E72EE17008E5861 /* libSIlib2-2.1.2.a */,
 				95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */,
 				956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */,
 				956B7CC31DFAC85500FF87F3 /* libSIlib2-2.0.a */,
@@ -1336,6 +1341,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95497AAB1E72EE60008E5861 /* pmath_rng.c in Sources */,
+				95497AA81E72EDF3008E5861 /* ranf.c in Sources */,
+				953F9EDB1E72B1DD007BEA89 /* boxMullerRandom.c in Sources */,
 				95D43AA61E200DBA00B66E58 /* matrixMultiplication.c in Sources */,
 				95A1F1E61E6C7C3F00FF4A20 /* rayTrace.cpp in Sources */,
 				95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */,
@@ -1379,10 +1387,10 @@
 				958258981D99368B00335811 /* tinyxmlerror.cpp in Sources */,
 				958258991D99368B00335811 /* tinyxmlparser.cpp in Sources */,
 				958258951D99365C00335811 /* TriangleMesh.cpp in Sources */,
-				954D03601B7DCCDA003CCB86 /* boxMullerRandom.c in Sources */,
 				954D035D1B7CF461003CCB86 /* JRStriangle.c in Sources */,
 				954D03521B7BC7AD003CCB86 /* main.cpp in Sources */,
 				954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */,
+				954D03601B7DCCDA003CCB86 /* boxMullerRandom.c in Sources */,
 				954D03651B7DD25C003CCB86 /* pmath_rng.c in Sources */,
 				954D03631B7DD20A003CCB86 /* ranf.c in Sources */,
 			);
@@ -1451,7 +1459,7 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -1493,7 +1501,7 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
 			};
 			name = Release;
