@@ -37,12 +37,6 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
 
     buildRays(&rays, nAzRays, nElRays, TxPos, sceneAABB) ;
-//    for (int i=0; i<nAzRays*nElRays; ++i) {
-//        SPVector h;
-//        VECT_SCMULT(rays[i].dir, sqrt(100*100+100*100), h);
-//        VECT_ADD(h, rays[i].org, h) ;
-//        printf("%f,%f,%f\n", h.x,h.y,h.z) ;
-//    }
     
     // generate triangles
     //
@@ -50,8 +44,19 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     accelerateTriangles(mesh,&accelTriangles) ;
     Hit * hits = new Hit [nRays] ;
     
+    Timer rayTimer ;
+    SPStatus status ;
+    im_init_status(status, 0);
+
+    startTimer(&rayTimer, &status) ;
+    
     shootRay(kdTree, accelTriangles, nRays, rays, hits);
     
+   
+    endTimer(&rayTimer, &status);
+    
+    printf("%d rays traced in  %f seconds (%f rays / second) \n",nRays,timeElapsedInSeconds(&rayTimer, &status), nRays / timeElapsedInSeconds(&rayTimer, &status)) ;
+
     delete [] accelTriangles ;
     return ;
     
@@ -64,14 +69,12 @@ void shootRay(kdTree::KdData * KdTree,ATS * accelTriangles,const int nRays, Ray 
 }
 
 
-void stacklessTraverse(const int ind,
-                       kdTree::KdData * KdTree,
-                       ATS * accelTriangles,
-                       const int nRays,        // Number of rays
-                       Ray * rays,                // array of rays to process.
-                       Hit *hits                  // Location of ray hits
-
-
+void stacklessTraverse(const int ind,           // Index of ray to trace in rays array
+                       kdTree::KdData * KdTree, // The Kd-Tree - prebuilt and passed in here
+                       ATS * accelTriangles,    // An array of triangles in accelerated format
+                       const int nRays,         // Number of rays - size of rays array and hits array
+                       Ray * rays,              // array of rays to process.
+                       Hit *hits                // Location of ray hits
 ){
     int dimToUse ;
     int cnt, i ;
@@ -187,7 +190,6 @@ void stacklessTraverse(const int ind,
                 if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
                    && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)){
-                    printf("%f,%f,%f\n",hp.x,hp.y,hp.z);
                     return ;
                 }
             }
@@ -450,6 +452,7 @@ void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) {
         (*accelTriangles)[i].kcv        = -c.cell[u] * denom;
         (*accelTriangles)[i].kcd        =  ((c.cell[u] * Aa.cell[v]) - (c.cell[v] * Aa.cell[u])) * denom;
         (*accelTriangles)[i].textureInd = mesh->triangles[i].mat ;
+        (*accelTriangles)[i].triNum     = i;
         
     }
 

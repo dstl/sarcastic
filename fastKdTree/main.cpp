@@ -80,15 +80,6 @@ int main(int argc, const char * argv[]) {
                               (char *)"The name of a triangle .ply file containing triangle data",
                               (char *) ROOTPATH"/delaunay.ply");
     
-    char *oustr  = input_string((char *)"KdTree Filename", (char *)"kdTreeFname",
-                                (char *)"Full path name where KdTree will be stored",
-                                (char *) ROOTPATH"/KdTree.kdt");
-    FILE *fpout ;
-    fpout = fopen(oustr, "w");
-    if (fpout == NULL) {
-        printf("Error : failed to open input triangle file %s\n",oustr);
-        exit(1);
-    }
 
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
