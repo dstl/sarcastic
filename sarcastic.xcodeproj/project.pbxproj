@@ -66,7 +66,6 @@
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9564CF461E71897000D37207 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
 		956B7CF61DFD7DCD00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
-		956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
@@ -112,6 +111,7 @@
 		95B927771E2D185D00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+		95D1299F1E7832440066B3C9 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95D43AA11E200D8200B66E58 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
 		95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
 		95D43AA31E200D9F00B66E58 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
@@ -558,7 +558,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956B7CF91DFD8F2B00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */,
+				95D1299F1E7832440066B3C9 /* libSIlib2-2.1.2.a in Frameworks */,
 				957A59E91CF9AA2200981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59EA1CF9AA2200981E60 /* libfftw3f.a in Frameworks */,
 				957A59E81CF9A9F700981E60 /* libreadline.tbd in Frameworks */,

@@ -30,8 +30,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     // generate rays
     //
     Ray *rays;
-    int nAzRays = 10;
-    int nElRays = 10;
+    int nAzRays = 100;
+    int nElRays = 100;
     int nRays = nAzRays * nElRays ;
     SPVector TxPos;
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
@@ -87,7 +87,6 @@ void stacklessTraverse(const int ind,
     sceneBoundingBox = KdTree[0].brch.aabb ;
     
     if (ind >=0 && ind < nRays ) {
-        printf("Ray %d \n",ind);
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -172,7 +171,8 @@ void stacklessTraverse(const int ind,
             
             for (i=0; i<trisInLeaf; i++){
                 
-                ATS * tri = &(accelTriangles[KDT_INDEX(node)+1]) ;
+                int triInx = KdTree[KDT_INDEX(node)+1+i].leaf.triangleIndex ;
+                ATS * tri = &(accelTriangles[triInx]) ;
                 Intersect(tri, &(rays[ind]), &(hits[ind]));
             }
             

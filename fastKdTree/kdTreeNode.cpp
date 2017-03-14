@@ -173,9 +173,19 @@ void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *r
     (left)->data.aabb.AA = data.aabb.AA ;
     (left)->data.aabb.BB = data.aabb.BB ;
     (left)->data.aabb.BB.cell[k] = pos ;
+    for(int i=0;i<3; ++i){
+        if ((left)->data.aabb.BB.cell[i] < (left)->data.aabb.AA.cell[i]) {
+            printf("ERROR: Inside out AABB for dimension %d\n",i);
+        }
+    }
     (rght)->data.aabb.AA = data.aabb.AA ;
     (rght)->data.aabb.BB = data.aabb.BB ;
     (rght)->data.aabb.AA.cell[k] = pos ;
+    for(int i=0;i<3; ++i){
+        if ((rght)->data.aabb.BB.cell[i] < (rght)->data.aabb.AA.cell[i]) {
+            printf("ERROR: Inside out AABB for dimension %d\n",i);
+        }
+    }
     
     // Sort triangles from this node into child nodes using bit mask
     //
@@ -183,8 +193,8 @@ void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *r
     (rght)->data.triangleMask = new unsigned char [data.smallntris] ;
     
     for(int t=0; t<data.smallntris; ++t){
-        (left)->data.triangleMask[t] = data.triangleMask[t] & (data.triAABBs[t].AA.cell[k] <= pos) ;
-        (rght)->data.triangleMask[t] = data.triangleMask[t] & (data.triAABBs[t].BB.cell[k] >= pos) ;
+        (left)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].AA.cell[k] <= pos) && (data.triAABBs[t].AA.cell[k] >= data.aabb.AA.cell[k])) ;
+        (rght)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].BB.cell[k] >= pos) && (data.triAABBs[t].BB.cell[k] <= data.aabb.BB.cell[k])) ;
     }
     
     (left)->data.splitList  = data.splitList  ;
