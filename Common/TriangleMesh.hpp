@@ -243,6 +243,8 @@ public:
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
     void buildTriangleAABBs();
+    TriangleMesh add(const TriangleMesh *newMesh) ;
+    
 //    void buildTriangleAABBs(int dim, float pos);
     
 };
