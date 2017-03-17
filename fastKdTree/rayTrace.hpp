@@ -15,25 +15,12 @@
 extern "C" {
 #include "boxMullerRandom.h"
 }
+#include "accelerateTriangles.hpp"
 
 #define NOINTERSECTION -1
 #define MAXTRAVERSAL 1000           // Maximum kdTree traversal steps before we blow up
 #define EPSILON          ((double) 0.0001)
 
-typedef struct ATS {
-    int  triNum;    // Triangle ID
-    double d;         // Constant of plane equation
-    double nd_u;      // Normal.u / normal.k
-    double nd_v;      // normal.v / normal.k
-    int k;          // projection dimension
-    double kbu;
-    double kbv;
-    double kbd;
-    double kcu;
-    double kcv;
-    double kcd;
-    int textureInd;
-} ATS;
 typedef struct Hit {
     double dist;
     int trinum;

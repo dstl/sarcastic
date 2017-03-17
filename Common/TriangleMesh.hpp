@@ -19,6 +19,12 @@
 #include <set>
 #include "AABB.hpp"
 
+enum  TRIVERTEX {
+    vertA = 0,
+    vertB = 1,
+    vertC = 2
+} ;
+
 void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, float *distance) ;
 
 class halfEdge {
@@ -131,6 +137,8 @@ public:
     Triangle3DVec N;    // Triangle Normal
     float dist=0;       // Distance of triangle plane from origin (a.N) Useful for sorting
     float Area=0;       // Area
+    double glob2locMatrix[9];
+    double loc2GlobMatrix[9];
     
     Triangle(){}
     Triangle(int vertexA, int vertexB, int vertexC): a(vertexA), b(vertexB), c(vertexC) {
@@ -149,6 +157,10 @@ public:
     // memory for them must be allocated before calling this function
     //
     void matrices(double *localToGlobal, double *globalToLocal) ;
+    void buildTransMats(){
+        matrices(loc2GlobMatrix, glob2locMatrix) ;
+        return ;
+    }
     
     // Sort in following order : Material, normal, d, a,b,c
     //
@@ -243,7 +255,10 @@ public:
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
     void buildTriangleAABBs();
-    TriangleMesh add(const TriangleMesh *newMesh) ;
+    TriangleMesh add(const TriangleMesh &newMesh) ;
+    SPVector vertAforTri(int triIndx) { return vertices[triangles[triIndx].a].asSPVector() ; }
+    SPVector vertBforTri(int triIndx) { return vertices[triangles[triIndx].b].asSPVector() ; }
+    SPVector vertCforTri(int triIndx) { return vertices[triangles[triIndx].c].asSPVector() ; }
     
 //    void buildTriangleAABBs(int dim, float pos);
     

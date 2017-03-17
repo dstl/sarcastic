@@ -91,6 +91,8 @@ namespace kdTree {
     void preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData **tree, int *numNodesInTree) ;
     void dumpsmall(treeList **list) ;
     void writeAABBtoPlyFile(AABB bv, std::string filename);
+    void writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename);
+    void writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename, int r, int g, int b);
     void swapLists(treeList **a, treeList **b) ;
     void printKdTreeNodes(std::vector<kdTreeNode *> nodelist);
     void printKdTreeData(KdData **kdTree, int *numNodesInTree) ;

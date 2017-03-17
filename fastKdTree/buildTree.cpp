@@ -135,11 +135,34 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
                 exit(0);
             }
         }
+        // find max level
+        //
+        int maxlevel = 0;
         for (int i=0; i<nodelist.size(); ++i) {
-            AABB ab = nodelist[i]->data.aabb ;
+            maxlevel = (nodelist[i]->data.level > maxlevel) ? nodelist[i]->data.level : maxlevel ;
+        }
+        for (int lev=0; lev<=maxlevel; ++lev) {
+            std::vector<AABB> boxes ;
+            for (int i=0; i<nodelist.size(); ++i) {
+                if (nodelist[i]->data.level == lev) {
+                    boxes.push_back(nodelist[i]->data.aabb);
+                }
+            }
             char fn[255] ;
-            sprintf(fn, "/tmp/AABBs/aabb_d%02d_%02d.ply",nodelist[i]->data.level,i);
-            writeAABBtoPlyFile(ab, std::string(fn));
+            sprintf(fn, "/tmp/AABBs/aabb_d%02d.ply",lev);
+            int r,g,b;
+            double rf,gf,bf;
+            double h = 360.0 * ((double)lev / (double)maxlevel) ;
+            rf = cos(DEG2RAD(0.75*(h - 0.0))) ;
+            if (rf < 0) rf=0.0;
+            gf = cos(DEG2RAD(0.75*(h - 120.0))) ;
+            if (gf < 0) gf=0.0;
+            bf = cos(DEG2RAD(0.75*(h - 240.0))) ;
+            if (bf < 0) bf=0.0;
+            r = (int)(rf*255.0);
+            g = (int)(gf*255.0);
+            b = (int)(bf*255.0);
+            writeAABBtoPlyFile(boxes, std::string(fn), r, g, b);
         }
     }
     
@@ -655,6 +678,68 @@ void kdTree::scanExclusive(int *in, int *out, int n){
 //    }
 //    return ;
 //}
+
+void kdTree::writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename, int r, int g, int b){
+    int verticesInAABB = 8;
+    int facesInAABB = 6;
+    
+    FILE *fp = fopen(filename.c_str(), "w");
+    
+    if (fp == NULL) {
+        printf("Error : could not open file %s for writing\n",filename.c_str());
+        exit(1);
+    }
+    
+    fprintf(fp,"ply\n");
+    fprintf(fp,"format ascii 1.0\n");
+    fprintf(fp,"comment AABB PLY File by fastKDTree\n");
+    fprintf(fp,"element vertex %d\n",(int)(verticesInAABB*abs.size()));
+    fprintf(fp,"property float x\n");
+    fprintf(fp,"property float y\n");
+    fprintf(fp,"property float z\n");
+    fprintf(fp,"element face %d\n",(int)(facesInAABB*abs.size()));
+    fprintf(fp,"property list uchar int vertex_index\n");
+    fprintf(fp,"property uchar red\n");
+    fprintf(fp,"property uchar green\n");
+    fprintf(fp,"property uchar blue\n");
+    fprintf(fp,"end_header\n");
+    
+    for(int i=0; i<abs.size(); ++i){
+        AABB bv = abs[i] ;
+        // vertex info for AABB
+        //
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.AA.y,bv.AA.z);  // Vertex 0
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.AA.y,bv.AA.z);  // Vertex 1
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.BB.y,bv.AA.z);  // Vertex 2
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.BB.y,bv.AA.z);  // Vertex 3
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.AA.y,bv.BB.z);  // Vertex 4
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.AA.y,bv.BB.z);  // Vertex 5
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.BB.x,bv.BB.y,bv.BB.z);  // Vertex 6
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",bv.AA.x,bv.BB.y,bv.BB.z);  // Vertex 7
+    }
+    
+    for(int i=0; i<abs.size(); ++i){
+        
+        // face info for AABB
+        //
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+0,i*8+1,i*8+2,i*8+3,r,g,b);
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+4,i*8+5,i*8+6,i*8+7,r,g,b);
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+0,i*8+1,i*8+5,i*8+4,r,g,b);
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+1,i*8+2,i*8+6,i*8+5,r,g,b);
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+2,i*8+3,i*8+7,i*8+6,r,g,b);
+        fprintf(fp, "4 %d %d %d %d %d %d %d\n",i*8+3,i*8+0,i*8+4,i*8+7,r,g,b);
+    }
+    
+    fclose(fp) ;
+    return ;
+    
+}
+
+
+void kdTree::writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename){
+    kdTree::writeAABBtoPlyFile(abs, filename, 255, 255, 255) ;
+    return ;
+}
 
 void kdTree::writeAABBtoPlyFile(AABB bv, std::string filename){
     

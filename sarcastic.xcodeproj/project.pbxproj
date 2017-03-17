@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9500A65B1E7C14240066E15B /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6591E7C14240066E15B /* buildRopesAndBoxes.cpp */; };
+		9500A65E1E7C15410066E15B /* accelerateTriangles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A65C1E7C15410066E15B /* accelerateTriangles.cpp */; };
+		9500A65F1E7C17A20066E15B /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */; };
+		9500A6601E7C1FD00066E15B /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
+		9500A6611E7C20510066E15B /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
+		9500A6641E7C22BF0066E15B /* getUserInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6621E7C22BF0066E15B /* getUserInput.cpp */; };
+		9500A6671E7C2E8D0066E15B /* threadCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6651E7C2E8D0066E15B /* threadCore.cpp */; };
 		9516175219DD83070004C4F0 /* PolyClip.c in Sources */ = {isa = PBXBuildFile; fileRef = 953375EE19D9294500DE1C46 /* PolyClip.c */; };
 		95209B191D7AEF8E008ACDD1 /* cpuPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95209B181D7AEF8E008ACDD1 /* cpuPOField.c */; };
 		953221F41E084FA400A736F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221F31E084FA400A736F9 /* main.cpp */; };
@@ -126,7 +133,31 @@
 		95D43AA61E200DBA00B66E58 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */; };
 		95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */; };
+		95E6273B1E7C8B3900BC7933 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59EF1CF9AAB200981E60 /* libexpat.tbd */; };
+		95E6273C1E7C8B6F00BC7933 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
+		95E6273D1E7C8B6F00BC7933 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
+		95E6273E1E7C8B6F00BC7933 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
+		95E627421E7C8C5200BC7933 /* oclReflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E627401E7C8C5200BC7933 /* oclReflect.cpp */; };
+		95E627451E7C8DC000BC7933 /* oclRandomRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E627431E7C8DC000BC7933 /* oclRandomRays.cpp */; };
+		95E627481E7C8E8500BC7933 /* oclBuildShadowRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E627461E7C8E8500BC7933 /* oclBuildShadowRays.cpp */; };
+		95E627491E7C8F1C00BC7933 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
+		95E6274A1E7C8F6600BC7933 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
+		95E6274B1E7C8F7A00BC7933 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
+		95E6274C1E7C8FDB00BC7933 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
+		95E6274D1E7C900400BC7933 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
+		95E6274E1E7C900400BC7933 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
+		95E6274F1E7C900400BC7933 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA361B48465400EC6D83 /* tinyxmlerror.cpp */; };
+		95E627501E7C900400BC7933 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA371B48465400EC6D83 /* tinyxmlparser.cpp */; };
+		95E627511E7C902700BC7933 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */; };
+		95E627521E7C904800BC7933 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221F81E084FE800A736F9 /* splitCandidate.cpp */; };
+		95E627531E7C906300BC7933 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221FA1E084FE800A736F9 /* AABB.cpp */; };
+		95E627541E7C907D00BC7933 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953221FC1E084FE800A736F9 /* kdTreeNode.cpp */; };
+		95E627551E7C909A00BC7933 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
+		95E627561E7C93D600BC7933 /* accelerateTriangles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A65C1E7C15410066E15B /* accelerateTriangles.cpp */; };
+		95E627571E7C93D600BC7933 /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6591E7C14240066E15B /* buildRopesAndBoxes.cpp */; };
 		95E9AE5E1D91B1000063993D /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
+		95F2F1B31E7C4E850035F635 /* buildKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95F2F1B11E7C4E850035F635 /* buildKernel.cpp */; };
+		95F2F1B61E7C5F740035F635 /* cpuPOField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95F2F1B41E7C5F740035F635 /* cpuPOField.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -197,6 +228,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9500A6591E7C14240066E15B /* buildRopesAndBoxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildRopesAndBoxes.cpp; sourceTree = "<group>"; };
+		9500A65A1E7C14240066E15B /* buildRopesAndBoxes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildRopesAndBoxes.hpp; sourceTree = "<group>"; };
+		9500A65C1E7C15410066E15B /* accelerateTriangles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = accelerateTriangles.cpp; sourceTree = "<group>"; };
+		9500A65D1E7C15410066E15B /* accelerateTriangles.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = accelerateTriangles.hpp; sourceTree = "<group>"; };
+		9500A6621E7C22BF0066E15B /* getUserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getUserInput.cpp; sourceTree = "<group>"; };
+		9500A6631E7C22BF0066E15B /* getUserInput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = getUserInput.hpp; sourceTree = "<group>"; };
+		9500A6651E7C2E8D0066E15B /* threadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadCore.cpp; sourceTree = "<group>"; };
+		9500A6661E7C2E8D0066E15B /* threadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = threadCore.hpp; sourceTree = "<group>"; };
 		950268461CDB6A0900CAC65F /* libSIlib-1.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.3.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.3.a"; sourceTree = "<group>"; };
 		9504211317A24F9400A076FC /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
 		950635CC19F7972C00B83F4B /* libSIlib-1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1.a"; sourceTree = "<group>"; };
@@ -529,12 +568,25 @@
 		95D8F8C01B5E78580057FA4C /* trianglecpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = trianglecpp.h; path = Common/trianglecpp.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		95D8F8C51B5E7A280057FA4C /* TriangleFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleFile.cpp; path = Common/TriangleFile.cpp; sourceTree = SOURCE_ROOT; };
 		95D8F8C61B5E7A280057FA4C /* TriangleFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TriangleFile.h; path = Common/TriangleFile.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		95E627401E7C8C5200BC7933 /* oclReflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oclReflect.cpp; sourceTree = "<group>"; };
+		95E627411E7C8C5200BC7933 /* oclReflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclReflect.hpp; sourceTree = "<group>"; };
+		95E627431E7C8DC000BC7933 /* oclRandomRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oclRandomRays.cpp; sourceTree = "<group>"; };
+		95E627441E7C8DC000BC7933 /* oclRandomRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclRandomRays.hpp; sourceTree = "<group>"; };
+		95E627461E7C8E8500BC7933 /* oclBuildShadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oclBuildShadowRays.cpp; sourceTree = "<group>"; };
+		95E627471E7C8E8500BC7933 /* oclBuildShadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclBuildShadowRays.hpp; sourceTree = "<group>"; };
 		95E744C71D5248DE00B3F3FB /* POField2.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = POField2.cl; sourceTree = "<group>"; };
 		95E745A01D74D63C00B3F3FB /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../usr/local/dstl/lib; sourceTree = "<group>"; };
 		95E745A21D74D65A00B3F3FB /* libSIlib2-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-1.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-1.0.a"; sourceTree = "<group>"; };
 		95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleMesh.cpp; path = Common/TriangleMesh.cpp; sourceTree = SOURCE_ROOT; };
 		95E9AE5D1D91B1000063993D /* TriangleMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TriangleMesh.hpp; path = Common/TriangleMesh.hpp; sourceTree = SOURCE_ROOT; };
 		95F276ED1A36045900FF9339 /* POField.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = POField.cl; sourceTree = "<group>"; };
+		95F2F1AD1E7C4C5D0035F635 /* oclkdTreeHits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oclkdTreeHits.cpp; sourceTree = "<group>"; };
+		95F2F1AE1E7C4C5D0035F635 /* oclkdTreeHits.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclkdTreeHits.hpp; sourceTree = "<group>"; };
+		95F2F1B01E7C4DE00035F635 /* kernels */ = {isa = PBXFileReference; lastKnownFileType = folder; path = kernels; sourceTree = "<group>"; };
+		95F2F1B11E7C4E850035F635 /* buildKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildKernel.cpp; sourceTree = "<group>"; };
+		95F2F1B21E7C4E850035F635 /* buildKernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildKernel.hpp; sourceTree = "<group>"; };
+		95F2F1B41E7C5F740035F635 /* cpuPOField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpuPOField.cpp; sourceTree = "<group>"; };
+		95F2F1B51E7C5F740035F635 /* cpuPOField.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cpuPOField.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -590,6 +642,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E6273B1E7C8B3900BC7933 /* libexpat.tbd in Frameworks */,
 				954BD4F71E795A24007A12E4 /* libreadline.tbd in Frameworks */,
 				954BD4F21E794B61007A12E4 /* libfftw3f_threads.a in Frameworks */,
 				954BD4F31E794B61007A12E4 /* libfftw3f.a in Frameworks */,
@@ -903,10 +956,31 @@
 		954BD4EA1E7949EA007A12E4 /* sarcastic2 */ = {
 			isa = PBXGroup;
 			children = (
+				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
+				95E627461E7C8E8500BC7933 /* oclBuildShadowRays.cpp */,
+				95E627471E7C8E8500BC7933 /* oclBuildShadowRays.hpp */,
+				95F2F1B01E7C4DE00035F635 /* kernels */,
+				95F2F1AD1E7C4C5D0035F635 /* oclkdTreeHits.cpp */,
+				95F2F1AE1E7C4C5D0035F635 /* oclkdTreeHits.hpp */,
+				9500A6621E7C22BF0066E15B /* getUserInput.cpp */,
+				9500A6631E7C22BF0066E15B /* getUserInput.hpp */,
 				954BD4F41E795925007A12E4 /* tryReadFile.cpp */,
 				954BD4F51E795925007A12E4 /* tryReadFile.hpp */,
-				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
+				9500A65C1E7C15410066E15B /* accelerateTriangles.cpp */,
+				9500A65D1E7C15410066E15B /* accelerateTriangles.hpp */,
 				954BD4F01E794ACC007A12E4 /* sarcastic2.hpp */,
+				9500A6591E7C14240066E15B /* buildRopesAndBoxes.cpp */,
+				9500A65A1E7C14240066E15B /* buildRopesAndBoxes.hpp */,
+				9500A6661E7C2E8D0066E15B /* threadCore.hpp */,
+				9500A6651E7C2E8D0066E15B /* threadCore.cpp */,
+				95E627431E7C8DC000BC7933 /* oclRandomRays.cpp */,
+				95E627441E7C8DC000BC7933 /* oclRandomRays.hpp */,
+				95F2F1B11E7C4E850035F635 /* buildKernel.cpp */,
+				95F2F1B21E7C4E850035F635 /* buildKernel.hpp */,
+				95F2F1B41E7C5F740035F635 /* cpuPOField.cpp */,
+				95F2F1B51E7C5F740035F635 /* cpuPOField.hpp */,
+				95E627401E7C8C5200BC7933 /* oclReflect.cpp */,
+				95E627411E7C8C5200BC7933 /* oclReflect.hpp */,
 			);
 			path = sarcastic2;
 			sourceTree = "<group>";
@@ -1407,6 +1481,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E627561E7C93D600BC7933 /* accelerateTriangles.cpp in Sources */,
+				95E627571E7C93D600BC7933 /* buildRopesAndBoxes.cpp in Sources */,
 				95497AAB1E72EE60008E5861 /* pmath_rng.c in Sources */,
 				95497AA81E72EDF3008E5861 /* ranf.c in Sources */,
 				953F9EDB1E72B1DD007BEA89 /* boxMullerRandom.c in Sources */,
@@ -1447,8 +1523,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E627551E7C909A00BC7933 /* matrixMultiplication.c in Sources */,
+				95E627541E7C907D00BC7933 /* kdTreeNode.cpp in Sources */,
+				95E627531E7C906300BC7933 /* AABB.cpp in Sources */,
+				95E627521E7C904800BC7933 /* splitCandidate.cpp in Sources */,
+				95E627511E7C902700BC7933 /* buildTree.cpp in Sources */,
+				95E6274D1E7C900400BC7933 /* tinystr.cpp in Sources */,
+				95E6274E1E7C900400BC7933 /* tinyxml.cpp in Sources */,
+				95E6274F1E7C900400BC7933 /* tinyxmlerror.cpp in Sources */,
+				95E627501E7C900400BC7933 /* tinyxmlparser.cpp in Sources */,
+				95E6274C1E7C8FDB00BC7933 /* colladainterface.cpp in Sources */,
+				95E6274B1E7C8F7A00BC7933 /* TriangleMesh.cpp in Sources */,
+				95E6274A1E7C8F6600BC7933 /* clipToAABB.cpp in Sources */,
+				95E627491E7C8F1C00BC7933 /* rayTrace.cpp in Sources */,
+				95E627451E7C8DC000BC7933 /* oclRandomRays.cpp in Sources */,
+				95E6273C1E7C8B6F00BC7933 /* pmath_rng.c in Sources */,
+				95E6273D1E7C8B6F00BC7933 /* boxMullerRandom.c in Sources */,
+				95E6273E1E7C8B6F00BC7933 /* ranf.c in Sources */,
+				9500A6641E7C22BF0066E15B /* getUserInput.cpp in Sources */,
+				9500A6611E7C20510066E15B /* OpenCLUtils.c in Sources */,
+				95E627481E7C8E8500BC7933 /* oclBuildShadowRays.cpp in Sources */,
+				95E627421E7C8C5200BC7933 /* oclReflect.cpp in Sources */,
+				9500A6601E7C1FD00066E15B /* TxPowerPerRay.c in Sources */,
+				9500A65F1E7C17A20066E15B /* ecef2SceneCoords.c in Sources */,
+				95F2F1B31E7C4E850035F635 /* buildKernel.cpp in Sources */,
+				9500A65E1E7C15410066E15B /* accelerateTriangles.cpp in Sources */,
+				95F2F1B61E7C5F740035F635 /* cpuPOField.cpp in Sources */,
+				9500A65B1E7C14240066E15B /* buildRopesAndBoxes.cpp in Sources */,
 				954BD4EC1E7949EA007A12E4 /* sarcastic2.cpp in Sources */,
 				954BD4F61E795925007A12E4 /* tryReadFile.cpp in Sources */,
+				9500A6671E7C2E8D0066E15B /* threadCore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1830,6 +1934,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic2/kernels\\\"",
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1850,6 +1959,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic2/kernels\\\"";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2058,6 +2168,7 @@
 				954BD4EE1E7949EA007A12E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		954D03551B7BC7AD003CCB86 /* Build configuration list for PBXNativeTarget "materialise" */ = {
 			isa = XCConfigurationList;

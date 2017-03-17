@@ -703,5 +703,21 @@ void Triangle::matrices(double *localToGlobal, double *globalToLocal){
     return ;
 }
 
+TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
+    
+    std::vector<Triangle> newTris       = this->triangles ;
+    std::vector<Triangle3DVec> newVerts = this->vertices  ;
+    
+    for (int i=0; i<mesh.triangles.size(); ++i) {
+        newTris.push_back(mesh.triangles[i]) ;
+    }
+    for (int i=0; i<mesh.vertices.size(); ++i) {
+        newVerts.push_back(mesh.vertices[i]) ;
+    }
+
+    TriangleMesh newMesh = TriangleMesh(newTris, newVerts) ;
+    
+    return newMesh ;
+}
 
 

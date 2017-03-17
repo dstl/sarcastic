@@ -11,7 +11,6 @@
 
 
 void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox) ;
-void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) ;
 
 void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) {
     
@@ -30,8 +29,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     // generate rays
     //
     Ray *rays;
-    int nAzRays = 100;
-    int nElRays = 100;
+    int nAzRays = 200;
+    int nElRays = 200;
     int nRays = nAzRays * nElRays ;
     SPVector TxPos;
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
@@ -190,6 +189,7 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
                 if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
                    && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)){
+//                    printf("%f,%f,%f\n",hp.x,hp.y,hp.z);
                     return ;
                 }
             }
@@ -281,50 +281,50 @@ void Intersect(ATS *tri, Ray *ray, Hit *hit){
     return ;
 }
 
-void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree){
-    
-    int Sl, Sr; //SplitPosLeft, SPlitPosRight;
-    float V;
-    int RSLeft[6], RSRight[6]; // Ropes for left and right side
-    AABB aabbLeft, aabbRight;
-    kdTree::KdData * Nr, * Nl;
-    
-    if( KDT_ISLEAF(Node) ){
-        for(int i=0; i<3; i++){
-            Node->leaf.aabb.AA.cell[i] = aabb.AA.cell[i];
-            Node->leaf.aabb.BB.cell[i] = aabb.BB.cell[i];
-            Node->leaf.Ropes[2*i] = RS[2*i];
-            Node->leaf.Ropes[2*i+1] = RS[2*i+1];
-        }
-    } else {
-        for(int i=0; i<3; i++){
-            Node->brch.aabb.AA.cell[i] = aabb.AA.cell[i];
-            Node->brch.aabb.BB.cell[i] = aabb.BB.cell[i];
-        }
-        
-        Sl = KDT_DIMENSION(Node) * 2;
-        Sr = KDT_DIMENSION(Node) * 2 + 1;
-        V  = Node->brch.splitPosition;
-        for(int i=0; i<6; i++)RSLeft[i]=RSRight[i]=RS[i];
-        
-        RSLeft[Sr] = KDT_RGHTCHILD(Node); // Right child for Node
-        aabbLeft = aabb;
-        aabbLeft.BB.cell[KDT_DIMENSION(Node)] = V;
-        Nl = &(KdTree[KDT_LEFTCHILD(Node)]);
-        
-        BuildRopesAndBoxes(Nl, RSLeft, aabbLeft, KdTree);
-        
-        RSRight[Sl] = KDT_LEFTCHILD(Node); // Left child for Node
-        aabbRight = aabb;
-        aabbRight.AA.cell[KDT_DIMENSION(Node)] = V;
-        Nr = &(KdTree[KDT_RGHTCHILD(Node)]);
-        
-        BuildRopesAndBoxes(Nr, RSRight, aabbRight, KdTree);
-        
-    }
-    
-    return ;
-}
+//void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree){
+//    
+//    int Sl, Sr; //SplitPosLeft, SPlitPosRight;
+//    float V;
+//    int RSLeft[6], RSRight[6]; // Ropes for left and right side
+//    AABB aabbLeft, aabbRight;
+//    kdTree::KdData * Nr, * Nl;
+//    
+//    if( KDT_ISLEAF(Node) ){
+//        for(int i=0; i<3; i++){
+//            Node->leaf.aabb.AA.cell[i] = aabb.AA.cell[i];
+//            Node->leaf.aabb.BB.cell[i] = aabb.BB.cell[i];
+//            Node->leaf.Ropes[2*i] = RS[2*i];
+//            Node->leaf.Ropes[2*i+1] = RS[2*i+1];
+//        }
+//    } else {
+//        for(int i=0; i<3; i++){
+//            Node->brch.aabb.AA.cell[i] = aabb.AA.cell[i];
+//            Node->brch.aabb.BB.cell[i] = aabb.BB.cell[i];
+//        }
+//        
+//        Sl = KDT_DIMENSION(Node) * 2;
+//        Sr = KDT_DIMENSION(Node) * 2 + 1;
+//        V  = Node->brch.splitPosition;
+//        for(int i=0; i<6; i++)RSLeft[i]=RSRight[i]=RS[i];
+//        
+//        RSLeft[Sr] = KDT_RGHTCHILD(Node); // Right child for Node
+//        aabbLeft = aabb;
+//        aabbLeft.BB.cell[KDT_DIMENSION(Node)] = V;
+//        Nl = &(KdTree[KDT_LEFTCHILD(Node)]);
+//        
+//        BuildRopesAndBoxes(Nl, RSLeft, aabbLeft, KdTree);
+//        
+//        RSRight[Sl] = KDT_LEFTCHILD(Node); // Left child for Node
+//        aabbRight = aabb;
+//        aabbRight.AA.cell[KDT_DIMENSION(Node)] = V;
+//        Nr = &(KdTree[KDT_RGHTCHILD(Node)]);
+//        
+//        BuildRopesAndBoxes(Nr, RSRight, aabbRight, KdTree);
+//        
+//    }
+//    
+//    return ;
+//}
 
 void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox){
     int nAzBeam = nAzRays;
@@ -391,71 +391,74 @@ void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB Sc
         VECT_NORM(Vdir, (*rayArray)[i].pol) ;
     }
 
-}
-
-void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) {
-
-    SPVector tmp,b,c;
-    
-    *accelTriangles = new ATS [mesh->triangles.size()] ;
-    if (*accelTriangles == NULL) {
-        printf("Error allocating memory for accelTriangles \n");
-        exit(1);
-    }
-    
-    for(int i=0; i<mesh->triangles.size(); ++i){
-        SPVector Aa = mesh->vertices[mesh->triangles[i].a].asSPVector() ;
-        SPVector Bb = mesh->vertices[mesh->triangles[i].b].asSPVector() ;
-        SPVector Cc = mesh->vertices[mesh->triangles[i].c].asSPVector() ;
-        SPVector N  = mesh->triangles[i].N.asSPVector() ;
-        
-        // calculate the projection dimension
-        //
-        float nx = N.x ;
-        float ny = N.y ;
-        float nz = N.z ;
-        float anx = fabs(nx);
-        float any = fabs(ny);
-        float anz = fabs(nz);
-        
-        if( anx > any ){
-            if (anx > anz){
-                (*accelTriangles)[i].k=0;           /* X */
-            }else{
-                (*accelTriangles)[i].k=2;           /* Z */
-            }
-        }else{
-            if ( any > anz){
-                (*accelTriangles)[i].k=1;           /* Y */
-            }else{
-                (*accelTriangles)[i].k=2;           /* Z */
-            }
-        }
-    
-        int u = quickmodulo[(*accelTriangles)[i].k+1];
-        int v = quickmodulo[(*accelTriangles)[i].k+2];
-    
-        (*accelTriangles)[i].nd_u = N.cell[u] / N.cell[(*accelTriangles)[i].k] ;
-        (*accelTriangles)[i].nd_v = N.cell[v] / N.cell[(*accelTriangles)[i].k] ;
-        VECT_SCMULT(N, 1/N.cell[(*accelTriangles)[i].k], tmp) ;
-        (*accelTriangles)[i].d = VECT_DOT(Aa, tmp) ;
-        
-        VECT_SUB(Cc, Aa, b) ;
-        VECT_SUB(Bb, Aa, c) ;
-    
-        float denom = 1.0/((b.cell[u]*c.cell[v]) - (b.cell[v]*c.cell[u]));
-        
-        (*accelTriangles)[i].kbu        = -b.cell[v] * denom ;
-        (*accelTriangles)[i].kbv        =  b.cell[u] * denom ;
-        (*accelTriangles)[i].kbd        = ((b.cell[v] * Aa.cell[u]) - (b.cell[u] * Aa.cell[v])) * denom;
-        (*accelTriangles)[i].kcu        =  c.cell[v] * denom;
-        (*accelTriangles)[i].kcv        = -c.cell[u] * denom;
-        (*accelTriangles)[i].kcd        =  ((c.cell[u] * Aa.cell[v]) - (c.cell[v] * Aa.cell[u])) * denom;
-        (*accelTriangles)[i].textureInd = mesh->triangles[i].mat ;
-        (*accelTriangles)[i].triNum     = i;
-        
-    }
-
     return ;
 }
 
+//void accelerateTriangles(TriangleMesh *mesh, ATS **accelTriangles) {
+//
+//    SPVector tmp,b,c;
+//    
+//    *accelTriangles = new ATS [mesh->triangles.size()] ;
+//    if (*accelTriangles == NULL) {
+//        printf("Error allocating memory for accelTriangles \n");
+//        exit(1);
+//    }
+//    
+//    for(int i=0; i<mesh->triangles.size(); ++i){
+//        SPVector Aa = mesh->vertAforTri(i) ;
+//        SPVector Bb = mesh->vertBforTri(i) ;
+//        SPVector Cc = mesh->vertCforTri(i) ;
+//        SPVector N  = mesh->triangles[i].N.asSPVector() ;
+//        
+//        // calculate the projection dimension
+//        //
+//        float nx = N.x ;
+//        float ny = N.y ;
+//        float nz = N.z ;
+//        float anx = fabs(nx);
+//        float any = fabs(ny);
+//        float anz = fabs(nz);
+//        
+//        if( anx > any ){
+//            if (anx > anz){
+//                (*accelTriangles)[i].k=0;           /* X */
+//            }else{
+//                (*accelTriangles)[i].k=2;           /* Z */
+//            }
+//        }else{
+//            if ( any > anz){
+//                (*accelTriangles)[i].k=1;           /* Y */
+//            }else{
+//                (*accelTriangles)[i].k=2;           /* Z */
+//            }
+//        }
+//    
+//        int u = quickmodulo[(*accelTriangles)[i].k+1];
+//        int v = quickmodulo[(*accelTriangles)[i].k+2];
+//    
+//        (*accelTriangles)[i].nd_u = N.cell[u] / N.cell[(*accelTriangles)[i].k] ;
+//        (*accelTriangles)[i].nd_v = N.cell[v] / N.cell[(*accelTriangles)[i].k] ;
+//        VECT_SCMULT(N, 1/N.cell[(*accelTriangles)[i].k], tmp) ;
+//        (*accelTriangles)[i].d = VECT_DOT(Aa, tmp) ;
+//        
+//        VECT_SUB(Cc, Aa, b) ;
+//        VECT_SUB(Bb, Aa, c) ;
+//    
+//        float denom = 1.0/((b.cell[u]*c.cell[v]) - (b.cell[v]*c.cell[u]));
+//        
+//        (*accelTriangles)[i].kbu        = -b.cell[v] * denom ;
+//        (*accelTriangles)[i].kbv        =  b.cell[u] * denom ;
+//        (*accelTriangles)[i].kbd        = ((b.cell[v] * Aa.cell[u]) - (b.cell[u] * Aa.cell[v])) * denom;
+//        (*accelTriangles)[i].kcu        =  c.cell[v] * denom;
+//        (*accelTriangles)[i].kcv        = -c.cell[u] * denom;
+//        (*accelTriangles)[i].kcd        =  ((c.cell[u] * Aa.cell[v]) - (c.cell[v] * Aa.cell[u])) * denom;
+//        (*accelTriangles)[i].textureInd = mesh->triangles[i].mat ;
+//        (*accelTriangles)[i].triNum     = i;
+//        
+//        mesh->triangles[i].buildTransMats() ;
+//        
+//    }
+//
+//    return ;
+//}
+//
