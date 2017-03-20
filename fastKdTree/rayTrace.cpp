@@ -29,8 +29,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     // generate rays
     //
     Ray *rays;
-    int nAzRays = 200;
-    int nElRays = 200;
+    int nAzRays = 10;
+    int nElRays = 10;
     int nRays = nAzRays * nElRays ;
     SPVector TxPos;
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;
@@ -55,7 +55,15 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     endTimer(&rayTimer, &status);
     
     printf("%d rays traced in  %f seconds (%f rays / second) \n",nRays,timeElapsedInSeconds(&rayTimer, &status), nRays / timeElapsedInSeconds(&rayTimer, &status)) ;
-
+    
+    SPVector hp;
+    for (int i=0; i<nRays; ++i) {
+        if(hits[i].trinum != -1){
+            VECT_SCMULT(rays[i].dir, hits[i].dist, hp) ;
+            VECT_ADD(rays[i].org, hp, hp) ;
+            printf("%f, %f, %f\n",hp.x,hp.y,hp.z);
+        }
+    }
     delete [] accelTriangles ;
     return ;
     
@@ -89,6 +97,9 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
     sceneBoundingBox = KdTree[0].brch.aabb ;
     
     if (ind >=0 && ind < nRays ) {
+        if (ind == 6) {
+            printf("here index is 6\n");
+        }
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
@@ -190,6 +201,9 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
                    && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)){
 //                    printf("%f,%f,%f\n",hp.x,hp.y,hp.z);
+                    if (hp.z == 0.0) {
+                        printf("Here\n");
+                    }
                     return ;
                 }
             }

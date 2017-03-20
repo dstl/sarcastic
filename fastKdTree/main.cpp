@@ -110,7 +110,7 @@ int main(int argc, const char * argv[]) {
     printf("Ray tracing through tree...\n");
     rayTrace(&mesh, tree, &treeSize) ;
     
-    
+    im_close_lib(&status);
     return 0;
 }
 
