@@ -200,10 +200,6 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
                 if(   hp.x <= (node->leaf.aabb.BB.x+EPSILON) && hp.x >= (node->leaf.aabb.AA.x-EPSILON)
                    && hp.y <= (node->leaf.aabb.BB.y+EPSILON) && hp.y >= (node->leaf.aabb.AA.y-EPSILON)
                    && hp.z <= (node->leaf.aabb.BB.z+EPSILON) && hp.z >= (node->leaf.aabb.AA.z-EPSILON)){
-//                    printf("%f,%f,%f\n",hp.x,hp.y,hp.z);
-                    if (hp.z == 0.0) {
-                        printf("Here\n");
-                    }
                     return ;
                 }
             }

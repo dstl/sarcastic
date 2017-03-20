@@ -197,8 +197,8 @@ void kdTree::kdTreeNode::split(int k, double pos, kdTreeNode *left, kdTreeNode *
     (rght)->data.triangleMask = new unsigned char [data.smallntris] ;
     
     for(int t=0; t<data.smallntris; ++t){
-        (left)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].AA.cell[k] <= pos) && (data.triAABBs[t].AA.cell[k] >= data.aabb.AA.cell[k])) ;
-        (rght)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].BB.cell[k] >= pos) && (data.triAABBs[t].BB.cell[k] <= data.aabb.BB.cell[k])) ;
+        (left)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].AA.cell[k] <= pos)) ;
+        (rght)->data.triangleMask[t] = data.triangleMask[t] & ((data.triAABBs[t].BB.cell[k] >= pos)) ;
     }
     
     (left)->data.splitList  = data.splitList  ;
