@@ -216,7 +216,7 @@ void * devPulseBlock ( void * threadArg ) {
         kdTree::KdData * tree;
         int treeSize;
         
-        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTDATA | kdTree::OUTPUTSUMM)) ;
+        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
         
         // Initialise the tree and build ropes and boxes to increase efficiency when traversing
         //

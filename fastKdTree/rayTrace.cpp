@@ -97,9 +97,7 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
     sceneBoundingBox = KdTree[0].brch.aabb ;
     
     if (ind >=0 && ind < nRays ) {
-        if (ind == 6) {
-            printf("here index is 6\n");
-        }
+    
         t_entry = 0;
         t_exit  = VECT_MAG(rays[ind].org) + 1000 ;
         
