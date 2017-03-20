@@ -47,7 +47,7 @@
 
 #include "splitCandidate.hpp"
 
-splitCandidate::splitCandidate(float pos, int o, int dim, int ntris): pos(pos), owner(o), dim(dim), ntris(ntris) {
+splitCandidate::splitCandidate(double pos, int o, int dim, int ntris): pos(pos), owner(o), dim(dim), ntris(ntris) {
     
     leftTris = new unsigned char [ntris] ;
     rghtTris = new unsigned char [ntris] ;

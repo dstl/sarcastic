@@ -158,7 +158,7 @@ AABB kdTree::kdTreeNode::BVforAllTris()
     return ans;
 }
 
-void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *rght)
+void kdTree::kdTreeNode::split(int k, double pos, kdTreeNode *left, kdTreeNode *rght)
 {
     if (smallroot == NULL) {
         printf("Error: split() function only works on small nodes. Did you mean medianSplit()?\n");
@@ -176,6 +176,8 @@ void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *r
     for(int i=0;i<3; ++i){
         if ((left)->data.aabb.BB.cell[i] < (left)->data.aabb.AA.cell[i]) {
             printf("ERROR: Inside out AABB for dimension %d\n",i);
+            printf("left node AABB (dimension %d) : %f - %f\n",i,(left)->data.aabb.AA.cell[i],(left)->data.aabb.BB.cell[i]);
+            printf("\n");
         }
     }
     (rght)->data.aabb.AA = data.aabb.AA ;
@@ -184,6 +186,8 @@ void kdTree::kdTreeNode::split(int k, float pos, kdTreeNode *left, kdTreeNode *r
     for(int i=0;i<3; ++i){
         if ((rght)->data.aabb.BB.cell[i] < (rght)->data.aabb.AA.cell[i]) {
             printf("ERROR: Inside out AABB for dimension %d\n",i);
+            printf("rght node AABB (dimension %d) : %f - %f\n",i,(rght)->data.aabb.AA.cell[i],(rght)->data.aabb.BB.cell[i]);
+            printf("\n");
         }
     }
     

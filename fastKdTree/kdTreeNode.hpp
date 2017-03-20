@@ -161,7 +161,7 @@ namespace kdTree {
         
         AABB BVforAllTris();
         void medianSplit(kdTreeNode **left, kdTreeNode **rght);
-        void split(int dim, float pos, kdTreeNode *left, kdTreeNode *rght) ;
+        void split(int dim, double pos, kdTreeNode *left, kdTreeNode *rght) ;
         
     };
     

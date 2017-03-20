@@ -56,7 +56,7 @@ class splitCandidate {
     
 public:
     
-    float pos;                              // position for this event
+    double pos;                              // position for this event
     int dim;                                // dimension of this splitcandidate
     int owner;                              // index of owning triangle
     int ntris;
@@ -64,7 +64,7 @@ public:
     unsigned char  *rghtTris ;              // Array mask of triangles to right of this event
     
     splitCandidate(){};
-    splitCandidate(float pos, int o, int dim, int ntris);
+    splitCandidate(double pos, int o, int dim, int ntris);
     ~splitCandidate();
     splitCandidate(const splitCandidate &split) ;   // Copy constructor
 };

@@ -94,6 +94,8 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
         swapLists(&nextlist, &activelist) ;
     }
     printf("Done!\n");
+    
+    
 
     printf("PreProcessing Small Nodes ...\n");
     preProcessSmallNodes(&smalllist);
@@ -300,13 +302,30 @@ void kdTree::preProcessSmallNodes(treeList **smalllist)
         for (int k=0; k<3; ++k){
             
             for(int j=0; j<p->data.smallntris; ++j){
-                splitCandidate eA(p->data.triAABBs[j].AA.cell[k], j, k, p->data.smallntris) ;
-                splitCandidate eB(p->data.triAABBs[j].BB.cell[k], j, k, p->data.smallntris) ;
                 
-                p->data.splitList.push_back(eA);
-                p->data.splitList.push_back(eB);
+                if ( (p->data.triAABBs[j].AA.cell[k] >= p->data.aabb.AA.cell[k]) &&  (p->data.triAABBs[j].AA.cell[k] <= p->data.aabb.BB.cell[k]) ) {
+                    splitCandidate eA(p->data.triAABBs[j].AA.cell[k], j, k, p->data.smallntris) ;
+                    if (eA.pos < p->data.aabb.AA.cell[eA.dim] ) {
+                        printf("ERROR : splitplane candidate is outside this node's AABB\n");
+                        printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
+                               ,eA.pos,eA.dim,eA.dim,p->data.aabb.AA.cell[eA.dim],p->data.aabb.BB.cell[eA.dim] ) ;
+                        printf("\n");
+                    }
+                    p->data.splitList.push_back(eA);
+                }
+                if ( (p->data.triAABBs[j].BB.cell[k] >= p->data.aabb.AA.cell[k]) && (p->data.triAABBs[j].BB.cell[k] <= p->data.aabb.BB.cell[k]) ) {
+                    splitCandidate eB(p->data.triAABBs[j].BB.cell[k], j, k, p->data.smallntris) ;
+                    if (eB.pos < p->data.aabb.AA.cell[eB.dim] ) {
+                        printf("ERROR : splitplane candidate is outside this node's AABB\n");
+                        printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
+                               ,eB.pos,eB.dim,eB.dim,p->data.aabb.AA.cell[eB.dim],p->data.aabb.BB.cell[eB.dim] ) ;
+                        printf("\n");
+                    }
+                    p->data.splitList.push_back(eB);
+                }
             }
         }
+        
         for(int j=0; j<p->data.splitList.size(); ++j){
             
             int k = p->data.splitList[j].dim ;
