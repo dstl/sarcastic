@@ -154,7 +154,7 @@ namespace kdTree {
         kdTreeNode(const kdTreeNode *node);     // constructor for initialising wth another node
         kdTreeNode(std::vector<int> tris) ;		// constructor using a vector array of ints representing triangle indices
         kdTreeNode(std::string plyFileName) ;	// constructor using a triangle mesh in a .ply file
-        kdTreeNode(const TriangleMesh *mesh) ;        // constructor using a triangleMesh as input
+        kdTreeNode(TriangleMesh *mesh) ;        // constructor using a triangleMesh as input. Builds Tri AABBs if they do not exist
         
         //    kdTreeNode(const kdTreeNode &node) ;    // copy constructor as we malloc in this class
         ~kdTreeNode() ;							// default destructor

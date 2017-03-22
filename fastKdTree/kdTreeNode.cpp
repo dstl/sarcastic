@@ -111,8 +111,11 @@ kdTree::kdTreeNode::kdTreeNode(std::string plyFileName)
     data.aabb = BVforAllTris() ;
 }
 
-kdTree::kdTreeNode::kdTreeNode(const TriangleMesh *mesh)
+kdTree::kdTreeNode::kdTreeNode(TriangleMesh *mesh)
 {
+    if (mesh->AABBs.size()==0) {
+        mesh->buildTriangleAABBs();
+    }
     globalMesh = *mesh ;
     data.triAABBs = globalMesh.AABBs ;
     for(int i=0; i< globalMesh.triangles.size(); ++i){
