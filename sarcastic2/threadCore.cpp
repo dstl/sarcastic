@@ -2,6 +2,7 @@
 #include <fftw3.h>
 extern "C" {
 #include "boxMullerRandom.h"
+#include "RCS.h"
 }
 #include "ranf.h"
 #include "threadCore.hpp"
@@ -216,7 +217,7 @@ void * devPulseBlock ( void * threadArg ) {
         kdTree::KdData * tree;
         int treeSize;
         
-        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTNO)) ;
         
         // Initialise the tree and build ropes and boxes to increase efficiency when traversing
         //
@@ -504,12 +505,13 @@ void * devPulseBlock ( void * threadArg ) {
             
 #ifdef TOTALRCSINPULSE
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
+            double oneOverLambda = td->cphdhdr->freq_centre / SIPC_c ;
             if(pulse%1==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
             printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log10(cmplx_mag));
             printf("For comparison: \n");
-            printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*td->oneOverLambda*td->oneOverLambda,10*log10(4*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 8620.677
-            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(8*SIPC_pi*td->oneOverLambda*td->oneOverLambda));   // 17241.354
-            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*td->oneOverLambda*td->oneOverLambda,10*log10(12*SIPC_pi*td->oneOverLambda*td->oneOverLambda)); // 25862.031
+            printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*oneOverLambda*oneOverLambda,10*log10(4*SIPC_pi*oneOverLambda*oneOverLambda)); // 8620.677
+            printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi*oneOverLambda*oneOverLambda,10*log10(8*SIPC_pi*oneOverLambda*oneOverLambda));   // 17241.354
+            printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi*oneOverLambda*oneOverLambda,10*log10(12*SIPC_pi*oneOverLambda*oneOverLambda)); // 25862.031
 #endif // TOTALRCSINPULSE
             // perform phase correction to account for deramped jitter in receiver timing
             //

@@ -325,11 +325,11 @@ void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, f
 // Normal, Area and Distance (of the triangle plane to the origin) of it
 //
 {
-    SPVector N, ab, bc, x;
+    SPVector N, ab, ac, x;
     double l;
     VECT_SUB(bb, aa, ab);
-    VECT_SUB(cc, bb, bc);
-    VECT_CROSS(ab, bc, x);
+    VECT_SUB(cc, aa, ac);
+    VECT_CROSS(ab, ac, x);
     l = VECT_MAG(x);
     *area = l * 0.5;
     VECT_SCMULT(x, (1/l), N);
@@ -365,6 +365,7 @@ void TriangleMesh::addTriangle(int a, int b, int c, int mat)
         VECT_CREATE(vertices[c].x, vertices[c].y, vertices[c].z, cc);
         nad(aa, bb, cc, &NN, &area, &distance) ;
         Triangle t = Triangle(a, b, c, mat, NN, distance) ;
+        t.buildTransMats() ;
         t.Area = area ;
         triangles.push_back(t) ;
         sorted = false ;
@@ -384,6 +385,7 @@ void TriangleMesh::addTriangle(rawTri tri){
     vertices.push_back(tri.cc);
     nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
     Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    t.buildTransMats() ;
     triangles.push_back(t) ;
     
     sorted = false ;
@@ -426,6 +428,7 @@ void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
     vertices.push_back(tri.cc);
     nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
     Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    t.buildTransMats() ;
     triangles.push_back(t) ;
     
     sorted = false ;

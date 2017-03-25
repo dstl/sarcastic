@@ -165,10 +165,10 @@ void cpuPOField(TriangleMesh       *mesh,
         
         
     }
-    //    printf("Mean         is %f,%f,%f \n", sumx / numrs, sumy/numrs, sumz/numrs);
-    //    printf("complex Mean is %f,%f,%f \n", CMPLX_PHASE(cmplxsum), sumy/numrs, sumz/numrs);
+    // printf("Mean         is %f,%f,%f \n", sumx / numrs, sumy/numrs, sumz/numrs);
+    // printf("complex Mean is %f,%f,%f \n", CMPLX_PHASE(cmplxsum), sumy/numrs, sumz/numrs);
     
-    //    printf("cmplxsum : (%e,%e) : %e, %f\n",cmplxsum.r,cmplxsum.i,CMPLX_MAG(cmplxsum),RAD2DEG(CMPLX_PHASE(cmplxsum)));
+    // printf("cmplxsum : (%e,%e) : %e, %f\n",cmplxsum.r,cmplxsum.i,CMPLX_MAG(cmplxsum),RAD2DEG(CMPLX_PHASE(cmplxsum)));
     
     // Clear down OpenCL allocations
     //

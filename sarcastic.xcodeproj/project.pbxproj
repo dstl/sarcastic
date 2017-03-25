@@ -79,6 +79,7 @@
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9564CF461E71897000D37207 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
 		956B7CF61DFD7DCD00FF87F3 /* libSIlib2-2.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */; };
+		956EA1B81E85A32900008E7A /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
@@ -1523,6 +1524,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956EA1B81E85A32900008E7A /* RCS.c in Sources */,
 				95E627551E7C909A00BC7933 /* matrixMultiplication.c in Sources */,
 				95E627541E7C907D00BC7933 /* kdTreeNode.cpp in Sources */,
 				95E627531E7C906300BC7933 /* AABB.cpp in Sources */,

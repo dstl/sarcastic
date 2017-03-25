@@ -208,7 +208,7 @@ int main (int argc, char **argv){
     
     for (int p = 0; p < nVec; p++){
         RxPos[p] = newhdr.pulses[p].sat_ps_rx ;
-        TxPos[p] = newhdr.pulses[p].sat_ps_rx ;
+        TxPos[p] = newhdr.pulses[p].sat_ps_tx ;
         
         // While we are looping through pulses also load up the Fx0 and FxStepSize values
         //

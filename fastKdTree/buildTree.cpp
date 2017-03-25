@@ -69,12 +69,15 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     
     kdTreeNode rootnode(mesh) ;
     
-    printf("Input Mesh has %ld triangles\n",globalMesh.triangles.size()) ;
+    if (printOutput != OUTPUTNO)printf("Input Mesh has %ld triangles\n",globalMesh.triangles.size()) ;
     
     activelist->push_back(&rootnode);
     
     int dpth = 0;
-    printf("Processing Large Nodes...\n");
+    if (printOutput != OUTPUTNO) {
+        printf("Processing Large Nodes...\n");
+    }
+
     while(!activelist->empty()){
         
         nextlist->clear() ;
@@ -90,22 +93,22 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
             q=p->next ;
         }
         
-        printf("[%3d] active list size: %4d\tSmalllist size %4d\tnextlist size: %4d\n",dpth++,activelist->size(),smalllist->size(),nextlist->size());
+        if (printOutput != OUTPUTNO) printf("[%3d] active list size: %4d\tSmalllist size %4d\tnextlist size: %4d\n",dpth++,activelist->size(),smalllist->size(),nextlist->size());
         swapLists(&nextlist, &activelist) ;
     }
-    printf("Done!\n");
+    if (printOutput != OUTPUTNO)printf("Done!\n");
     
     
 
-    printf("PreProcessing Small Nodes ...\n");
+    if (printOutput != OUTPUTNO)printf("PreProcessing Small Nodes ...\n");
     preProcessSmallNodes(&smalllist);
     
     swapLists(&smalllist, &activelist);
     delete smalllist ;
     
-    printf("Done!\n");
+    if (printOutput != OUTPUTNO)printf("Done!\n");
     
-    printf("Processing Small Nodes...\n");
+    if (printOutput != OUTPUTNO)printf("Processing Small Nodes...\n");
     dpth=0;
     while(!activelist->empty()){
         
@@ -121,7 +124,7 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
             q=p->next ;
         }
         
-        printf("[%3d] active list size: %4d\tnextlist size: %4d\n",dpth++,activelist->size(),nextlist->size());
+        if (printOutput != OUTPUTNO)printf("[%3d] active list size: %4d\tnextlist size: %4d\n",dpth++,activelist->size(),nextlist->size());
         swapLists(&nextlist, &activelist);
     }
     
