@@ -211,22 +211,25 @@ void POKernelCode(int ind,
     
     
     SPVector origin;
-    SPVector a,b,c;
-    a = mesh->vertAforTri(hitpoints[ind].tri) ;
-    b = mesh->vertBforTri(hitpoints[ind].tri) ;
-    c = mesh->vertCforTri(hitpoints[ind].tri) ;
-    for(int i=0; i<3; ++i)origin.cell[i] = (a.cell[i] + b.cell[i] + c.cell[i]) / 3.0 ;
+    SPVector tri_a,tri_b,tri_c;
+    tri   = mesh->triangles[hitpoints[ind].tri];
+    tri_a = mesh->vertices[tri.a].asSPVector() ;
+    tri_b = mesh->vertices[tri.b].asSPVector() ;
+    tri_c = mesh->vertices[tri.c].asSPVector() ;
     
-    VECT_SUB(a,origin,a);
-    VECT_SUB(b,origin,b);
-    VECT_SUB(c,origin,c);
+    origin.x = (tri_a.x + tri_b.x + tri_c.x) / 3 ;
+    origin.y = (tri_a.y + tri_b.y + tri_c.y) / 3 ;
+    origin.z = (tri_a.z + tri_b.z + tri_c.z) / 3 ;
+    VECT_SUB(tri_a,origin,tri_a);
+    VECT_SUB(tri_b,origin,tri_b);
+    VECT_SUB(tri_c,origin,tri_c);
     
     hp  = hitpoints[ind].hit ;
     ray = rays[ind] ;
-    Rs  = materialProperties[mesh->triangles[hitpoints[ind].tri].mat].Rs ;
-    Rm  = materialProperties[mesh->triangles[hitpoints[ind].tri].mat].Rm ;
-    for(int i=0; i<9; i++)globalToLocalMat[i] = mesh->triangles[hitpoints[ind].tri].glob2locMatrix[i] ;
-    for(int i=0; i<9; i++)localToGlobalMat[i] = mesh->triangles[hitpoints[ind].tri].loc2GlobMatrix[i] ;
+    Rs  = materialProperties[tri.mat].Rs ;
+    Rm  = materialProperties[tri.mat].Rm ;
+    for(int i=0; i<9; i++)globalToLocalMat[i] = tri.glob2locMatrix[i] ;
+    for(int i=0; i<9; i++)localToGlobalMat[i] = tri.loc2GlobMatrix[i] ;
     
     VECT_SUB(RxPnt,hp,r);
     VECT_SUB(ray.org,hp,ri);
@@ -263,10 +266,10 @@ void POKernelCode(int ind,
     v = h.y + g.y ;
     w = h.z + g.z ;
     
-    x1 = a.x ; y1 = a.y ; z1 = a.z ;
-    x2 = b.x ; y2 = b.y ; z2 = b.z ;
-    x3 = c.x ; y3 = c.y ; z3 = c.z ;
-    A = mesh->triangles[hitpoints[ind].tri].Area ;
+    x1 = tri_a.x ; y1 = tri_a.y ; z1 = tri_a.z ;
+    x2 = tri_b.x ; y2 = tri_b.y ; z2 = tri_b.z ;
+    x3 = tri_c.x ; y3 = tri_c.y ; z3 = tri_c.z ;
+    A  = tri.Area ;
     
     Dp = k * ( ((x1 - x3) * u) + ((y1 - y3) * v) + ((z1 - z3) * w) ) ;
     Dq = k * ( ((x2 - x3) * u) + ((y2 - y3) * v) + ((z2 - z3) * w) ) ;

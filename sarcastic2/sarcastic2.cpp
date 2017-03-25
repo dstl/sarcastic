@@ -126,12 +126,15 @@ int main(int argc, const char * argv[]) {
     ecef2SceneCoords(nPulses, TxPos, SRP);
     ecef2SceneCoords(1,  &interogPt, SRP);
     
+    SPVector tmp;
     for (int p = 0; p < nPulses; p++){
+        tmp = newhdr.pulses[p].sat_ps_rx ;
         newhdr.pulses[p].sat_ps_rx = RxPos[p] ;
+        RxPos[p]  = tmp;
+        tmp = newhdr.pulses[p].sat_ps_tx ;
         newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
+        TxPos[p] = tmp;
     }
-    free(RxPos) ;
-    free(TxPos) ;
     
     
     double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, maxBeamUsedAz, maxBeamUsedEl ;
@@ -392,6 +395,10 @@ int main(int argc, const char * argv[]) {
             perror("Error opening file");
             exit(888);
         }
+        for (int p = 0; p < nPulses; p++){
+            newhdr.pulses[p].sat_ps_rx = RxPos[p] ;
+            newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
+        }
         printf("Writing CPHD File \"%s\"....",outCPHDFile);
         writeCPHD3Header( &newhdr, fp, &status ) ;
         write_cphd3_nb_vectors(&newhdr, 0, fp, &status) ;
@@ -405,6 +412,8 @@ int main(int argc, const char * argv[]) {
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;
+    free(RxPos) ;
+    free(TxPos) ;
     
     return 0;
     

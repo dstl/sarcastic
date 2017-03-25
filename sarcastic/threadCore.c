@@ -45,7 +45,7 @@
 #define NPOINTS (32)
 #define OVERSAMP (512)
 #define NOINTERSECTION -1
-#define TOTALRCSINPULSE
+//#define TOTALRCSINPULSE
 
 void packSinc(SPCmplxD point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 static void ham1dx(double * data, int nx);
@@ -499,7 +499,6 @@ void * devPulseBlock ( void * threadArg ) {
                 }
                 
                 pulseLine.data.cmpl_f[x] = tmp;
-                printf("%d, %f, %f\n",x,tmp.r,tmp.i);
 
             }
             im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
