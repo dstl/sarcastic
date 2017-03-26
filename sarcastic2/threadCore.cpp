@@ -188,15 +188,40 @@ void * devPulseBlock ( void * threadArg ) {
             
             SPVector S0,S1,S2,S;
             VECT_CREATE(0.0, 0.0, 0.0, S0) ;  // Translation
-            VECT_CREATE(0.05, 0.0, 0.0, S1) ;  // Velocity
+            VECT_CREATE(0.0, 0.0, 0.0, S1) ;  // Velocity
             VECT_CREATE(0.0, 0.0, 0.0, S2) ;  // Acceleration
             
             
             // move the movers to the location for this pulse
             //
+            // Linear Motion
+            //
             S.x = S0.x + (S1.x * t) + (0.5 * S2.x * t * t) ;
             S.y = S0.y + (S1.y * t) + (0.5 * S2.y * t * t) ;
             S.z = S0.z + (S1.z * t) + (0.5 * S2.z * t * t) ;
+            
+            // Harmonic Motion
+            //
+            double A = 0.005 ;
+            double f = 0.25 ;
+            S.x = A * sin(2 * SIPC_pi * t * f ) ;
+            
+            // Modification for top hat motion
+            //
+            //if ( S.x > 0.0) {
+            //    S.x = A;
+            //}else{
+            //    S.x = -A ;
+            //}
+
+            //if ( S.x > A/2) {
+            //    S.x = A;
+            //}else if (S.x < -A/2){
+            //    S.x = -A ;
+            //}else{
+            //    S.x = 0;
+            //}
+            printf("S.x: %f\n",S.x);
             
             TriangleMesh mesh_t = *(td->moverMesh) ;
             for(int i=0; i<mesh_t.vertices.size(); ++i){
