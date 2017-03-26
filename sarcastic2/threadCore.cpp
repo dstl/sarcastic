@@ -188,7 +188,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             SPVector S0,S1,S2,S;
             VECT_CREATE(0.0, 0.0, 0.0, S0) ;  // Translation
-            VECT_CREATE(0.0, 1.0, 0.0, S1) ;  // Velocity
+            VECT_CREATE(0.05, 0.0, 0.0, S1) ;  // Velocity
             VECT_CREATE(0.0, 0.0, 0.0, S2) ;  // Acceleration
             
             

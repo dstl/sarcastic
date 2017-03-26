@@ -710,8 +710,12 @@ TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
     
     std::vector<Triangle> newTris       = this->triangles ;
     std::vector<Triangle3DVec> newVerts = this->vertices  ;
+    int off = (int)this->vertices.size() ;
+
+    for (int i=0; i<mesh.vertices.size(); ++i) {
+        newVerts.push_back(mesh.vertices[i]) ;
+    }
     
-    int off = (int)this->triangles.size()+1 ;
     for (int i=0; i<mesh.triangles.size(); ++i) {
         Triangle t = mesh.triangles[i];
         t.a += off ;
@@ -719,9 +723,7 @@ TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
         t.c += off ;
         newTris.push_back(t) ;
     }
-    for (int i=0; i<mesh.vertices.size(); ++i) {
-        newVerts.push_back(mesh.vertices[i]) ;
-    }
+    
 
     TriangleMesh newMesh = TriangleMesh(newTris, newVerts) ;
     

@@ -144,10 +144,34 @@ public:
     Triangle(int vertexA, int vertexB, int vertexC): a(vertexA), b(vertexB), c(vertexC) {
     }
     Triangle(int vertexA, int vertexB, int vertexC, int matID): a(vertexA), b(vertexB), c(vertexC), mat(matID) {}
-    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
+    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle( const Triangle &tri)  // copy constructor
+    {
+        a=tri.a;
+        b=tri.b;
+        c=tri.c;
+        mat = tri.mat;
+        N.x = tri.N.x ;
+        N.y = tri.N.y ;
+        N.z = tri.N.z ;
+        dist = tri.dist ;
+        Area = tri.Area ;
+        for (int i=0; i<9; ++i){
+            glob2locMatrix[i] = tri.glob2locMatrix[i] ;
+            loc2GlobMatrix[i] = tri.loc2GlobMatrix[i] ;
+        }
+    }
     
     // matrices is a function that calculates the coordinate tranformation matrices
     // for converting from a global coordinate system to a local system where the
