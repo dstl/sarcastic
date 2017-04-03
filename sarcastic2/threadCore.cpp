@@ -58,6 +58,9 @@ void * devPulseBlock ( void * threadArg ) {
     char ct[1000];
     bool dynamicScene = false;
     
+    kdTree::KdData * tree = NULL;
+    int treeSize;
+
     CPHDHeader *hdr  = td->cphdhdr ;
     gainRx           = td->gainRx ;
     PowPerRay        = td->PowPerRay ;
@@ -237,12 +240,11 @@ void * devPulseBlock ( void * threadArg ) {
             newMesh = *(td->sceneMesh) ;
         }
         
-        // Build kdTree
+        // Build kdTree if required
         //
-        kdTree::KdData * tree;
-        int treeSize;
-        
-        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTNO)) ;
+        if (pulse == 0 || dynamicScene) {
+            kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTNO)) ;
+        }
         
         // Initialise the tree and build ropes and boxes to increase efficiency when traversing
         //
@@ -564,6 +566,7 @@ void * devPulseBlock ( void * threadArg ) {
         } // end of pulse loop
         
         free(rnp) ;
+        if(dynamicScene)free(tree) ;
     }
     
     if(td->phd != NULL){
@@ -571,6 +574,7 @@ void * devPulseBlock ( void * threadArg ) {
     }
     
     free( rayAimPoints );
+    if(!dynamicScene)free(tree);
     // Clear down OpenCL allocations
     //
     clReleaseKernel(randRaysKL);
