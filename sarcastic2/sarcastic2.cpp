@@ -86,8 +86,8 @@ int main(int argc, const char * argv[]) {
     CPHDHeader newhdr = hdr ;
     newhdr.num_azi = nPulses / pulseUndersampleFactor ;
     newhdr.pulses  = (CPHDPulse *)sp_calloc(newhdr.num_azi, sizeof(CPHDPulse));
-    for(int p=startPulse; p<startPulse+nPulses; p+=pulseUndersampleFactor){
-        newhdr.pulses[(p-startPulse)/pulseUndersampleFactor] = hdr.pulses[p] ;
+    for(int p = 0; p<newhdr.num_azi; ++p){
+        newhdr.pulses[p] = hdr.pulses[(p*pulseUndersampleFactor)+startPulse] ;
     }
     nPulses = newhdr.num_azi ;
 

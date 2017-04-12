@@ -205,17 +205,20 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Harmonic Motion
             //
-            double A = 0.005 ;
-            double f = 0.25 ;
+            double A = 0.0125 ;
+            double f = 0.33 ;
             S.x = A * sin(2 * SIPC_pi * t * f ) ;
+            double Ts = 1/f;
+            double frac = (t / Ts) - (int)(t / Ts) ;
+            S.x = A * frac ;
             
             // Modification for top hat motion
             //
-            //if ( S.x > 0.0) {
-            //    S.x = A;
-            //}else{
-            //    S.x = -A ;
-            //}
+//            if ( S.x > 0.0) {
+//                S.x = A;
+//            }else{
+//                S.x = -A ;
+//            }
 
             //if ( S.x > A/2) {
             //    S.x = A;

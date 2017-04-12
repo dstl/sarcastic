@@ -536,7 +536,9 @@ void TriangleMesh::checkIntegrityAndRepair(){
         nad(A, B, Cc, &Nclcv, &area, &distance);
         Ncalc = Triangle3DVec(Nclcv) ;
         
-        if (!(Ncalc == Ntri) || area == 0.0 || isnan(distance) ) {
+        // Area precsion is set to match the precision stored in a .ply file
+        //
+        if (!(Ncalc == Ntri) || area < 1e-5 || isnan(distance) ) {
             printf("Mesh integrity check failed for triangle %d\n",i);
             printf("(Naughty triangle has Normal: %f,%f,%f, Planar Distace: %f, Area: %f)\n",
                    Nclcv.x, Nclcv.y, Nclcv.z, distance, area) ;
