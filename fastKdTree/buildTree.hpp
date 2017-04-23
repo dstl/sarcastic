@@ -58,7 +58,7 @@ namespace kdTree {
     
 #define TRAVERSALCOST ((float)(15.0))
 #define INTERSECTIONCOST ((float)(20.0))
-#define SMALLSIZE (64)
+#define SMALLSIZE (128)
 #define Ce (0.25)           // Percentage empty space in a node
 #define MAXTREELEVEL 10
 #define KDT_ISLEAF(n)       ((n->leaf.leafDim & (unsigned char)(0x4))>>2)

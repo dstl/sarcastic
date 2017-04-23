@@ -262,10 +262,23 @@ void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght)
     (*left)->data.aabb.AA = data.aabb.AA ;
     (*left)->data.aabb.BB = data.aabb.BB ;
     (*left)->data.aabb.BB.cell[maxAxis] = pos ;
-    
+    for(int i=0;i<3; ++i){
+        if ((*left)->data.aabb.BB.cell[i] < (*left)->data.aabb.AA.cell[i]) {
+            printf("ERROR: Inside out AABB for dimension %d\n",i);
+            printf("left node AABB (dimension %d) : %f - %f\n",i,(*left)->data.aabb.AA.cell[i],(*left)->data.aabb.BB.cell[i]);
+            printf("\n");
+        }
+    }
     (*rght)->data.aabb.AA = data.aabb.AA;
     (*rght)->data.aabb.BB = data.aabb.BB;
     (*rght)->data.aabb.AA.cell[maxAxis] = pos ;
+    for(int i=0;i<3; ++i){
+        if ((*rght)->data.aabb.BB.cell[i] < (*rght)->data.aabb.AA.cell[i]) {
+            printf("ERROR: Inside out AABB for dimension %d\n",i);
+            printf("rght node AABB (dimension %d) : %f - %f\n",i,(*rght)->data.aabb.AA.cell[i],(*rght)->data.aabb.BB.cell[i]);
+            printf("\n");
+        }
+    }
     
     // sort the triangles in the mesh in this node into the mesh for each of the child nodes.
     //

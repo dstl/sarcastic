@@ -45,6 +45,7 @@
 
 extern "C" {
 #include "matrixMultiplication.h"
+#include "printProgress.h"
 }
 
 void TriangleMesh::readDAEFile  ( std::string filename ){
@@ -522,6 +523,7 @@ void TriangleMesh::checkIntegrityAndRepair(){
     Triangle3DVec Ntri, Ncalc;
     float area,distance;
     std::vector<Triangle> newtriangles;
+    int cnt = 0;
     
     for (int i=0 ; i< triangles.size(); ++i){
         aa = triangles[i].a ;
@@ -538,15 +540,13 @@ void TriangleMesh::checkIntegrityAndRepair(){
         
         // Area precsion is set to match the precision stored in a .ply file
         //
-        if (!(Ncalc == Ntri) || area < 1e-5 || isnan(distance) ) {
-            printf("Mesh integrity check failed for triangle %d\n",i);
-            printf("(Naughty triangle has Normal: %f,%f,%f, Planar Distace: %f, Area: %f)\n",
-                   Nclcv.x, Nclcv.y, Nclcv.z, distance, area) ;
-            printf("Repairing ....\n");
-            triangles.erase(triangles.begin()+i);
-            --i;
+        if ( !(!(Ncalc == Ntri) || area < 1e-6 || isnan(distance)) ) {
+            newtriangles.push_back(triangles[i]);
+        }else{
+            cnt++;
         }
     }
+    triangles = newtriangles ;
     return ;
 }
 
@@ -732,4 +732,12 @@ TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
     return newMesh ;
 }
 
-
+long int TriangleMesh::size(){
+    
+    long rtb = rawTriBuff.size() * sizeof(rawTri) ;
+    long ver = vertices.size() * sizeof(Triangle3DVec) ;
+    long tri = triangles.size() * sizeof(Triangle) ;
+    long hfe = halfedges.size() * sizeof(halfEdge) ;
+    long abs = AABBs.size() * sizeof(AABB) ;
+    return (rtb + ver + tri + hfe + abs) ;
+}

@@ -39,9 +39,12 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
     //
+    printf("Reading in file %s...\n",baseScene);
     baseMesh->readPLYFile(baseScene);
+    printf("Done. Checking file Integrity...\n");
     baseMesh->checkIntegrityAndRepair();
     baseMesh->buildTriangleAABBs();
+    printf("Done \n");
 
     char *moversScene ;
     moversScene = input_string("Name of movers scene", "moversScene",

@@ -12,7 +12,7 @@
 
 void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox) ;
 
-void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) {
+void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree, int nAzRays, int nElRays) {
     
     kdTree::KdData *node;
     
@@ -29,8 +29,6 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) 
     // generate rays
     //
     Ray *rays;
-    int nAzRays = 10;
-    int nElRays = 10;
     int nRays = nAzRays * nElRays ;
     SPVector TxPos;
     VECT_CREATE(-100.0, 0.0, 100.0, TxPos) ;

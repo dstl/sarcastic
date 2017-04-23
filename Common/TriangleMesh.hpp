@@ -283,6 +283,8 @@ public:
     SPVector vertAforTri(int triIndx) { return vertices[triangles[triIndx].a].asSPVector() ; }
     SPVector vertBforTri(int triIndx) { return vertices[triangles[triIndx].b].asSPVector() ; }
     SPVector vertCforTri(int triIndx) { return vertices[triangles[triIndx].c].asSPVector() ; }
+    long int size() ;
+
     
 //    void buildTriangleAABBs(int dim, float pos);
     

@@ -57,6 +57,10 @@ void * devPulseBlock ( void * threadArg ) {
     time_t current,complete;
     char ct[1000];
     bool dynamicScene = false;
+    kdTree::KdData *node;
+    ATS *accelTriangles = NULL;
+    int Ropes[6] ;
+    AABB sceneAABB ;
     
     kdTree::KdData * tree = NULL;
     int treeSize;
@@ -246,25 +250,18 @@ void * devPulseBlock ( void * threadArg ) {
         // Build kdTree if required
         //
         if (pulse == 0 || dynamicScene) {
-            kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTNO)) ;
+            kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+            accelerateTriangles(&newMesh,&accelTriangles) ;
+            // Initialise the tree and build ropes and boxes to increase efficiency when traversing
+            //
+            node = &(tree[0]) ;
+            
+            // build Ropes and Boxes
+            //
+            sceneAABB = tree[0].brch.aabb ;
+            for(int i=0; i<6; i++) Ropes[i] = NILROPE;
+            BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
         }
-        
-        // Initialise the tree and build ropes and boxes to increase efficiency when traversing
-        //
-        kdTree::KdData *node;
-        
-        node = &(tree[0]) ;
-        
-        // build Ropes and Boxes
-        //
-        int Ropes[6] ;
-        AABB sceneAABB = tree[0].brch.aabb ;
-        for(int i=0; i<6; i++) Ropes[i] = NILROPE;
-        BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
-        
-        ATS *accelTriangles;
-        accelerateTriangles(&newMesh,&accelTriangles) ;
-        
 
         // Allocate memory for items that are needed in all kernels
         //
@@ -569,7 +566,10 @@ void * devPulseBlock ( void * threadArg ) {
         } // end of pulse loop
         
         free(rnp) ;
-        if(dynamicScene)free(tree) ;
+        if(dynamicScene){
+            free(tree) ;
+            delete accelTriangles ;
+        }
     }
     
     if(td->phd != NULL){
@@ -577,7 +577,10 @@ void * devPulseBlock ( void * threadArg ) {
     }
     
     free( rayAimPoints );
-    if(!dynamicScene)free(tree);
+    if(!dynamicScene){
+        free(tree);
+        delete accelTriangles ;
+    }
     // Clear down OpenCL allocations
     //
     clReleaseKernel(randRaysKL);
@@ -670,7 +673,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
                SPVector **rayAimPoints)
 {
     
-    int METHOD  = 2;
+    int METHOD  = 3;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene

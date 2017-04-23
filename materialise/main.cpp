@@ -18,6 +18,7 @@ extern "C" {
 #include "matrixMultiplication.h"
 #include "JRStriangle.h"
 #include "boxMullerRandom.h"
+#include "printProgress.h"
 }
 #include "materialProperties.h"
 #include "colourCodes.h"
@@ -38,7 +39,6 @@ void cleanPoints(int ntriangles, double **points, int **trinds, int **segments, 
 void PointTo2D(SPVector vec, SPVector origin, SPVector ordinate, SPVector abscissa, double *x, double *y);
 bool isPointOnLine(double px, double py, double x1, double y1, double x2, double y2, double approxZero);
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def);
-void printProgress(int percentDone, int nChars) ;
 bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y);
 bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y, int *nleft, int *nright);
 void testcommonmesh(TriangleMesh *mesh) ;
@@ -100,8 +100,10 @@ int main(int argc, const char * argv[]) {
     int cnt=0;
     while (!mesh.triangles.empty()) {
         
-        percentDone = 100.0 * (float)(orgNTris - mesh.triangles.size()) / (float)orgNTris ;
-        printProgress(percentDone, 80);
+        if(cnt % 100 == 0){
+            percentDone = 100.0 * (float)(orgNTris - mesh.triangles.size()) / (float)orgNTris ;
+            printProgress(percentDone, 80);
+        }
         
         // Take the first triangle in mesh.triangles and calculate all triangles that
         // are common to it (on the same plane and joined togethr
@@ -126,7 +128,8 @@ int main(int argc, const char * argv[]) {
         // Set up switches for Delaunay triangulation
         //
         std::ostringstream stringstream ;
-        stringstream << "zpj" ;
+        // Add 'q' flag for quality mesh - no angle less than 20 deg
+        stringstream << "zpqj" ;
         if (!verbose) {
             stringstream << "Q" ;
         }
@@ -534,21 +537,6 @@ char * tryReadFile(const char *prompt, const char * key, const char * help, cons
     return(fname) ;
 }
 
-void printProgress(int percentDone, int nChars)
-{
-    int ppc = (float)100 / nChars ; // Percent per character
-    putchar('\r');
-    for (int i=0; i<nChars; ++i){
-        if (i * ppc < percentDone) {
-            putchar('>');
-        }else{
-            putchar('.');
-        }
-//        putchar('\n');
-    }
-    std::cout.flush();
-}
-
 bool pointInPolygon(int npoints, double *points, int nsegments, int *segments, double x, double y)
 {
     bool  oddNodes=false   ;
@@ -618,4 +606,5 @@ void testcommonmesh(TriangleMesh *mesh){
     }
     if (!pass )exit(1);
 }
+
 

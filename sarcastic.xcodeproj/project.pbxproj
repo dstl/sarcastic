@@ -42,6 +42,8 @@
 		953FA1FD18F4289400EAD4F3 /* sarcastic.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DF18F4289400EAD4F3 /* sarcastic.c */; };
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
+		954485DF1EAA3CA20042F694 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
+		954485E01EAA3D3B0042F694 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
 		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
 		95497AA81E72EDF3008E5861 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
 		95497AAA1E72EE17008E5861 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95497AA91E72EE17008E5861 /* libSIlib2-2.1.2.a */; };
@@ -382,6 +384,8 @@
 		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = TxPowerPerRay.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
+		954485DD1EAA3B510042F694 /* printProgress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = printProgress.c; path = sarcastic2/printProgress.c; sourceTree = SOURCE_ROOT; };
+		954485DE1EAA3B510042F694 /* printProgress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = printProgress.h; path = sarcastic2/printProgress.h; sourceTree = SOURCE_ROOT; };
 		95492F391A74EFC90061FCF7 /* oclPOField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oclPOField.c; sourceTree = "<group>"; };
 		95497AA91E72EE17008E5861 /* libSIlib2-2.1.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.2.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.1.2.a"; sourceTree = "<group>"; };
 		954BD4E91E7949EA007A12E4 /* sarcastic2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1203,6 +1207,8 @@
 				95D8F8C61B5E7A280057FA4C /* TriangleFile.h */,
 				95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */,
 				95E9AE5D1D91B1000063993D /* TriangleMesh.hpp */,
+				954485DD1EAA3B510042F694 /* printProgress.c */,
+				954485DE1EAA3B510042F694 /* printProgress.h */,
 			);
 			name = Common;
 			path = sarcastic/Common;
@@ -1482,6 +1488,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954485DF1EAA3CA20042F694 /* printProgress.c in Sources */,
 				95E627561E7C93D600BC7933 /* accelerateTriangles.cpp in Sources */,
 				95E627571E7C93D600BC7933 /* buildRopesAndBoxes.cpp in Sources */,
 				95497AAB1E72EE60008E5861 /* pmath_rng.c in Sources */,
@@ -1562,6 +1569,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954485E01EAA3D3B0042F694 /* printProgress.c in Sources */,
 				9582589A1D99370300335811 /* colladainterface.cpp in Sources */,
 				958258961D99368B00335811 /* tinystr.cpp in Sources */,
 				958258971D99368B00335811 /* tinyxml.cpp in Sources */,

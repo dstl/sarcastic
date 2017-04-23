@@ -54,6 +54,8 @@
 
 #define ROOTPATH "/tmp"
 #define USECOLOR 0
+#define NAZRAYS 1
+#define NELRAYS 1
 
 using namespace std;
 
@@ -85,8 +87,11 @@ int main(int argc, const char * argv[]) {
     // integrity
     //
     TriangleMesh mesh;
+    printf("Reading in file %s...\n",instr);
     mesh.readPLYFile(instr);
+    printf("Done. Checking file Integrity...\n");
     mesh.checkIntegrityAndRepair();
+    printf("Done \n");
     mesh.buildTriangleAABBs();
 
     // Initialise and start timer
@@ -101,6 +106,7 @@ int main(int argc, const char * argv[]) {
     //
     endTimer(&runTimer, &status);
     
+    
     if (USECOLOR==1) {
         printf("KdTree constructed in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     }else{
@@ -108,7 +114,7 @@ int main(int argc, const char * argv[]) {
     }
     
     printf("Ray tracing through tree...\n");
-    rayTrace(&mesh, tree, &treeSize) ;
+    rayTrace(&mesh, tree, &treeSize, NAZRAYS, NELRAYS) ;
     
     im_close_lib(&status);
     return 0;

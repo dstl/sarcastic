@@ -98,8 +98,6 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     }
     if (printOutput != OUTPUTNO)printf("Done!\n");
     
-    
-
     if (printOutput != OUTPUTNO)printf("PreProcessing Small Nodes ...\n");
     preProcessSmallNodes(&smalllist);
     
@@ -127,8 +125,8 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
         if (printOutput != OUTPUTNO)printf("[%3d] active list size: %4d\tnextlist size: %4d\n",dpth++,activelist->size(),nextlist->size());
         swapLists(&nextlist, &activelist);
     }
-    
-    if(printOutput >= 4){
+
+    if((printOutput & OUTPUTAABB) == OUTPUTAABB){
         struct stat sb;
         
         if (stat("/tmp/AABBs", &sb) == 0 && S_ISDIR(sb.st_mode)) {
@@ -172,19 +170,30 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     }
     
     preOrderTraversalNode(&nodelist, kdTree, numNodesInTree) ;
+    
 
-    if ((printOutput & 0x2) == OUTPUTNODE) {
+    if ((printOutput & OUTPUTNODE) == OUTPUTNODE) {
         printKdTreeNodes(nodelist) ;
     }
     
-    if ((printOutput & 0x1) == OUTPUTDATA) {
+    if ((printOutput & OUTPUTDATA) == OUTPUTDATA) {
         printKdTreeData(kdTree, numNodesInTree) ;
     }
     
-    if ((printOutput & 0x8) == OUTPUTSUMM) {
+    if ((printOutput & OUTPUTSUMM) == OUTPUTSUMM) {
         printSummary(nodelist) ;
     }
     
+    for(int i=0; i<nodelist.size(); ++i){
+        nodelist[i]->next = NULL ;
+        nodelist[i]->leftChild = NULL ;
+        nodelist[i]->rghtChild = NULL ;
+        nodelist[i]->smallroot = NULL ;
+        free(nodelist[i]->data.triangleMask) ;
+        nodelist[i]->data.splitList.clear() ;
+        nodelist[i]->data.triAABBs.clear() ;
+        nodelist[i]->data.triangles.clear() ;
+    }
     nodelist.clear() ;
     activelist->erase() ;
     
@@ -227,23 +236,37 @@ void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, tree
         p = q ;
         
         for(int j=0; j<3; ++j){
+            
             s = p->data.aabb.BB.cell[j] - p->data.aabb.AA.cell[j] ;
+            // aabb (the BV for all the tris in this node) can be larger than the AABB for this node as some of the
+            // triangles in this node may spill into one of the neighboring nodes. In this case set aabb to be the
+            // boundary for this node
+            //
             aabb = BV4TrisInNode[i] ;
+            if (aabb.AA.cell[j] < p->data.aabb.AA.cell[j]) {
+                aabb.AA.cell[j] = p->data.aabb.AA.cell[j] ;
+            }
+            if (aabb.BB.cell[j] > p->data.aabb.BB.cell[j]) {
+                aabb.BB.cell[j] = p->data.aabb.BB.cell[j] ;
+            }
+            
             ldist = aabb.AA.cell[j] - p->data.aabb.AA.cell[j] ;
-            if( (ldist/s) > Ce){
+            if( (ldist/s) > Ce && (ldist < s) ){
                 p->data.aabb.AA.cell[j] = aabb.AA.cell[j] ;
             }
             hdist = p->data.aabb.BB.cell[j] - aabb.BB.cell[j] ;
-            if( (hdist/s) > Ce){
+            if( (hdist/s) > Ce && (hdist < s) ){
                 p->data.aabb.BB.cell[j] = aabb.BB.cell[j] ;
             }
         }
+        
         
         kdTreeNode *leftNode = new kdTreeNode ;
         kdTreeNode *rghtNode = new kdTreeNode ;
         p->medianSplit(&leftNode, &rghtNode);
         int numLeftChild  = (int)leftNode->data.triangles.size();
         int numRightChild = (int)rghtNode->data.triangles.size();
+        
         p->leftChild = leftNode ;
         p->rghtChild = rghtNode ;
         
@@ -286,57 +309,60 @@ void kdTree::preProcessSmallNodes(treeList **smalllist)
         p->data.smallntris = (int)p->data.triangles.size() ;
         p->smallroot = p ;
         
-        if(p->data.smallntris <=0){
-            printf("error : smallroot with zero triangles in preProcessSmallNodes\n");
-            exit(1);
-        }
         if(p->smallroot == NULL){
             printf("Error: node %d in activelist is not a small node in function preProcessSmallNodes()\n",i) ;
             exit(1);
         }
-        p->data.triangleMask = new unsigned char [p->data.smallntris] ;
-        for (int j=0; j<p->data.triangles.size(); ++j) {
-            p->data.triangleMask[j] = 1 ;
-        }
-        // Create split candidates based upon the AABBs of the triangles in this node
-        // two for each triangle (low and high), and for each dimension.
-        // Store them all in splitList for this node
-        //
-        for (int k=0; k<3; ++k){
-            
-            for(int j=0; j<p->data.smallntris; ++j){
+        if(p->data.smallntris > 0){
+
+            p->data.triangleMask = new unsigned char [p->data.smallntris] ;
+            for (int j=0; j<p->data.triangles.size(); ++j) {
+                p->data.triangleMask[j] = 1 ;
+            }
+            // Create split candidates based upon the AABBs of the triangles in this node
+            // two for each triangle (low and high), and for each dimension.
+            // Store them all in splitList for this node
+            //
+            for (int k=0; k<3; ++k){
                 
-                if ( (p->data.triAABBs[j].AA.cell[k] >= p->data.aabb.AA.cell[k]) &&  (p->data.triAABBs[j].AA.cell[k] <= p->data.aabb.BB.cell[k]) ) {
-                    splitCandidate eA(p->data.triAABBs[j].AA.cell[k], j, k, p->data.smallntris) ;
-                    if (eA.pos < p->data.aabb.AA.cell[eA.dim] ) {
-                        printf("ERROR : splitplane candidate is outside this node's AABB\n");
-                        printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
-                               ,eA.pos,eA.dim,eA.dim,p->data.aabb.AA.cell[eA.dim],p->data.aabb.BB.cell[eA.dim] ) ;
-                        printf("\n");
+                for(int j=0; j<p->data.smallntris; ++j){
+                    
+                    if ( (p->data.triAABBs[j].AA.cell[k] >= p->data.aabb.AA.cell[k]) &&  (p->data.triAABBs[j].AA.cell[k] <= p->data.aabb.BB.cell[k]) ) {
+                        splitCandidate eA(p->data.triAABBs[j].AA.cell[k], j, k, p->data.smallntris) ;
+                        if (eA.pos < p->data.aabb.AA.cell[eA.dim] ) {
+                            printf("ERROR : splitplane candidate is outside this node's AABB\n");
+                            printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
+                                   ,eA.pos,eA.dim,eA.dim,p->data.aabb.AA.cell[eA.dim],p->data.aabb.BB.cell[eA.dim] ) ;
+                            printf("\n");
+                        }
+                        p->data.splitList.push_back(eA);
                     }
-                    p->data.splitList.push_back(eA);
-                }
-                if ( (p->data.triAABBs[j].BB.cell[k] >= p->data.aabb.AA.cell[k]) && (p->data.triAABBs[j].BB.cell[k] <= p->data.aabb.BB.cell[k]) ) {
-                    splitCandidate eB(p->data.triAABBs[j].BB.cell[k], j, k, p->data.smallntris) ;
-                    if (eB.pos < p->data.aabb.AA.cell[eB.dim] ) {
-                        printf("ERROR : splitplane candidate is outside this node's AABB\n");
-                        printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
-                               ,eB.pos,eB.dim,eB.dim,p->data.aabb.AA.cell[eB.dim],p->data.aabb.BB.cell[eB.dim] ) ;
-                        printf("\n");
+                    if ( (p->data.triAABBs[j].BB.cell[k] >= p->data.aabb.AA.cell[k]) && (p->data.triAABBs[j].BB.cell[k] <= p->data.aabb.BB.cell[k]) ) {
+                        splitCandidate eB(p->data.triAABBs[j].BB.cell[k], j, k, p->data.smallntris) ;
+                        if (eB.pos < p->data.aabb.AA.cell[eB.dim] ) {
+                            printf("ERROR : splitplane candidate is outside this node's AABB\n");
+                            printf("      : split position: %f (dimension:%d), AABB[%d]: %f - %f \n"
+                                   ,eB.pos,eB.dim,eB.dim,p->data.aabb.AA.cell[eB.dim],p->data.aabb.BB.cell[eB.dim] ) ;
+                            printf("\n");
+                        }
+                        p->data.splitList.push_back(eB);
                     }
-                    p->data.splitList.push_back(eB);
                 }
             }
-        }
-        
-        for(int j=0; j<p->data.splitList.size(); ++j){
             
-            int k = p->data.splitList[j].dim ;
-            
-            for(int t=0; t<p->data.smallntris; ++t){
-                p->data.splitList[j].leftTris[t] = (p->data.triAABBs[t].AA.cell[k] <= p->data.splitList[j].pos) ;
-                p->data.splitList[j].rghtTris[t] = (p->data.triAABBs[t].BB.cell[k] >= p->data.splitList[j].pos) ;
+            for(int j=0; j<p->data.splitList.size(); ++j){
+                
+                int k = p->data.splitList[j].dim ;
+                
+                for(int t=0; t<p->data.smallntris; ++t){
+                    p->data.splitList[j].leftTris[t] = (p->data.triAABBs[t].AA.cell[k] <= p->data.splitList[j].pos) ;
+                    p->data.splitList[j].rghtTris[t] = (p->data.triAABBs[t].BB.cell[k] >= p->data.splitList[j].pos) ;
+                }
             }
+        }else{
+            // Set large Node to be a leaf with zero triangles
+            //
+            p->data.isLeaf = true ;
         }
         
         q=p->next ;
@@ -365,58 +391,65 @@ void kdTree::processSmallNodes(treeList **activelist, treeList **nextlist)
             exit(1);
         }
         
-        float A0 = p->data.aabb.surfaceArea() ;
-        int minId = -1;
-        
-        int ntrisInThisNode = reduce(p->data.triangleMask, p->data.smallntris );
-        float SAH0 = INTERSECTIONCOST * ntrisInThisNode ;
-        float minSAH = SAH0;
-        
-        for (int j=0; j<p->data.splitList.size(); ++j){
-            
-            // For this split candidate find the number of triangles to the
-            // left and right of the split plane that are also in this node
+        if (! p->data.isLeaf ) {
+            // Only split the small node if it is not a leaf
             //
-            int tri = p->data.splitList[j].owner ;
-            if(p->data.triangleMask[tri] != 0){
+            
+            float A0 = p->data.aabb.surfaceArea() ;
+            int minId = -1;
+            
+            int ntrisInThisNode = reduce(p->data.triangleMask, p->data.smallntris );
+            float SAH0 = INTERSECTIONCOST * ntrisInThisNode ;
+            float minSAH = SAH0;
+            
+            for (int j=0; j<p->data.splitList.size(); ++j){
                 
-                Cl = reduce(p->data.splitList[j].leftTris, p->data.smallntris) ;
-                Cr = reduce(p->data.splitList[j].rghtTris, p->data.smallntris) ;
-                
-                AA = p->data.aabb.AA;
-                BB = p->data.aabb.BB;
-                AA.cell[p->data.splitList[j].dim] = p->data.splitList[j].pos ;
-                BB.cell[p->data.splitList[j].dim] = p->data.splitList[j].pos ;
-                Vleft = AABB(p->data.aabb.AA, BB);
-                Vrght = AABB(AA, p->data.aabb.BB);
-                Al = Vleft.surfaceArea();
-                Ar = Vrght.surfaceArea();
-                ProbL = Al / A0 ;
-                ProbR = Ar / A0 ;
-                SAHp = TRAVERSALCOST + ((Cl * ProbL + Cr * ProbR) * INTERSECTIONCOST);
-                if(SAHp < minSAH){
-                    minSAH = SAHp ;
-                    minId = j;
+                // For this split candidate find the number of triangles to the
+                // left and right of the split plane that are also in this node
+                //
+                int tri = p->data.splitList[j].owner ;
+                if(p->data.triangleMask[tri] != 0){
+                    
+                    Cl = reduce(p->data.splitList[j].leftTris, p->data.smallntris) ;
+                    Cr = reduce(p->data.splitList[j].rghtTris, p->data.smallntris) ;
+                    
+                    AA = p->data.aabb.AA;
+                    BB = p->data.aabb.BB;
+                    
+                    if(p->data.splitList[j].pos >= AA.cell[p->data.splitList[j].dim] && p->data.splitList[j].pos <= BB.cell[p->data.splitList[j].dim]){
+                        AA.cell[p->data.splitList[j].dim] = p->data.splitList[j].pos ;
+                        BB.cell[p->data.splitList[j].dim] = p->data.splitList[j].pos ;
+                        Vleft = AABB(p->data.aabb.AA, BB);
+                        Vrght = AABB(AA, p->data.aabb.BB);
+                        Al = Vleft.surfaceArea();
+                        Ar = Vrght.surfaceArea();
+                        ProbL = Al / A0 ;
+                        ProbR = Ar / A0 ;
+                        SAHp = TRAVERSALCOST + ((Cl * ProbL + Cr * ProbR) * INTERSECTIONCOST);
+                        if(SAHp < minSAH){
+                            minSAH = SAHp ;
+                            minId = j;
+                        }
+                    }
                 }
             }
+            
+            if(minId == -1){
+                p->data.isLeaf = true ;
+            }else{
+                kdTreeNode *leftNode = new kdTreeNode ;
+                kdTreeNode *rghtNode = new kdTreeNode ;
+                
+                p->split(p->data.splitList[minId].dim, p->data.splitList[minId].pos, leftNode, rghtNode) ;
+                
+                p->leftChild = leftNode ;
+                p->rghtChild = rghtNode ;
+                
+                (*nextlist)->push_back(leftNode);
+                (*nextlist)->push_back(rghtNode);
+                
+            }
         }
-        
-        if(minId == -1){
-            p->data.isLeaf = true ;
-        }else{
-            kdTreeNode *leftNode = new kdTreeNode ;
-            kdTreeNode *rghtNode = new kdTreeNode ;
-            
-            p->split(p->data.splitList[minId].dim, p->data.splitList[minId].pos, leftNode, rghtNode) ;
-            
-            p->leftChild = leftNode ;
-            p->rghtChild = rghtNode ;
-            
-            (*nextlist)->push_back(leftNode);
-            (*nextlist)->push_back(rghtNode);
-            
-        }
-        
         
         q=p->next ;
         ++i;

@@ -37,7 +37,7 @@ typedef struct Ray {
 
 static const unsigned int quickmodulo[] = {0,1,2,0,1};
 
-void rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree) ;
+void rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree, int nAzRays, int nElRays) ;
 void Intersect(ATS *tri, Ray *ray, Hit *hit) ;
 void BuildRopesAndBoxes(kdTree::KdData * Node, int *RS, AABB aabb, kdTree::KdData * KdTree) ;
 void shootRay(kdTree::KdData * KdTree,ATS * accelTriangles,const int nRays, Ray * rays, Hit *hits);
