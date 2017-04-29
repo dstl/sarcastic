@@ -104,18 +104,19 @@ typedef struct scatProps {
     float  diffuse     ;
     float  shinyness   ;
 } scatProps ;
-#define NMATERIALS 9
+#define NMATERIALS 10
 static constant scatProps materialProperties[NMATERIALS] = {
-//   Name          corrLen      Roughness   Rs          Rm      Specular    Diffuse     Shinyness
-    {"MATERIAL",    100.0,      0.0,        0.0,        9e9,   1.0,        0.0,        50.0        },
+    //   Name           corrLen     Roughness   Rs          Rm      Specular    Diffuse     Shinyness
+    {"MATERIAL",    0.2,        0.0,        0.0,        9e9,   1.0,        0.0,        50.0        },
     {"ASPHALT",     0.5,        0.005,      1.0e18,     9e9,   0.8,        0.2,        30.0        },
     {"BRICK",       0.1,        0.001,      1.0e18,     9e9,   0.7,        0.3,        20.0        },
     {"CONCRETE",    0.2,        0.01,       120.0,      9e9,   0.3,        0.7,        10.0        },
-    {"METAL",       100.0,      0.0,        1.0e-8,     9e9,   1.0,        0.0,        50.0        },
+    {"METAL",       0.6,        0.0,        1.0e-8,     9e9,   1.0,        0.0,        50.0        },
     {"ROOFING",     0.1,        0.1,        1.0e18,     9e9,   0.6,        0.4,        40.0        },
-    {"VEGETATION",  0.01,       0.1,        2000.0,     9e9,   0.2,        0.8,        5.0         },
+    {"VEGETATION",  0.1,        0.1,        2000.0,     9e9,   0.2,        0.8,        5.0         },
     {"WATER",       0.01,       0.1,        2.0e1,      9e9,   1.0,        0.0,        50.0        },
-    {"WOOD",        0.1,        0.001,      1.0e14,     9e9,   0.6,        0.4,        10.0        }
+    {"WOOD",        0.1,        0.001,      1.0e14,     9e9,   0.6,        0.4,        10.0        },
+    {"GRASS",       0.05,       0.1,        2000.0,     9e9,   0.2,        0.8,        5.0         }
 } ;
 // end of materialProperties.h
 

@@ -49,7 +49,7 @@ typedef struct scatProps {
     float  diffuse     ;
     float  shinyness   ;
 } scatProps ;
-#define NMATERIALS 9
+#define NMATERIALS 10
 // Resistivities taken from http://chemistry.about.com/od/moleculescompounds/a/Table-Of-Electrical-Resistivity-And-Conductivity.htm
 //
 static scatProps materialProperties[NMATERIALS] = {
@@ -62,7 +62,8 @@ static scatProps materialProperties[NMATERIALS] = {
     {"ROOFING",     0.1,        0.1,        1.0e18,     9e9,   0.6,        0.4,        40.0        },
     {"VEGETATION",  0.1,        0.1,        2000.0,     9e9,   0.2,        0.8,        5.0         },
     {"WATER",       0.01,       0.1,        2.0e1,      9e9,   1.0,        0.0,        50.0        },
-    {"WOOD",        0.1,        0.001,      1.0e14,     9e9,   0.6,        0.4,        10.0        }
+    {"WOOD",        0.1,        0.001,      1.0e14,     9e9,   0.6,        0.4,        10.0        },
+    {"GRASS",       0.05,       0.1,        2000.0,     9e9,   0.2,        0.8,        5.0         }
 } ;
 
 static int materialColours[NMATERIALS][3] = {
@@ -75,6 +76,7 @@ static int materialColours[NMATERIALS][3] = {
     {166, 214, 054},        // 6 = Vegetation
     {056, 125, 214},        // 7 = Water
     {137,  46, 014},        // 8 = Wood
+    {100, 214, 050},        // 9 = Grass
 };
 
 #endif

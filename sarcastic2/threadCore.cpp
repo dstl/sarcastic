@@ -29,7 +29,8 @@ void * devPulseBlock ( void * threadArg ) {
     cl_device_id devId ;
     cl_context context ;
     cl_command_queue commandQ ;
-    
+    cl_mem dTriangles;
+
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nx=0, nShadowRays, tid ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
     int hrs,min,sec;
@@ -64,7 +65,8 @@ void * devPulseBlock ( void * threadArg ) {
     
     kdTree::KdData * tree = NULL;
     int treeSize;
-
+    int nTriangles;
+    
     CPHDHeader *hdr  = td->cphdhdr ;
     gainRx           = td->gainRx ;
     PowPerRay        = td->PowPerRay ;
@@ -250,6 +252,9 @@ void * devPulseBlock ( void * threadArg ) {
         // Build kdTree if required
         //
         if (pulse == 0 || dynamicScene) {
+            if (!dynamicScene) {
+                endTimer(&threadTimer, &status);
+            }
             kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
             accelerateTriangles(&newMesh,&accelTriangles) ;
             // Initialise the tree and build ropes and boxes to increase efficiency when traversing
@@ -261,14 +266,18 @@ void * devPulseBlock ( void * threadArg ) {
             sceneAABB = tree[0].brch.aabb ;
             for(int i=0; i<6; i++) Ropes[i] = NILROPE;
             BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
+            if (!dynamicScene) {
+                startTimer(&threadTimer, &status);
+            }
+            
+            // Allocate memory for items that are needed in all kernels
+            //
+            nTriangles   = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
+            dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(ATS)*nTriangles, NULL, &_err));
+            CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(ATS)*nTriangles, accelTriangles, 0, NULL, NULL));
         }
 
-        // Allocate memory for items that are needed in all kernels
-        //
-        int nTriangles       = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
-        cl_mem dTriangles;
-        dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(ATS)*nTriangles, NULL, &_err));
-        CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(ATS)*nTriangles, accelTriangles, 0, NULL, NULL));
+        
         
         // Generate a distribution of nAzbeam x nElbeam rays that originate from the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
@@ -568,6 +577,7 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnp) ;
         if(dynamicScene){
             free(tree) ;
+            clReleaseMemObject(dTriangles);
             delete accelTriangles ;
         }
     }
@@ -580,6 +590,7 @@ void * devPulseBlock ( void * threadArg ) {
     if(!dynamicScene){
         free(tree);
         delete accelTriangles ;
+        clReleaseMemObject(dTriangles);
     }
     // Clear down OpenCL allocations
     //
