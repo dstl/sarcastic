@@ -1,16 +1,16 @@
 /***************************************************************************
  *
- *       Module:    sarcastic2.cpp
- *      Program:    SARCASTIC
- *   Created by:    Darren on 15/03/2017.
- *                  Copyright (c) 2017 Dstl. All rights reserved.
+ *       Module:    main.cpp
+ *      Program:    BIRCS
+ *   Created by:    Darren on 30/04/2017.
+ *                  Copyright (c) 2013 Dstl. All rights reserved.
  *
  *   Description:
- *
+ *      Programm to calculate the bistatic RCS of a target model
  *
  *
  *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  15/03/2017
+ *   Date of CLASSN        :  15/01/2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -45,101 +45,144 @@
 #include "buildTree.hpp"
 #include "buildRopesAndBoxes.hpp"
 #include "accelerateTriangles.hpp"
+#include "threadCore.hpp"
+
 extern "C" {
 #include "TxPowerPerRay.h"
 #include "ecef2SceneCoords.h"
 #include "OpenCLUtils.h"
+#include "bircsBanner.h"
 }
-#include "getUserInput.hpp"
-#include "threadCore.hpp"
 
-int main(int argc, const char * argv[]) {
-    
-    int rc;
+#define ROOTPATH "/tmp"
 
+double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
+
+int main (int argc, char **argv){
     
     SPStatus status ;
     im_init_status(status, 0) ;
-    im_init_lib(&status, (char *)"sarcastic2", argc, (char **)argv);
+    im_init_lib(&status, (char *)"bircs", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status);
-    
-    CPHDHeader hdr ;
+  
     TriangleMesh baseMesh ;
-    TriangleMesh moverMesh ;
-    char *outCPHDFile ;
-    int startPulse, nPulses, bounceToShow, nAzBeam, nElBeam, interrogate, pulseUndersampleFactor ;
-    SPVector interogPt ;
-    double interogRad ;
-    FILE *interrogateFP ;
+    AABB        SceneBoundingBox;
+    OCLPlatform platform;
+#define GPUCAPABILITY_MAJOR 2
+#define GPUCAPABILITY_MINOR 0
     
-    getUserInput(&hdr, &baseMesh, &moverMesh, &outCPHDFile,
-                     &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad,
-                 &interrogateFP, &pulseUndersampleFactor, &status) ;
+    SPVector unitBeamAz, unitBeamEl, rVect, zHat, interogPt ;
+    double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
+    char *baseScene ;
+    int startPulse, nPulses, bounceToShow, interrogate ;
+    int nAzBeam, nElBeam, nVec, dev, rc ;
+    FILE *interrogateFP = NULL ;
+    
+    cl_int      err;
+    cl_uint     ndevs;
+    cl_ulong    memSizeTmp,devMemSize;
+    
+    SPVector  * RxPos         = NULL ;
+    SPVector  * TxPos         = NULL ;
+    
+    bircsBanner() ;
+    
+    bounceToShow = 0;
+    nAzBeam = 100;
+    nElBeam = 100;
+    interrogate = 0;
+    
+    double phistart =  0.0;
+    double phiend = 360.0;
+    double thetastart = 0.0;
+    double thetaend = 180.0;
+    double obsdist = 20000.0;
+    double ILLAZ = 180.0;
+    double ILLINC = 45.0;
+    double ILLRANGE = 20000.0;
+    int nphis = 180;
+    int nthetas = 90;
+    double freq_centre = 1e9 ;
+    
+    
+    ILLAZ = input_int("IllAz", (char *)"ILLAZ", (char *)"Illumination azimuth", ILLAZ);
+    ILLINC = input_int("ILLINC", (char *)"ILLINC", (char *)"Illumination inclination", ILLINC);
+    freq_centre = input_dbl("Centre Frequency", (char *)"freq", (char *)"Transmit centre frequency", freq_centre);
+    obsdist = input_dbl("Slant range to scene centre", (char *)"SRdist", (char *)"Slant Range to scene centre", obsdist);
+    phistart = input_dbl("phistart", (char *)"PHISTART", (char *)"Starting azimuth angle", phistart);
+    phiend = input_dbl("phiend", (char *)"PHIEND", (char *)"end azimuth angle", phiend);
+    nphis = input_int("nphis", (char *)"NPHIS", (char *)"Number of azimuth samples", nphis);
+    thetastart = input_dbl("thetastart", (char *)"THETASTART", (char *)"starting angle of incidence", thetastart);
+    thetaend = input_dbl("thetaend", (char *)"THETAEND", (char *)"Ending angle of incidence", thetaend);
+    nthetas = input_int("nthetas", (char *)"NTHETAS", (char *)"Number of elevation samples", nthetas);
+    nAzBeam = input_int("nAzBeam", (char *)"NAZBEAM", (char *)"Number of azimuth rays to cast for each observation position", nAzBeam);
+    nElBeam = input_int("nElBeam", (char *)"NELBEAM", (char *)"Number of elevation rays to cast for each observation position", nElBeam);
+    bounceToShow = input_int("bounceToShow", (char *)"BOUNCETOSHOW", (char *)"Output just the ray intersections corresponding to this bounce. (0=no bounce output)", bounceToShow);
+    baseScene = tryReadFile("Name of Base scene", "baseScene",
+                            "Enter the name of a file that will be the base scene to be raytraced. The file must be in a .PLY file format"
+                            ,ROOTPATH"/delaunay.ply") ;
+    
+    // Read in the triangle mesh from the input plyfile and check it's
+    // integrity
+    //
+    printf("Reading in file %s...\n",baseScene);
+    baseMesh.readPLYFile(baseScene);
+    printf("Done. Checking file Integrity...\n");
+    baseMesh.checkIntegrityAndRepair();
+    baseMesh.buildTriangleAABBs();
+    printf("Done \n");
+    
+    ILLINC = DEG2RAD(ILLINC);
+    ILLAZ = DEG2RAD(ILLAZ);
+    phistart = DEG2RAD(phistart);
+    phiend = DEG2RAD(phiend);
+    thetastart = DEG2RAD(thetastart);
+    thetaend = DEG2RAD(thetaend) ;
+    
+    nPulses = nphis * nthetas ;
+    double deltaiphi, deltaitheta;
+    deltaiphi = (phiend-phistart) / nphis ;
+    deltaitheta = (thetaend-thetastart) / (nthetas) ;
+    SPVector illOrigin, illDir;
+    double illRange, illAz, illInc ;
+    illRange = ILLRANGE ;
+    illAz    = ILLAZ ;
+    illInc   = ILLINC ;
+    VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
+    VECT_NORM(illOrigin, illDir) ;
     
     // Start timing after user input
     //
     Timer runTimer ;
     startTimer(&runTimer, &status) ;
     
-    // Reduce the Cphd data we have to deal with to make things quicker.
-    //
-    CPHDHeader newhdr = hdr ;
-    newhdr.num_azi = nPulses / pulseUndersampleFactor ;
-    newhdr.pulses  = (CPHDPulse *)sp_calloc(newhdr.num_azi, sizeof(CPHDPulse));
-    for(int p = 0; p<newhdr.num_azi; ++p){
-        newhdr.pulses[p] = hdr.pulses[(p*pulseUndersampleFactor)+startPulse] ;
-    }
-    nPulses = newhdr.num_azi ;
-
-
-    // print out info about the collection
-    //
-    printCPHDCollectionInfo(&hdr, &status) ;
-    printf("Wavelength                  : %f m\n",SIPC_c/newhdr.freq_centre);
-    printf("Slant range resolution      : %f m\n",SIPC_c/(2*newhdr.pulse_length*newhdr.chirp_gamma));
+    nVec = nphis*nthetas ;
     
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
-    SPVector  *RxPos, *TxPos, SRP, zHat ;
-    double    *Fx0s, *FxSteps, *amp_sf0, lambda ;
+    RxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses);
+    TxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses);
     
-    RxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses) ;
-    TxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses) ;
-//    Fx0s    = (double *)sp_malloc(sizeof(double)*nPulses)   ;
-//    FxSteps = (double *)sp_malloc(sizeof(double)*nPulses)   ;
-//    amp_sf0 = (double *)sp_malloc(sizeof(double)*nPulses)   ;
-   
-    for (int p = 0; p < nPulses; p++){
-        RxPos[p] = newhdr.pulses[p].sat_ps_rx ;
-        TxPos[p] = newhdr.pulses[p].sat_ps_tx ;
-        
-//        // While we are looping through pulses also load up the Fx0 and Fx®StepSize values
-//        //
-//        Fx0s[p]    = newhdr.pulses[p].fx0 ;
-//        FxSteps[p] = newhdr.pulses[p].fx_step_size ;
-//        amp_sf0[p] = newhdr.pulses[p].amp_sf0 ;
+    double theta_s, phi_s;
+    SPVector obsDir;
+    for (int t=0; t<nthetas; t++){
+        theta_s = thetastart + t * deltaitheta ;
+        for(int p=0; p<nphis; p++){
+            phi_s = phistart + p * deltaiphi ;
+            obsDir.x = sin(theta_s) * cos(phi_s);
+            obsDir.y = sin(theta_s) * sin(phi_s);
+            obsDir.z = cos(theta_s);
+            VECT_SCMULT(obsDir, obsdist, RxPos[t*nphis+p]) ;
+            TxPos[t*nphis+p] = illOrigin ;
+        }
     }
     
-    SRP = newhdr.pulses[(nPulses/2)].srp ;
+    // Calculate azbeamwidth from scene
+    // Calculate elbeamwidth from scene
+    // use largest so that beam sampling is uniform
+    // multiply by sceneBeamMargin
+    // set to be beamwidth
     
-    ecef2SceneCoords(nPulses, RxPos, SRP);
-    ecef2SceneCoords(nPulses, TxPos, SRP);
-    ecef2SceneCoords(1,  &interogPt, SRP);
-    
-    SPVector tmp;
-    for (int p = 0; p < nPulses; p++){
-        tmp = newhdr.pulses[p].sat_ps_rx ;
-        newhdr.pulses[p].sat_ps_rx = RxPos[p] ;
-        RxPos[p]  = tmp;
-        tmp = newhdr.pulses[p].sat_ps_tx ;
-        newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
-        TxPos[p] = tmp;
-    }
-    
-    
-    double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, maxBeamUsedAz, maxBeamUsedEl ;
-    SPVector rVect, unitBeamAz, unitBeamEl  ;
-    AABB SceneBoundingBox ;
     centreRange = VECT_MAG(TxPos[nPulses/2]);
     VECT_MINUS( TxPos[nPulses/2], rVect ) ;
     VECT_CREATE(0, 0, 1., zHat) ;
@@ -178,44 +221,26 @@ int main(int argc, const char * argv[]) {
     }
     maxBeamUsedAz = (maxAz - minAz) / centreRange ;
     maxBeamUsedEl = (maxEl - minEl) / centreRange ;
-
-    collectionGeom cGeom;
-    collectionGeometry(&hdr, nPulses/2, hdr.grp, &cGeom, &status);
-    printf("RayTracing beam (Az,El)     : %3.2e deg x %3.2e deg (%3.2f x %3.2f metres (ground plane))\n",
-           GeoConsts_RADTODEG*maxBeamUsedAz,GeoConsts_RADTODEG*maxBeamUsedEl,centreRange*maxBeamUsedAz,centreRange*maxBeamUsedEl/sin(cGeom.grazingRad));
+    
     dAz = maxBeamUsedAz / nAzBeam;
     dEl = maxBeamUsedEl / nElBeam;
-    lambda = SIPC_c / newhdr.freq_centre ;
-    printf("Ray density                 : %3.1f x %3.1f [ %3.1f x %3.1f ground plane] rays per metre\n",
-           1.0/(dAz * centreRange), 1.0/(dEl * centreRange),
-           1.0/(dAz * centreRange), 1.0/(dEl * centreRange / sin(cGeom.grazingRad)));
-    printf("Ray seperation              : %4.3f x %4.3f [ %4.3f x %4.3f ground plane] metres between adjacent rays\n",
-           (dAz * centreRange), (dEl * centreRange),
-           (dAz * centreRange), (dEl * centreRange / sin(cGeom.grazingRad)));
+    lambda = SIPC_c / freq_centre ;
     
     double TxPowPerRay, gainRx ;
     TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
-    printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
-    double TB = TxPowPerRay * hdr.pulse_length * hdr.chirp_gamma * hdr.pulse_length ;
-    TxPowPerRay = TxPowPerRay * TB ;
+    //    printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
     
     // Initialise OpenCL and load the relevent information into the
     // platform structure. OCL tasks will use this later
     //
-    cl_int      err;
-    cl_uint     ndevs;
-    cl_ulong    memSizeTmp,devMemSize;
-#define GPUCAPABILITY_MAJOR 2
-#define GPUCAPABILITY_MINOR 0
-    OCLPlatform platform;
-
+    
     platform.clSelectedPlatformID = NULL;
     err = oclGetPlatformID (&platform, &status);
     if(err != CL_SUCCESS){
         printf("Error: Failed to find a suitable OpenCL Launch platform\n");
         exit(-1);
     }
-    oclPrintPlatform(platform);
+    //    oclPrintPlatform(platform);
     cl_context_properties props[] = {
         CL_CONTEXT_PLATFORM, (cl_context_properties)platform.clSelectedPlatformID,
         0
@@ -230,15 +255,15 @@ int main(int argc, const char * argv[]) {
         if(err == CL_SUCCESS){
             char cbuf[1024];
             cl_uint max_compute_units;
-            printf("GPU DEVICES                 : %d\n",ndevs);
+            //            printf("GPU DEVICES                 : %d\n",ndevs);
             for(int d=0; d<ndevs; d++){
-                printf("DEVICE                      : %d\n",d);
+                //                printf("DEVICE                      : %d\n",d);
                 clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_VENDOR, sizeof(cbuf), &cbuf, NULL);
-                printf("  DEVICE VENDOR             : %s\n",cbuf);
+                //                printf("  DEVICE VENDOR             : %s\n",cbuf);
                 clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_NAME, sizeof(cbuf), &cbuf, NULL);
-                printf("  DEVICE NAME               : %s\n",cbuf);
+                //                printf("  DEVICE NAME               : %s\n",cbuf);
                 clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &max_compute_units, NULL);
-                printf("  DEVICE MAX COMPUTE UNITS  : %d\n",max_compute_units);
+                //                printf("  DEVICE MAX COMPUTE UNITS  : %d\n",max_compute_units);
             }
         }else{
             printf("No GPU devices available with compute capability: %d.%d\n", GPUCAPABILITY_MAJOR, GPUCAPABILITY_MINOR);
@@ -247,9 +272,10 @@ int main(int argc, const char * argv[]) {
     }else{
         err = oclGetCPUDevices(&platform, &platform.device_ids, &ndevs, &status);
         if(err == CL_SUCCESS){
-            printf("CPU DEVICES                 : %d\n",ndevs);
+            //            printf("CPU DEVICES                 : %d\n",ndevs);
         }
     }
+    
     
     // Find out the maximum amount of memory that all OpenCL devices have
     // For this task
@@ -265,7 +291,7 @@ int main(int argc, const char * argv[]) {
     if (bounceToShow != 0) ndevs = 1;
     platform.nDevs = ndevs ;
     
-    printf("DEVICES USED                : %d\n",ndevs);
+    //    printf("DEVICES USED                : %d\n",ndevs);
     
     pthread_t *threads;
     threads = (pthread_t *)malloc(sizeof(pthread_t)*ndevs) ;
@@ -274,8 +300,8 @@ int main(int argc, const char * argv[]) {
         exit(-1);
     }
     
-    threadData *threadDataArray ;
-    threadDataArray = (threadData *)malloc(sizeof(threadData)*ndevs);
+    bircsThreadData *threadDataArray ;
+    threadDataArray = (bircsThreadData *)sp_malloc(sizeof(bircsThreadData)*ndevs);
     if (threadDataArray == NULL) {
         printf("Error : Failed to malloc %d threadDataArrays\n",ndevs);
         exit(-1);
@@ -284,13 +310,8 @@ int main(int argc, const char * argv[]) {
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    SPImage cphd ;
 
-    if(outCPHDFile != NULL){
-        im_init(&cphd, &status) ;
-        newhdr.data_type = ITYPE_CMPL_FLOAT ;
-        im_create(&cphd, ITYPE_CMPL_FLOAT, newhdr.nsamp, newhdr.num_azi, 1.0, 1.0, &status) ;
-    }
+    
     // Calculate how many pulses can be processed on a device at a time
     //
     int pulsesPerDevice;
@@ -298,7 +319,8 @@ int main(int argc, const char * argv[]) {
     while (nPulses % ndevs != 0) nPulses-- ;
     pulsesPerDevice = nPulses / ndevs ;
     
-    for (int dev=0; dev<ndevs; dev++) {
+    for (dev=0; dev<ndevs; dev++) {
+        
         
         threadDataArray[dev].devIndex               = dev ;
         threadDataArray[dev].nThreads               = ndevs ;
@@ -308,25 +330,19 @@ int main(int argc, const char * argv[]) {
         threadDataArray[dev].nPulses                = pulsesPerDevice ;
         threadDataArray[dev].nAzBeam                = nAzBeam ;
         threadDataArray[dev].nElBeam                = nElBeam ;
-        threadDataArray[dev].cphdhdr                = &newhdr ;
-//        threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
-//        threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
-//        threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
-//        threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
-//        threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
+        threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
+        threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
+        //        threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
+        //        threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
+        //        threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
         threadDataArray[dev].gainRx                 = gainRx;
         threadDataArray[dev].PowPerRay              = TxPowPerRay ;
-        if(outCPHDFile == NULL){
-            threadDataArray[dev].phd                    = NULL ;
-        }else{
-            threadDataArray[dev].phd                    = &cphd;            // Pointer to beginning of cphd data
-        }
-//        threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
-//        threadDataArray[dev].ADRate                 = hdr.clock_speed ;
-//        threadDataArray[dev].pulseDuration          = hdr.pulse_length ;
-//        threadDataArray[dev].oneOverLambda          = hdr.freq_centre / SIPC_c ;
-//        threadDataArray[dev].freq_centre            = hdr.freq_centre ;
-//        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length * hdr.chirp_gamma / 2) ;
+        //        threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
+        //        threadDataArray[dev].ADRate                 = hdr.clock_speed ;
+        //        threadDataArray[dev].pulseDuration          = hdr.pulse_length ;
+        //        threadDataArray[dev].oneOverLambda          = hdr.freq_centre / SIPC_c ;
+        threadDataArray[dev].freq_centre            = freq_centre ;
+        //        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length * hdr.chirp_gamma / 2) ;
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
         threadDataArray[dev].interrogate            = interrogate ;
@@ -334,7 +350,6 @@ int main(int argc, const char * argv[]) {
         threadDataArray[dev].interogRad             = interogRad ;
         threadDataArray[dev].interogFP              = &interrogateFP ;
         threadDataArray[dev].sceneMesh              = &baseMesh ;
-        threadDataArray[dev].moverMesh              = &moverMesh ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
@@ -356,7 +371,7 @@ int main(int argc, const char * argv[]) {
             fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
             fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
             fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
-            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse/pulseUndersampleFactor,(startPulse/pulseUndersampleFactor)+nPulses);
+            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);
             fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
             fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         }
@@ -371,7 +386,7 @@ int main(int argc, const char * argv[]) {
     
     pthread_attr_destroy(&attr);
     void * threadStatus ;
-    for (int dev=0; dev<ndevs; dev++) {
+    for (dev=0; dev<ndevs; dev++) {
         rc = pthread_join(threads[dev], &threadStatus);
         if (rc) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
@@ -385,30 +400,9 @@ int main(int argc, const char * argv[]) {
     }
     
     endTimer(&runTimer, &status) ;
-    printf("Done in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
- 
-    if (outCPHDFile != NULL ) {
-        FILE *fp;
-        fp = fopen(outCPHDFile, "w") ;
-        if (fp == NULL) {
-            fprintf(stderr, "Failed to open file %s\n", outCPHDFile);
-            perror("Error opening file");
-            exit(888);
-        }
-        for (int p = 0; p < nPulses; p++){
-            newhdr.pulses[p].sat_ps_rx = RxPos[p] ;
-            newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
-        }
-        printf("Writing CPHD File \"%s\"....",outCPHDFile);
-        writeCPHD3Header( &newhdr, fp, &status ) ;
-        write_cphd3_nb_vectors(&newhdr, 0, fp, &status) ;
-        write_cphd3_wb_vectors(&newhdr, &cphd, 0, fp, &status) ;
-        printf("...Done\n");
-    }
+    //    printf("Done in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     
-    if(outCPHDFile != NULL){
-        im_destroy(&cphd, &status);
-    }
+    
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;
@@ -418,91 +412,4 @@ int main(int argc, const char * argv[]) {
     return 0;
     
 }
-
-    /*
-    
-    // Define these arrays here. The Raytrace routibe will expand then as we
-    // proceed through pulses. They will then be handed to the PO Code
-    // to perform the field calculations all at once.
-    //
-    HitPoint *hitPoints ;
-    Ray *incidentRays, *observationRays ;
-    int nHits ;
-    
-    // for each pulse in file
-    //
-    double t0 = newhdr.pulses[0].sat_tx_time ;
-    for (int p=0; p<nPulses; ++p) {
-        
-        double t = newhdr.pulses[p].sat_tx_time  - t0;
-        
-        SPVector S0,S1,S2,S;
-        VECT_CREATE(0.0, 0.0, 0.0, S0) ;  // Translation
-        VECT_CREATE(0.0, 1.0, 0.0, S1) ;  // Velocity
-        VECT_CREATE(0.0, 0.0, 0.0, S2) ;  // Acceleration
-        
-        
-        // move the movers to the location for this pulse
-        //
-        S.x = S0.x + (S1.x * t) + (0.5 * S2.x * t * t) ;
-        S.y = S0.y + (S1.y * t) + (0.5 * S2.y * t * t) ;
-        S.z = S0.z + (S1.z * t) + (0.5 * S2.z * t * t) ;
-        
-        TriangleMesh mesh_t = moversMesh ;
-        for(int i=0; i<mesh_t.vertices.size(); ++i){
-            mesh_t.vertices[i].x += S.x ;
-            mesh_t.vertices[i].y += S.y ;
-            mesh_t.vertices[i].z += S.z ;
-        }
-    
-        // Add movers to base scene
-        //
-        TriangleMesh newMesh = baseMesh.add(&mesh_t) ;
-    
-        // Build kdTree
-        //
-        kdTree::KdData * tree;
-        int treeSize;
-
-        kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTDATA | kdTree::OUTPUTSUMM)) ;
-    
-        // Initialise the tree and build ropes and boxes to increase efficiency when traversing
-        //
-        kdTree::KdData *node;
-        
-        node = &(kdTree[0]) ;
-        
-        // build Ropes and Boxes
-        //
-        int Ropes[6] ;
-        AABB sceneAABB = kdTree[0].brch.aabb ;
-        for(int i=0; i<6; i++) Ropes[i] = NILROPE;
-        BuildRopesAndBoxes(node, Ropes, sceneAABB, kdTree);
-        
-        ATS *accelTriangles;
-        accelerateTriangles(mesh,&accelTriangles) ;
-        
-        
-        
-        threadCore 
-        
-        
-        // Ray trace it
-        //
-       
-        
-          // end for
-    //
-    }
-    
-// Write pulse to file
-    //
-
-    
-
-    return 0;
-}
-*/
-
-
 

@@ -1,17 +1,16 @@
 /***************************************************************************
  *
- *       Module:    RCS.c
- *      Program:    SARCASTIC
- *   Created by:    Darren on 07/05/2015.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *       Module:    banner.c
+ *      Program:    tdp2
+ *   Created by:    Darren Muff on 12/03/2013.
+ *                  Copyright (c) 2013 [Dstl]. All rights reserved.
  *
  *   Description:
- *      Function to calculate the radar cross section (RCS) of a target
- *      at a given range and with a provided Efield magnitude
+ *   <ENTER DESCRIPTION HERE>
  *
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  7/05/2015
+ *   CLASSIFICATION        :  <PENDING>
+ *   Date of CLASSN        :  12/03/2013
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -38,29 +37,17 @@
  *
  ***************************************************************************/
 
-#include "RCS.h"
-#include <SIlib2/SIlib2.h>
+#include <stdio.h>
+#include "BircsVersion.h"
+#include "colourCodes.h"
 
-double RCS(double PtGt, double EMagAtRx, double TxRange, double RxRange){
+void bircsBanner (){
+    printf(" \n");
+    printf(DARK GREEN "                        BIRCS - Bistatic RCS Simulator\n" NORMAL);
+    printf(BLUE "                          Version :"RED" %s \n", FULL_VERSION);
+    printf(BLUE "                    Revision: "RED"%s, %s \n",REVISION, VERSION_DATE);
+    printf(BLUE "               Copyright (c) 12017 "WHITE"["BLUE"Dstl"WHITE"]"BLUE". All rights reserved.\n" RESETCOLOR);
+    printf(" \n");
 
-    
-    // first calculation the isotropically radiated power from a point at a range
-    // from the transitter
-    //
-    double iso = PtGt / (4 * SIPC_pi * TxRange * TxRange) ; // power in Watts / m^2
-    
-    // Correct the received radar field magnitude to be the power at the reflection point
-    // An interesting point here. The E field measured at the receiver is the mean
-    // amplitude of a sinusoidal wave function. The peak amplitude is therefore twice as large
-    // (hence the factor of 4 below when calculating the power (amplitude squared)
-    //
-    double Ppt = EMagAtRx * EMagAtRx * ( 4.0 * SIPC_pi * RxRange * RxRange); // Watts
-
-    // RCS is defined as the ratio of radar reflected power in the direction of a receiver
-    // compared the the power reflected isotropically
-    //
-    double rcs = Ppt / iso ; // unitless
-    
-    return rcs;
+    return ;
 }
-

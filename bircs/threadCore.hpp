@@ -42,7 +42,7 @@ typedef struct rnpData_t {
     double  rdiff;
 }rnpData_t ;
 
-typedef struct threadData {
+typedef struct bircsThreadData {
     int devIndex ;
     int nThreads ;
     OCLPlatform platform ;
@@ -51,20 +51,18 @@ typedef struct threadData {
     int nPulses ;
     int nAzBeam ;
     int nElBeam ;
-    CPHDHeader * cphdhdr ;
-//    SPVector * TxPositions ;    // Pointer to beginning of TxPos data
-//    SPVector * RxPositions ;    // Pointer to beginning of RxPos data
-//    double * Fx0s ;             // Pointer to beginning of Fx0s data
-//    double * FxSteps ;          // Pointer to beginning of FxSteps data
-//    double * amp_sf0 ;          // Pointer to beginning of amp_sf0 data
+    SPVector * TxPositions ;    // Pointer to beginning of TxPos data
+    SPVector * RxPositions ;    // Pointer to beginning of RxPos data
+    //    double * Fx0s ;             // Pointer to beginning of Fx0s data
+    //    double * FxSteps ;          // Pointer to beginning of FxSteps data
+    //    double * amp_sf0 ;          // Pointer to beginning of amp_sf0 data
     double gainRx ;
-    SPImage * phd ;             // Pointer to beginning of cphd data
-//    double chirpRate ;
-//    double ADRate ;
-//    double pulseDuration ;      // Pulse duration in seconds
-//    double oneOverLambda ;
-//    double freq_centre ;        // Centre frequency
-//    double StartFrequency ;
+    //    double chirpRate ;
+    //    double ADRate ;
+    //    double pulseDuration ;      // Pulse duration in seconds
+    //    double oneOverLambda ;
+    double freq_centre ;        // Centre frequency
+    //    double StartFrequency ;
     int bounceToShow ;
     SPStatus status ;
     double PowPerRay ;          // Ray Power (Pp = (Pt * Gtx ))
@@ -73,8 +71,7 @@ typedef struct threadData {
     double interogRad ;         // Radius in metres around interrogation point to calculate scattering for
     FILE ** interogFP ;         // File pointer to dump out interrogation data
     TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
-    TriangleMesh *moverMesh ;
-} threadData ;
+} bircsThreadData ;
 
 void * devPulseBlock ( void * threadArg ) ;
 
