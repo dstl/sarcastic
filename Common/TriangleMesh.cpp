@@ -45,6 +45,7 @@
 
 extern "C" {
 #include "matrixMultiplication.h"
+#include "printProgress.h"
 }
 
 void TriangleMesh::readDAEFile  ( std::string filename ){
@@ -325,11 +326,11 @@ void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, f
 // Normal, Area and Distance (of the triangle plane to the origin) of it
 //
 {
-    SPVector N, ab, bc, x;
+    SPVector N, ab, ac, x;
     double l;
     VECT_SUB(bb, aa, ab);
-    VECT_SUB(cc, bb, bc);
-    VECT_CROSS(ab, bc, x);
+    VECT_SUB(cc, aa, ac);
+    VECT_CROSS(ab, ac, x);
     l = VECT_MAG(x);
     *area = l * 0.5;
     VECT_SCMULT(x, (1/l), N);
@@ -365,6 +366,7 @@ void TriangleMesh::addTriangle(int a, int b, int c, int mat)
         VECT_CREATE(vertices[c].x, vertices[c].y, vertices[c].z, cc);
         nad(aa, bb, cc, &NN, &area, &distance) ;
         Triangle t = Triangle(a, b, c, mat, NN, distance) ;
+        t.buildTransMats() ;
         t.Area = area ;
         triangles.push_back(t) ;
         sorted = false ;
@@ -384,6 +386,7 @@ void TriangleMesh::addTriangle(rawTri tri){
     vertices.push_back(tri.cc);
     nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
     Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    t.buildTransMats() ;
     triangles.push_back(t) ;
     
     sorted = false ;
@@ -426,6 +429,7 @@ void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
     vertices.push_back(tri.cc);
     nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
     Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
+    t.buildTransMats() ;
     triangles.push_back(t) ;
     
     sorted = false ;
@@ -519,6 +523,7 @@ void TriangleMesh::checkIntegrityAndRepair(){
     Triangle3DVec Ntri, Ncalc;
     float area,distance;
     std::vector<Triangle> newtriangles;
+    int cnt = 0;
     
     for (int i=0 ; i< triangles.size(); ++i){
         aa = triangles[i].a ;
@@ -533,15 +538,15 @@ void TriangleMesh::checkIntegrityAndRepair(){
         nad(A, B, Cc, &Nclcv, &area, &distance);
         Ncalc = Triangle3DVec(Nclcv) ;
         
-        if (!(Ncalc == Ntri) || area == 0.0 || isnan(distance) ) {
-            printf("Mesh integrity check failed for triangle %d\n",i);
-            printf("(Naughty triangle has Normal: %f,%f,%f, Planar Distace: %f, Area: %f)\n",
-                   Nclcv.x, Nclcv.y, Nclcv.z, distance, area) ;
-            printf("Repairing ....\n");
-            triangles.erase(triangles.begin()+i);
-            --i;
+        // Area precsion is set to match the precision stored in a .ply file
+        //
+        if ( !(!(Ncalc == Ntri) || area < 1e-6 || isnan(distance)) ) {
+            newtriangles.push_back(triangles[i]);
+        }else{
+            cnt++;
         }
     }
+    triangles = newtriangles ;
     return ;
 }
 
@@ -703,5 +708,36 @@ void Triangle::matrices(double *localToGlobal, double *globalToLocal){
     return ;
 }
 
+TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
+    
+    std::vector<Triangle> newTris       = this->triangles ;
+    std::vector<Triangle3DVec> newVerts = this->vertices  ;
+    int off = (int)this->vertices.size() ;
 
+    for (int i=0; i<mesh.vertices.size(); ++i) {
+        newVerts.push_back(mesh.vertices[i]) ;
+    }
+    
+    for (int i=0; i<mesh.triangles.size(); ++i) {
+        Triangle t = mesh.triangles[i];
+        t.a += off ;
+        t.b += off ;
+        t.c += off ;
+        newTris.push_back(t) ;
+    }
+    
 
+    TriangleMesh newMesh = TriangleMesh(newTris, newVerts) ;
+    
+    return newMesh ;
+}
+
+long int TriangleMesh::size(){
+    
+    long rtb = rawTriBuff.size() * sizeof(rawTri) ;
+    long ver = vertices.size() * sizeof(Triangle3DVec) ;
+    long tri = triangles.size() * sizeof(Triangle) ;
+    long hfe = halfedges.size() * sizeof(halfEdge) ;
+    long abs = AABBs.size() * sizeof(AABB) ;
+    return (rtb + ver + tri + hfe + abs) ;
+}

@@ -499,6 +499,7 @@ void * devPulseBlock ( void * threadArg ) {
                 }
                 
                 pulseLine.data.cmpl_f[x] = tmp;
+
             }
             im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
             im_fftw(&pulseLine, FFT_X_ONLY+FWD+NOSCALE, &status);

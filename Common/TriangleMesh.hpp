@@ -19,6 +19,12 @@
 #include <set>
 #include "AABB.hpp"
 
+enum  TRIVERTEX {
+    vertA = 0,
+    vertB = 1,
+    vertC = 2
+} ;
+
 void nad(SPVector aa, SPVector bb, SPVector cc, SPVector *normal, float *area, float *distance) ;
 
 class halfEdge {
@@ -131,15 +137,41 @@ public:
     Triangle3DVec N;    // Triangle Normal
     float dist=0;       // Distance of triangle plane from origin (a.N) Useful for sorting
     float Area=0;       // Area
+    double glob2locMatrix[9];
+    double loc2GlobMatrix[9];
     
     Triangle(){}
     Triangle(int vertexA, int vertexB, int vertexC): a(vertexA), b(vertexB), c(vertexC) {
     }
     Triangle(int vertexA, int vertexB, int vertexC, int matID): a(vertexA), b(vertexB), c(vertexC), mat(matID) {}
-    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
-    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {}
+    Triangle(int vertexA, int vertexB, int vertexC, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, Triangle3DVec N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle(int vertexA, int vertexB, int vertexC, int matID, SPVector N, float dist): a(vertexA), b(vertexB), c(vertexC), mat(matID), N(N), dist(dist) {
+        buildTransMats() ;
+    }
+    Triangle( const Triangle &tri)  // copy constructor
+    {
+        a=tri.a;
+        b=tri.b;
+        c=tri.c;
+        mat = tri.mat;
+        N.x = tri.N.x ;
+        N.y = tri.N.y ;
+        N.z = tri.N.z ;
+        dist = tri.dist ;
+        Area = tri.Area ;
+        for (int i=0; i<9; ++i){
+            glob2locMatrix[i] = tri.glob2locMatrix[i] ;
+            loc2GlobMatrix[i] = tri.loc2GlobMatrix[i] ;
+        }
+    }
     
     // matrices is a function that calculates the coordinate tranformation matrices
     // for converting from a global coordinate system to a local system where the
@@ -149,6 +181,10 @@ public:
     // memory for them must be allocated before calling this function
     //
     void matrices(double *localToGlobal, double *globalToLocal) ;
+    void buildTransMats(){
+        matrices(loc2GlobMatrix, glob2locMatrix) ;
+        return ;
+    }
     
     // Sort in following order : Material, normal, d, a,b,c
     //
@@ -243,6 +279,13 @@ public:
     rawTri asRawTriangle(long int triangleIndex);
     std::vector<halfEdge> edges();
     void buildTriangleAABBs();
+    TriangleMesh add(const TriangleMesh &newMesh) ;
+    SPVector vertAforTri(int triIndx) { return vertices[triangles[triIndx].a].asSPVector() ; }
+    SPVector vertBforTri(int triIndx) { return vertices[triangles[triIndx].b].asSPVector() ; }
+    SPVector vertCforTri(int triIndx) { return vertices[triangles[triIndx].c].asSPVector() ; }
+    long int size() ;
+
+    
 //    void buildTriangleAABBs(int dim, float pos);
     
 };

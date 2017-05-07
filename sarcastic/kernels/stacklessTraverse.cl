@@ -618,7 +618,7 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             //
             float t_max = 10e6;
             float tpos;
-            int ropeInd, ropeIndSide, ropeIndOff;
+            int ropeInd=0, ropeIndSide, ropeIndOff;
             for(int i=0; i<3; i++){
                 if (dirInverse.cell[i] != 0){
                     t1 = (node->branch.aabb.AA.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];

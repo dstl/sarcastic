@@ -177,8 +177,11 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
         //
         mesh = geometry->FirstChildElement("mesh");
         while(mesh != NULL) {
+            input = NULL;
             vertices = mesh->FirstChildElement("vertices");
-            input = vertices->FirstChildElement("input");
+            if(vertices != NULL){
+                input = vertices->FirstChildElement("input");
+            }
             
             // Iterate through input elements
             //
@@ -206,53 +209,30 @@ void ColladaInterface::readGeometries(std::vector<ColGeom>* v, const char* filen
             primitive = mesh->FirstChildElement("triangles");
             std::vector<unsigned short>indices_vec ;
             
-            for(int i=0; i<7; i++) {
-                primitive = mesh->FirstChildElement(primitive_types[i]);
-                if(primitive != NULL) {
-                    
-                    // Determine number of primitives
-                    //
-                    primitive->QueryIntAttribute("count", &prim_count);
-                    
-                    // Determine primitive type and set count
-                    //
-                    switch(i) {
-                        case 0:
-                            data.primitive = GL_LINES;
-                            num_indices = prim_count * 2;
-                            break;
-                        case 1:
-                            data.primitive = GL_LINE_STRIP;
-                            num_indices = prim_count + 1;
-                            break;
-                        case 4:
-                            data.primitive = GL_TRIANGLES;
-                            num_indices = prim_count * 3;
-                            break;
-                        case 5:
-                            data.primitive = GL_TRIANGLE_FAN;
-                            num_indices = prim_count + 2;
-                            break;
-                        case 6:
-                            data.primitive = GL_TRIANGLE_STRIP;
-                            num_indices = prim_count + 2;
-                            break;
-                        default: std::cout << "Primitive " << primitive_types[i] <<
-                            " not supported" << std::endl;
-                    }
-                    data.index_count = num_indices;
-                    
-                    // Allocate memory for indices
-                    //
-                    data.indices = (unsigned short*)malloc(num_indices * sizeof(unsigned short));
-                    
-                    // Read the index values
-                    //
-                    std::vector<std::string> text = stringTok(std::string(primitive->FirstChildElement("p")->GetText()));
-
-                    for(int index=0; index<num_indices; index++) {
-                        data.indices[index] = (unsigned short)atoi(text[index].c_str());
-                    }
+            if(primitive != NULL) {
+                
+                // Determine number of primitives
+                //
+                primitive->QueryIntAttribute("count", &prim_count);
+                
+                data.primitive = GL_TRIANGLES;
+                num_indices = prim_count * 3;
+                data.index_count = num_indices;
+                
+                // Allocate memory for indices
+                //
+                if(num_indices == 0){
+                    printf("Error: Number of indices is zero\n");
+                    exit(0);
+                }
+                data.indices = (unsigned short*)malloc(num_indices * sizeof(unsigned short));
+                
+                // Read the index values
+                //
+                std::vector<std::string> text = stringTok(std::string(primitive->FirstChildElement("p")->GetText()));
+                
+                for(int index=0; index<num_indices; index++) {
+                    data.indices[index] = (unsigned short)atoi(text[index].c_str());
                 }
             }
             
@@ -274,7 +254,9 @@ void ColladaInterface::freeGeometries(std::vector<ColGeom>* v) {
         
         // Deallocate index data
         //
-        free(geom_it->indices);
+        if(geom_it->index_count > 0){
+            free(geom_it->indices);
+        }
         
         // Deallocate array data in each map value
         //

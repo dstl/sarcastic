@@ -33,3 +33,4 @@ Common/tinyxml
 .fastKDTreerc*
 .readColladarc*
 .materialiserc*
+BircsVersion.h
