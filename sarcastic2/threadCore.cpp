@@ -148,6 +148,8 @@ void * devPulseBlock ( void * threadArg ) {
         printf("...Done\n");
     }
     
+    printf("Considering only first %d reflections\n",MAXBOUNCES);
+    
     if(td->moverMesh != NULL || td->moverMesh->triangles.size() != 0){
         dynamicScene = true;
     }

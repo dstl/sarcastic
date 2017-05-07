@@ -12,8 +12,7 @@
 #include <stdio.h>
 #include "TriangleMesh.hpp"
 #include <SILib2/SIlib2.h>
-
-#define MAXBOUNCES  10  // Maximum number of ray bounces
+#include "threadCore.hpp"
 
 int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMesh, char **outCPHDFile,
                  int *startPulse, int *nPulses,

@@ -101,7 +101,7 @@ int main(int argc, const char * argv[]) {
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
     SPVector  *RxPos, *TxPos, SRP, zHat ;
-    double    *Fx0s, *FxSteps, *amp_sf0, lambda ;
+    double    lambda ;
     
     RxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses) ;
     TxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses) ;
