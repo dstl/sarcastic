@@ -150,7 +150,7 @@ void * devPulseBlock ( void * threadArg ) {
     
     printf("Considering only first %d reflections\n",MAXBOUNCES);
     
-    if(td->moverMesh != NULL || td->moverMesh->triangles.size() != 0){
+    if(td->moverMesh->triangles.size() != 0){
         dynamicScene = true;
     }
     // **** loop  start here
@@ -161,7 +161,14 @@ void * devPulseBlock ( void * threadArg ) {
     
     double t0 = hdr->pulses[0].sat_tx_time ;
     
+    // set up some timers
+    //
+    Timer pulseTimer, buildRaysTimer, shootRayTimer, reflectTimer, buildShadowRayTimer, packPulseTimer, POTimer;
+    double pulseDur, buildRaysDur, shootRaysDur, reflectDur, buildShadDur, packPulseDur, PODur ;
+    pulseDur = buildRaysDur = shootRaysDur = reflectDur = buildShadDur = packPulseDur = PODur = 0.0;
+    
     for (int pulse=0; pulse<td->nPulses; pulse++){
+        startTimer(&pulseTimer, &status);
         int pulseIndex = (tid * td->nPulses) + pulse ;
 #ifndef TOTALRCSINPULSE
         // print out some useful progress information
@@ -288,7 +295,10 @@ void * devPulseBlock ( void * threadArg ) {
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
+        startTimer(&buildRaysTimer, &status) ;
         buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, context, commandQ, randRaysKL, randRaysLWS, &rayAimPoints);
+        endTimer(&buildRaysTimer, &status);
+        buildRaysDur += timeElapsedInMilliseconds(&buildRaysTimer, &status);
         
         // Set up deramp range for this pulse
         //
@@ -311,7 +321,10 @@ void * devPulseBlock ( void * threadArg ) {
             //
 //            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
             
+            startTimer(&shootRayTimer, &status);
             shootRay(tree, accelTriangles, nRays, rayArray, hitArray) ;
+            endTimer(&shootRayTimer, &status);
+            shootRaysDur += timeElapsedInMilliseconds(&shootRayTimer, &status);
             
             // Sort out hits
             //
@@ -357,7 +370,10 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build forward scattering rays ready for next turn round the loop
             //
+            startTimer(&reflectTimer, &status) ;
             oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+            endTimer(&reflectTimer, &status);
+            reflectDur += timeElapsedInMilliseconds(&reflectTimer, &status) ;
             
             // If debug out is required then capturing here using the origins of the Reflected rays
             // which will save us having to calculate the hit locations again
@@ -378,12 +394,18 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build Shadowrays
             //
+            startTimer(&buildShadowRayTimer, &status);
             oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, nRays, RxPos, reflectedRays, shadowRays, ranges);
+            endTimer(&buildShadowRayTimer, &status);
+            buildShadDur += timeElapsedInMilliseconds(&buildShadowRayTimer, &status);
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
 //            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles , dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
+            startTimer(&shootRayTimer, &status);
             shootRay(tree, accelTriangles, nRays, shadowRays, shadowHits) ;
+            endTimer(&shootRayTimer, &status);
+            shootRaysDur += timeElapsedInMilliseconds(&shootRayTimer, &status);
             
             // Shrink the shadowRays to only include those that made it back to the sensor
             // in order to calculate power at sensor we also need the Illumination or LRays
@@ -445,7 +467,10 @@ void * devPulseBlock ( void * threadArg ) {
                 //
                 //  oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;
 //                cpuPOField(td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nxRay*nyRay*nbounce])) ;
+                startTimer(&POTimer, &status);
                 cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nxRay*nyRay*nbounce])) ;
+                endTimer(&POTimer, &status);
+                PODur += timeElapsedInMilliseconds(&POTimer, &status);
                 
                 
                 // If we are going to interrogate a point then we need to work out the min and max ranges for
@@ -496,7 +521,8 @@ void * devPulseBlock ( void * threadArg ) {
         free(rayArray) ;
         
         if(td->phd != NULL){
-            
+            startTimer(&packPulseTimer, &status);
+
             int cnt=0;
             nrnpItems = 0;
             nRays = nxRay * nyRay ;
@@ -573,6 +599,8 @@ void * devPulseBlock ( void * threadArg ) {
             im_destroy(&pulseLine, &status) ;
             
             free(rnpData);
+            endTimer(&packPulseTimer, &status);
+            packPulseDur+= timeElapsedInMilliseconds(&packPulseTimer, &status);
             
         } // end of pulse loop
         
@@ -582,6 +610,8 @@ void * devPulseBlock ( void * threadArg ) {
             clReleaseMemObject(dTriangles);
             delete accelTriangles ;
         }
+        endTimer(&pulseTimer, &status);
+        pulseDur += timeElapsedInMilliseconds(&pulseTimer, &status) ;
     }
     
     if(td->phd != NULL){
@@ -609,6 +639,23 @@ void * devPulseBlock ( void * threadArg ) {
     clReleaseCommandQueue(commandQ);
     clReleaseContext(context);
     
+    // print timer Summary
+    //
+    printf("Timing Summary\n");
+    printf("==========================================\n");
+    printf("Time spent building rays          : %8.2f ms\n",buildRaysDur);
+    printf("Time spent shooting rays          : %8.2f ms\n",shootRaysDur);
+    printf("Time spent reflecting rays        : %8.2f ms\n",reflectDur);
+    printf("Time spent building shadowRays    : %8.2f ms\n",buildShadDur);
+    printf("Time spent packing the pulse      : %8.2f ms\n",packPulseDur);
+    printf("Time spent calculating PO Fields  : %8.2f ms\n",PODur);
+    printf("Time data processing in loop      : %8.2f ms\n",pulseDur - (buildRaysDur+shootRaysDur+reflectDur+buildShadDur+packPulseDur+PODur));
+    printf("Number of loops                   : %8d pulses\n",td->nPulses);
+    printf("Total time spent on pulses        : %8.2f ms\n",pulseDur);
+    printf("------------------------------------------\n");
+    printf("  Total time per pulse            : %8.2f ms\n", pulseDur/td->nPulses);
+    
+
     // return to parent thread
     //
     pthread_exit(NULL) ;
