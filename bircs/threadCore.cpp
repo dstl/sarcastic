@@ -174,7 +174,7 @@ void * devPulseBlock ( void * threadArg ) {
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, context, commandQ, randRaysKL, randRaysLWS, &rayAimPoints);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints);
         maxRaysPerBounce = ( nRays < nxRay*nyRay ) ? nRays : nxRay*nyRay ;
         
         // Set up deramp range for this pulse

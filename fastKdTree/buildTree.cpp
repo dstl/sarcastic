@@ -997,6 +997,7 @@ void kdTree::printSummary(std::vector<kdTreeNode *> nodelist)
     printf("\n            KDTree Summary\n");
     printf("==========================================\n");
     printf("  Triangles                       : %4ld\n",globalMesh.triangles.size());
+    printf("  Smallnode size                  : %d\n",SMALLSIZE);
     printf("  Number of Nodes                 : %4ld\n",nodelist.size());
     printf("  Number of leaves (NL)           : %4d \n",Nl);
     printf("  Number of non-empty leaves      : %4d\n",Nne);
