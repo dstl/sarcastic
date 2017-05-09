@@ -561,7 +561,7 @@ void * devPulseBlock ( void * threadArg ) {
     
     // print timer Summary
     //
-    printf("Timing Summary\n");
+    printf("           Timing Summary\n");
     printf("==========================================\n");
     printf("Time spent building rays          : %8.2f ms\n",buildRaysDur);
     printf("Time spent shooting rays          : %8.2f ms\n",shootRaysDur);
@@ -576,9 +576,10 @@ void * devPulseBlock ( void * threadArg ) {
     printf("  Total time per pulse            : %8.2f ms\n", pulseDur/td->nPulses);
     
 
+    return (NULL);
     // return to parent thread
     //
-    pthread_exit(NULL) ;
+//    pthread_exit(NULL) ;
 }
 
 void packSinc(SPCmplxD point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel)

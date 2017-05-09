@@ -44,7 +44,7 @@ void * devPulseBlock ( void * threadArg ) {
     Hit *hitArray, *newHits, *shadowHits;
     
     SPVector aimdir, RxPos, TxPos, origin, interogPt;
-    SPVector maxRCS = {0.0,0.0,0.0};
+    SPVector maxRCS = {-9e99,0.0,0.0};
     SPStatus status;
     
     FILE *interogFP ;
@@ -390,11 +390,11 @@ void * devPulseBlock ( void * threadArg ) {
             free(rnpData);
         }
         
-        if(cmplx_mag <0 ){
-            printf("%f, %f, %f\n",0.0,phi,theta);
-        }else{
+//        if(cmplx_mag <0 ){
+//            printf("%f, %f, %f\n",0.0,phi,theta);
+//        }else{
             printf("%f, %f, %f\n",cmplx_mag,phi,theta);
-        }
+//        }
         
         if (maxRCS.R < cmplx_mag){
             maxRCS.R = cmplx_mag;
@@ -405,11 +405,16 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnp) ;
     }
     
-    double lambda_squared = (SIPC_c / td->freq_centre) *  (SIPC_c / td->freq_centre);
+    double lambda = (SIPC_c / td->freq_centre);
+    double lambda_squared = lambda * lambda ;
     printf("Maximum RCS was %f dB m^2 (%f m^2) at az:%fdeg, incidence: %fdeg\n",maxRCS.R,pow(10.0,maxRCS.R/10.0),RAD2DEG(maxRCS.phi), RAD2DEG(maxRCS.theta) );
-    printf("    1m^2 flat plate : %f (%f dB m^2)\n",4*SIPC_pi / lambda_squared,10*log10(4*SIPC_pi / lambda_squared)); // 8620.677
-    printf("    1m dihedral     : %f (%f dB m^2)\n",8*SIPC_pi / lambda_squared,10*log10(8*SIPC_pi / lambda_squared)); // 17241.354
-    printf("    1m trihedral    : %f (%f dB m^2)\n",12*SIPC_pi/ lambda_squared,10*log10(12*SIPC_pi/ lambda_squared)); // 25862.031
+    printf("    1m^2 flat plate               : %f (%f dB m^2)\n",4*SIPC_pi / lambda_squared,10*log10(4*SIPC_pi / lambda_squared)); // 8620.677
+    printf("    1m dihedral                   : %f (%f dB m^2)\n",8*SIPC_pi / lambda_squared,10*log10(8*SIPC_pi / lambda_squared)); // 17241.354
+    printf("    1m trihedral                  : %f (%f dB m^2)\n",12*SIPC_pi/ lambda_squared,10*log10(12*SIPC_pi/ lambda_squared)); // 25862.031
+    printf("    1m dia Sphere                 : \n");
+    printf("        Rayleigh Region r<<lambda : %f ( %f dB m^2)\n", 9*SIPC_pi*0.5*0.5*pow(k*0.5,4), 10*log10(9*SIPC_pi*0.5*0.5*pow(k*0.5,4)));
+    printf("        Optical Region  r>>lambda : %f ( %f dB m^2)\n", SIPC_pi*0.5*0.5, 10*log10(SIPC_pi*0.5*0.5));
+    printf("         ( r = 0.5 m, lambda = %5.3f m )\n",lambda);
 
     
     free( rayAimPoints );
