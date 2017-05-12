@@ -51,6 +51,9 @@ extern "C" {
 }
 #include "getUserInput.hpp"
 #include "threadCore.hpp"
+#include <thread>
+#include <fftw3.h>
+
 
 int main(int argc, const char * argv[]) {
     
@@ -191,63 +194,107 @@ int main(int argc, const char * argv[]) {
     
     SPImage cphd ;
 
+    
+    unsigned nThreads;
+    if (bounceToShow != 0){
+        nThreads = 1;
+    }else{
+        nThreads = std::thread::hardware_concurrency() ;
+    }
+    int pulsesPerThread;
+    int nVec = newhdr.num_azi ;
+    if (nVec < nThreads) {
+        nThreads = nVec;
+    }
+        
+    while (nVec % nThreads != 0) nVec-- ;
+    newhdr.num_azi = nVec ;
+    pulsesPerThread = nVec / nThreads ;
+    
     if(outCPHDFile != NULL){
         im_init(&cphd, &status) ;
         newhdr.data_type = ITYPE_CMPL_FLOAT ;
         im_create(&cphd, ITYPE_CMPL_FLOAT, newhdr.nsamp, newhdr.num_azi, 1.0, 1.0, &status) ;
     }
     
-    threadData coreData;
+    pthread_t *threads;
+    threads = (pthread_t *)sp_malloc(sizeof(pthread_t)*nThreads) ;
+    threadData *coreData;
+    coreData = (threadData *)sp_malloc(sizeof(threadData) * nThreads) ;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    fftwf_init_threads();
+
     
-    coreData.SceneBoundingBox       = SceneBoundingBox;
-    coreData.startPulse             = startPulse ;
-    coreData.nPulses                = nPulses ;
-    coreData.nAzBeam                = nAzBeam ;
-    coreData.nElBeam                = nElBeam ;
-    coreData.cphdhdr                = &newhdr ;
-    coreData.gainRx                 = gainRx;
-    coreData.PowPerRay              = TxPowPerRay ;
-    if(outCPHDFile == NULL){
-        coreData.phd                    = NULL ;
-    }else{
-        coreData.phd                    = &cphd;
+    for(int t=0; t<nThreads; ++t){
+        
+        coreData[t].tid                    = t ;
+        coreData[t].nThreads               = nThreads ;
+        coreData[t].SceneBoundingBox       = SceneBoundingBox;
+        coreData[t].startPulse             = startPulse + t*pulsesPerThread;
+        coreData[t].nPulses                = pulsesPerThread ;
+        coreData[t].nAzBeam                = nAzBeam ;
+        coreData[t].nElBeam                = nElBeam ;
+        coreData[t].cphdhdr                = &newhdr ;
+        coreData[t].gainRx                 = gainRx;
+        coreData[t].PowPerRay              = TxPowPerRay ;
+        if(outCPHDFile == NULL){
+            coreData[t].phd                    = NULL ;
+        }else{
+            coreData[t].phd                    = &cphd;
+        }
+        coreData[t].bounceToShow           = bounceToShow-1;
+        coreData[t].status                 = status ;
+        coreData[t].interrogate            = interrogate ;
+        coreData[t].interogPt              = interogPt ;
+        coreData[t].interogRad             = interogRad ;
+        coreData[t].interogFP              = &interrogateFP ;
+        coreData[t].sceneMesh              = &baseMesh ;
+        coreData[t].moverMesh              = &moverMesh ;
+        
+        if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
+        if (interrogate){
+            time_t rawtime;
+            struct tm * timeinfo;
+            time ( &rawtime );
+            timeinfo = localtime ( &rawtime );
+            SPVector intOutRg, intRetRg ;
+            double intRg, intMinR, intMaxR ;
+            
+            VECT_SUB(interogPt, TxPos[0], intOutRg);
+            VECT_SUB(RxPos[0], interogPt, intRetRg);
+            intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
+            intMinR = intRg - interogRad/2.0 ;
+            intMaxR = intRg + interogRad/2.0 ;
+            
+            fprintf(interrogateFP, "\tInterrogate Output (Sarcastic %s)\n",FULL_VERSION);
+            fprintf(interrogateFP, "Time of run             : %s\n",asctime (timeinfo));
+            fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
+            fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
+            fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
+            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse/pulseUndersampleFactor,(startPulse/pulseUndersampleFactor)+nPulses);
+            fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
+            fprintf(interrogateFP, "--------------------------------------------------------------------\n");
+        }
+        
+        rc = pthread_create(&threads[t], NULL, devPulseBlock, (void *) &coreData[t]) ;
+        if (rc){
+            printf("ERROR; return code from pthread_create() is %d\n", rc);
+            exit(-1);
+        }
+//        devPulseBlock(&coreData) ;
     }
-    coreData.bounceToShow           = bounceToShow-1;
-    coreData.status                 = status ;
-    coreData.interrogate            = interrogate ;
-    coreData.interogPt              = interogPt ;
-    coreData.interogRad             = interogRad ;
-    coreData.interogFP              = &interrogateFP ;
-    coreData.sceneMesh              = &baseMesh ;
-    coreData.moverMesh              = &moverMesh ;
-        
-    if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
-    if (interrogate){
-        time_t rawtime;
-        struct tm * timeinfo;
-        time ( &rawtime );
-        timeinfo = localtime ( &rawtime );
-        SPVector intOutRg, intRetRg ;
-        double intRg, intMinR, intMaxR ;
-        
-        VECT_SUB(interogPt, TxPos[0], intOutRg);
-        VECT_SUB(RxPos[0], interogPt, intRetRg);
-        intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
-        intMinR = intRg - interogRad/2.0 ;
-        intMaxR = intRg + interogRad/2.0 ;
-        
-        fprintf(interrogateFP, "\tInterrogate Output (Sarcastic %s)\n",FULL_VERSION);
-        fprintf(interrogateFP, "Time of run             : %s\n",asctime (timeinfo));
-        fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
-        fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
-        fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
-        fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse/pulseUndersampleFactor,(startPulse/pulseUndersampleFactor)+nPulses);
-        fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
-        fprintf(interrogateFP, "--------------------------------------------------------------------\n");
+    
+    pthread_attr_destroy(&attr);
+    void * threadStatus ;
+    for (int t=0; t<nThreads; t++) {
+        rc = pthread_join(threads[t], &threadStatus);
+        if (rc) {
+            printf("ERROR; return code from pthread_join() is %d\n", rc);
+            exit(-1);
+        }
     }
-    
-    devPulseBlock(&coreData) ;
-    
     if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
     if (interrogate){
         fprintf(interrogateFP, "--------------------------------------------------------------------\n");

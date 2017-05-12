@@ -58,7 +58,7 @@ namespace kdTree {
     
 #define TRAVERSALCOST ((float)(15.0))
 #define INTERSECTIONCOST ((float)(20.0))
-#define SMALLSIZE (128)
+#define SMALLSIZE (32)
 #define Ce (0.25)           // Percentage empty space in a node
 #define MAXTREELEVEL 10
 #define KDT_ISLEAF(n)       ((n->leaf.leafDim & (unsigned char)(0x4))>>2)
@@ -79,7 +79,7 @@ namespace kdTree {
         OUTPUTSUMM = 8
     } ;
     
-    void processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist);
+    void processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist, TriangleMesh &globalMesh);
     void preProcessSmallNodes(treeList **smalllist) ;
     int reduce(unsigned char *list, long int size) ;
     int reduce(std::vector<int> list);
@@ -96,12 +96,12 @@ namespace kdTree {
     void swapLists(treeList **a, treeList **b) ;
     void printKdTreeNodes(std::vector<kdTreeNode *> nodelist);
     void printKdTreeData(KdData **kdTree, int *numNodesInTree) ;
-    void printSummary(std::vector<kdTreeNode *> nodelist) ;
+    void printSummary(std::vector<kdTreeNode *> nodelist, TriangleMesh &mesh) ;
 
-    void buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
+    void buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
     
-    extern TriangleMesh globalMesh;
-    extern std::vector<kdTree::kdTreeNode *> nodelist ;
+//    extern TriangleMesh globalMesh;
+//    extern std::vector<kdTree::kdTreeNode *> nodelist ;
     
 }
 

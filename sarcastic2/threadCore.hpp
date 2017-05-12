@@ -45,6 +45,8 @@ typedef struct rnpData_t {
 }rnpData_t ;
 
 typedef struct threadData {
+    int tid;
+    int nThreads ;
     AABB SceneBoundingBox ;
     int startPulse ;
     int nPulses ;

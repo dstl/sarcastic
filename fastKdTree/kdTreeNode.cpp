@@ -98,7 +98,7 @@ kdTree::kdTreeNode::kdTreeNode(std::vector<int> tris) {
 
 // Initialise the root KdTreeNode using a .plyFile
 //
-kdTree::kdTreeNode::kdTreeNode(std::string plyFileName)
+kdTree::kdTreeNode::kdTreeNode(std::string plyFileName, TriangleMesh &globalMesh)
 {
     globalMesh.readPLYFile(plyFileName);
     globalMesh.checkIntegrityAndRepair();
@@ -111,14 +111,13 @@ kdTree::kdTreeNode::kdTreeNode(std::string plyFileName)
     data.aabb = BVforAllTris() ;
 }
 
-kdTree::kdTreeNode::kdTreeNode(TriangleMesh *mesh)
+kdTree::kdTreeNode::kdTreeNode(TriangleMesh &mesh)
 {
-    if (mesh->AABBs.size()==0) {
-        mesh->buildTriangleAABBs();
+    if (mesh.AABBs.size()==0) {
+        mesh.buildTriangleAABBs();
     }
-    globalMesh = *mesh ;
-    data.triAABBs = globalMesh.AABBs ;
-    for(int i=0; i< globalMesh.triangles.size(); ++i){
+    data.triAABBs = mesh.AABBs ;
+    for(int i=0; i< mesh.triangles.size(); ++i){
         data.triangles.push_back(i) ;
     }
     data.aabb = BVforAllTris() ;
@@ -225,7 +224,7 @@ void kdTree::kdTreeNode::split(int k, double pos, kdTreeNode *left, kdTreeNode *
     return ;
 }
 
-void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght)
+void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght, TriangleMesh &globalMesh)
 // medianSplit() splits the node at the median point of the largest axis
 // and returns two child nodes that have their AABB's set and the triAABB's correctly clipped to the split plane.
 // In addition the triangles array in each child correctly holds the index of each triangle

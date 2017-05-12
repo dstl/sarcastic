@@ -1051,13 +1051,13 @@
 		954BD4EA1E7949EA007A12E4 /* sarcastic2 */ = {
 			isa = PBXGroup;
 			children = (
+				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
 				95AB9E191EBA7ABD0055527A /* threadCore.hpp */,
 				9500A6651E7C2E8D0066E15B /* threadCore.cpp */,
 				95CC27F71EC0BC930092A2CE /* buildRays.cpp */,
 				95CC27F81EC0BC930092A2CE /* buildRays.hpp */,
 				95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */,
 				95CC27F51EC0B99D0092A2CE /* shadowRays.hpp */,
-				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
 				95E627461E7C8E8500BC7933 /* oclBuildShadowRays.cpp */,
 				95E627471E7C8E8500BC7933 /* oclBuildShadowRays.hpp */,
 				95F2F1B01E7C4DE00035F635 /* kernels */,

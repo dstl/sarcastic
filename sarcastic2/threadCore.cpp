@@ -24,6 +24,7 @@ void * devPulseBlock ( void * threadArg ) {
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
     int hrs,min,sec;
     int reportN = 10 ;
+    int tid, nThreads, nPulses;
     
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing=0, *ikernel=NULL, bandwidth ;
@@ -56,6 +57,9 @@ void * devPulseBlock ( void * threadArg ) {
     int treeSize;
     int nTriangles=0;
     
+    tid              = td->tid ;
+    nThreads         = td->nThreads ;
+    nPulses          = td->nPulses ;
     CPHDHeader *hdr  = td->cphdhdr ;
     gainRx           = td->gainRx ;
     PowPerRay        = td->PowPerRay ;
@@ -72,7 +76,6 @@ void * devPulseBlock ( void * threadArg ) {
     
     VECT_CREATE(0, 0, 0, origin);
     
-    fftwf_init_threads();
     im_init_status(status, 0) ;
 
     
@@ -85,11 +88,7 @@ void * devPulseBlock ( void * threadArg ) {
         ikernel     = (double *)sp_calloc((OVERSAMP * NPOINTS + 1), sizeof(double)) ;
         
         sinc_kernel(OVERSAMP, NPOINTS, resolution, sampSpacing, ikernel);
-        
-        printf("...Done\n");
     }
-    
-    printf("Considering only first %d reflections\n",MAXBOUNCES);
     
     if(td->moverMesh->triangles.size() != 0){
         dynamicScene = true;
@@ -108,28 +107,31 @@ void * devPulseBlock ( void * threadArg ) {
     double pulseDur, buildRaysDur, shootRaysDur, reflectDur, buildShadDur, packPulseDur, PODur ;
     pulseDur = buildRaysDur = shootRaysDur = reflectDur = buildShadDur = packPulseDur = PODur = 0.0;
     
-    for (int pulse=0; pulse<td->nPulses; pulse++){
+    for (int pulse=0; pulse<nPulses; pulse++){
         startTimer(&pulseTimer, &status);
         int pulseIndex = pulse ;
 #ifndef TOTALRCSINPULSE
         // print out some useful progress information
         //
         
-        if( pulse % reportN == 0 && td->nPulses != 1){
-            pCentDone = 100.0*pulse/td->nPulses ;
-            printf("Processing pulses %6d - %6d out of %6d [%2d%%]",  pulse, (pulse+((reportN > td->nPulses) ?  td->nPulses : reportN)), td->nPulses ,(int)pCentDone);
-            if(pulse != 0 ){
-                current  = time(NULL);
-                sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
-                hrs      = (int)floor(sexToGo/60/60) ;
-                min      = (int)floor(sexToGo / 60) - (hrs*60);
-                sec      = (int)sexToGo % 60;
-                complete = current + sexToGo ;
-                p        = localtime(&complete) ;
-                strftime(ct, 1000, "%a %b %d %H:%M", p);
-                printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
-            }else{
-                printf("  Calculating ETC...\n");
+        if(tid == 0){
+            if( pulse % reportN == 0 && nPulses != 1){
+                pCentDone = 100.0*pulse/nPulses ;
+                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",
+                       pulse, (pulse+((reportN > (nPulses*nThreads)) ?  (nPulses*nThreads) : reportN)), nPulses*nThreads ,(int)pCentDone);
+                if(pulse != 0 ){
+                    current  = time(NULL);
+                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                    hrs      = (int)floor(sexToGo/60/60) ;
+                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+                    sec      = (int)sexToGo % 60;
+                    complete = current + sexToGo ;
+                    p        = localtime(&complete) ;
+                    strftime(ct, 1000, "%a %b %d %H:%M", p);
+                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+                }else{
+                    printf("  Calculating ETC...\n");
+                }
             }
         }
       
@@ -204,8 +206,9 @@ void * devPulseBlock ( void * threadArg ) {
             if (!dynamicScene) {
                 endTimer(&threadTimer, &status);
             }
-            kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+            kdTree::buildTree(newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTNO)) ;
             accelerateTriangles(&newMesh,&accelTriangles) ;
+            
             // Initialise the tree and build ropes and boxes to increase efficiency when traversing
             //
             node = &(tree[0]) ;
@@ -561,25 +564,26 @@ void * devPulseBlock ( void * threadArg ) {
     
     // print timer Summary
     //
-    printf("           Timing Summary\n");
-    printf("==========================================\n");
-    printf("Time spent building rays          : %8.2f ms\n",buildRaysDur);
-    printf("Time spent shooting rays          : %8.2f ms\n",shootRaysDur);
-    printf("Time spent reflecting rays        : %8.2f ms\n",reflectDur);
-    printf("Time spent building shadowRays    : %8.2f ms\n",buildShadDur);
-    printf("Time spent packing the pulse      : %8.2f ms\n",packPulseDur);
-    printf("Time spent calculating PO Fields  : %8.2f ms\n",PODur);
-    printf("Time data processing in loop      : %8.2f ms\n",pulseDur - (buildRaysDur+shootRaysDur+reflectDur+buildShadDur+packPulseDur+PODur));
-    printf("Number of loops                   : %8d pulses\n",td->nPulses);
-    printf("Total time spent on pulses        : %8.2f ms\n",pulseDur);
-    printf("------------------------------------------\n");
-    printf("  Total time per pulse            : %8.2f ms\n", pulseDur/td->nPulses);
-    
+    if(tid==0){
+        printf("           Timing Summary\n");
+        printf("==========================================\n");
+        printf("Time spent building rays          : %8.2f ms\n",buildRaysDur * nThreads);
+        printf("Time spent shooting rays          : %8.2f ms\n",shootRaysDur * nThreads);
+        printf("Time spent reflecting rays        : %8.2f ms\n",reflectDur * nThreads);
+        printf("Time spent building shadowRays    : %8.2f ms\n",buildShadDur * nThreads);
+        printf("Time spent packing the pulse      : %8.2f ms\n",packPulseDur * nThreads);
+        printf("Time spent calculating PO Fields  : %8.2f ms\n",PODur * nThreads);
+        printf("Time data processing in loop      : %8.2f ms\n",(pulseDur - (buildRaysDur+shootRaysDur+reflectDur+buildShadDur+packPulseDur+PODur)) * nThreads);
+        printf("Number of loops                   : %8d pulses\n",nPulses * nThreads);
+        printf("Total time spent on pulses        : %8.2f ms\n",pulseDur * nThreads);
+        printf("------------------------------------------\n");
+        printf("  Total time per pulse            : %8.2f ms\n", pulseDur/(nPulses * nThreads));
+    }
 
-    return (NULL);
+//    return (NULL);
     // return to parent thread
     //
-//    pthread_exit(NULL) ;
+    pthread_exit(NULL) ;
 }
 
 void packSinc(SPCmplxD point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel)
