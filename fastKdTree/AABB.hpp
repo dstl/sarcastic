@@ -77,6 +77,7 @@ public:
     
     void clipToTriangle(SPVector vertA, SPVector vertB, SPVector vertC, double splitPos, int splitDim, AABB &left, AABB &right);
     float surfaceArea();
+    void print();
     bool isEmpty();
     
 };

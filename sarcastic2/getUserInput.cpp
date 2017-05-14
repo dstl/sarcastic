@@ -44,6 +44,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     printf("Done. Checking file Integrity...\n");
     baseMesh->checkIntegrityAndRepair();
     baseMesh->buildTriangleAABBs();
+    baseMesh->buildTrianglelCentres();
     printf("Done \n");
 
     char *moversScene ;

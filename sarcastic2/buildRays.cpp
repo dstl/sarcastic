@@ -26,12 +26,8 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
         
         for(int i=0;i<mesh->triangles.size(); i++){
             SPVector mean;
-            SPVector a = mesh->vertAforTri(i) ;
-            SPVector b = mesh->vertBforTri(i) ;
-            SPVector c = mesh->vertCforTri(i) ;
-            
-            for(int j=0; j<3; j++) mean.cell[j] = (a.cell[j] + b.cell[j] + c.cell[j]) / 3.0 ;
-            
+            mean = mesh->centres[i].asSPVector() ;
+
             Ray r;
             r.org = TxPos ;
             r.pow = PowPerRay ;

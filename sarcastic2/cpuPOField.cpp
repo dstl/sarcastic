@@ -212,14 +212,18 @@ void POKernelCode(int ind,
     
     SPVector origin;
     SPVector tri_a,tri_b,tri_c;
-    tri   = mesh->triangles[hitpoints[ind].tri];
+    int triInd;
+    triInd = hitpoints[ind].tri;
+    tri   = mesh->triangles[triInd];
     tri_a = mesh->vertices[tri.a].asSPVector() ;
     tri_b = mesh->vertices[tri.b].asSPVector() ;
     tri_c = mesh->vertices[tri.c].asSPVector() ;
+
     
-    origin.x = (tri_a.x + tri_b.x + tri_c.x) / 3 ;
-    origin.y = (tri_a.y + tri_b.y + tri_c.y) / 3 ;
-    origin.z = (tri_a.z + tri_b.z + tri_c.z) / 3 ;
+    origin.x = mesh->centres[triInd].x ;
+    origin.y = mesh->centres[triInd].y ;
+    origin.z = mesh->centres[triInd].z ;
+    
     VECT_SUB(tri_a,origin,tri_a);
     VECT_SUB(tri_b,origin,tri_b);
     VECT_SUB(tri_c,origin,tri_c);

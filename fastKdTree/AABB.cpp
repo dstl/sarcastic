@@ -187,6 +187,19 @@ bool AABB::isEmpty(){
         return false ;
     }
 }
+void AABB::print(){
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,AA.y,AA.z);
+    printf("%5.2f, %5.2f, %5.2f\n", BB.x,AA.y,AA.z);
+    printf("%5.2f, %5.2f, %5.2f\n", BB.x,BB.y,AA.z);
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,BB.y,AA.z);
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,AA.y,AA.z);
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,AA.y,BB.z);
+    printf("%5.2f, %5.2f, %5.2f\n", BB.x,AA.y,BB.z);
+    printf("%5.2f, %5.2f, %5.2f\n", BB.x,BB.y,BB.z);
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,BB.y,BB.z);
+    printf("%5.2f, %5.2f, %5.2f\n", AA.x,AA.y,BB.z);
+    
+}
 SPVector crossingPoint(int dim, double linePos, SPVector start, SPVector end)
 // Returns the crossing point of a line through a plane defined in the dim
 // dimension at position linepos.
