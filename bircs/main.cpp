@@ -130,6 +130,7 @@ int main (int argc, char **argv){
     printf("Done. Checking file Integrity...\n");
     baseMesh.checkIntegrityAndRepair();
     baseMesh.buildTriangleAABBs();
+    baseMesh.buildTrianglelCentres();
     printf("Done \n");
     
     ILLINC = DEG2RAD(ILLINC);

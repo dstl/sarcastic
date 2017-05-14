@@ -137,7 +137,7 @@ void * devPulseBlock ( void * threadArg ) {
     // Build kdTree if required
     //
     
-    kdTree::buildTree(&newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+    kdTree::buildTree(newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
     accelerateTriangles(&newMesh,&accelTriangles) ;
     // Initialise the tree and build ropes and boxes to increase efficiency when traversing
     //
@@ -390,11 +390,11 @@ void * devPulseBlock ( void * threadArg ) {
             free(rnpData);
         }
         
-//        if(cmplx_mag <0 ){
-//            printf("%f, %f, %f\n",0.0,phi,theta);
-//        }else{
+        if(cmplx_mag <0 ){
+            printf("%f, %f, %f\n",0.0,phi,theta);
+        }else{
             printf("%f, %f, %f\n",cmplx_mag,phi,theta);
-//        }
+        }
         
         if (maxRCS.R < cmplx_mag){
             maxRCS.R = cmplx_mag;
