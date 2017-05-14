@@ -79,7 +79,7 @@ namespace kdTree {
         OUTPUTSUMM = 8
     } ;
     
-    void processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist);
+    void processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist, TriangleMesh &globalMesh);
     void preProcessSmallNodes(treeList **smalllist) ;
     int reduce(unsigned char *list, long int size) ;
     int reduce(std::vector<int> list);
@@ -96,12 +96,12 @@ namespace kdTree {
     void swapLists(treeList **a, treeList **b) ;
     void printKdTreeNodes(std::vector<kdTreeNode *> nodelist);
     void printKdTreeData(KdData **kdTree, int *numNodesInTree) ;
-    void printSummary(std::vector<kdTreeNode *> nodelist) ;
+    void printSummary(std::vector<kdTreeNode *> nodelist, TriangleMesh &mesh) ;
 
-    void buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
+    void buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
     
-    extern TriangleMesh globalMesh;
-    extern std::vector<kdTree::kdTreeNode *> nodelist ;
+//    extern TriangleMesh globalMesh;
+//    extern std::vector<kdTree::kdTreeNode *> nodelist ;
     
 }
 

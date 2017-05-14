@@ -18,7 +18,7 @@ extern "C" {
 #include "kdTreeNode.hpp"
 #include "accelerateTriangles.hpp"
 #include "rayTrace.hpp"
-
+#include "buildRays.hpp"
 
 #define NPOINTS (32)
 #define OVERSAMP (512)
@@ -115,9 +115,6 @@ void packSinc(SPCmplxD point, SPCmplx *outData, double rdiff, double sampleSpaci
 void ham1dx(double * data, int nx) ;
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
 void generate_gaussian_ray_distribution(double xStdev,double yStdev, SPVector txPos, SPVector GRP, int nx,int ny, Ray *rayArray);
-void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
-               double PowPerRay, AABB SceneBoundingBox,
-               cl_context context, cl_command_queue commandQ, cl_kernel  randRaysKL, size_t randRaysLWS[2],
-               SPVector **rayAimPoints);
+
 
 #endif /* threadCore_hpp */

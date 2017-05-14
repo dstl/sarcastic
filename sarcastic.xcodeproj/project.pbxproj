@@ -161,6 +161,10 @@
 		95B927771E2D185D00FAF7A1 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95C1709018C9CCC000651D97 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1708F18C9CCC000651D97 /* libfftw3f.a */; };
 		95C1709218C9CCDA00651D97 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */; };
+		95CC27F31EC0AC4A0092A2CE /* reflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F11EC0AC4A0092A2CE /* reflect.cpp */; };
+		95CC27F61EC0B99D0092A2CE /* shadowRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */; };
+		95CC27F91EC0BC930092A2CE /* buildRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F71EC0BC930092A2CE /* buildRays.cpp */; };
+		95CC27FA1EC0BFED0092A2CE /* buildRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F71EC0BC930092A2CE /* buildRays.cpp */; };
 		95D1299F1E7832440066B3C9 /* libSIlib2-2.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95584C341E12A69D00C7AFDB /* libSIlib2-2.1.2.a */; };
 		95D43AA11E200D8200B66E58 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */; };
 		95D43AA21E200D9F00B66E58 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
@@ -621,6 +625,12 @@
 		95C1708C18C9CC9800651D97 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/lib/libfftw3.a; sourceTree = "<group>"; };
 		95C1708F18C9CCC000651D97 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../usr/local/lib/libfftw3f.a; sourceTree = "<group>"; };
 		95C1709118C9CCDA00651D97 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../usr/local/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
+		95CC27F11EC0AC4A0092A2CE /* reflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reflect.cpp; sourceTree = "<group>"; };
+		95CC27F21EC0AC4A0092A2CE /* reflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reflect.hpp; sourceTree = "<group>"; };
+		95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shadowRays.cpp; sourceTree = "<group>"; };
+		95CC27F51EC0B99D0092A2CE /* shadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = shadowRays.hpp; sourceTree = "<group>"; };
+		95CC27F71EC0BC930092A2CE /* buildRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildRays.cpp; sourceTree = "<group>"; };
+		95CC27F81EC0BC930092A2CE /* buildRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildRays.hpp; sourceTree = "<group>"; };
 		95D0DAC619EFF1EC00DBB831 /* reflectionPowerPO.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; lineEnding = 0; path = reflectionPowerPO.cl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.opencl; };
 		95D8F8BF1B5E78580057FA4C /* trianglecpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trianglecpp.cpp; path = Common/trianglecpp.cpp; sourceTree = SOURCE_ROOT; };
 		95D8F8C01B5E78580057FA4C /* trianglecpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = trianglecpp.h; path = Common/trianglecpp.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1041,9 +1051,13 @@
 		954BD4EA1E7949EA007A12E4 /* sarcastic2 */ = {
 			isa = PBXGroup;
 			children = (
+				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
 				95AB9E191EBA7ABD0055527A /* threadCore.hpp */,
 				9500A6651E7C2E8D0066E15B /* threadCore.cpp */,
-				954BD4EB1E7949EA007A12E4 /* sarcastic2.cpp */,
+				95CC27F71EC0BC930092A2CE /* buildRays.cpp */,
+				95CC27F81EC0BC930092A2CE /* buildRays.hpp */,
+				95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */,
+				95CC27F51EC0B99D0092A2CE /* shadowRays.hpp */,
 				95E627461E7C8E8500BC7933 /* oclBuildShadowRays.cpp */,
 				95E627471E7C8E8500BC7933 /* oclBuildShadowRays.hpp */,
 				95F2F1B01E7C4DE00035F635 /* kernels */,
@@ -1066,6 +1080,8 @@
 				95F2F1B51E7C5F740035F635 /* cpuPOField.hpp */,
 				95E627401E7C8C5200BC7933 /* oclReflect.cpp */,
 				95E627411E7C8C5200BC7933 /* oclReflect.hpp */,
+				95CC27F11EC0AC4A0092A2CE /* reflect.cpp */,
+				95CC27F21EC0AC4A0092A2CE /* reflect.hpp */,
 			);
 			path = sarcastic2;
 			sourceTree = "<group>";
@@ -1635,6 +1651,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95CC27FA1EC0BFED0092A2CE /* buildRays.cpp in Sources */,
 				9585F8E11EBCB3C700257FBB /* RCS.c in Sources */,
 				9585F8E01EBC8F2000257FBB /* rayTrace.cpp in Sources */,
 				9585F8DF1EBC8E5200257FBB /* tinyxmlparser.cpp in Sources */,
@@ -1673,7 +1690,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				956EA1B81E85A32900008E7A /* RCS.c in Sources */,
+				95CC27F31EC0AC4A0092A2CE /* reflect.cpp in Sources */,
 				95E627551E7C909A00BC7933 /* matrixMultiplication.c in Sources */,
+				95CC27F91EC0BC930092A2CE /* buildRays.cpp in Sources */,
 				95E627541E7C907D00BC7933 /* kdTreeNode.cpp in Sources */,
 				95E627531E7C906300BC7933 /* AABB.cpp in Sources */,
 				95E627521E7C904800BC7933 /* splitCandidate.cpp in Sources */,
@@ -1693,6 +1712,7 @@
 				9500A6641E7C22BF0066E15B /* getUserInput.cpp in Sources */,
 				9500A6611E7C20510066E15B /* OpenCLUtils.c in Sources */,
 				95E627481E7C8E8500BC7933 /* oclBuildShadowRays.cpp in Sources */,
+				95CC27F61EC0B99D0092A2CE /* shadowRays.cpp in Sources */,
 				95E627421E7C8C5200BC7933 /* oclReflect.cpp in Sources */,
 				9500A6601E7C1FD00066E15B /* TxPowerPerRay.c in Sources */,
 				9500A65F1E7C17A20066E15B /* ecef2SceneCoords.c in Sources */,

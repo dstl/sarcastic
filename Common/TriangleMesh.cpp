@@ -593,6 +593,30 @@ void TriangleMesh::buildTriangleAABBs()
     return ;
 }
 
+void TriangleMesh::buildTrianglelCentres()
+// Function to calculate the centre of each triangle
+//
+{
+    SPVector va, vb, vc ;
+    Triangle3DVec mean, tmp ;
+    
+    centres.clear() ;
+    for(int i=0; i<triangles.size(); ++i){
+
+        va = vertAforTri(i) ;
+        vb = vertBforTri(i) ;
+        vc = vertCforTri(i) ;
+        mean.x = (va.x + vb.x + vc.x) / 3.0;
+        mean.y = (va.y + vb.y + vc.y) / 3.0;
+        mean.z = (va.z + vb.z + vc.z) / 3.0;
+        centres.push_back(mean) ;
+        
+    }
+    
+    return ;
+}
+
+
 /*void TriangleMesh::buildTriangleAABBs(int dim, float pos)
 // function for calculating the AAB for each triangle in the mesh and clips it against
 // a split position
@@ -726,8 +750,9 @@ TriangleMesh TriangleMesh::add(const TriangleMesh &mesh){
         newTris.push_back(t) ;
     }
     
-
     TriangleMesh newMesh = TriangleMesh(newTris, newVerts) ;
+    newMesh.buildTriangleAABBs() ;
+    newMesh.buildTrianglelCentres() ;
     
     return newMesh ;
 }

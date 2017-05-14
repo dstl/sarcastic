@@ -229,7 +229,8 @@ public:
     std::vector<Triangle3DVec> vertices ;
     std::vector<Triangle> triangles;
     std::vector<halfEdge> halfedges;
-    std::vector<AABB> AABBs ;  // array of AABBs for each triangle
+    std::vector<AABB> AABBs ;               // array of AABBs for each triangle
+    std::vector<Triangle3DVec> centres;     // centre of each triangle.
     
     TriangleMesh(){}
     
@@ -284,6 +285,8 @@ public:
     SPVector vertBforTri(int triIndx) { return vertices[triangles[triIndx].b].asSPVector() ; }
     SPVector vertCforTri(int triIndx) { return vertices[triangles[triIndx].c].asSPVector() ; }
     long int size() ;
+    void buildTrianglelCentres() ;
+
 
     
 //    void buildTriangleAABBs(int dim, float pos);

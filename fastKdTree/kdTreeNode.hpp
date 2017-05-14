@@ -56,10 +56,6 @@
 namespace kdTree {
     
     
-    extern TriangleMesh globalMesh;
-//    extern int * kdTreeTriangleIndicesOutput ;
-    
-    
     //typedef union {
     //    struct KdTreeLeaf {
     //        unsigned int flagDimAndOffset;
@@ -153,19 +149,17 @@ namespace kdTree {
         kdTreeNode();                           // Default constructor
         kdTreeNode(const kdTreeNode *node);     // constructor for initialising wth another node
         kdTreeNode(std::vector<int> tris) ;		// constructor using a vector array of ints representing triangle indices
-        kdTreeNode(std::string plyFileName) ;	// constructor using a triangle mesh in a .ply file
-        kdTreeNode(TriangleMesh *mesh) ;        // constructor using a triangleMesh as input. Builds Tri AABBs if they do not exist
+        kdTreeNode(std::string plyFileName, TriangleMesh &globalMesh) ;	// constructor using a triangle mesh in a .ply file
+        kdTreeNode(TriangleMesh &mesh) ;        // constructor using a triangleMesh as input. Builds Tri AABBs if they do not exist
         
         //    kdTreeNode(const kdTreeNode &node) ;    // copy constructor as we malloc in this class
         ~kdTreeNode() ;							// default destructor
         
         AABB BVforAllTris();
-        void medianSplit(kdTreeNode **left, kdTreeNode **rght);
+        void medianSplit(kdTreeNode **left, kdTreeNode **rght, TriangleMesh &globalMesh);
         void split(int dim, double pos, kdTreeNode *left, kdTreeNode *rght) ;
         
     };
-    
-    extern std::vector<kdTreeNode *> nodelist ;
     
     
     // Linked list to hande the kdTree nodes

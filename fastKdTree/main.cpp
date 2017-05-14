@@ -99,7 +99,7 @@ int main(int argc, const char * argv[]) {
     Timer runTimer ;
     startTimer(&runTimer, &status) ;
 
-    kdTree::buildTree(&mesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(/*kdTree::OUTPUTDATA |*/ kdTree::OUTPUTSUMM));
+    kdTree::buildTree(mesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(/*kdTree::OUTPUTDATA |*/ kdTree::OUTPUTSUMM));
     printf("Done!\n");
 
     // end timer

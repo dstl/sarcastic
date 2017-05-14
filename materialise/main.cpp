@@ -344,25 +344,27 @@ TriangleMesh growTriangles(TriangleMesh *mesh)
 // inside 'triangles'. These are removed from 'triangles' and returned as a vector
 //
 {
+#define QUALITYMESH
+#ifdef QUALITYMESH
 
     // This provides better quality messhes but is slower
     //
-//    Triangle objectTri(mesh->triangles.front());
-//    vector<Triangle> commonTriangles, originals;
-//    Triangle tri;
-//    commonTriangles.push_back(mesh->triangles.front()) ;
-//    for (int t=1; t < mesh->triangles.size(); ++t) {
-//        tri = mesh->triangles[t];
-//        if ((tri.mat == objectTri.mat) && (fabs(tri.dist-objectTri.dist) < 1e-07) && (tri.N == objectTri.N) ) {
-//            commonTriangles.push_back(tri);
-//        }else{
-//            originals.push_back(tri);
-//        }
-//    }
-//    TriangleMesh newMesh(commonTriangles, mesh->vertices);
-//    mesh->triangles = originals ;
-//    return newMesh ;
-
+    Triangle objectTri(mesh->triangles.front());
+    vector<Triangle> commonTriangles, originals;
+    Triangle tri;
+    commonTriangles.push_back(mesh->triangles.front()) ;
+    for (int t=1; t < mesh->triangles.size(); ++t) {
+        tri = mesh->triangles[t];
+        if ((tri.mat == objectTri.mat) && (fabs(tri.dist-objectTri.dist) < 1e-07) && (tri.N == objectTri.N) ) {
+            commonTriangles.push_back(tri);
+        }else{
+            originals.push_back(tri);
+        }
+    }
+    TriangleMesh newMesh(commonTriangles, mesh->vertices);
+    mesh->triangles = originals ;
+    return newMesh ;
+#else
     
     // This is quicker
     //
@@ -382,6 +384,8 @@ TriangleMesh growTriangles(TriangleMesh *mesh)
 
     TriangleMesh newMesh(commonTriangles, mesh->vertices);
     return newMesh ;
+#endif
+    
 }
 
 void meshTo2D(TriangleMesh *mesh, SPVector *org, SPVector *ord, SPVector *absci,

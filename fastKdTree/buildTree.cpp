@@ -46,10 +46,9 @@
  ***************************************************************************/
 
 #include "buildTree.hpp"
-TriangleMesh kdTree::globalMesh ;
-std::vector<kdTree::kdTreeNode *> kdTree::nodelist ;
 
-void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT printOutput){
+void kdTree::buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT printOutput){
+    std::vector<kdTree::kdTreeNode *> nodelist ;
     
     kdTreeNode *p, *q;      // used for indexing through the linked list
     
@@ -69,7 +68,7 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     
     kdTreeNode rootnode(mesh) ;
     
-    if (printOutput != OUTPUTNO)printf("Input Mesh has %ld triangles\n",globalMesh.triangles.size()) ;
+    if (printOutput != OUTPUTNO)printf("Input Mesh has %ld triangles\n",mesh.triangles.size()) ;
     
     activelist->push_back(&rootnode);
     
@@ -82,7 +81,7 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
         
         nextlist->clear() ;
         
-        processLargeNodes(&activelist, &smalllist, &nextlist) ;
+        processLargeNodes(&activelist, &smalllist, &nextlist, mesh) ;
         
         // Copy activelist into nodelist.
         //
@@ -181,7 +180,7 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     }
     
     if ((printOutput & OUTPUTSUMM) == OUTPUTSUMM) {
-        printSummary(nodelist) ;
+        printSummary(nodelist, mesh) ;
     }
     
     for(int i=0; i<nodelist.size(); ++i){
@@ -200,7 +199,7 @@ void kdTree::buildTree(TriangleMesh *mesh, KdData **kdTree, int *numNodesInTree,
     return;
 }
 
-void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist)
+void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, treeList **nextlist, TriangleMesh &globalMesh)
 {
     
     // BV4TrisInNode is the AABB that tightly bounds all the triangles in the node
@@ -263,7 +262,7 @@ void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, tree
         
         kdTreeNode *leftNode = new kdTreeNode ;
         kdTreeNode *rghtNode = new kdTreeNode ;
-        p->medianSplit(&leftNode, &rghtNode);
+        p->medianSplit(&leftNode, &rghtNode, globalMesh);
         int numLeftChild  = (int)leftNode->data.triangles.size();
         int numRightChild = (int)rghtNode->data.triangles.size();
         
@@ -961,7 +960,7 @@ void kdTree::printKdTreeData(KdData **kdTree, int *numOfKdTreeNodes){
     return ;
 }
 
-void kdTree::printSummary(std::vector<kdTreeNode *> nodelist)
+void kdTree::printSummary(std::vector<kdTreeNode *> nodelist, TriangleMesh &mesh)
 // Note that this complexity analysis is taken from [1]
 //
 //  1. Wald, Ingo, and Vlastimil Havran. "On building fast kd-trees for ray tracing,
@@ -996,8 +995,8 @@ void kdTree::printSummary(std::vector<kdTreeNode *> nodelist)
     Ct  = (Et * Kt) + (Ei * Ki) ;
     printf("\n            KDTree Summary\n");
     printf("==========================================\n");
-    printf("  Triangles                       : %4ld\n",globalMesh.triangles.size());
-    printf("  Small node size                 : %d\n", SMALLSIZE);
+    printf("  Triangles                       : %4ld\n",mesh.triangles.size());
+    printf("  Smallnode size                  : %d\n",SMALLSIZE);
     printf("  Number of Nodes                 : %4ld\n",nodelist.size());
     printf("  Number of leaves (NL)           : %4d \n",Nl);
     printf("  Number of non-empty leaves      : %4d\n",Nne);
