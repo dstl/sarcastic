@@ -64,6 +64,9 @@ typedef struct threadData {
     FILE ** interogFP ;         // File pointer to dump out interrogation data
     TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
     TriangleMesh *moverMesh ;
+    kdTree::KdData ** tree ;
+    int treesize; 
+    ATS **accelTriangles ;
 } threadData ;
 
 void * devPulseBlock ( void * threadArg ) ;

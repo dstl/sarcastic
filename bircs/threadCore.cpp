@@ -175,7 +175,7 @@ void * devPulseBlock ( void * threadArg ) {
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
         buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints);
-        maxRaysPerBounce = ( nRays < nxRay*nyRay ) ? nRays : nxRay*nyRay ;
+        maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
         
         // Set up deramp range for this pulse
         //
@@ -359,7 +359,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         int cnt=0;
         nrnpItems = 0;
-        nRays = nxRay * nyRay ;
+        nRays = maxRaysPerBounce ;
         for (int i=0; i<maxRaysPerBounce*MAXBOUNCES; i++){
             if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
 //            printf("[%d] range: %f, %e, %f \n",i,rnp[i].range,rnp[i].Es.r,rnp[i].Es.i);

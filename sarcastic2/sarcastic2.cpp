@@ -73,6 +73,9 @@ int main(int argc, const char * argv[]) {
     SPVector interogPt ;
     double interogRad ;
     FILE *interrogateFP ;
+    kdTree::KdData * tree = NULL;
+    ATS *accelTriangles = NULL;;
+    int treeSize = 0;
     
     getUserInput(&hdr, &baseMesh, &moverMesh, &outCPHDFile,
                      &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad,
@@ -93,12 +96,27 @@ int main(int argc, const char * argv[]) {
     }
     nPulses = newhdr.num_azi ;
 
-
     // print out info about the collection
     //
     printCPHDCollectionInfo(&hdr, &status) ;
     printf("Wavelength                  : %f m\n",SIPC_c/newhdr.freq_centre);
     printf("Slant range resolution      : %f m\n",SIPC_c/(2*newhdr.pulse_length*newhdr.chirp_gamma));
+    
+    if(moverMesh.triangles.size() == 0){
+        kdTree::buildTree(baseMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+        accelerateTriangles(&baseMesh,&accelTriangles) ;
+        // Initialise the tree and build ropes and boxes to increase efficiency when traversing
+        //
+        kdTree::KdData *node;
+        node = &(tree[0]) ;
+        // build Ropes and Boxes
+        //
+        AABB sceneAABB ;
+        sceneAABB = tree[0].brch.aabb ;
+        int Ropes[6] ;
+        for(int i=0; i<6; i++) Ropes[i] = NILROPE;
+        BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
+    }
     
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
@@ -128,7 +146,6 @@ int main(int argc, const char * argv[]) {
         newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
         TxPos[p] = tmp;
     }
-    
     
     double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, maxBeamUsedAz, maxBeamUsedEl ;
     SPVector rVect, unitBeamAz, unitBeamEl  ;
@@ -193,7 +210,6 @@ int main(int argc, const char * argv[]) {
     TxPowPerRay = TxPowPerRay * TB ;
     
     SPImage cphd ;
-
     
     unsigned nThreads;
     if (bounceToShow != 0){
@@ -252,6 +268,10 @@ int main(int argc, const char * argv[]) {
         coreData[t].interogFP              = &interrogateFP ;
         coreData[t].sceneMesh              = &baseMesh ;
         coreData[t].moverMesh              = &moverMesh ;
+        coreData[t].tree                   = &tree ;
+        coreData[t].accelTriangles         = &accelTriangles ;
+        coreData[t].treesize               = treeSize ;
+        
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
@@ -326,6 +346,11 @@ int main(int argc, const char * argv[]) {
     if(outCPHDFile != NULL){
         im_destroy(&cphd, &status);
     }
+    if(moverMesh.triangles.size() == 0){
+        free(tree);
+        delete accelTriangles ;
+    }
+    
     im_close_lib(&status);
     free(RxPos) ;
     free(TxPos) ;
