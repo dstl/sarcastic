@@ -34,3 +34,5 @@ Common/tinyxml
 .readColladarc*
 .materialiserc*
 BircsVersion.h
+.*rc_*
+materialise_version.h
