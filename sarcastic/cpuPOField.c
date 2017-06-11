@@ -238,16 +238,17 @@ void POKernelCode(int ind,
     
     
     SPVector origin;
-    origin.x = (tris[hitpoints[ind].tri].AA.x + tris[hitpoints[ind].tri].BB.x + tris[hitpoints[ind].tri].CC.x) / 3;
-    origin.y = (tris[hitpoints[ind].tri].AA.y + tris[hitpoints[ind].tri].BB.y + tris[hitpoints[ind].tri].CC.y) / 3;
-    origin.z = (tris[hitpoints[ind].tri].AA.z + tris[hitpoints[ind].tri].BB.z + tris[hitpoints[ind].tri].CC.z) / 3;
-    VECT_SUB(tris[hitpoints[ind].tri].AA,origin,tris[hitpoints[ind].tri].AA);
-    VECT_SUB(tris[hitpoints[ind].tri].BB,origin,tris[hitpoints[ind].tri].BB);
-    VECT_SUB(tris[hitpoints[ind].tri].CC,origin,tris[hitpoints[ind].tri].CC);
+    tri = tris[hitpoints[ind].tri] ;
+
+    origin.x = (tri.AA.x + tri.BB.x + tri.CC.x) / 3;
+    origin.y = (tri.AA.y + tri.BB.y + tri.CC.y) / 3;
+    origin.z = (tri.AA.z + tri.BB.z + tri.CC.z) / 3;
+    VECT_SUB(tri.AA,origin,tri.AA);
+    VECT_SUB(tri.BB,origin,tri.BB);
+    VECT_SUB(tri.CC,origin,tri.CC);
     
     hp  = hitpoints[ind].hit ;
     ray = rays[ind] ;
-    tri = tris[hitpoints[ind].tri] ;
     Rs  = materialProperties[tri.matId].Rs ;
     Rm  = materialProperties[tri.matId].Rm ;
     for(int i=0; i<9; i++)globalToLocalMat[i] = tri.globalToLocalMat[i];
@@ -420,11 +421,11 @@ void POKernelCode(int ind,
     CMPLX_MULT(Jc_par, t2_, EsVs[ind]);
     CMPLX_MULT(Jc_per, t2_, EsHs[ind]);
     
-    //        printf("\n");
-    //        printf("[%2d] Ev : %e, %f \n",ind
-    //               ,CMPLX_MAG(EsVs[ind]),CMPLX_PHASE(EsVs[ind])
-    //               ,CMPLX_MAG(Ic),CMPLX_PHASE(Ic)
-    //               );
+    //printf("\n");
+    //printf("[%2d] Ev : %e, %f \n",ind
+      //     ,CMPLX_MAG(EsVs[ind]),CMPLX_PHASE(EsVs[ind])
+                   //,CMPLX_MAG(Ic),CMPLX_PHASE(Ic)
+    //);
     
     
     

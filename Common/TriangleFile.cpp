@@ -191,6 +191,23 @@ void TriangleFile::WriteFile(std::string fname){
     fclose(fp);
     return ;
 }
+void TriangleFile::NewWritePLYFile( std::string fname, bool binary) {
+    sortTrianglesAndPoints() ;
+    FILE * fp = initialise_ply_file(fname.c_str(), (int)triangleVertices.size(), (int)triangleReferences.size());
+    
+    // Write out the unique vertices
+    //
+    for (int i=0; i<triangleVertices.size(); i++){
+        fprintf(fp,"%4.4f %4.4f %4.4f\n",triangleVertices[i].x,triangleVertices[i].y,triangleVertices[i].z);
+    }
+    
+    // now write out triangles in 'face' element
+    //
+    for(int i=0; i<triangles.size(); i++){
+        fprintf(fp, "3 %d %d %d %d %d %d\n",triangleReferences[i].AA, triangleReferences[i].BB, triangleReferences[i].CC,
+                materialColours[triangles[i].matId][0],materialColours[triangles[i].matId][1],materialColours[triangles[i].matId][2]);
+    }
+}
 
 void TriangleFile::WritePLYFile( std::string fname, bool binary) {
         
@@ -291,4 +308,74 @@ std::vector<SPVector> uniqueVertices(std::vector<Triangle> triangles){
 
 bool SPVectorsAreEqual(SPVector a, SPVector b){
     return (a.x==b.x && a.y==b.y && a.z==b.z) ;
+}
+
+void TriangleFile::sortTrianglesAndPoints(){
+    
+    Point p;
+    triangleReference tr;
+    int idxA, idxB, idxC;
+    
+    int npoints = (int)triangles.size() * 3 ;
+    
+    triangleVertices.reserve(npoints) ;
+    triangleReferences.reserve(triangles.size()) ;
+    
+    // Print out input
+    //
+    for(int t=0; t<triangles.size(); ++t){
+        printf("triangle %d\n",t);
+        printf("  %f,%f,%f\n",triangles[t].AA.x,triangles[t].AA.y,triangles[t].AA.z);
+        printf("  %f,%f,%f\n",triangles[t].BB.x,triangles[t].BB.y,triangles[t].BB.z);
+        printf("  %f,%f,%f\n",triangles[t].CC.x,triangles[t].CC.y,triangles[t].CC.z);
+    }
+    
+    // Create a vector of triangle vertices
+    //
+    for(int t=0; t<triangles.size(); ++t){
+        p = Point(triangles[t].AA.x, triangles[t].AA.y, triangles[t].AA.z);
+        triangleVertices.push_back(p) ;
+        p = Point(triangles[t].BB.x, triangles[t].BB.y, triangles[t].BB.z);
+        triangleVertices.push_back(p) ;
+        p = Point(triangles[t].CC.x, triangles[t].CC.y, triangles[t].CC.z);
+        triangleVertices.push_back(p) ;
+    }
+    
+    // sort the vertices into unique points
+    //
+    sort(triangleVertices.begin(), triangleVertices.end());
+    triangleVertices.erase( unique(triangleVertices.begin(), triangleVertices.end()), triangleVertices.end()) ;
+    
+    //rebuild triangles using the index of the point in the points vector
+    //
+    for(int t=0; t<triangles.size(); ++t){
+        p = Point(triangles[t].AA.x, triangles[t].AA.y, triangles[t].AA.z);
+        idxA = (int) (lower_bound(triangleVertices.begin(), triangleVertices.end(), p) - triangleVertices.begin()) ;
+        p = Point(triangles[t].BB.x, triangles[t].BB.y, triangles[t].BB.z);
+        idxB = (int) (lower_bound(triangleVertices.begin(), triangleVertices.end(), p) - triangleVertices.begin()) ;
+        p = Point(triangles[t].CC.x, triangles[t].CC.y, triangles[t].CC.z);
+        idxC = (int) (lower_bound(triangleVertices.begin(), triangleVertices.end(), p) - triangleVertices.begin()) ;
+        
+        p = Point(triangles[t].NN.x, triangles[t].NN.y, triangles[t].NN.z);
+        tr = triangleReference(idxA, idxB, idxC, triangles[t].matId, p);
+        triangleReferences.push_back(tr);
+    }
+    
+    // sort the triangle references vector and remove any duplicate triangles
+    //
+    sort(triangleReferences.begin(), triangleReferences.end());
+    triangleReferences.erase( unique(triangleReferences.begin(), triangleReferences.end()), triangleReferences.end()) ;
+    
+//    printf("All points are\n");
+//    for(int t=0; t<triangleVertices.size(); ++t){
+//        printf("[%d]  %f,%f,%f\n",t,(*points)[t].x,(*points)[t].y,(*points)[t].z);
+//    }
+//    printf("Triangle references are:\n");
+//    for(int t=0; t<triangleReferences.size(); ++t){
+//        printf("triangle [%d]: %d,%d,%d [mat: %d]\n",t, (*triRefs)[t].AA, (*triRefs)[t].BB,(*triRefs)[t].CC,(*triRefs)[t].mat);
+//    }
+    
+    
+    return ;
+    
 }

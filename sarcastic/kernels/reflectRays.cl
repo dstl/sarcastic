@@ -213,7 +213,7 @@ void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector
     }else if(fabs(axisVect.x) < PROGEPSILON && fabs(axisVect.z) < PROGEPSILON){
         VECT_ROTATEY(inVect, angRads, out);
     }else if(fabs(axisVect.y) < PROGEPSILON && fabs(axisVect.z) < PROGEPSILON){
-        VECT_ROTATEZ(inVect, angRads, out);
+        VECT_ROTATEX(inVect, angRads, out);
     }else{
         SPVector ansa,ansb,ansc,ansd;
         double thetaz = atan2(axisVect.y,axisVect.x);

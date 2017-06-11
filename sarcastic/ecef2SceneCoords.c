@@ -39,6 +39,7 @@
 //***************************************************************************
 
 #include "ecef2SceneCoords.h"
+//#define OVERRIDEGRAZINGANGLEWITH ((double)(5.4))
 
 void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
     SPVector point;
@@ -51,14 +52,18 @@ void ecef2SceneCoords(int nPoints, SPVector *points, SPVector geoPoint){
     VECT_CROSS(geoPoint, E, N);         // Create local North vector - tangent to Earth's surface
     VECT_NORM(N, N) ;                   // and make it a unit vector
     VECT_NORM(geoPoint, A) ;            // Create local height vector
-//    double graz = DEG2RAD(0);
+#ifdef OVERRIDEGRAZINGANGLEWITH
+    double graz = DEG2RAD(OVERRIDEGRAZINGANGLEWITH);
+#endif
     for (int i=0; i<nPoints; i++){
         point = points[i];
         VECT_SUB(point, geoPoint, v) ;  // v is vector from point in space to geopoint
         e = VECT_DOT(v, E) ;            // e is component of v in local East direction
         n = VECT_DOT(v, N) ;            // n is component of v in local North direction
         a = VECT_DOT(v, A) ;            // a is component of v in altitude direction
-//        a= fabs(e) * tan(graz);
+#ifdef OVERRIDEGRAZINGANGLEWITH
+        a= fabs(e) * tan(graz);
+#endif
 //        if(i==0)printf("grazing angle is %fdeg a is %f\n",RAD2DEG(atan2(a,fabs(e))),a);
 //        n=0;
         VECT_CREATE(e, n, a, points[i]) ;

@@ -27,3 +27,10 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 *.xcuserstate
+Common/tinyxml
+~$*
+.sarcasticrc*
+.fastKDTreerc*
+.readColladarc*
+.materialiserc*
+BircsVersion.h

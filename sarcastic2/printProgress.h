@@ -1,25 +1,15 @@
 /***************************************************************************
- *  boxMuller_Random.c
- *  triDecomp
  *
- *  Created by Muff Darren on 27/09/2014.
- *  Copyright (c) 2014 [dstl]. All rights reserved.
- *
- * Original source code
- *  (c) Copyright 1994, Everett F. Carter Jr.
- *  Permission is granted by the author to use
- *  this software for any application provided this
- *  copyright notice is preserved.
+ *       Module:    printprogress
+ *      Program:    SARCASTIC
+ *   Created by:    Darren on 27/07/2013.
+ *                  Copyright (c) 2013 Dstl. All rights reserved.
  *
  *   Description:
- *      Implements the Polar form of the Box-Muller Transformation
- *      This module is taken from http://www.taygeta.com/random/gaussian.html
- *      There is a useful discussion on generating Gaussian random numbers
- *      at http://www.design.caltech.edu/erik/Misc/Gaussian.html
+ *   short tool to output progrees on of a programme
  *
- *
- *  CLASSIFICATION       :   UNCLASSIFIED
- *  Date of CLASSN       :   25/09/2014
+ *   CLASSIFICATION        :  UNCLASSIFIED
+ *   Date of CLASSN        :  21/04/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -43,14 +33,13 @@
  * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
  * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
  * IRELAND.
+ *
  ***************************************************************************/
 
-#ifndef sarcastic_boxMullerRandom_h
-#define sarcastic_boxMullerRandom_h
+#ifndef printProgress_h
+#define printProgress_h
 
-#include <math.h>
-#include "ranf.h"
+#include <stdio.h>
 
-float box_muller(float m, float s);	/* normal random variate generator */
-
-#endif
+#endif /* printProgress_h */
+void printProgress(int percentDone, int nChars) ;

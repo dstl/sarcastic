@@ -51,11 +51,16 @@ class TriangleFile {
 
 public:
     std::vector<Triangle> triangles ;
+    std::vector<triangleReference> triangleReferences ;
+    std::vector<Point> triangleVertices ;
 
     TriangleFile( std::vector<Triangle> tris ) ;
     TriangleFile( std::string filename) ;
     void WriteFile( std::string filename ) ;
     void WritePLYFile( std::string filename, bool binary) ;
+    void NewWritePLYFile( std::string filename, bool binary) ;
+    void sortTrianglesAndPoints() ;
+
 };
 
 #endif /* defined(__sarcastic__TriangleFile__) */

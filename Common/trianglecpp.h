@@ -42,6 +42,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <SIlib2/SIlib2.h>
+#include <set>
 
 class Triangle {
    
@@ -63,9 +64,80 @@ public:
     SPVector   NN ;
     double     area ;
     int        matId;
+    double     d; // distance of triangle plane to origin
     double     globalToLocalMat[9];
     double     localToGlobalMat[9];
 };
 
+struct Point {
+public:
+
+    float x;
+    float y;
+    float z;
+    Point() {}
+    Point(float x, float y, float z) : x(x), y(y), z(z) {}
+    
+    bool operator<(const Point &o) const {
+        if (x != o.x) {
+            return x < o.x;
+        }
+        if (y != o.y) {
+            return y < o.y;
+        }
+        return z < o.z;
+    }
+    
+    bool operator==(const Point &o) const {
+        if(x == o.x && y==o.y && z==o.z){
+            return true;
+        }
+        return false;
+    }
+    
+};
+
+class triangleReference{
+public:
+
+    int AA;
+    int BB;
+    int CC;
+    int mat ;
+    Point NN ;
+    
+    triangleReference(){}
+    triangleReference(int AA, int BB, int CC, int mat, Point NN) : AA(AA), BB(BB), CC(CC), mat(mat), NN(NN) {}
+    
+    bool operator<(const triangleReference &o) const {
+        if( mat != o.mat) {
+            return mat < o.mat ;
+        }
+        if( ! (NN == o.NN) ) {
+            return NN < o.NN ;
+        }
+        if( AA != o.AA ){
+            return AA < o.AA ;
+        }
+        if( BB != o.BB ){
+            return BB < o.BB ;
+        }
+        return CC < o.CC ;
+    }
+    
+    bool operator==(const triangleReference &o) const {
+        if (mat != o.mat){
+            return false;
+        }
+        if (!(NN == o.NN)){
+            return false ;
+        }
+        std::set<int> s1, s2;
+        s1.insert(AA); s1.insert(BB); s1.insert(CC);
+        s2.insert(o.AA); s2.insert(o.BB); s2.insert(o.CC);
+        return (s1==s2);
+    }
+    
+} ;
 
 #endif /* defined(__sarcastic__trianglecpp__) */

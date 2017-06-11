@@ -115,6 +115,7 @@ int main (int argc, char **argv){
                &nTreeNodes,         // Number of nodes in KdTree
                &KdTree);            // KdTree returned.
     
+    
     // Build Ropes and AABBs for faster stackless traversal
     //
     for(int i=0; i<6; i++) Ropes[i] = NILROPE;
@@ -169,16 +170,16 @@ int main (int argc, char **argv){
     //
     CPHDHeader newhdr = hdr ;
     newhdr.num_azi = nPulses / pulseUndersampFactor ;
-    newhdr.nbdata  = calloc(newhdr.num_azi, sizeof(CPHD_NBData));
+    newhdr.pulses  = calloc(newhdr.num_azi, sizeof(CPHDPulse));
     for(int p=startPulse; p<startPulse+nPulses; p+=pulseUndersampFactor){
-        newhdr.nbdata[(p-startPulse)/pulseUndersampFactor] = hdr.nbdata[p] ;
+        newhdr.pulses[(p-startPulse)/pulseUndersampFactor] = hdr.pulses[p] ;
     }
     
     nVec = newhdr.num_azi ;
     
     // print out info about the collection
     //
-    printCPHDCollectionInfo(&hdr, NULL, &status) ;
+    printCPHDCollectionInfo(&hdr, &status) ;
     printf("Wavelength                  : %f m\n",SIPC_c/newhdr.freq_centre);
     printf("Slant range resolution      : %f m\n",SIPC_c/(2*newhdr.pulse_length*newhdr.chirp_gamma));
 
@@ -206,17 +207,17 @@ int main (int argc, char **argv){
     }
     
     for (int p = 0; p < nVec; p++){
-        RxPos[p] = newhdr.nbdata[p].sat_ps_rx ;
-        TxPos[p] = newhdr.nbdata[p].sat_ps_rx ;
+        RxPos[p] = newhdr.pulses[p].sat_ps_rx ;
+        TxPos[p] = newhdr.pulses[p].sat_ps_tx ;
         
         // While we are looping through pulses also load up the Fx0 and FxStepSize values
         //
-        Fx0s[p]    = newhdr.nbdata[p].fx0 ;
-        FxSteps[p] = newhdr.nbdata[p].fx_step_size ;
-        amp_sf0[p] = newhdr.nbdata[p].amp_sf0 ;
+        Fx0s[p]    = newhdr.pulses[p].fx0 ;
+        FxSteps[p] = newhdr.pulses[p].fx_step_size ;
+        amp_sf0[p] = newhdr.pulses[p].amp_sf0 ;
     }
     
-    SRP = newhdr.nbdata[(nVec/2)].srp ;
+    SRP = newhdr.pulses[(nVec/2)].srp ;
 
     ecef2SceneCoords(nVec, RxPos, SRP);
     ecef2SceneCoords(nVec, TxPos, SRP);

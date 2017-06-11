@@ -188,7 +188,7 @@ void vectRotateAxis(SPVector inVect, SPVector axisVect, double angRads, SPVector
     }else if(fabs(axisVect.x) < PROGEPSILON && fabs(axisVect.z) < PROGEPSILON){
         VECT_ROTATEY(inVect, angRads, out);
     }else if(fabs(axisVect.y) < PROGEPSILON && fabs(axisVect.z) < PROGEPSILON){
-        VECT_ROTATEZ(inVect, angRads, out);
+        VECT_ROTATEX(inVect, angRads, out);
     }else{
         SPVector ansa,ansb,ansc,ansd;
         double thetaz = atan2(axisVect.y,axisVect.x);
@@ -618,7 +618,7 @@ __kernel void stacklessTraverse(__global KdData * KdTree,
             //
             float t_max = 10e6;
             float tpos;
-            int ropeInd, ropeIndSide, ropeIndOff;
+            int ropeInd=0, ropeIndSide, ropeIndOff;
             for(int i=0; i<3; i++){
                 if (dirInverse.cell[i] != 0){
                     t1 = (node->branch.aabb.AA.cell[i] - volumeEntry.cell[i]) * dirInverse.cell[i];

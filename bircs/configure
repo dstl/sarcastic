@@ -1,0 +1,108 @@
+#!/bin/csh -f
+#***************************************************************************
+#*
+#*       Module:    configure
+#*      Program:    sarcastic
+#*   Created by:    Darren Muff 23/07/2013
+#*                  Copyright (c) 2013 [dstl]. All rights reserved.
+#*
+#*   Description:
+#*      configure script for sarcastic
+#*
+#*   CLASSIFICATION        :  UNCLASSIFIED
+#*   Date of CLASSN        :  22/11/2013
+#*
+#* Permission is hereby granted, free of charge, to any person obtaining a
+#* copy of this software and associated documentation files (the "Software"),
+#* to deal in the Software without restriction, including without limitation
+#* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#* and/or sell copies of the Software, and to permit persons to whom the
+#* Software is furnished to do so, subject to the following conditions:
+#*
+#* The above copyright notice and this permission notice shall be included
+#* in all copies or substantial portions of the Software.
+#*
+#* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#* DEALINGS IN THE SOFTWARE.
+#*
+#* THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
+#* USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
+#* SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
+#* IRELAND.
+#*
+#***************************************************************************/
+
+set CURR_DIR        = $PWD
+set required        = "clang git sed wc awk uname ar mkdir cp rm ln cat chmod pwd"
+set def_INSTALL_DIR = /usr/local/dstl
+set CCtmp           = `which clang`
+
+echo "Searching for files required for this installation..."
+foreach req ($required)
+    echo $req ".......... `which $req`"
+if ($status) then
+	if ($req == clang) then
+        echo "**** Warning: clang not found trying gcc..."
+    	    echo "gcc.......... `which gcc`"
+	    if ( $status ) then 
+		echo "**** gcc not found - I need a C Compiler to compile with. "
+		exit 1
+	    else
+		set CCtmp = `which gcc`
+	    endif
+        else
+            echo "Error: required binary $req not found"
+            exit 1
+        endif
+    endif
+end
+
+set CC          = $CCtmp
+
+#
+# Ask for parameters for installation directory
+#
+
+echo " "
+echo "Please enter the full path name of the directory"
+echo "that bircs is to be installed into. Executable files"
+echo "will be placed in a bin subdirectory [$def_INSTALL_DIR]"
+echo " "
+
+set INSTALL_DIR = $<
+if ($INSTALL_DIR == "") then
+set INSTALL_DIR = $def_INSTALL_DIR
+endif
+
+echo "Setting install_dir to be $INSTALL_DIR"
+if ( ! (-d $INSTALL_DIR/bin) ) then
+    echo " "
+    echo "$INSTALL_DIR/bin does not exist. Shall I create it? [y/n]"
+    set yesno = $<
+    if ( $yesno == "y" || $yesno == "Y" || $yesno == "yes" || $yesno == "Yes" || $yesno == "YES") then
+        mkdir -p $INSTALL_DIR
+        mkdir -p $INSTALL_DIR/bin
+        if ( ! -d $INSTALL_DIR ) then
+            echo "Error : Failed to create install directory $INSTALL_DIR"
+            exit 1
+        endif
+    else
+        echo "Exiting ... "
+        exit 1
+    endif
+endif
+
+sed s@_INSTALLDIR_@${INSTALL_DIR}@g Makefile.in > Makefile.1
+sed s@_CC_@"${CC}"@g Makefile.1 > Makefile
+
+rm -f Makefile.1
+
+echo "Configuration is complete."
+echo " Now type 'make; make install; ' "
+echo " "
+echo " "

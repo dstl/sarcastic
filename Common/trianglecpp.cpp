@@ -59,6 +59,7 @@ Triangle::Triangle(SPVector aa, SPVector bb, SPVector cc){
     double l ; l = VECT_MAG(x);
     area = l * 0.5;
     VECT_SCMULT(x, (1/l), NN);
+    d = VECT_DOT(AA, NN) ;
     
     SPVector zhat; VECT_CREATE(0, 0, 1, zhat);
     double alpha; alpha = atan2(NN.y, NN.x);

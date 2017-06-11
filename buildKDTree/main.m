@@ -40,6 +40,7 @@
 #include "materialProperties.h"
 #define ROOTPATH "/Users/Darren/Development"
 #define SHOWTRIANGLES 0
+#define MAX_LINE_LENGTH 128
 
 void banner() ;
 
@@ -75,77 +76,76 @@ int main (int argc, const char * argv[])
             exit(1);
         }
         fclose(fpout) ;
-
-        int ntri;
-        int vertexBytes;
-        int materialBytes;
-        fread(&ntri, sizeof(int), 1, fpin);
-        fread(&vertexBytes,sizeof(int), 1, fpin);
-        fread(&materialBytes, sizeof(int), 1, fpin);
         
-        if (vertexBytes != sizeof(double) ) {
-            printf("Error : Triangle vertices of size %d bytes not yet supported\n",vertexBytes);
-            exit(1);
-        }
-        if (materialBytes != MATBYTES ) {
-            printf("Error : Material Bytes in file does not match the program\n");
-            exit(1);
-        }
-
-        NSMutableArray * triangles         = [[NSMutableArray alloc] init];
-        
-        for (int itri=0; itri < ntri; itri++ ) {
-            int val ;
-            double AAx,AAy,AAz,BBx,BBy,BBz,CCx,CCy,CCz,NNx,NNy,NNz,area,x ;
-            char mat[MATBYTES] ;
-            fread(&val, sizeof(int),    1, fpin) ;
-            fread(&AAx, sizeof(double), 1, fpin) ;
-            fread(&AAy, sizeof(double), 1, fpin) ;
-            fread(&AAz, sizeof(double), 1, fpin) ;
-            MVector * AA = [MVector MVectorWithValuesX:AAx Y:AAy Z:AAz] ;
-            fread(&BBx, sizeof(double), 1, fpin) ;
-            fread(&BBy, sizeof(double), 1, fpin) ;
-            fread(&BBz, sizeof(double), 1, fpin) ;
-            MVector * BB = [MVector MVectorWithValuesX:BBx Y:BBy Z:BBz] ;
-            fread(&CCx, sizeof(double), 1, fpin) ;
-            fread(&CCy, sizeof(double), 1, fpin) ;
-            fread(&CCz, sizeof(double), 1, fpin) ;
-            MVector * CC = [MVector MVectorWithValuesX:CCx Y:CCy Z:CCz] ;
-            fread(&NNx, sizeof(double), 1, fpin) ;
-            fread(&NNy, sizeof(double), 1, fpin) ;
-            fread(&NNz, sizeof(double), 1, fpin) ;
-            MVector  * NN  = [MVector MVectorWithValuesX:NNx Y:NNy Z:NNz] ;
-            Triangle * tri = [Triangle TriangleWithVerticesAa:AA Bb:BB Cc:CC andNormal:NN ];
-            [tri setTriId:val] ;
-            
-            // Read Area - don't need it yet just read it in
-            //
-            fread(&area,sizeof(double), 1, fpin) ;
-            
-            // Same for the globalToLocalMatrix
-            //
-            for (int j=0; j<9; j++){
-                fread(&x, sizeof(double), 1, fpin);
-            }
-            
-            // Same for the LocalToGlobalMatrix
-            //
-            for (int j=0; j<9; j++){
-                fread(&x, sizeof(double), 1, fpin);
-            }
-
-            fread(&mat, sizeof(char), materialBytes, fpin) ;
-            NSString *strFromFile = [[NSString stringWithUTF8String: mat] uppercaseString];
-            NSString *matStr ;
-            for(int i=0; i<NMATERIALS; i++){
-               matStr = [NSString stringWithUTF8String:materialProperties[i].matname];
-                if ([strFromFile rangeOfString:matStr].location != NSNotFound) {
-                    [tri setMaterialName:strFromFile] ;
+        char line[MAX_LINE_LENGTH];
+        char name1[MAX_LINE_LENGTH];
+        char name2[MAX_LINE_LENGTH];
+        char name3[MAX_LINE_LENGTH];
+        char name4[MAX_LINE_LENGTH];
+        char name5[MAX_LINE_LENGTH];
+        char name6[MAX_LINE_LENGTH];
+        char name7[MAX_LINE_LENGTH];
+        char name8[MAX_LINE_LENGTH];
+        int ntri=0;;
+        int nvertices=0;
+        int matId = 0;
+        double x,y,z;
+        do {
+            fgets(line, MAX_LINE_LENGTH, fpin);
+            sscanf(line, "%s%s%s", name1, name2, name3);
+            if (strcmp(name1, "element") == 0) {
+                if(strcmp(name2, "vertex") == 0){
+                    nvertices = atoi(name3);
+                }else if(strcmp(name2, "face") == 0){
+                    ntri = atoi(name3);
                 }
             }
-            [triangles addObject:tri] ;
+        } while (strcmp( name1, "end_header") ) ;
+        
+        if (nvertices == 0 || ntri == 0) {
+            printf("Error: failed to read number of triangles / vertices from .PLY header\n");
+            exit(1);
         }
         
+        float *vertices = (float *)sp_malloc(sizeof(float) * nvertices * 3);
+        for (int i=0; i<nvertices; ++i){
+            fgets(line, MAX_LINE_LENGTH, fpin);
+            sscanf(line, "%s%s%s", name1, name2, name3);
+            vertices[i*3+0] = atof(name1);
+            vertices[i*3+1] = atof(name2);
+            vertices[i*3+2] = atof(name3);
+        }
+        
+        int *trinds = (int *)sp_malloc(sizeof(int) * ntri * 4);
+        for (int i=0; i<ntri; ++i){
+            fgets(line, MAX_LINE_LENGTH, fpin);
+            sscanf(line, "%s%s%s%s%s%s%s%s",name1,name2, name3,name4,name5,name6,name7,name8);
+            trinds[i*4+0] = atoi(name2);
+            trinds[i*4+1] = atoi(name3);
+            trinds[i*4+2] = atoi(name4);
+            trinds[i*4+3] = atoi(name8);
+        }
+        
+        NSMutableArray * triangles         = [[NSMutableArray alloc] init];
+        for (int itri=0; itri < ntri; itri++ ) {
+            x = vertices[trinds[itri*4+0]*3+0];
+            y = vertices[trinds[itri*4+0]*3+1];
+            z = vertices[trinds[itri*4+0]*3+2];
+            MVector * AA = [MVector MVectorWithValuesX:x Y:y Z:z] ;
+            x = vertices[trinds[itri*4+1]*3+0];
+            y = vertices[trinds[itri*4+1]*3+1];
+            z = vertices[trinds[itri*4+1]*3+2];
+            MVector * BB = [MVector MVectorWithValuesX:x Y:y Z:z] ;
+            x = vertices[trinds[itri*4+2]*3+0];
+            y = vertices[trinds[itri*4+2]*3+1];
+            z = vertices[trinds[itri*4+2]*3+2];
+            MVector * CC = [MVector MVectorWithValuesX:x Y:y Z:z] ;
+            matId = trinds[itri*4+3];
+            Triangle * tri = [Triangle TriangleWithVerticesAa:AA Bb:BB Cc:CC andId:itri];
+            [tri setMatId:matId];
+            [triangles addObject:tri] ;
+        }
+
         if (SHOWTRIANGLES) {
             printf("Triangle file contains the following triangles:\n");
             for (int itri=0; itri < ntri; itri++ ) {
