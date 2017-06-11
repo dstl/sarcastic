@@ -564,10 +564,10 @@ void * devPulseBlock ( void * threadArg ) {
     }
     
     free( rayAimPoints );
-    if(!dynamicScene){
-        free(tree);
-        delete accelTriangles ;
-    }
+//    if(!dynamicScene){
+//        free(tree);
+//        delete accelTriangles ;
+//    }
     
     // print timer Summary
     //
