@@ -22,9 +22,11 @@ void * devPulseBlock ( void * threadArg ) {
 
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nx=0, nShadowRays ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
+    int maxRaysPerBounce ;
+
     int hrs,min,sec;
     int reportN = 10 ;
-    int tid, nThreads, nPulses;
+    int tid, nThreads, nPulses, startPulse;
     
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing=0, *ikernel=NULL, bandwidth ;
@@ -59,6 +61,7 @@ void * devPulseBlock ( void * threadArg ) {
     
     tid              = td->tid ;
     nThreads         = td->nThreads ;
+    startPulse       = td->startPulse ;
     nPulses          = td->nPulses ;
     CPHDHeader *hdr  = td->cphdhdr ;
     gainRx           = td->gainRx ;
@@ -109,7 +112,7 @@ void * devPulseBlock ( void * threadArg ) {
     
     for (int pulse=0; pulse<nPulses; pulse++){
         startTimer(&pulseTimer, &status);
-        int pulseIndex = pulse ;
+        int pulseIndex = pulse + startPulse ;
 #ifndef TOTALRCSINPULSE
         // print out some useful progress information
         //
@@ -118,7 +121,7 @@ void * devPulseBlock ( void * threadArg ) {
             if( pulse % reportN == 0 && nPulses != 1){
                 pCentDone = 100.0*pulse/nPulses ;
                 printf("Processing pulses %6d - %6d out of %6d [%2d%%]",
-                       pulse, (pulse+((reportN > (nPulses*nThreads)) ?  (nPulses*nThreads) : reportN)), nPulses*nThreads ,(int)pCentDone);
+                       pulse, (pulse+((reportN > (nPulses)) ?  (nPulses*nThreads) : reportN*nThreads)), nPulses*nThreads ,(int)pCentDone);
                 if(pulse != 0 ){
                     current  = time(NULL);
                     sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
@@ -202,7 +205,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Build kdTree if required
         //
-        if (pulse == 0 || dynamicScene) {
+        if (dynamicScene) {
             if (!dynamicScene) {
                 endTimer(&threadTimer, &status);
             }
@@ -222,12 +225,15 @@ void * devPulseBlock ( void * threadArg ) {
                 startTimer(&threadTimer, &status);
             }
             
-            // Allocate memory for items that are needed in all kernels
-            //
-            nTriangles   = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
+        }else{
+            tree = *(td->tree) ;
+            treeSize = td->treesize ;
+            accelTriangles = *(td->accelTriangles) ;
         }
 
-        
+        // Allocate memory for items that are needed in all kernels
+        //
+        nTriangles   = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
         
         // Generate a distribution of nAzbeam x nElbeam rays that originate from the TxPosition aiming at the origin. Use beamMax as the std deviation
         // for the distribution
@@ -235,11 +241,12 @@ void * devPulseBlock ( void * threadArg ) {
         nbounce = 0;
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
-        nRays   = nxRay*nyRay;
+        nRays   = nxRay*nyRay; // nRays is the number of rays in each bounce and is rewritten after each reflection
         startTimer(&buildRaysTimer, &status) ;
         buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints);
         endTimer(&buildRaysTimer, &status);
         buildRaysDur += timeElapsedInMilliseconds(&buildRaysTimer, &status);
+        maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
         
         // Set up deramp range for this pulse
         //
@@ -249,7 +256,7 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
-        rnp = (rangeAndPower *)sp_calloc(nRays*MAXBOUNCES, sizeof(rangeAndPower));
+        rnp = (rangeAndPower *)sp_calloc(maxRaysPerBounce*MAXBOUNCES, sizeof(rangeAndPower));
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
@@ -407,7 +414,7 @@ void * devPulseBlock ( void * threadArg ) {
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
                 startTimer(&POTimer, &status);
-                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nxRay*nyRay*nbounce])) ;
+                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[maxRaysPerBounce*nbounce])) ;
                 endTimer(&POTimer, &status);
                 PODur += timeElapsedInMilliseconds(&POTimer, &status);
                 
@@ -427,7 +434,7 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     for ( int i=0; i<nShadowRays; i++){
                         
-                        irp = rnp[(nxRay*nyRay*nbounce)+i] ;
+                        irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
                         
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
                             fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
@@ -464,8 +471,8 @@ void * devPulseBlock ( void * threadArg ) {
 
             int cnt=0;
             nrnpItems = 0;
-            nRays = nxRay * nyRay ;
-            for (int i=0; i<nRays*MAXBOUNCES; i++){
+            nRays = maxRaysPerBounce ;
+            for (int i=0; i<maxRaysPerBounce*MAXBOUNCES; i++){
                 if ((rnp[i].Es.r * rnp[i].Es.r + rnp[i].Es.i * rnp[i].Es.i) != 0 && rnp[i].range !=0) cnt++ ;
             }
             if(cnt > 0){
@@ -480,7 +487,7 @@ void * devPulseBlock ( void * threadArg ) {
             // DEBUG
             rnpData_t * rnpData = (rnpData_t *)sp_malloc(nrnpItems * sizeof(rnpData_t));
             cnt = 0;
-            for (int i=0; i<nRays*MAXBOUNCES; i++){
+            for (int i=0; i<maxRaysPerBounce*MAXBOUNCES; i++){
                 if (CMPLX_MAG(rnp[i].Es) != 0 && rnp[i].range !=0){
                     rnpData[cnt].Es    = rnp[i].Es ;
                     rnpData[cnt].rdiff = rnp[i].range - derampRange;
@@ -651,4 +658,3 @@ void ham1dx(double * data, int nx)
         data[x] *= ped + a * cos(val) * cos(val);
     }
 }
-

@@ -53,8 +53,8 @@ typedef struct scatProps {
 // Resistivities taken from http://chemistry.about.com/od/moleculescompounds/a/Table-Of-Electrical-Resistivity-And-Conductivity.htm
 //
 static scatProps materialProperties[NMATERIALS] = {
-//   Name           corrLen     Roughness   Rs          Rm      Specular    Diffuse     Shinyness
-    {"MATERIAL",    0.02,        0.0,        0.0,        9e9,   1.0,        0.0,        50.0        },
+//   Name           corrLen     Roughness   Rs          Rm     Specular    Diffuse     Shinyness
+    {"MATERIAL",    0.02,       0.0,        0.0,        9e9,   0.7,        0.0,        50.0        },
     {"ASPHALT",     0.5,        0.005,      1.0e18,     9e9,   0.8,        0.2,        30.0        },
     {"BRICK",       0.1,        0.001,      1.0e18,     9e9,   0.7,        0.3,        20.0        },
     {"CONCRETE",    0.2,        0.01,       120.0,      9e9,   0.3,        0.7,        10.0        },
