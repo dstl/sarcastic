@@ -6,7 +6,7 @@
  *                  Copyright (c) 2017 Dstl. All rights reserved.
  *
  *   Description:
- *
+ *      Version of sarcastic that uses threads rather than openCL calls
  *
  *
  *   CLASSIFICATION        :  UNCLASSIFIED
@@ -65,6 +65,8 @@ int main(int argc, const char * argv[]) {
     im_init_lib(&status, (char *)"sarcastic2", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status);
     
+    banner() ;
+
     CPHDHeader hdr ;
     TriangleMesh baseMesh ;
     TriangleMesh moverMesh ;

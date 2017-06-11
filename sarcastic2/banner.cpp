@@ -1,17 +1,16 @@
 /***************************************************************************
  *
- *       Module:    tryReadFile.cpp
- *      Program:    SARCASTIC
- *   Created by:    Darren on 15/03/2017.
- *                  Copyright (c) 2017 Dstl. All rights reserved.
+ *       Module:    banner.c
+ *      Program:    sarcastic
+ *   Created by:    Darren Muff on 11/06/2017.
+ *                  Copyright (c) 2017 [Dstl]. All rights reserved.
  *
  *   Description:
- *      Function to repeatedly try and read a file in until the user gets
- *      it right
+ *   SImple banner function to display version details about the program
  *
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  15/03/2017
+ *   CLASSIFICATION        :  OFFICIAL
+ *   Date of CLASSN        :  11/06/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -38,18 +37,17 @@
  *
  ***************************************************************************/
 
-#ifndef tryReadFile_hpp
-#define tryReadFile_hpp
-
 #include <stdio.h>
-#include <SIlib2/SIlib2.h>
+#include "SarcasticVersion.h"
 #include "colourCodes.h"
 
-///  prompt  : the text to display when asking the user for input (the default value will also be displayed)
-///  key     : a unique bit of text (such az "AzPixelSize") which the input system will then use to store parameter values
-///  help    : the text to display to the user when they just enter '?'
-///  def     : the default, ie the value to take if the user just presses return
-///
-char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def) ;
+void banner (){
+    printf(" \n");
+    printf(DARK GREEN "              SAR Ray Caster for the Intelligence Community [SARCASTIC]\n" NORMAL);
+    printf(BLUE "                          Version :" RED" %s \n", SARCASTIC_FULL_VERSION);
+    printf(BLUE "                    Revision: " RED"%s, %s \n",SARCASTIC_REVISION, SARCASTIC_VERSION_DATE);
+    printf(BLUE "               Copyright (c) 2017 " WHITE"[" BLUE"Dstl" WHITE"]" BLUE". All rights reserved.\n" RESETCOLOR);
+    printf(" \n");
 
-#endif /* tryReadFile_hpp */
+    return ;
+}

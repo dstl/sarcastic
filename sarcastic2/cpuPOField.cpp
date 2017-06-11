@@ -3,10 +3,10 @@
  *       Module:    cpuPOField.c
  *      Program:    SARCASTIC
  *   Created by:    Darren on 25/01/2015.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *                  Copyright (c) 2015 Dstl. All rights reserved.
  *
  *   Description:
- *      Function to use opencl to calculate the E field at the reciever
+ *      Function to calculate the E field at the reciever
  *      using Physical Optics
  *
  *

@@ -1,31 +1,12 @@
 # /***************************************************************************
 # *
 # *       Module:    Makefile
-# *      Program:    materialise
+# *      Program:    sarcastic2
 # *   Created by:    Darren Muff on 11/06/2017.
 # *                  Copyright (c) 2017 Dstl. All rights reserved.
 # *
 # *   Description:
-# *
-# *      This programme reads in a .ply file and breaks it down into Delaunay
-# *      triangles. The input .ply file can be a mesh or a triangle soup. In the
-# *      latter case (where vertex points can be unique to a triangle) the
-# *      programme searches for them and splits the soup up so that each triangle
-# *      has only onle pertner for each of its edges. The final trianglation has
-# *      a roughness applied that is determined by the input 'material'
-# *      characteristics and the surface roughness parameters specified in the
-# *      materialProperties.h header file. if any of the surfaces of the model
-# *      has a surface roughness that is not zero then the triangulation will
-# *      perform a post process pass to randomly 'roughen' the surface such that
-# *      the standard deviation is equivalent to the specified surface roughness.
-# *
-# *      The progremme makes extensive use of teh CGAL library [1] and in
-# *      particular the Delaunay triangulation routines [2]
-# *
-# *          [1] CGAL, Computational Geometry Algorithms Library, http://www.cgal.org
-# *          [2] Laurent Rineau. 2D Conforming Triangulations and Meshes.
-# *              In CGAL User and Reference Manual. CGAL Editorial Board, 4.10 edition, 2017
-# *
+# *     Makefile for sarcastic
 # *
 # *   CLASSIFICATION        :  OFFICIAL
 # *   Date of CLASSN        :  11/06/2017
@@ -54,29 +35,48 @@
 # * IRELAND.
 # *
 # ***************************************************************************/
-
-EXE_NAME = materialise
+EXE_NAME = sarcastic
 INSTALL_DIR = /usr/local/dstl/bin
 VERSION    := $(shell `pwd`/GenGitVersion.sh)
 
 CPPSRC = \
+../fastKdTree/AABB.cpp \
+banner.cpp \
+buildRays.cpp \
+../fastKdTree/buildTree.cpp \
+../fastKdTree/clipToAABB.cpp \
 ../colladaToTriFile/colladainterface.cpp \
-main.cpp \
+../fastKdTree/kdTreeNode.cpp \
+../fastKdTree/rayTrace.cpp \
+reflect.cpp \
+../fastKdTree/splitCandidate.cpp \
 ../Common/tinyxml/tinystr.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../Common/tinyxml/tinyxmlparser.cpp \
-../Common/TriangleMesh.cpp
+../Common/TriangleMesh.cpp \
+getUserInput.cpp \
+shadowRays.cpp \
+accelerateTriangles.cpp \
+cpuPOField.cpp \
+buildRopesAndBoxes.cpp \
+sarcastic2.cpp \
+tryReadFile.cpp \
+threadCore.cpp
 
 SRC = \
 ../Common/boxMullerRandom.c \
+../sarcastic/ecef2SceneCoords.c \
 ../Common/matrixMultiplication.c \
-../Common/pmath_rng.c \
-../sarcastic2/printProgress.c \
-../Common/ranf.c
+../Common/ranf.c \
+../sarcastic/RCS.c \
+../sarcastic/TxPowerPerRay.c \
+../Common/pmath_rng.c
 
 
-LIB = -lreadline -lSIlib2 -lboost_filesystem -lboost_system -lboost_thread-mt -lgmp.10 -lmpfr.4 -lCGAL_Core.12.0.0 -lCGAL.12.0.0
+LIB = -lreadline -lSIlib2
+
+
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
 CC   = clang
 
