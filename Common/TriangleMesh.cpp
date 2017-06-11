@@ -406,8 +406,7 @@ double pround(double x, int precision)
 
 void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
 {
-    SPVector NN, AAx,BBx,CCx;
-    float area, distance ;
+    SPVector AAx,BBx,CCx;
     int s ;
     
     AAx.x = pround(AA.x, 6);
@@ -420,16 +419,14 @@ void TriangleMesh::addTriangle(SPVector AA, SPVector BB, SPVector CC, int mat)
     CCx.y = pround(CC.y, 6);
     CCx.z = pround(CC.z, 6);
     
-    
     rawTri tri(AAx,BBx,CCx,mat);
     rawTriBuff.push_back(tri);
     s = (int)vertices.size() ;
     vertices.push_back(tri.aa);
     vertices.push_back(tri.bb);
     vertices.push_back(tri.cc);
-    nad(tri.aa, tri.bb, tri.cc, &NN, &area, &distance) ;
-    Triangle t = Triangle(s, s+1, s+2, tri.mat, NN, distance) ;
-    t.buildTransMats() ;
+    
+    Triangle t = Triangle(s, s+1, s+2, mat, tri.N, tri.d) ;
     triangles.push_back(t) ;
     
     sorted = false ;
@@ -540,7 +537,7 @@ void TriangleMesh::checkIntegrityAndRepair(){
         
         // Area precsion is set to match the precision stored in a .ply file
         //
-        if ( !(!(Ncalc == Ntri) || area < 1e-6 || isnan(distance)) ) {
+        if ( !(!(Ncalc == Ntri) || area < 1e-4 || isnan(distance)) ) {
             newtriangles.push_back(triangles[i]);
         }else{
             cnt++;
@@ -615,78 +612,6 @@ void TriangleMesh::buildTrianglelCentres()
     
     return ;
 }
-
-
-/*void TriangleMesh::buildTriangleAABBs(int dim, float pos)
-// function for calculating the AAB for each triangle in the mesh and clips it against
-// a split position
-//
-{
-    SPVector aa, bb, cc;
-    SPVector min, max;
-    
-    AABBs.clear() ;
-    
-    for(int i=0; i<triangles.size(); ++i){
-        VECT_CREATE( 9e9,  9e9,  9e9, min);
-        VECT_CREATE(-9e9, -9e9, -9e9, max);
-        aa = vertices[triangles[i].a].asSPVector() ;
-        bb = vertices[triangles[i].b].asSPVector() ;
-        cc = vertices[triangles[i].c].asSPVector() ;
-        
-        std::vector<double> xs;
-        std::vector<double> ys;
-        std::vector<double> zs;
-        
-        int k = dim;
-        xs.push_back(aa.cell[k]);
-        xs.push_back(bb.cell[k]);
-        xs.push_back(cc.cell[k]);
-        std::sort(xs.begin(), xs.end());
-        min.cell[k] = xs[0];
-        max.cell[k] = xs[2];
-        
-        
-        // if this triangle straddles the split plane then set the
-        // split plane to be the max or min
-        // This may then change the AABB on each side of teh split plane
-        // so the min and max in the other two dims need to be reconsidered
-        //
-        if(min.cell[dim] < pos && max.cell[dim] > pos){
-            
-            
-            min.x = (aa.x < min.x) ? aa.x : min.x ;
-            min.x = (bb.x < min.x) ? bb.x : min.x ;
-            min.x = (cc.x < min.x) ? cc.x : min.x ;
-            min.y = (aa.y < min.y) ? aa.y : min.y ;
-            min.y = (bb.y < min.y) ? bb.y : min.y ;
-            min.y = (cc.y < min.y) ? cc.y : min.y ;
-            min.z = (aa.z < min.z) ? aa.z : min.z ;
-            min.z = (bb.z < min.z) ? bb.z : min.z ;
-            min.z = (cc.z < min.z) ? cc.z : min.z ;
-            
-            max.x = (aa.x > max.x) ? aa.x : max.x ;
-            max.x = (bb.x > max.x) ? bb.x : max.x ;
-            max.x = (cc.x > max.x) ? cc.x : max.x ;
-            max.y = (aa.y > max.y) ? aa.y : max.y ;
-            max.y = (bb.y > max.y) ? bb.y : max.y ;
-            max.y = (cc.y > max.y) ? cc.y : max.y ;
-            max.z = (aa.z > max.z) ? aa.z : max.z ;
-            max.z = (bb.z > max.z) ? bb.z : max.z ;
-            max.z = (cc.z > max.z) ? cc.z : max.z ;
-        
-        }
-        
-        // If the triangle does not straddle teh split plane then
-        // we can just use teh calculated AABB
-        //
-        
-        
-        
-        
-    }
-    
-}*/
 
 // matrices is a function that calculates the coordinate tranformation matrices
 // for converting from a global coordinate system to a local system where the
@@ -766,3 +691,155 @@ long int TriangleMesh::size(){
     long abs = AABBs.size() * sizeof(AABB) ;
     return (rtb + ver + tri + hfe + abs) ;
 }
+
+void TriangleMesh::monogamise()
+// Check the mesh for triangles that have more than one partner and divide it
+// so that it only has one partner per side
+//
+{
+    int v1, v2, v3 ;
+    Triangle tri ;
+    bool triAdded ;
+    do {
+        triAdded = false ;
+        int itri=0;
+        while(itri < triangles.size()){
+            v1 = triangles[itri].a ;
+            v2 = triangles[itri].b ;
+            v3 = triangles[itri].c ;
+            
+            // Search all vertices in the mesh and see if one lands on any of the sides of the
+            // subject triangle specified by index 'itri'
+            //
+            for (int vit = 0; vit < vertices.size(); ++vit) {
+                if (isPointOnSegment(vit, v1, v2)) {
+                    tri = Triangle(v1, vit, v3);
+                    triangles.push_back(tri) ;
+                    tri = Triangle(vit, v2, v3);
+                    triangles.push_back(tri) ;
+                    triangles.erase(triangles.begin()+itri) ;
+                    triAdded = true ;
+                    break ;
+                }
+                if (isPointOnSegment(vit, v2, v3)) {
+                    tri = Triangle(v2, vit, v1);
+                    triangles.push_back(tri) ;
+                    tri = Triangle(vit, v3, v1);
+                    triangles.push_back(tri) ;
+                    triangles.erase(triangles.begin()+itri) ;
+                    triAdded = true ;
+                    break ;
+                }
+                if (isPointOnSegment(vit, v3, v1)) {
+                    tri = Triangle(v3, vit, v2);
+                    triangles.push_back(tri) ;
+                    tri = Triangle(vit, v1, v2);
+                    triangles.push_back(tri) ;
+                    triangles.erase(triangles.begin()+itri) ;
+                    triAdded = true ;
+                    break ;
+                }
+            }
+            
+            // If a vertex has been found to be on a triangle side then an additional
+            // triangle has been added to the mesh. If so start again qith all triangles
+            //
+            if (triAdded) {
+                break ;
+            }
+            itri++;
+        }
+        
+    }while (triAdded) ;
+    
+    monogamous = true ;
+    
+}
+
+bool TriangleMesh::isPointOnSegment(int pt, int vert1, int vert2)
+// Tests if vertex denoted by pt is on line between vert1 and vert2
+// From http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+//
+{
+    SPVector pv, v1, v2, _t1, _t2, _t3 ;
+    double d ;
+    double approxZero = 1e-6 ; // 1 micron
+
+    pv  = vertices[pt].asSPVector() ;
+    v1  = vertices[vert1].asSPVector() ;
+    v2  = vertices[vert2].asSPVector() ;
+
+    // Check special cases where line is zero length or test point is at a vertex
+    //
+    if(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return false ;
+    if(v1.x == pv.x && v1.y == pv.y && v1.z == pv.z) return false ;
+    if(v2.x == pv.x && v2.y == pv.y && v2.z == pv.z) return false ;
+
+    
+    VECT_SUB(pv, v1, _t1) ;
+    VECT_SUB(pv, v2, _t2) ;
+    VECT_CROSS(_t1, _t2, _t3) ;
+    VECT_SUB(v2, v1, _t1) ;
+    d = VECT_MAG(_t3) / VECT_MAG(_t1) ;
+    
+    if (d < approxZero) {
+        // Point is on line from vert1 to vert 2
+        //
+        for(int i=0; i<3; ++i){
+            if (pv.cell[i] < std::min(v1.cell[i],v2.cell[i]) || pv.cell[i] > std::max(v1.cell[i],v2.cell[i])) {
+                return false ;
+            }
+        }
+        return true;
+    }
+    return false ;
+}
+
+void TriangleMesh::removeDegenerates(){
+    
+    size_t before,after;
+    
+    before = triangles.size() ;
+    
+    // First check that vertices are all different and remove any duplicates
+    //
+    std::vector<Triangle3DVec> newVerts(vertices) ;
+    sort(newVerts.begin(), newVerts.end());
+    newVerts.erase( unique(newVerts.begin(), newVerts.end()), newVerts.end()) ;
+    
+    // Find new index for triangle by using old index to find old vertex and search
+    // for that vertex in the new vertex vector.
+    //
+    for(int t=0; t<triangles.size(); ++t){
+        Triangle3DVec pa = vertices[triangles[t].a] ;
+        Triangle3DVec pb = vertices[triangles[t].b] ;
+        Triangle3DVec pc = vertices[triangles[t].c] ;
+        
+        triangles[t].a = (int) (lower_bound(newVerts.begin(), newVerts.end(), pa) - newVerts.begin()) ;
+        triangles[t].b = (int) (lower_bound(newVerts.begin(), newVerts.end(), pb) - newVerts.begin()) ;
+        triangles[t].c = (int) (lower_bound(newVerts.begin(), newVerts.end(), pc) - newVerts.begin()) ;
+        
+    }
+    
+    std::swap(vertices,newVerts);
+    
+    // now check that each triangle has 3 different vertices
+    //
+    int itri = 0;
+    while(itri < triangles.size()){
+        if(triangles[itri].a == triangles[itri].b || triangles[itri].a == triangles[itri].c || triangles[itri].b == triangles[itri].c){
+            triangles.erase(triangles.begin()+itri) ;
+        }else{
+            itri++ ;
+        }
+    }
+    
+    after = triangles.size() ;
+    if(before != after){
+        printf("%lu degenerate triangles found\n",before-after);
+    }
+    
+    return ;
+    
+}
+

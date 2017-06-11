@@ -223,7 +223,9 @@ class TriangleMesh {
 private:
     std::vector<rawTri> rawTriBuff ;
     bool halfEdgesBuilt = false ;
-    
+    bool isPointOnSegment(int pt, int vert1, int vert2) ;
+    bool monogamous = false ;
+
 public:
     bool sorted = false ;
     std::vector<Triangle3DVec> vertices ;
@@ -286,6 +288,9 @@ public:
     SPVector vertCforTri(int triIndx) { return vertices[triangles[triIndx].c].asSPVector() ; }
     long int size() ;
     void buildTrianglelCentres() ;
+    void monogamise();
+    void removeDegenerates() ;
+    bool isMonogamous(){return monogamous;};
 
 
     
