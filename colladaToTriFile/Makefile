@@ -6,7 +6,7 @@
 # *                  Copyright (c) 2015 [dstl]. All rights reserved.
 # *
 # *   Description:
-# *      Makefile
+# *      Makefile for colladaToTriFile
 # *
 # *   CLASSIFICATION        :  UNCLASSIFIED
 # *   Date of CLASSN        :  15/04/2015
@@ -36,45 +36,44 @@
 # *
 # ***************************************************************************/
 
-PROJECT_DIR = /Users/darren/Development/sarcastic
+EXE         = colladaToTriFile
 INSTALL_DIR = /usr/local/dstl/bin
 
 CPPSRC = \
 colladainterface.cpp \
 main.cpp \
-tinystr.cpp \
-tinyxml.cpp \
-tinyxmlerror.cpp \
-tinyxmlparser.cpp \
-TriangleFile.cpp \
-trianglecpp.cpp
+../Common/tinyxml/tinystr.cpp \
+../Common/tinyxml/tinyxml.cpp \
+../Common/tinyxml/tinyxmlerror.cpp \
+../Common/tinyxml/tinyxmlparser.cpp \
+../Common/TriangleMesh.cpp 
 
-SRC = matrixMultiplication.c
+SRC = ../Common/matrixMultiplication.c
 
 LIB = -lreadline -lSIlib
-CPP  = clang -x c++ -std=gnu++11 -stdlib=libc++
-CC   = clang
+CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
+CC   = clang -O3
 
-OBJ    = $(patsubst %.c, objs/%.o, $(SRC))
-CPPOBJ = $(patsubst %.cpp, objs/%.o, $(CPPSRC))
+OBJ    = $(patsubst %.c, %.o, $(SRC))
+CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-CFLAGS = -m64 -c `SIlib-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml
-LFLAGS = -arch x86_64 -L/usr/local/dstl/lib
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I. -I../sarcastic -I../sarcastic2 -I../Common -I../Common/tinyxml -I../fastKdTree -I/usr/local/include
+LFLAGS = -arch x86_64 -L/usr/local/dstl/lib `SIlib2-config --libs` -L/usr/local/lib 
 
-objs/%.o:	%.cpp
+%.o:	%.cpp
 		$(CPP) $< $(CFLAGS) -o $@
 
-objs/%.o:	%.c
+%.o:	%.c
 		$(CC) $< $(CFLAGS) -o $@
 
-colladaToTriFile: $(OBJ) $(CPPOBJ)
-	clang++ -stdlib=libc++ $(OBJ) $(CPPOBJ) $(LFLAGS) $(LIB) -o ../bin/colladaToTriFile
+$(EXE): $(OBJ) $(CPPOBJ)
+	clang++ -stdlib=libc++ $(OBJ) $(CPPOBJ) $(LFLAGS) $(LIB) -o ../bin/$(EXE)
 
 clean:
-	rm -fr objs/*.o
+	rm -fr $(OBJ) $(CPPOBJ) ../bin/$(EXE)
 
 install:
-	cp -p ../bin/colladaToTriFile $(INSTALL_DIR)
+	cp -p ../bin/$(EXE) $(INSTALL_DIR)
 
 	
 
