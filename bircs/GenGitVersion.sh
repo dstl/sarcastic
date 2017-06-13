@@ -2,7 +2,7 @@
 #***************************************************************************
 #
 #       Module:    GenGitVersion
-#      Program:    SARCASTIC
+#      Program:    BIRCS
 #   Created by:    Darren Muff on 19/07/2013.
 #                  Copyright (c) 2013 [dstl]. All rights reserved.
 #

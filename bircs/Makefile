@@ -1,7 +1,7 @@
 # /***************************************************************************
 # *
 # *       Module:    Makefile
-# *      Program:    sarcastic2
+# *      Program:    bircs
 # *   Created by:    Darren Muff on 11/06/2017.
 # *                  Copyright (c) 2017 Dstl. All rights reserved.
 # *
@@ -35,56 +35,58 @@
 # * IRELAND.
 # *
 # ***************************************************************************/
-EXE_NAME = sarcastic
+EXE_NAME = bircs
 INSTALL_DIR = /usr/local/dstl/bin
 VERSION    := $(shell `pwd`/GenGitVersion.sh)
+OCLKERNELSPATH = \"/users/darren/Dropbox/Development/sarcastic/bircs/kernels\"
 
 CPPSRC = \
-../fastKdTree/AABB.cpp \
-banner.cpp \
-buildRays.cpp \
-../fastKdTree/buildTree.cpp \
-../fastKdTree/clipToAABB.cpp \
-../colladaToTriFile/colladainterface.cpp \
-../fastKdTree/kdTreeNode.cpp \
+../sarcastic2/buildRays.cpp \
 ../fastKdTree/rayTrace.cpp \
-reflect.cpp \
-../fastKdTree/splitCandidate.cpp \
+../Common/tinyxml/tinyxmlparser.cpp \
 ../Common/tinyxml/tinystr.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
-../Common/tinyxml/tinyxmlparser.cpp \
+../colladaToTriFile/colladainterface.cpp \
+oclReflect.cpp \
+../fastKdTree/splitCandidate.cpp \
+../fastKdTree/AABB.cpp \
+../fastKdTree/clipToAABB.cpp \
+../fastKdTree/kdTreeNode.cpp \
+../fastKdTree/buildTree.cpp \
 ../Common/TriangleMesh.cpp \
-getUserInput.cpp \
-shadowRays.cpp \
-accelerateTriangles.cpp \
-cpuPOField.cpp \
-buildRopesAndBoxes.cpp \
-sarcastic2.cpp \
-tryReadFile.cpp \
+../sarcastic2/tryReadFile.cpp \
+../sarcastic2/accelerateTriangles.cpp \
+buildKernel.cpp \
+../sarcastic2/buildRopesAndBoxes.cpp \
+../sarcastic2/cpuPOField.cpp \
+main.cpp \
+oclRandomRays.cpp \
+oclBuildShadowRays.cpp \
 threadCore.cpp
 
 SRC = \
-../Common/boxMullerRandom.c \
-../sarcastic/ecef2SceneCoords.c \
+bircsBanner.c \
+../sarcastic/TxPowerPerRay.c \
 ../Common/matrixMultiplication.c \
 ../Common/ranf.c \
+../Common/boxMullerRandom.c \
+../Common/pmath_rng.c \
 ../sarcastic/RCS.c \
-../sarcastic/TxPowerPerRay.c \
-../Common/pmath_rng.c
+../sarcastic/OpenCLUtils.c
 
 
 LIB = -lreadline -lSIlib2
 
 
-CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
-CC   = clang
+CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++ -DOCLKERNELSPATH=$(OCLKERNELSPATH)
+CC   = clang -DOCLKERNELSPATH=$(OCLKERNELSPATH)
 
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
 CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToTriFile
-LFLAGS = -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
+LFLAGS = -framework OpenCL -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
 
 %.o:	%.cpp
 		$(CPP) $< $(CFLAGS) -o $@

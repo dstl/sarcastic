@@ -1,26 +1,16 @@
-//
-//  oclBuildShadowRays.cpp
-//  sarcastic
-//
-//  Created by Darren Muff on 17/03/2017.
-//  Copyright © 2017 Dstl. All rights reserved.
-//
-
-#include "oclBuildShadowRays.hpp"
-
 /***************************************************************************
  *
- *       Module:    oclBuildShadowRays.c
- *      Program:    SARCASTIC
- *   Created by:    Darren on 01/08/2013.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *       Module:    oclBuildSHadowRays.cpp
+ *      Program:    bircs
+ *   Created by:    Darren Muff on 12/06/2017.
+ *                  Copyright (c) 2017 [Dstl]. All rights reserved.
  *
  *   Description:
- *      Function to use opencl to build an array of shadowrays
+ *     FUnction to build shadow rays for bircs using OpenCL
  *
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  09/03/2014
+ *   CLASSIFICATION        :  OFFICIAL
+ *   Date of CLASSN        :  12/06/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -48,6 +38,7 @@
  ***************************************************************************/
 
 #include "threadCore.hpp"
+#include "oclBuildShadowRays.hpp"
 
 
 void oclBuildShadowRays(cl_context          context,            // OpenCL context - alrready built

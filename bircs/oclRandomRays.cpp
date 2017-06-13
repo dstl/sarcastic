@@ -1,26 +1,16 @@
-//
-//  oclRandomRays.cpp
-//  sarcastic
-//
-//  Created by Darren Muff on 17/03/2017.
-//  Copyright © 2017 Dstl. All rights reserved.
-//
-
-#include "oclRandomRays.hpp"
-
 /***************************************************************************
  *
- *       Module:    oclRandomRays.c
- *      Program:    SARCASTIC
- *   Created by:    Darren on 01/08/2013.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *       Module:    oclRandomRays.hpp
+ *      Program:    bircs
+ *   Created by:    Darren Muff on 12/06/2017.
+ *                  Copyright (c) 2017 [Dstl]. All rights reserved.
  *
  *   Description:
- *      Function to use opencl to generate an array of random rays
+ *     Function to build an array of rays for bircs using OpenCL
  *
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  15/01/2014
+ *   CLASSIFICATION        :  OFFICIAL
+ *   Date of CLASSN        :  12/06/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -47,7 +37,7 @@
  *
  ***************************************************************************/
 
-
+#include "oclRandomRays.hpp"
 #include "threadCore.hpp"
 
 void oclRandomRays(cl_context context,          // OpenCL context - alrready built

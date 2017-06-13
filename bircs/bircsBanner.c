@@ -1,16 +1,16 @@
 /***************************************************************************
  *
  *       Module:    banner.c
- *      Program:    tdp2
- *   Created by:    Darren Muff on 12/03/2013.
- *                  Copyright (c) 2013 [Dstl]. All rights reserved.
+ *      Program:    bircs
+ *   Created by:    Darren Muff on 12/06/2017.
+ *                  Copyright (c) 2017 [Dstl]. All rights reserved.
  *
  *   Description:
- *   <ENTER DESCRIPTION HERE>
+ *      Banner file for BIRCS
  *
  *
- *   CLASSIFICATION        :  <PENDING>
- *   Date of CLASSN        :  12/03/2013
+ *   CLASSIFICATION        :  OFFICIAL
+ *   Date of CLASSN        :  12/06/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),

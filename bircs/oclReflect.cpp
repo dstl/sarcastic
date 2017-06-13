@@ -1,26 +1,16 @@
-//
-//  oclReflect.cpp
-//  sarcastic
-//
-//  Created by Darren Muff on 17/03/2017.
-//  Copyright © 2017 Dstl. All rights reserved.
-//
-
-#include "oclReflect.hpp"
-
 /***************************************************************************
  *
- *       Module:    oclReflect.c
- *      Program:    SARCASTIC
- *   Created by:    Darren on 01/08/2013.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *       Module:    oclReflect.hpp
+ *      Program:    bircs
+ *   Created by:    Darren Muff on 12/06/2017.
+ *                  Copyright (c) 2017 [Dstl]. All rights reserved.
  *
  *   Description:
- *      Function to use opencl to reflect an array of rays
+ *     Function to build an array of reflection rays for bircs using OpenCL
  *
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  09/03/2014
+ *   CLASSIFICATION        :  OFFICIAL
+ *   Date of CLASSN        :  12/06/2017
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -46,7 +36,7 @@
  * IRELAND.
  *
  ***************************************************************************/
-
+#include "oclReflect.hpp"
 #include "threadCore.hpp"
 
 void oclReflect(cl_context          context,            // OpenCL context - alrready built
