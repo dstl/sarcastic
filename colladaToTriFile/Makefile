@@ -42,6 +42,7 @@ INSTALL_DIR = /usr/local/dstl/bin
 CPPSRC = \
 colladainterface.cpp \
 main.cpp \
+banner.cpp \
 ../Common/tinyxml/tinystr.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
