@@ -168,6 +168,7 @@
 		95C9D1021EEF142300EB61D3 /* oclReflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D1001EEF142300EB61D3 /* oclReflect.cpp */; };
 		95C9D1051EEF145D00EB61D3 /* oclBuildShadowRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D1031EEF145D00EB61D3 /* oclBuildShadowRays.cpp */; };
 		95C9D1061EEF145D00EB61D3 /* oclRandomRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D1041EEF145D00EB61D3 /* oclRandomRays.cpp */; };
+		95C9D10E1EF05C7B00EB61D3 /* banner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D10D1EF05C7B00EB61D3 /* banner.cpp */; };
 		95CC27F31EC0AC4A0092A2CE /* reflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F11EC0AC4A0092A2CE /* reflect.cpp */; };
 		95CC27F61EC0B99D0092A2CE /* shadowRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */; };
 		95CC27F91EC0BC930092A2CE /* buildRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F71EC0BC930092A2CE /* buildRays.cpp */; };
@@ -665,6 +666,8 @@
 		95C9D1091EEF165A00EB61D3 /* oclRandomRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclRandomRays.hpp; sourceTree = "<group>"; };
 		95C9D10A1EEF165A00EB61D3 /* oclReflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oclReflect.hpp; sourceTree = "<group>"; };
 		95C9D10B1EEF189100EB61D3 /* Makefile */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = Makefile; sourceTree = "<group>"; };
+		95C9D10D1EF05C7B00EB61D3 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = colladaToTriFile/banner.cpp; sourceTree = SOURCE_ROOT; };
+		95C9D10F1EF05DA200EB61D3 /* GenGitVersion.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = GenGitVersion.sh; path = colladaToTriFile/GenGitVersion.sh; sourceTree = SOURCE_ROOT; };
 		95CC27F11EC0AC4A0092A2CE /* reflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reflect.cpp; sourceTree = "<group>"; };
 		95CC27F21EC0AC4A0092A2CE /* reflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reflect.hpp; sourceTree = "<group>"; };
 		95CC27F41EC0B99D0092A2CE /* shadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shadowRays.cpp; sourceTree = "<group>"; };
@@ -1224,7 +1227,9 @@
 		9562D9CB1B483FEA00EC6D83 /* colladaToTriFile */ = {
 			isa = PBXGroup;
 			children = (
+				95C9D10F1EF05DA200EB61D3 /* GenGitVersion.sh */,
 				95AE61C11B9DD7CF0056AA4C /* Makefile */,
+				95C9D10D1EF05C7B00EB61D3 /* banner.cpp */,
 				95ABA80B1B5F7FAB00A485BA /* colladainterface.cpp */,
 				95ABA80C1B5F7FAB00A485BA /* colladainterface.h */,
 				95ABA80D1B5F7FAB00A485BA /* main.cpp */,
@@ -1898,6 +1903,7 @@
 				9562DA431B48465400EC6D83 /* tinyxmlparser.cpp in Sources */,
 				95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */,
 				95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */,
+				95C9D10E1EF05C7B00EB61D3 /* banner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

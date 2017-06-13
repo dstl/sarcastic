@@ -2,9 +2,9 @@
 #***************************************************************************
 #
 #       Module:    GenGitVersion
-#      Program:    Materialise
-#   Created by:    Darren Muff on 19/07/2013.
-#                  Copyright (c) 2013 [dstl]. All rights reserved.
+#      Program:    colladaToTriFile
+#   Created by:    Darren Muff on 11/06/2017.
+#                  Copyright (c) 2017 [dstl]. All rights reserved.
 #
 #   Description:
 #       This script automatically sets the revision, full and short version
@@ -15,8 +15,8 @@
 #       and be in the format v(or V)x.x.x 
 #
 #
-#   CLASSIFICATION        :  UNCLASSIFIED
-#   Date of CLASSN        :  19/07/2013
+#   CLASSIFICATION        :  OFFICIAL
+#   Date of CLASSN        :  11/06/2017
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -57,20 +57,20 @@ REVISION=$(git rev-list master | wc -l | awk '{print $1}')
 # Also print the version date
 VERSION_DATE=$(git show --format="%ci" | head -1)
 
-echo "#ifdef MATERIALISE_REVISION"                             > materialise_version.h
-echo "#undef MATERIALISE_REVISION"                             >>materialise_version.h
-echo "#endif"                                                  >>materialise_version.h
-echo "#ifdef MATERIALISE_SHORT_VERSION"                        >>materialise_version.h
-echo "#undef MATERIALISE_SHORT_VERSION"                        >>materialise_version.h
-echo "#endif"                                                  >>materialise_version.h
-echo "#ifdef MATERIALISE_FULL_VERSION"                         >>materialise_version.h
-echo "#undef MATERIALISE_FULL_VERSION"                         >>materialise_version.h
-echo "#endif"                                                  >>materialise_version.h
-echo "#ifdef MATERIALISE_VERSION_DATE"                         >>materialise_version.h
-echo "#undef MATERIALISE_VERSION_DATE"                         >>materialise_version.h
-echo "#endif"                                                  >>materialise_version.h
-echo "#define MATERIALISE_REVISION \"${REVISION}\""            >>materialise_version.h
-echo "#define MATERIALISE_SHORT_VERSION \"${SHORT_VERSION}\""  >>materialise_version.h
-echo "#define MATERIALISE_FULL_VERSION \"${FULL_VERSION}\""    >>materialise_version.h
-echo "#define MATERIALISE_VERSION_DATE \"${VERSION_DATE}\""    >>materialise_version.h
+echo "#ifdef CTT_REVISION"                                > CTTVersion.h
+echo "#undef CTT_REVISION"                                >>CTTVersion.h
+echo "#endif"                                             >>CTTVersion.h
+echo "#ifdef CTT_SHORT_VERSION"                           >>CTTVersion.h
+echo "#undef CTT_SHORT_VERSION"                           >>CTTVersion.h
+echo "#endif"                                             >>CTTVersion.h
+echo "#ifdef CTT_FULL_VERSION"                            >>CTTVersion.h
+echo "#undef CTT_FULL_VERSION"                            >>CTTVersion.h
+echo "#endif"                                             >>CTTVersion.h
+echo "#ifdef CTT_VERSION_DATE"                            >>CTTVersion.h
+echo "#undef CTT_VERSION_DATE"                            >>CTTVersion.h
+echo "#endif"                                             >>CTTVersion.h
+echo "#define CTT_REVISION \"${REVISION}\""               >>CTTVersion.h
+echo "#define CTT_SHORT_VERSION \"${SHORT_VERSION}\""     >>CTTVersion.h
+echo "#define CTT_FULL_VERSION \"${FULL_VERSION}\""       >>CTTVersion.h
+echo "#define CTT_VERSION_DATE \"${VERSION_DATE}\""       >>CTTVersion.h
 echo "${FULL_VERSION}"

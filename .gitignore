@@ -36,3 +36,4 @@ Common/tinyxml
 BircsVersion.h
 .*rc_*
 materialise_version.h
+CTTVersion.h

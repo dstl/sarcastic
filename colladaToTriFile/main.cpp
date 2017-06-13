@@ -14,6 +14,7 @@ extern "C" {
 }
 #include "TriangleMesh.hpp"
 
+void banner ();
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def) ;
 
 std::vector<ColGeom> geom_vec;    // Vector containing COLLADA meshes
@@ -26,6 +27,7 @@ int main(int argc, char* argv[]) {
     im_init_lib(&status, (char *)"readCollada", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status);
     
+    banner(); 
     char * inFile, * outFile ;
     
     inFile = tryReadFile("Collada .dae file to read", "inFile",

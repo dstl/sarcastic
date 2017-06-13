@@ -103,6 +103,15 @@ typedef K::Point_2                                              Point_2;
 #define REPORTN 100
 #define VERBOSE ((int) 0)
 
+#define RESETCOLOR  "\033[0m"
+#define RED         "\033[31m"
+#define GREEN       "\033[32m"
+#define YELLOW      "\033[33m"
+#define BLUE        "\033[34m"
+#define WHITE       "\033[37m"
+#define NORMAL      "\033[22m"
+#define DARK        "\033[1m"
+
 using namespace std;
 
 void roughenPoint(SPVector *p, Triangle t);
@@ -141,13 +150,12 @@ int main(int argc, const char * argv[]) {
     double *points ;
 
     printf(" \n");
-    printf("                              Materialise\n");
-    printf("                          Version : %s \n", MATERIALISE_FULL_VERSION);
-    printf("                    Revision: %s, %s \n",MATERIALISE_REVISION, MATERIALISE_VERSION_DATE);
-    printf("               Copyright (c) 2013 [Dstl]. All rights reserved.\n");
+    printf(DARK GREEN "                              Materialise\n" NORMAL);
+    printf(BLUE "                          Version :" RED" %s \n", MATERIALISE_FULL_VERSION);
+    printf(BLUE "                    Revision: " RED"%s, %s \n",MATERIALISE_REVISION, MATERIALISE_VERSION_DATE);
+    printf(BLUE "               Copyright (c) 2017 " WHITE"[" BLUE"Dstl" WHITE"]" BLUE". All rights reserved.\n" RESETCOLOR);
     printf(" \n");
 
-    
     SPStatus status ;
     im_init_status(status, 0);
     im_init_lib(&status, "materialise", argc, (char **)argv);
