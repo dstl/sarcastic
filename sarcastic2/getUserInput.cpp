@@ -138,11 +138,11 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     }
     
     *nAzBeam = *nElBeam = 100 ;
-    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
-                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
-    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
-                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
-    
+//    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
+//                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
+//    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
+//                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
+//    
     
     // To save processing time only read in the CPHDFile PHD if we are going to create a new
     // CPHD file

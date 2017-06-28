@@ -136,10 +136,17 @@
 		9585F8DF1EBC8E5200257FBB /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA371B48465400EC6D83 /* tinyxmlparser.cpp */; };
 		9585F8E01EBC8F2000257FBB /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
 		9585F8E11EBCB3C700257FBB /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
-		958BAB531EEB1C0100539F5F /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F222E41EDAD939001DD6A3 /* libSIlib2-2.1.5.a */; };
 		958BAB541EED57D600539F5F /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
 		958BAB561EED5FDD00539F5F /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
 		958BAB571EED5FF300539F5F /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
+		958FE5181F0395F000BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE5191F0395FF00BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51A1F03961300BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51B1F03962300BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51C1F03963200BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51D1F03964000BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51E1F03964E00BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
+		958FE51F1F03965B00BD0F28 /* libSIlib2-2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */; };
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95A1F1E31E6C2F8B00FF4A20 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */; };
 		95A1F1E61E6C7C3F00FF4A20 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
@@ -158,11 +165,6 @@
 		95B5F8A71B7735870095A6AB /* oclKdTreeHits.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D818F4289400EAD4F3 /* oclKdTreeHits.c */; };
 		95B5F8A81B7735AD0095A6AB /* oclRandomRays.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1D918F4289400EAD4F3 /* oclRandomRays.c */; };
 		95B5F8A91B7735AD0095A6AB /* oclReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DB18F4289400EAD4F3 /* oclReflect.c */; };
-		95C9D0F41EEDC2D100EB61D3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */; };
-		95C9D0F51EEDC2EC00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */; };
-		95C9D0F61EEDC30200EB61D3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */; };
-		95C9D0F71EEDC32E00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */; };
-		95C9D0F81EEDC34D00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */; };
 		95C9D0FB1EEDC86100EB61D3 /* banner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D0FA1EEDC86100EB61D3 /* banner.cpp */; };
 		95C9D1011EEF142300EB61D3 /* buildKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D0FF1EEF142300EB61D3 /* buildKernel.cpp */; };
 		95C9D1021EEF142300EB61D3 /* oclReflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D1001EEF142300EB61D3 /* oclReflect.cpp */; };
@@ -203,8 +205,6 @@
 		95E9AE5E1D91B1000063993D /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
 		95F222E21EDAD0E8001DD6A3 /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F222E01EDAD0B0001DD6A3 /* libboost_system.dylib */; };
 		95F222E31EDAD0F9001DD6A3 /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F222DE1EDAD092001DD6A3 /* libboost_filesystem.dylib */; };
-		95F222E51EDAD939001DD6A3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F222E41EDAD939001DD6A3 /* libSIlib2-2.1.5.a */; };
-		95F222E61EDAD981001DD6A3 /* libSIlib2-2.1.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F222E41EDAD939001DD6A3 /* libSIlib2-2.1.5.a */; };
 		95F222F01EDF6F9A001DD6A3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95F222EF1EDF6F9A001DD6A3 /* main.cpp */; };
 		95F222F41EDF733E001DD6A3 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9514820A1ECF489D00AD72EC /* libboost_thread-mt.dylib */; };
 		95F222F51EDF733E001DD6A3 /* libCGAL_Core.12.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 951482061ECF457E00AD72EC /* libCGAL_Core.12.0.0.dylib */; };
@@ -628,6 +628,10 @@
 		958F014A1CD34B9500D24F00 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = Common/colourCodes.h; sourceTree = SOURCE_ROOT; };
 		958F014B1CD34D1900D24F00 /* materialise_version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = materialise_version.h; sourceTree = "<group>"; };
 		958F607C19E9B20F00DD1F50 /* libSIlib-1.1-7-e17b94d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib-1.1-7-e17b94d.a"; path = "../../../../usr/local/dstl/lib/libSIlib-1.1-7-e17b94d.a"; sourceTree = "<group>"; };
+		958FE4FB1EF7CA8500BD0F28 /* libSIlib2-2.1.5-3-9db1551.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.5-3-9db1551.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.1.5-3-9db1551.a"; sourceTree = "<group>"; };
+		958FE5071EFD665F00BD0F28 /* libSIlib2-2.1.5-3-9db1551-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.5-3-9db1551-dirty.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.1.5-3-9db1551-dirty.a"; sourceTree = "<group>"; };
+		958FE50F1EFE757500BD0F28 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../../usr/local/dstl/lib; sourceTree = "<group>"; };
+		958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.2.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.2.a"; sourceTree = "<group>"; };
 		95A046431AFBCD7E00FD0114 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = RCS.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCS.h; sourceTree = "<group>"; };
 		95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildTree.cpp; sourceTree = "<group>"; };
@@ -699,7 +703,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C9D0F61EEDC30200EB61D3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51C1F03963200BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				957A59F41CF9AAFA00981E60 /* libreadline.tbd in Frameworks */,
 				957A59F31CF9AAEF00981E60 /* libexpat.tbd in Frameworks */,
 				957B840A17AD25DA00B963DE /* OpenCL.framework in Frameworks */,
@@ -722,7 +726,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C9D0F51EEDC2EC00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51B1F03962300BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				957A59F11CF9AAD500981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59F21CF9AAD500981E60 /* libfftw3f.a in Frameworks */,
 				957A59F01CF9AAB200981E60 /* libexpat.tbd in Frameworks */,
@@ -734,7 +738,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C9D0F71EEDC32E00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51D1F03964000BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				95584C381E12A6CA00C7AFDB /* libreadline.tbd in Frameworks */,
 				95584C361E12A6BE00C7AFDB /* libfftw3f_threads.a in Frameworks */,
 				95584C371E12A6BE00C7AFDB /* libfftw3f.a in Frameworks */,
@@ -745,7 +749,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C9D0F41EEDC2D100EB61D3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51A1F03961300BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				957A59E91CF9AA2200981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59EA1CF9AA2200981E60 /* libfftw3f.a in Frameworks */,
 				957A59E81CF9A9F700981E60 /* libreadline.tbd in Frameworks */,
@@ -757,7 +761,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C9D0F81EEDC34D00EB61D3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51F1F03965B00BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				9585F8D61EBC8DC800257FBB /* libreadline.tbd in Frameworks */,
 				9585F8CE1EBC8D3A00257FBB /* libfftw3f_threads.a in Frameworks */,
 				9585F8CF1EBC8D3A00257FBB /* libfftw3f.a in Frameworks */,
@@ -768,7 +772,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				958BAB531EEB1C0100539F5F /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE51E1F03964E00BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				95E6273B1E7C8B3900BC7933 /* libexpat.tbd in Frameworks */,
 				954BD4F71E795A24007A12E4 /* libreadline.tbd in Frameworks */,
 				954BD4F21E794B61007A12E4 /* libfftw3f_threads.a in Frameworks */,
@@ -780,7 +784,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95F222E51EDAD939001DD6A3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE5191F0395FF00BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				95F222E31EDAD0F9001DD6A3 /* libboost_filesystem.dylib in Frameworks */,
 				95F222E21EDAD0E8001DD6A3 /* libboost_system.dylib in Frameworks */,
 				9514820D1ECF489D00AD72EC /* libboost_thread-mt.dylib in Frameworks */,
@@ -798,7 +802,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95F222E61EDAD981001DD6A3 /* libSIlib2-2.1.5.a in Frameworks */,
+				958FE5181F0395F000BD0F28 /* libSIlib2-2.2.a in Frameworks */,
 				957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */,
 				957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */,
 				957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */,
@@ -1183,6 +1187,10 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */,
+				958FE50F1EFE757500BD0F28 /* lib */,
+				958FE5071EFD665F00BD0F28 /* libSIlib2-2.1.5-3-9db1551-dirty.a */,
+				958FE4FB1EF7CA8500BD0F28 /* libSIlib2-2.1.5-3-9db1551.a */,
 				95C9D0F31EEDC2D100EB61D3 /* libSIlib2-2.1.5.a */,
 				95F222E41EDAD939001DD6A3 /* libSIlib2-2.1.5.a */,
 				95F222E01EDAD0B0001DD6A3 /* libboost_system.dylib */,

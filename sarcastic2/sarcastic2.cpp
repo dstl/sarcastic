@@ -339,10 +339,23 @@ int main(int argc, const char * argv[]) {
             newhdr.pulses[p].sat_ps_tx = TxPos[p] ;
         }
         printf("Writing CPHD File \"%s\"....",outCPHDFile);
-        writeCPHD3Header( &newhdr, fp, &status ) ;
-        write_cphd3_nb_vectors(&newhdr, 0, fp, &status) ;
-        write_cphd3_wb_vectors(&newhdr, &cphd, 0, fp, &status) ;
+        
+        if (newhdr.version == '3') {
+            writeCPHD3Header( &newhdr, fp, &status ) ;
+            write_cphd3_nb_vectors(&newhdr, 0, fp, &status) ;
+            write_cphd3_wb_vectors(&newhdr, &cphd, 0, fp, &status) ;
+        }else if (newhdr.version == 'x'){
+            writeCPHDXHeader(&newhdr, fp, &status);
+            writeCPHDXNarrowband(&newhdr, 0, fp, &status);
+            writeCPHDXWideband(&newhdr, &cphd, fp, &status) ;
+        }else{
+            printf("Unknown cphd version requested : %c\n",newhdr.version) ;
+            printf("Not writing output file...\n");
+        }
         printf("...Done\n");
+        
+        fclose(fp);
+
     }
     
     if(outCPHDFile != NULL){
