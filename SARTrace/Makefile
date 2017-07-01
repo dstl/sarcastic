@@ -35,42 +35,70 @@
 # * IRELAND.
 # *
 # ***************************************************************************/
-
-PROJECT_DIR = /Users/darren/Development/sarcastic
+EXE_NAME = SARTrace
 INSTALL_DIR = /usr/local/dstl/bin
+VERSION    := $(shell `pwd`/GenGitVersion.sh)
+OCLKERNELSPATH = \"/users/darren/Dropbox/Development/sarcastic/bircs/kernels\"
+
+CPPSRC = \
+../fastKdTree/AABB.cpp \
+../fastKdTree/clipToAABB.cpp \
+../fastKdTree/rayTrace.cpp \
+../fastKdTree/kdTreeNode.cpp \
+../fastKdTree/splitCandidate.cpp \
+../Common/tinyxml/tinystr.cpp \
+../Common/tinyxml/tinyxml.cpp \
+../Common/tinyxml/tinyxmlerror.cpp \
+../Common/tinyxml/tinyxmlparser.cpp \
+../fastKdTree/buildTree.cpp \
+../colladaToTriFile/colladainterface.cpp \
+../Common/TriangleMesh.cpp \
+../sarcastic2/buildRays.cpp \
+../sarcastic2/accelerateTriangles.cpp \
+../sarcastic2/buildRopesAndBoxes.cpp \
+../bircs/buildKernel.cpp \
+../bircs/oclReflect.cpp \
+getSARTraceUserInput.cpp \
+SARTrace.cpp \
+SARTracebanner.cpp \
+traceThreadCore.cpp
 
 SRC = \
-buildKernel.c \
-BuildRopesAndBoxes.c \
-ecef2SceneCoords.c \
-getSARTraceUserInput.c \
-oclKdTreeHits.c \
-oclRandomRays.c \
-oclReflect.c \
-readKdTree.c \
-SARTrace.c \
-SARTracebanner.c \
-threadCore.c
+../Common/matrixMultiplication.c \
+../sarcastic/OpenCLUtils.c \
+../sarcastic/ecef2SceneCoords.c \
+../Common/pmath_rng.c \
+../Common/boxMullerRandom.c \
+../Common/ranf.c
 
-LIB = -lreadline -lSIlib -lexpat
-FRM = -framework OpenCL
-CC  = clang
-OBJ = $(patsubst %.c, objs/%.o, $(SRC))
-CFLAGS = -m64 -c `SIlib-config --cflags` -I../sarcastic -I../Common -DOCLKERNELSPATH=\"$(PROJECT_DIR)sarcastic/kernels\"
-LFLAGS = -arch x86_64 -L/usr/local/dstl/lib
 
-objs/%.o:	%.c
+LIB = -lreadline -lSIlib2
+
+CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++ -DOCLKERNELSPATH=$(OCLKERNELSPATH)
+CC   = clang -O3 -DOCLKERNELSPATH=$(OCLKERNELSPATH)
+
+OBJ    = $(patsubst %.c, %.o, $(SRC))
+CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
+
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic2 -I../sarcastic -I../Common -I/usr/local/include -I../fastKdTree -I../bircs -I../colladaToTriFile
+LFLAGS = -framework OpenCL -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
+
+%.o:	%.cpp
+		$(CPP) $< $(CFLAGS) -o $@
+
+%.o:	%.c
 		$(CC) $< $(CFLAGS) -o $@
-		
-SARTrace: $(OBJ)
-	clang $(OBJ) $(FRM) $(LFLAGS) $(LIB) -o ../bin/SARTrace
+
+$(EXE_NAME): $(OBJ) $(CPPOBJ)
+		mkdir -p ../bin
+		clang++ -stdlib=libc++ $(OBJ) $(CPPOBJ) $(LFLAGS) $(LIB) -o ../bin/$(EXE_NAME)
 
 clean:
-	rm -fr objs/*.o
+		rm -fr $(OBJ) $(CPPOBJ)
+		rm -fr ../bin/$(EXE_NAME)
 
 install:
-	cp -p ../bin/SARTrace $(INSTALL_DIR)
+		cp -p ../bin/$(EXE_NAME) $(INSTALL_DIR)
 
-	
 
 

@@ -1,15 +1,15 @@
 /***************************************************************************
  *
- *       Module:    SARTrace.h
+ *       Module:    SARTracebanner.c
  *      Program:    SARTrace
- *   Created by:    Darren on 27/07/2013.
- *                  Copyright (c) 2013 Dstl. All rights reserved.
+ *   Created by:    Darren Muff on 12/03/2013.
+ *                  Copyright (c) 2013 [Dstl]. All rights reserved.
  *
  *   Description:
- *   Header file for SARTrace
+ *   Prints out useful info about the programme and version
  *
  *
- *   CLASSIFICATION        :  Unclassified
+ *   CLASSIFICATION        :  UNCLASSIFIED
  *   Date of CLASSN        :  10/08/2015
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -37,13 +37,17 @@
  *
  ***************************************************************************/
 
-#ifndef SARCASTIC_SARTRACE_h
-#define SARCASTIC_SARTRACE_h
-#include "sarcastic.h"
+#include <stdio.h>
+#include "SartraceVersion.h"
+#include "colourCodes.h"
 
-int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, int *nRaysX, int *nRaysY, SPStatus *status);
-void * devPulseBlock ( void * threadArg ) ;
-void sartraceCore(threadData td, char *outDir) ;
-void SARTracebanner () ;
+void SARTracebanner (){
+    printf(" \n");
+    printf(DARK GREEN "                   SARTrace - SAR Ray Tracer\n" NORMAL);
+    printf(BLUE       "                Version :" RED" %s \n", FULL_VERSION);
+    printf(BLUE       "            Revision: " RED"%s, %s \n",REVISION, VERSION_DATE);
+    printf(BLUE       "         Copyright (c) 2015 " WHITE"[" BLUE"Dstl" WHITE"]" BLUE". All rights reserved.\n" RESETCOLOR);
+    printf(" \n");
 
-#endif
+    return ;
+}

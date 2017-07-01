@@ -42,17 +42,17 @@
 
 
 void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
-               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints)
+               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method)
 {
     
-    int METHOD  = 1;
+    int METHOD  = method;
     
     // 1 - each ray aimed at triangle centre
     // 2 - random rays on each call across scene
     // 3 - random rays created first time but the same hitpoints used for each subsequent call
     // 4 - like 2 (random rays on each call across the scene) but rays are parallel from Tx
     
-    if(METHOD == 1){
+    if(METHOD == TRIANGLECENTRE){
         *nRays = (int)mesh->triangles.size() ;
         *rayArray = (Ray *)sp_malloc(*nRays * sizeof(Ray));
         
@@ -76,7 +76,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
         }
         return ;
         
-    }else if(METHOD == 2){
+    }else if(METHOD == RANDOMRAYS){
         
         int nAzBeam = nAzRays;
         int nElBeam = nElRays;
@@ -118,6 +118,9 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
                     SceneBoundingBox.AA.z+((SceneBoundingBox.BB.z - SceneBoundingBox.AA.z)/2), aimpoint);
         
         *rayArray = (Ray *)sp_malloc(*nRays * sizeof(Ray));
+        if(*rayAimPoints == NULL){
+            *rayAimPoints = (SPVector *)sp_malloc(sizeof(SPVector) * *nRays);
+        }
         
         for( int i=0; i < *nRays; i++){
             SPVector elVect, azVect;
@@ -144,7 +147,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
         
         return;
         
-    }else if(METHOD == 3){
+    }else if(METHOD == FIRSTTIMERANDOM){
         
         int nAzBeam = nAzRays;
         int nElBeam = nElRays;
@@ -214,7 +217,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
         }
         return ;
         
-    }else if(METHOD == 4){      // 4 - like 2 (random rays on each call across the scene) but rays are parallel from Tx
+    }else if(METHOD == PARALLELRANDOM){      // 4 - like 2 (random rays on each call across the scene) but rays are parallel from Tx
         
         int nAzBeam = nAzRays;
         int nElBeam = nElRays;

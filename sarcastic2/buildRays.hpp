@@ -43,6 +43,15 @@
 #include <stdio.h>
 #include "AABB.hpp"
 #include "rayTrace.hpp"
+
+enum  BUILDRAYMETHOD {
+        TRIANGLECENTRE  = 1,    // 1 - each ray aimed at triangle centre
+        RANDOMRAYS      = 2,    // 2 - random rays on each call across scene
+        FIRSTTIMERANDOM = 3,    // 3 - random rays created first time but the same hitpoints used for each subsequent call
+        PARALLELRANDOM  = 4     // 4 - like 2 (random rays on each call across the scene) but rays are parallel from Tx
+} ;
+
+
 void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
-               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints);
+               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method);
 #endif /* buildRays_hpp */

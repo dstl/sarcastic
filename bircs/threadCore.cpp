@@ -211,7 +211,7 @@ void * devPulseBlock ( void * threadArg ) {
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints, TRIANGLECENTRE);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
         
         // Set up deramp range for this pulse
@@ -544,7 +544,7 @@ void ham1dx(double * data, int nx)
     }
 }
 
-void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
+/*void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
                double PowPerRay, AABB SceneBoundingBox,
                cl_context context, cl_command_queue commandQ, cl_kernel  randRaysKL, size_t randRaysLWS[2],
                SPVector **rayAimPoints)
@@ -773,4 +773,4 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
         return;
     }
     
-}
+}*/

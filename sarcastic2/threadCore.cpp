@@ -281,7 +281,7 @@ void * devPulseBlock ( void * threadArg ) {
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay; // nRays is the number of rays in each bounce and is rewritten after each reflection
         startTimer(&buildRaysTimer, &status) ;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints,TRIANGLECENTRE);
         endTimer(&buildRaysTimer, &status);
         buildRaysDur += timeElapsedInMilliseconds(&buildRaysTimer, &status);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres

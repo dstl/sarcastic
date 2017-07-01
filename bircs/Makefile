@@ -80,7 +80,7 @@ LIB = -lreadline -lSIlib2
 
 
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++ -DOCLKERNELSPATH=$(OCLKERNELSPATH)
-CC   = clang -DOCLKERNELSPATH=$(OCLKERNELSPATH)
+CC   = clang -O3 -DOCLKERNELSPATH=$(OCLKERNELSPATH)
 
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))

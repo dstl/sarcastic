@@ -37,12 +37,12 @@
  *
  ***************************************************************************/
 
-#include "SARTrace.h"
+#include "SARTrace.hpp"
 #include "colourCodes.h"
 
-static char *rootpath = "/local_storage/DGM" ;
+static const char *rootpath = "/tmp" ;
 
-int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, int *nRaysX, int *nRaysY, SPStatus *status){
+int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int *pulseToTrace, int *nRaysX, int *nRaysY,  SPStatus *status){
     
     char * prompt;
     SPStatus fileStat ;
@@ -51,12 +51,12 @@ int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, in
     
     do {
         im_init_status(fileStat, 0) ;
-        sprintf(prompt, "%s/KdTree.kdt",rootpath);
-        *KdTreeFile = input_string((char *)"KdTree Filename", (char *)"KdTreeFile",
-                                   (char *)"The name of a KdTree file containing the scene. The KdTree is a hierarchical structure containing all the scene information and can be created from a '.dae' file using the program 'buildKdTree'",
-                                   prompt);
-        if( access( *KdTreeFile, F_OK ) == -1 ) {
-            printf(RED "Cannot access file %s\n" RESETCOLOR,*KdTreeFile);
+        sprintf(prompt, "%s/delaunay.ply",rootpath);
+        *meshFile = input_string((char *)"Triangle mesh file", (char *)"plyfile",
+                   (char *)"The name of a triangle mesh \'.ply\' file containing the scene. The file can be created using colldaToTriFile using a .dae file as input (you can create a .dae file from Google Sketchup (tm))",
+                   prompt);
+        if( access( *meshFile, F_OK ) == -1 ) {
+            printf(RED "Cannot access file %s\n" RESETCOLOR,*meshFile);
             fileStat.status = BAD_FILE ;
         }
     } while(fileStat.status != NO_ERROR);
@@ -72,6 +72,15 @@ int getSARTraceUserInput(char **inCPHDFile, char **KdTreeFile, char **outDir, in
             fileStat.status = BAD_FILE ;
         }
     } while(fileStat.status != NO_ERROR);
+    
+    CPHDHeader hdr;
+    readCPHDHeader(*inCPHDFile, &hdr, status) ;
+    CHECK_STATUS(status) ;
+    printf("CPHDFile has %d pulses\n", hdr.num_azi);
+    *pulseToTrace = hdr.num_azi / 2 ;
+    do {
+        *pulseToTrace = input_int("Whioh pulse would you like to trace?", "PULSETOTRACE", "Must be a pulse index of a valid pulse within the cphd dataset", *pulseToTrace) ;
+    } while (*pulseToTrace < 0 || *pulseToTrace > hdr.num_azi-1) ;
     
     do {
         im_init_status(fileStat, 0) ;
