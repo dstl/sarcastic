@@ -50,6 +50,6 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam,
                  int *interrogate, SPVector *interogPt, double *interogRad,
-                 FILE **interrogateFP, int * pulseUndersampleFactor, SPStatus *status) ;
+                 FILE **interrogateFP, int *pulseUndersampleFactor, int *polarisation, SPStatus *status) ;
 
 #endif /* getUserInput_hpp */

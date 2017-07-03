@@ -46,7 +46,7 @@
 #include "TriangleMesh.hpp"
 #include "threadCore.hpp"
 
-#define RXPOL "V" // Can be V or H or - (both)
+//#define RXPOL "V" // Can be V or H or - (both)
 #define SURFMAXN 4
 #define LT 0.04
 
@@ -65,6 +65,7 @@ void cpuPOField(TriangleMesh       *mesh,
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                 double              gainRx,             // Receiver gain used for power calculations
                 int                 firstBounce,        // if 1 then PO calcs use origin for field calculations
+                int                 rxPol,              // Receive Polarisation. one of enums set in threadCore.hpp::polarisation
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 );
 

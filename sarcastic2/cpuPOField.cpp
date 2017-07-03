@@ -51,6 +51,7 @@ void cpuPOField(TriangleMesh       *mesh,
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
                 double              gainRx,             // Receiver gain used for power calculations
                 int                 firstBounce,        // if 1 then PO calcs use origin for field calculations
+                int                 rxPol,              // Receive Polarisation
                 rangeAndPower       *rnp                // Output array of ray power at, and range to reciever
 )
 {
@@ -120,9 +121,9 @@ void cpuPOField(TriangleMesh       *mesh,
         //        if(firstBounce==3)printf("bounce: %d range : %f (range to SRP:%f) ranges[%d]:%f rays[%d].len:%f hits[%d].dist: %f point: %f,%f,%f\n"
         //                                 ,firstBounce,rnp[r].range,VECT_MAG(RxPos),r,ranges[r],r,rays[r].len,r,hits[r].dist,shadowRays[r].org.x,shadowRays[r].org.y,shadowRays[r].org.z);
         
-        if (RXPOL == "V") {
+        if (rxPol == VV || rxPol == HV) {
             Ecmplx = VsTmp[r] ;
-        }else if (RXPOL == "H"){
+        }else if (rxPol == VH || rxPol == HH){
             Ecmplx = HsTmp[r] ;
         } else {
             SPVector Ev, Eh, E;

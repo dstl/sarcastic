@@ -383,7 +383,7 @@ int main(int argc, const char * argv[]) {
     }
     
 
-    printf("Writing %lu triangles to file %s...\n",newMesh.triangles.size(),oustr);
+    printf("\nWriting %lu triangles to file %s...\n",newMesh.triangles.size(),oustr);
     newMesh.writePLYFile(std::string(oustr)) ;
     endTimer(&timer, &status);
     

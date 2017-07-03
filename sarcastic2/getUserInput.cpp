@@ -48,7 +48,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam,
                  int *interrogate, SPVector *interogPt, double *interogRad,
-                 FILE **interrogateFP, int * pulseUndersampleFactor, SPStatus *status){
+                 FILE **interrogateFP, int *pulseUndersampleFactor, int *polarisation, SPStatus *status){
     
     char * prompt;
     char * file ;
@@ -142,7 +142,39 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
 //                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
 //    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
 //                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
-//    
+//
+    
+    // Find out what polarisation the sarcastic CPHD file will have
+    //
+    printf("Input file has polarisation set to \'%s\'\n",*(hdr->polarisation));
+    char *polstr ;
+    bool validpol ;
+    do{
+        validpol = false ;
+        polstr = input_string("Enter polarisation to simulate", "Polarisation",
+                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined",*(hdr->polarisation) ) ;
+        if (!strcasecmp(polstr, "vv")) {
+            *polarisation = VV ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "vh")){
+            *polarisation = VH ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "hv")){
+            *polarisation = HV ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "hh")){
+            *polarisation = HH ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "v_")){
+            *polarisation = V_ ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "h_")){
+            *polarisation = H_ ;
+            validpol = true ;
+        }else{
+            printf("Invalid polarisation. Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\' or \'H_\'\n");
+        }
+    }while(!validpol);
     
     // To save processing time only read in the CPHDFile PHD if we are going to create a new
     // CPHD file

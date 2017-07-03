@@ -43,6 +43,7 @@
 #include <stdio.h>
 #include "AABB.hpp"
 #include "rayTrace.hpp"
+#include "threadCore.hpp"
 
 enum  BUILDRAYMETHOD {
         TRIANGLECENTRE  = 1,    // 1 - each ray aimed at triangle centre
@@ -53,5 +54,6 @@ enum  BUILDRAYMETHOD {
 
 
 void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
-               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method);
+               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method, int Pol);
+
 #endif /* buildRays_hpp */

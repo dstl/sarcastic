@@ -42,7 +42,7 @@
 
 
 void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMesh *mesh, SPVector TxPos,
-               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method)
+               double PowPerRay, AABB SceneBoundingBox,SPVector **rayAimPoints, int method, int pol)
 {
     
     int METHOD  = method;
@@ -71,7 +71,14 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             VECT_CREATE(0, 0, 1, zHat);
             VECT_CROSS(r.dir, zHat, Hdir);
             VECT_CROSS(Hdir, r.dir, Vdir);
-            VECT_NORM(Vdir, r.pol);
+            if (pol == VV || pol == VH || pol == V_) {
+                VECT_NORM(Vdir, r.pol);
+            }else if (pol == HV || pol == HH || pol == H_){
+                VECT_NORM(Hdir, r.pol);
+            }else{
+                printf("ERROR : Trying to build ray with unknown polarisation of \'%d\'\n",pol);
+                exit(1);
+            }
             (*rayArray)[i] = r;
         }
         return ;
@@ -142,7 +149,15 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].len = 0 ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
-            VECT_NORM(Vdir, (*rayArray)[i].pol) ;
+            if (pol == VV || pol == VH || pol == V_) {
+                VECT_NORM(Vdir, (*rayArray)[i].pol);
+            }else if (pol == HV || pol == HH || pol == H_){
+                VECT_NORM(Hdir, (*rayArray)[i].pol);
+            }else{
+                printf("ERROR : Trying to build ray with unknown polarisation of \'%d\'\n",pol);
+                exit(1);
+            }
+
         }
         
         return;
@@ -213,7 +228,14 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].len = 0 ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
-            VECT_NORM(Vdir, (*rayArray)[i].pol) ;
+            if (pol == VV || pol == VH || pol == V_) {
+                VECT_NORM(Vdir, (*rayArray)[i].pol);
+            }else if (pol == HV || pol == HH || pol == H_){
+                VECT_NORM(Hdir, (*rayArray)[i].pol);
+            }else{
+                printf("ERROR : Trying to build ray with unknown polarisation of \'%d\'\n",pol);
+                exit(1);
+            }
         }
         return ;
         
@@ -279,7 +301,14 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].len = 0 ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
-            VECT_NORM(Vdir, (*rayArray)[i].pol) ;
+            if (pol == VV || pol == VH || pol == V_) {
+                VECT_NORM(Vdir, (*rayArray)[i].pol);
+            }else if (pol == HV || pol == HH || pol == H_){
+                VECT_NORM(Hdir, (*rayArray)[i].pol);
+            }else{
+                printf("ERROR : Trying to build ray with unknown polarisation of \'%d\'\n",pol);
+                exit(1);
+            }
         }
         
         return;

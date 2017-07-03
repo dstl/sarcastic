@@ -58,7 +58,6 @@ extern "C" {
 int main(int argc, const char * argv[]) {
     
     int rc;
-
     
     SPStatus status ;
     im_init_status(status, 0) ;
@@ -78,10 +77,11 @@ int main(int argc, const char * argv[]) {
     kdTree::KdData * tree = NULL;
     ATS *accelTriangles = NULL;;
     int treeSize = 0;
+    int polarisation ;
     
     getUserInput(&hdr, &baseMesh, &moverMesh, &outCPHDFile,
                      &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad,
-                 &interrogateFP, &pulseUndersampleFactor, &status) ;
+                 &interrogateFP, &pulseUndersampleFactor, &polarisation, &status) ;
     
     // Start timing after user input
     //
@@ -97,6 +97,25 @@ int main(int argc, const char * argv[]) {
         newhdr.pulses[p] = hdr.pulses[(p*pulseUndersampleFactor)+startPulse] ;
     }
     nPulses = newhdr.num_azi ;
+    
+    // Set the polarisation in the output CPHDFile
+    //
+    if (polarisation == VV) {
+        strcpy(*(hdr.polarisation), "VV");
+    }else if (polarisation == VH){
+        strcpy(*(hdr.polarisation), "VH");
+    }else if (polarisation == HV){
+        strcpy(*(hdr.polarisation), "HV");
+    }else if (polarisation == HH){
+        strcpy(*(hdr.polarisation), "HH");
+    }else if (polarisation == V_){
+        strcpy(*(hdr.polarisation), "V_");
+    }else if (polarisation == H_){
+        strcpy(*(hdr.polarisation), "H_");
+    }else{
+        printf("ERROR: Unknown polarisation type : %d \n", polarisation);
+        exit(1);
+    }
 
     // print out info about the collection
     //
@@ -273,7 +292,7 @@ int main(int argc, const char * argv[]) {
         coreData[t].tree                   = &tree ;
         coreData[t].accelTriangles         = &accelTriangles ;
         coreData[t].treesize               = treeSize ;
-        
+        coreData[t].polarisation           = polarisation ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){

@@ -65,6 +65,7 @@ void * devPulseBlock ( void * threadArg ) {
     int hrs,min,sec;
     int reportN = 10 ;
     int tid, nThreads, nPulses, startPulse;
+    int pol ;
     
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing=0, *ikernel=NULL, bandwidth ;
@@ -114,6 +115,7 @@ void * devPulseBlock ( void * threadArg ) {
     interogRad       = td->interogRad ;
     interogFP        = *(td->interogFP) ;
     k                = 2 * SIPC_pi / (SIPC_c / hdr->freq_centre) ;
+    pol              = td->polarisation ;
     
     VECT_CREATE(0, 0, 0, origin);
     
@@ -281,7 +283,7 @@ void * devPulseBlock ( void * threadArg ) {
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay; // nRays is the number of rays in each bounce and is rewritten after each reflection
         startTimer(&buildRaysTimer, &status) ;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints,TRIANGLECENTRE);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints,TRIANGLECENTRE, pol);
         endTimer(&buildRaysTimer, &status);
         buildRaysDur += timeElapsedInMilliseconds(&buildRaysTimer, &status);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
@@ -452,7 +454,7 @@ void * devPulseBlock ( void * threadArg ) {
                 // For each ray that isn't occluded back to the receiver, calculate the power and put it into rnp.
                 //
                 startTimer(&POTimer, &status);
-                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[maxRaysPerBounce*nbounce])) ;
+                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, pol, &(rnp[maxRaysPerBounce*nbounce])) ;
                 endTimer(&POTimer, &status);
                 PODur += timeElapsedInMilliseconds(&POTimer, &status);
                 

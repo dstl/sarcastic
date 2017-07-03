@@ -98,11 +98,12 @@ typedef struct threadData {
     kdTree::KdData ** tree ;
     int treesize; 
     ATS **accelTriangles ;
+    int polarisation ;
 } threadData ;
 
+enum  POLARISATION { VV, VH, HV, HH, V_, H_ } ;
+
 void * devPulseBlock ( void * threadArg ) ;
-
-
 void packSinc(SPCmplxD point, SPCmplx *outData, double rdiff, double sampleSpacing, long long nxInData, double * ikernel);
 void ham1dx(double * data, int nx) ;
 void sinc_kernel(int oversample_factor, int num_of_points, double resolution, double sampleSpacing, double *ikernel);
