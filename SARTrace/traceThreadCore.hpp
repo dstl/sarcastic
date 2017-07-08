@@ -95,6 +95,8 @@ typedef struct traceThreadData {
     TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
 } traceThreadData ;
 
+enum  POLARISATION { VV, VH, HV, HH, V_, H_ } ;
+
 void * devPulseBlock ( void * threadArg ) ;
 
 void oclReflect(cl_context          context,            // OpenCL context - alrready built

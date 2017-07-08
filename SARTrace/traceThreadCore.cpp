@@ -183,7 +183,7 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
     
     printf("Ray generation.............");
 
-    buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td.SceneBoundingBox, &rayAimPoints, RANDOMRAYS);
+    buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td.SceneBoundingBox, &rayAimPoints, RANDOMRAYS, VV);
     
     printf("Done !\n");
 
