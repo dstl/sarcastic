@@ -269,7 +269,7 @@ int main(int argc, const char * argv[]) {
         coreData[t].tid                    = t ;
         coreData[t].nThreads               = nThreads ;
         coreData[t].SceneBoundingBox       = SceneBoundingBox;
-        coreData[t].startPulse             = startPulse + t*pulsesPerThread;
+        coreData[t].startPulse             = t*pulsesPerThread;
         coreData[t].nPulses                = pulsesPerThread ;
         coreData[t].nAzBeam                = nAzBeam ;
         coreData[t].nElBeam                = nElBeam ;
