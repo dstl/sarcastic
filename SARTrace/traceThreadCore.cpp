@@ -49,7 +49,7 @@ extern "C" {
 #define OVERSAMP (512)
 #define NOINTERSECTION -1
 static SPVector bouncecolours[MAXBOUNCES] = {
-    {153.0, 232.0, 29.0},         // 0 = Dark Blue
+    {166.0, 255.0, 000.0},        // 0 = Lime Green
     {128.0, 128.0, 128.0},        // 1 = grey
     {224.0, 224.0, 224.0},        // 2 = White
     {176.0, 019.0, 035.0},        // 3 = Red

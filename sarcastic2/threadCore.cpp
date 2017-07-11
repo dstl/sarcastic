@@ -419,6 +419,13 @@ void * devPulseBlock ( void * threadArg ) {
             SPVector normal;
             for(int i=0; i<nRays; i++){
                 normal = newMesh.triangles[hitArray[i].trinum].N.asSPVector() ;
+                // A ray might be on the plane of a triangle having arrived from the side obscured from the receiver
+                // (infinitely thin triangle plane). To make sure rays do not pass through a triangle, make sure the normal
+                // is pointing in the same direction as the reflected ray
+                //
+                if( VECT_DOT(normal, reflectedRays[i].dir) < 0){
+                    VECT_MINUS(normal, normal);
+                }
                 facing[i] =VECT_DOT(normal, shadowRays[i].dir);
             }
             for(int i= 0 ; i<nRays; i++){
@@ -497,22 +504,22 @@ void * devPulseBlock ( void * threadArg ) {
                         }
                     }
                     fprintf(interogFP, "Bounce %2d : Emag : %f Intersections found : %d\n", nbounce, CMPLX_MAG(magEForBounce), intCnt) ;
-                    fprintf(interogFP, "---------------------------------------------------\n");
                     
                     for ( int i=0; i<nShadowRays; i++){
                         irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
                             int id = shadowRays[i].id ;
                             fprintf(interogFP, "[%d] %f, %f\t",id,irp.range, CMPLX_MAG(irp.Es)) ;
+                            fprintf(interogFP, "%f,%f,%f",TxPos.x,TxPos.y,TxPos.z);
                             for(int b=0; b<=nbounce; ++b){
-                                fprintf(interogFP, "%f,%f,%f -- ",allHitPts[b*maxRaysPerBounce+id].x,allHitPts[b*maxRaysPerBounce+id].y,allHitPts[b*maxRaysPerBounce+id].z);
+                                fprintf(interogFP, " -- %f,%f,%f",allHitPts[b*maxRaysPerBounce+id].x,allHitPts[b*maxRaysPerBounce+id].y,allHitPts[b*maxRaysPerBounce+id].z);
                             }
                             
 //                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
                             
                             fprintf(interogFP, "\n");
-                            
                         }
+                        fprintf(interogFP, "---------------------------------------------------\n");
                     }
                 }
                 
