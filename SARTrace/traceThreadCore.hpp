@@ -49,6 +49,7 @@ extern "C" {
 #include "accelerateTriangles.hpp"
 #include "rayTrace.hpp"
 #include "buildRays.hpp"
+#include "reflect.hpp"
 
 #define NPOINTS (32)
 #define OVERSAMP (512)

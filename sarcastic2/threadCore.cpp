@@ -65,7 +65,7 @@ void * devPulseBlock ( void * threadArg ) {
     int hrs,min,sec;
     int reportN = 10 ;
     int tid, nThreads, nPulses, startPulse;
-    int pol ;
+    int pol, rayGenMethod;
     
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing=0, *ikernel=NULL, bandwidth ;
@@ -76,7 +76,7 @@ void * devPulseBlock ( void * threadArg ) {
     Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
     Hit *hitArray, *newHits, *shadowHits;
     
-    SPVector aimdir, RxPos, TxPos, origin, interogPt;
+    SPVector aimdir, RxPos, TxPos, origin, interogPt, *allHitPts=NULL;
     SPCmplx pcorr, tmp;
     SPCmplxD targ ;
     SPImage pulseLine ;
@@ -116,6 +116,7 @@ void * devPulseBlock ( void * threadArg ) {
     interogFP        = *(td->interogFP) ;
     k                = 2 * SIPC_pi / (SIPC_c / hdr->freq_centre) ;
     pol              = td->polarisation ;
+    rayGenMethod     = td->rayGenMethod ;
     
     VECT_CREATE(0, 0, 0, origin);
     
@@ -283,7 +284,7 @@ void * devPulseBlock ( void * threadArg ) {
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay; // nRays is the number of rays in each bounce and is rewritten after each reflection
         startTimer(&buildRaysTimer, &status) ;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints,TRIANGLECENTRE, pol);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints,rayGenMethod, pol);
         endTimer(&buildRaysTimer, &status);
         buildRaysDur += timeElapsedInMilliseconds(&buildRaysTimer, &status);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
@@ -298,6 +299,13 @@ void * devPulseBlock ( void * threadArg ) {
         //
         rnp = (rangeAndPower *)sp_calloc(maxRaysPerBounce*MAXBOUNCES, sizeof(rangeAndPower));
         
+        // If an interrogation request has been put in then create an array that contains all the hit
+        // locations so that we can back trace the source of hits for a point being interrogated
+        //
+        if(interrogate){
+            allHitPts = (SPVector *)sp_calloc(maxRaysPerBounce*MAXBOUNCES, sizeof(SPVector));
+        }
+        
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
             // Malloc space for hits for this bounce
@@ -307,7 +315,7 @@ void * devPulseBlock ( void * threadArg ) {
             // Cast the rays in rayArray through the KdTree using a stackless traversal technique
             // return the hit locations in hitArray
             //
-//            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
+            //            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles, dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, rayArray, hitArray);
             
             startTimer(&shootRayTimer, &status);
             shootRay(tree, accelTriangles, nRays, rayArray, hitArray) ;
@@ -362,6 +370,12 @@ void * devPulseBlock ( void * threadArg ) {
             reflect(nRays, rayArray, hitArray, accelTriangles, reflectedRays);
             endTimer(&reflectTimer, &status);
             reflectDur += timeElapsedInMilliseconds(&reflectTimer, &status) ;
+            
+            if(interrogate){
+                for (int i=0; i<nRays; i++){
+                    allHitPts[nbounce*maxRaysPerBounce+reflectedRays[i].id] = reflectedRays[i].org ;
+                }
+            }
             
             // If debug out is required then capturing here using the origins of the Reflected rays
             // which will save us having to calculate the hit locations again
@@ -465,7 +479,9 @@ void * devPulseBlock ( void * threadArg ) {
                 if (interrogate) {
                     SPVector intOutRg, intRetRg ;
                     double intRg ;
-                    
+                    SPCmplx magEForBounce = {0.0f, 0.0f};
+                    int intCnt = 0;
+
                     VECT_SUB(interogPt, TxPos, intOutRg);
                     VECT_SUB(RxPos, interogPt, intRetRg);
                     intRg = (VECT_MAG(intOutRg) + VECT_MAG(intRetRg))/2.0;
@@ -473,11 +489,29 @@ void * devPulseBlock ( void * threadArg ) {
                     intMaxR = intRg + interogRad/2.0 ;
                     
                     for ( int i=0; i<nShadowRays; i++){
-                        
                         irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
-                        
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
-                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
+                            CMPLX_ADD(magEForBounce, irp.Es, magEForBounce)
+//                            magEForBounce += CMPLX_MAG(irp.Es) ;
+                            intCnt++;
+                        }
+                    }
+                    fprintf(interogFP, "Bounce %2d : Emag : %f Intersections found : %d\n", nbounce, CMPLX_MAG(magEForBounce), intCnt) ;
+                    fprintf(interogFP, "---------------------------------------------------\n");
+                    
+                    for ( int i=0; i<nShadowRays; i++){
+                        irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
+                        if ( irp.range > intMinR && irp.range < intMaxR ) {
+                            int id = shadowRays[i].id ;
+                            fprintf(interogFP, "[%d] %f, %f\t",id,irp.range, CMPLX_MAG(irp.Es)) ;
+                            for(int b=0; b<=nbounce; ++b){
+                                fprintf(interogFP, "%f,%f,%f -- ",allHitPts[b*maxRaysPerBounce+id].x,allHitPts[b*maxRaysPerBounce+id].y,allHitPts[b*maxRaysPerBounce+id].z);
+                            }
+                            
+//                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
+                            
+                            fprintf(interogFP, "\n");
+                            
                         }
                     }
                 }
@@ -594,6 +628,9 @@ void * devPulseBlock ( void * threadArg ) {
         if(dynamicScene){
             free(tree) ;
             delete accelTriangles ;
+        }
+        if(interrogate){
+            free(allHitPts);
         }
         endTimer(&pulseTimer, &status);
         pulseDur += timeElapsedInMilliseconds(&pulseTimer, &status) ;

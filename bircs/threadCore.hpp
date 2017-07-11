@@ -101,7 +101,10 @@ typedef struct bircsThreadData {
     double interogRad ;         // Radius in metres around interrogation point to calculate scattering for
     FILE ** interogFP ;         // File pointer to dump out interrogation data
     TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
+    int polarisation ;
 } bircsThreadData ;
+
+enum  POLARISATION { VV, VH, HV, HH, V_, H_ } ;
 
 void * devPulseBlock ( void * threadArg ) ;
 

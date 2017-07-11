@@ -537,7 +537,7 @@ void TriangleMesh::checkIntegrityAndRepair(){
         
         // Area precsion is set to match the precision stored in a .ply file
         //
-        if ( !(!(Ncalc == Ntri) || area < 1e-6 || isnan(distance)) ) {
+        if ( !(!(Ncalc == Ntri) || area < 1e-10 || isnan(distance)) ) {
             newtriangles.push_back(triangles[i]);
         }else{
             cnt++;

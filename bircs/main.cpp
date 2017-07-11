@@ -118,6 +118,35 @@ int main (int argc, char **argv){
     nAzBeam = input_int("nAzBeam", (char *)"NAZBEAM", (char *)"Number of azimuth rays to cast for each observation position", nAzBeam);
     nElBeam = input_int("nElBeam", (char *)"NELBEAM", (char *)"Number of elevation rays to cast for each observation position", nElBeam);
     bounceToShow = input_int("bounceToShow", (char *)"BOUNCETOSHOW", (char *)"Output just the ray intersections corresponding to this bounce. (0=no bounce output)", bounceToShow);
+    char *polstr ;
+    bool validpol ;
+    int pol = 0 ;
+    do{
+        validpol = false ;
+        polstr = input_string("Enter polarisation to simulate", "Polarisation",
+                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined",polstr ) ;
+        if (!strcasecmp(polstr, "vv")) {
+            pol = VV ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "vh")){
+            pol = VH ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "hv")){
+            pol = HV ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "hh")){
+            pol = HH ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "v_")){
+            pol = V_ ;
+            validpol = true ;
+        }else if (!strcasecmp(polstr, "h_")){
+            pol = H_ ;
+            validpol = true ;
+        }else{
+            printf("Invalid polarisation. Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\' or \'H_\'\n");
+        }
+    }while(!validpol);
     baseScene = tryReadFile("Name of Base scene", "baseScene",
                             "Enter the name of a file that will be the base scene to be raytraced. The file must be in a .PLY file format"
                             ,ROOTPATH"/delaunay.ply") ;
@@ -333,17 +362,9 @@ int main (int argc, char **argv){
         threadDataArray[dev].nElBeam                = nElBeam ;
         threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
         threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
-        //        threadDataArray[dev].Fx0s                   = Fx0s ;            // Pointer to beginning of Fx0s data
-        //        threadDataArray[dev].FxSteps                = FxSteps;          // Pointer to beginning of FxSteps data
-        //        threadDataArray[dev].amp_sf0                = amp_sf0 ;         // Pointer to beginning of amp_sf0 data
         threadDataArray[dev].gainRx                 = gainRx;
         threadDataArray[dev].PowPerRay              = TxPowPerRay ;
-        //        threadDataArray[dev].chirpRate              = hdr.chirp_gamma;
-        //        threadDataArray[dev].ADRate                 = hdr.clock_speed ;
-        //        threadDataArray[dev].pulseDuration          = hdr.pulse_length ;
-        //        threadDataArray[dev].oneOverLambda          = hdr.freq_centre / SIPC_c ;
         threadDataArray[dev].freq_centre            = freq_centre ;
-        //        threadDataArray[dev].StartFrequency         = hdr.freq_centre - (hdr.pulse_length * hdr.chirp_gamma / 2) ;
         threadDataArray[dev].bounceToShow           = bounceToShow-1;
         threadDataArray[dev].status                 = status ;
         threadDataArray[dev].interrogate            = interrogate ;
@@ -351,6 +372,7 @@ int main (int argc, char **argv){
         threadDataArray[dev].interogRad             = interogRad ;
         threadDataArray[dev].interogFP              = &interrogateFP ;
         threadDataArray[dev].sceneMesh              = &baseMesh ;
+        threadDataArray[dev].polarisation           = pol ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){

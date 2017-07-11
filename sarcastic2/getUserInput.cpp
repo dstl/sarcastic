@@ -48,7 +48,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam,
                  int *interrogate, SPVector *interogPt, double *interogRad,
-                 FILE **interrogateFP, int *pulseUndersampleFactor, int *polarisation, SPStatus *status){
+                 FILE **interrogateFP, int *pulseUndersampleFactor, int *polarisation, int *rayGenMethod, SPStatus *status){
     
     char * prompt;
     char * file ;
@@ -137,12 +137,26 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
         
     }
     
+    *rayGenMethod = 1 ;
+    do{
+    printf("There are four ways to cast rays in SARCASTIC :\n");
+    printf("\t1 : TRIANGLECENTRE\n");
+    printf("\t2 : RANDOMRAYS\n");
+    printf("\t3 : FIRSTTIMERANDOM\n");
+    printf("\t4 : PARALLELRANDOM\n");
+    *rayGenMethod = input_int("Enter number for ray generation method or '?' for help", "RayGenMethod",
+              "SARCASTIC can generate rays in one of 4 ways. Here is an explanation of each method and why you should use it: \n\t1 : TRIANGLECENTRE \n\t\tThis method uses the centre of each triangle in the input mesh to determine the direction that\n\t\teach ray should be cast in. The origin is obviously the transmitter location for a given pulse.\n\t\tIt doesnt not try to perform any Z-buffering of triangles and so triangles that are behind another \n\t\tone will still generate a ray and will result in the nearer triangle being hit many times. (this gets \n\t\taccounted for in the RCS calculation and so doesnt affect the output.) Use this method to guarantee that\n\t\tevery triangle in the mesh (that can be illuminated by transmitted ray) is illuminated by the transmitted\n\t\tray. Use this method if: \n\t\t    You have a large scene with a smaller number of large triangles. \n\t\t    You want to make sure that every part of your model is illuminated \n\t\t    You have small triangles and so secondary and higher bounces will be incident on all faces of the mesh. \n\t2 : RANDOMRAYS \n\t\tThis method generates a Gaussian distribution of random rays. The size of the scene is measured first\n\t\tso that the entire scene is illuminated. If this method is selected then the number of rays in \n\t\tazimuth/cross-range and elevation will be asked for. Use this method if: \n\t\t    You want to perform a quick run and are not that bothered about illuminating every part of teh input mesh. \n\t\t    You have a small scene with large triangles. \n\t\t    You have large triangles and want to make sure there are many reflections from the surface of each triangle. \n\t3 : FIRSTIMERANDOM \n\t\tThis method is similar to method 2 in that it generates a Gaussian distribution of random rays. The difference\n\t\thowever is that after generating the aim point for the initial rays it then remembers the aim point for future\n\t\tpulses. This is useful if you want to make sure that pulse scattering centres are coherent from pulse to pulse.\n\t\tUse this method if: \n\t\t    You want to guarantee that a triangle correlates pulse to pulse over the entire SAR aperture \n\t4 : PARALLELRANDOM \n\t\tThis method is the same as method 2 in that it generates a Gaussian distribution of random rays. The difference\n\t\there is that the origin of each pulse is adjusted so that all the rays are parallel. Use this method if: \n\t\t    You are simulating a scene in the near field but would like it to be imaged in the far field. \n\n ",
+                              *rayGenMethod);
+    }while(*rayGenMethod < 1 || *rayGenMethod > 4);
+    
     *nAzBeam = *nElBeam = 100 ;
-//    *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
-//                         (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
-//    *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
-//                         (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
-//
+    if (*rayGenMethod == RANDOMRAYS || *rayGenMethod == FIRSTTIMERANDOM || *rayGenMethod == PARALLELRANDOM) {
+        *nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
+                             (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",*nAzBeam);
+        *nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
+                             (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",*nElBeam);
+        
+    }
     
     // Find out what polarisation the sarcastic CPHD file will have
     //

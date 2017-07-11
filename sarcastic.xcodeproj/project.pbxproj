@@ -86,7 +86,6 @@
 		9562DA6A1B4FFE4D00EC6D83 /* Triangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA581B4FFE4D00EC6D83 /* Triangle.m */; };
 		9564CF461E71897000D37207 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
 		956EA1B81E85A32900008E7A /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
-		95701CCA1F068CEB00283A92 /* oclReflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D1001EEF142300EB61D3 /* oclReflect.cpp */; };
 		95701CCB1F068D1D00283A92 /* buildKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C9D0FF1EEF142300EB61D3 /* buildKernel.cpp */; };
 		95701CCC1F06914E00283A92 /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1C518F4289400EAD4F3 /* ecef2SceneCoords.c */; };
 		95701CCD1F06920600283A92 /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6591E7C14240066E15B /* buildRopesAndBoxes.cpp */; };
@@ -106,6 +105,8 @@
 		95701CDB1F069B7800283A92 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
 		95701CDC1F069BD400283A92 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
 		95701CDD1F06A43E00283A92 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9564CF441E71897000D37207 /* clipToAABB.cpp */; };
+		95701CDE1F14C64500283A92 /* reflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CC27F11EC0AC4A0092A2CE /* reflect.cpp */; };
+		95701CE01F14DBFC00283A92 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 95701CDF1F14DBFC00283A92 /* Makefile */; };
 		957A59D91CF9A7DE00981E60 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		957A59E11CF9A88400981E60 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DE1CF9A88400981E60 /* libfftw3f_threads.a */; };
 		957A59E21CF9A88400981E60 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59DF1CF9A88400981E60 /* libfftw3f.a */; };
@@ -624,6 +625,7 @@
 		956B7CC31DFAC85500FF87F3 /* libSIlib2-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.0.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-2.0.a"; sourceTree = "<group>"; };
 		956B7CF41DFD7D6300FF87F3 /* libSIlib2-2.1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.1.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-2.1.1.a"; sourceTree = "<group>"; };
 		95701CC91F06415600283A92 /* traceThreadCore.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = traceThreadCore.hpp; sourceTree = "<group>"; };
+		95701CDF1F14DBFC00283A92 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		957A59D81CF9A7DE00981E60 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
 		957A59DB1CF9A83D00981E60 /* libfftw3_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3_threads.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3_threads.a; sourceTree = "<group>"; };
 		957A59DD1CF9A88400981E60 /* libfftw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3.a; path = ../../../../usr/local/Cellar/fftw/3.3.4_1/lib/libfftw3.a; sourceTree = "<group>"; };
@@ -840,6 +842,7 @@
 		9504210817A24F9400A076FC = {
 			isa = PBXGroup;
 			children = (
+				95701CDF1F14DBFC00283A92 /* Makefile */,
 				957B840917AD25DA00B963DE /* OpenCL.framework */,
 				95B9D7DA1AEA63F200CEA000 /* Common */,
 				9562D9CB1B483FEA00EC6D83 /* colladaToTriFile */,
@@ -1756,6 +1759,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95701CDE1F14C64500283A92 /* reflect.cpp in Sources */,
 				95701CDD1F06A43E00283A92 /* clipToAABB.cpp in Sources */,
 				95701CDC1F069BD400283A92 /* rayTrace.cpp in Sources */,
 				95701CDB1F069B7800283A92 /* matrixMultiplication.c in Sources */,
@@ -1775,7 +1779,6 @@
 				95701CCD1F06920600283A92 /* buildRopesAndBoxes.cpp in Sources */,
 				95701CCC1F06914E00283A92 /* ecef2SceneCoords.c in Sources */,
 				95701CCB1F068D1D00283A92 /* buildKernel.cpp in Sources */,
-				95701CCA1F068CEB00283A92 /* oclReflect.cpp in Sources */,
 				95538E261BB06538009E8117 /* pmath_rng.c in Sources */,
 				95538E271BB06538009E8117 /* boxMullerRandom.c in Sources */,
 				95538E281BB06538009E8117 /* ranf.c in Sources */,
@@ -1933,6 +1936,7 @@
 				9562DA5D1B4FFE4D00EC6D83 /* matrixMultiplication.c in Sources */,
 				9562DA401B48465400EC6D83 /* tinystr.cpp in Sources */,
 				9562DA411B48465400EC6D83 /* tinyxml.cpp in Sources */,
+				95701CE01F14DBFC00283A92 /* Makefile in Sources */,
 				9562DA421B48465400EC6D83 /* tinyxmlerror.cpp in Sources */,
 				9562DA431B48465400EC6D83 /* tinyxmlparser.cpp in Sources */,
 				95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */,

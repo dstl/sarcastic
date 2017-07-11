@@ -61,17 +61,9 @@ static SPVector bouncecolours[MAXBOUNCES] = {
     {121.0, 012.0, 165.0},        // 9 = Violet
 };
 
-//void generate_gaussian_ray_distribution(double xStdev,double yStdev, SPVector txPos, SPVector GRP, int nx,int ny, Ray *rayArray);
-//void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, int nTriangles, Triangle *triangles, SPVector TxPos, double PowPerRay, AABB SceneBoundingBox,
-//               cl_context context, cl_command_queue commandQ, cl_kernel  randRaysKL, size_t     randRaysLWS[2], SPVector **rayAimPoints );
-
     
 void sartraceCore ( traceThreadData td, char *outDir ) {
     
-    cl_device_id devId ;
-    cl_context context ;
-    cl_command_queue commandQ ;
-    cl_mem dTriangles;
 
     int nAzBeam, nElBeam, bounceToShow, tid, norigrays ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, interrogate ;
@@ -101,7 +93,6 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
     nElBeam          = td.nElBeam ;
     SceneBoundingBox = td.SceneBoundingBox ;
     tid              = td.devIndex ;
-    devId            = td.platform.device_ids[tid] ;
     interrogate      = td.interrogate ;
     interogPt        = td.interogPt ;
     k                = 2 * SIPC_pi / (SIPC_c / td.freq_centre) ;
@@ -109,43 +100,12 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
     nElBeam          = td.nElBeam ;
     
     VECT_CREATE(0, 0, 0, origin);
-    
-    // Create OpenCL context and command queue for this device
-    //
-    context  = CL_CHECK_ERR(clCreateContext(td.platform.props, 1, &devId, NULL, NULL, &_err));
-    commandQ = CL_CHECK_ERR(clCreateCommandQueue(context, devId, 0, &_err));
 
-    // We have the following OpenCL kernels in this thread:
-    //  randomRays :  Generates a net of Gaussian distributed rays
-    //  stackLessTraverse : Performs a stackless traversal of a KdTree to find the intersection points for rays
-    //  reflect : Calculates the reflection ray for a net of rays hitting a surface
-    //
-    
-    //  Build the kernels now and bail out if any fail to compile
-    //
-    cl_program randRaysPG,     stackTraversePG,  reflectPG ;
-    cl_kernel  randRaysKL,     stackTraverseKL,  reflectKL ;
-    size_t     randRaysLWS[2], stackTraverseLWS, reflectLWS ;
-
-    static const char *randRaysCode      = OCLKERNELSPATH"/randomRays.cl" ;
-    static const char *stackTraverseCode = OCLKERNELSPATH"/stacklessTraverse.cl" ;
-    static const char *reflectCode       = OCLKERNELSPATH"/reflectRays.cl" ;
-    
-    CL_CHECK(buildKernel(context, randRaysCode,      "randomRays",        devId, 2, &randRaysPG,      &randRaysKL,      randRaysLWS));
-    CL_CHECK(buildKernel(context, stackTraverseCode, "stacklessTraverse", devId, 1, &stackTraversePG, &stackTraverseKL, &stackTraverseLWS));
-    CL_CHECK(buildKernel(context, reflectCode,       "reflect",           devId, 1, &reflectPG,       &reflectKL,       &reflectLWS));
-    
     int pulse = 0;
     int pulseIndex = (tid * td.nPulses) + pulse ;
     
-    // Set correct parameters for beam to ray trace
-    //
     TxPos = td.TxPositions[pulseIndex] ;
     RxPos = td.RxPositions[pulseIndex] ;
-    
-    // Generate a distribution of nAzbeam x nElbeam rays that originate form the TxPosition aiming at the origin. Use beamMax as the std deviation
-    // for the distribution
-    //
     
     SPStatus status;
     im_init_status(status, 0) ;
@@ -178,8 +138,6 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
     // Allocate memory for items that are needed in all kernels
     //
     nTriangles   = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
-    dTriangles   = CL_CHECK_ERR(clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(ATS)*nTriangles, NULL, &_err)) ;
-    CL_CHECK(clEnqueueWriteBuffer(commandQ, dTriangles,   CL_TRUE, 0, sizeof(ATS)*nTriangles, accelTriangles, 0, NULL, NULL)) ;
     
     printf("Ray generation.............");
 
@@ -240,7 +198,8 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
         
         // Build forward scattering rays ready for next turn round the loop
         //
-        oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+        reflect(nRays, rayArray, hitArray, accelTriangles, reflectedRays);
+
         
         int * trianglesHit = (int *)sp_calloc(nTriangles, sizeof(int));
         for (int i=0; i<nRays; i++){
@@ -274,7 +233,7 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
             fprintf(bounceFile,"end_header\n");
             
             for (int i=0; i<nRays; i++){
-                //            printf("%f, %f, %f\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z);
+                // printf("%f, %f, %f\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z);
                 fprintf(bounceFile,"%f %f %f %d %d %d\n",reflectedRays[i].org.x,reflectedRays[i].org.y,reflectedRays[i].org.z,
                         (int)bouncecolours[nbounce].r,(int)bouncecolours[nbounce].g,(int)bouncecolours[nbounce].b);
             }
@@ -384,17 +343,6 @@ void sartraceCore ( traceThreadData td, char *outDir ) {
     
     free( rayAimPoints );
     free( rayArray ) ;
-    
-    // Clear down OpenCL allocations
-    //
-    clReleaseKernel(randRaysKL);
-    clReleaseKernel(stackTraverseKL);
-    clReleaseKernel(reflectKL);
-    clReleaseProgram(randRaysPG) ;
-    clReleaseProgram(stackTraversePG) ;
-    clReleaseProgram(reflectPG) ;
-    clReleaseCommandQueue(commandQ);
-    clReleaseContext(context);
     
     return ;
 }

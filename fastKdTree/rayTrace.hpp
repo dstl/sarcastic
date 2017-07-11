@@ -33,6 +33,7 @@ typedef struct Ray {
     double   pow;    // Power for this ray
     double   len;    // Distance travelled to this ray's origin from transmission
     SPVector pol ;   // unit vector of direction of E field of ray
+    int      id;     // unique identifier for this ray
 } Ray;
 
 static const unsigned int quickmodulo[] = {0,1,2,0,1};

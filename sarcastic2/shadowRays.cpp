@@ -69,6 +69,7 @@ void buildShadowRays(int                 nRays,              // The number of re
         shadowRays[ind].pow = reflectedRays[ind].pow ;
         shadowRays[ind].len = reflectedRays[ind].len ;
         shadowRays[ind].pol = reflectedRays[ind].pol ;
+        shadowRays[ind].id  = reflectedRays[ind].id  ;
 
     }
     return ;

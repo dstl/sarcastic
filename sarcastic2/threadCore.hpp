@@ -99,6 +99,7 @@ typedef struct threadData {
     int treesize; 
     ATS **accelTriangles ;
     int polarisation ;
+    int rayGenMethod ;
 } threadData ;
 
 enum  POLARISATION { VV, VH, HV, HH, V_, H_ } ;

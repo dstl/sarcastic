@@ -69,7 +69,7 @@ void * devPulseBlock ( void * threadArg ) {
     
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nShadowRays, tid ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
-    int maxRaysPerBounce ;
+    int maxRaysPerBounce, pol ;
 
     
     double gainRx, PowPerRay, derampRange ;
@@ -109,6 +109,7 @@ void * devPulseBlock ( void * threadArg ) {
     interogRad       = td->interogRad ;
     interogFP        = *(td->interogFP) ;
     k                = 2 * SIPC_pi / (SIPC_c / td->freq_centre) ;
+    pol              = td->polarisation ;
     
     VECT_CREATE(0, 0, 0, origin);
     
@@ -211,7 +212,7 @@ void * devPulseBlock ( void * threadArg ) {
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints, TRIANGLECENTRE);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints, TRIANGLECENTRE, pol);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
         
         // Set up deramp range for this pulse
@@ -368,7 +369,7 @@ void * devPulseBlock ( void * threadArg ) {
                 //
                 //  oclPOField(context, commandQ, POFieldKL, POFieldLWS, td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nRays*nbounce])) ;
                 //                cpuPOField(td->triangles, nTriangles, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[nxRay*nyRay*nbounce])) ;
-                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, &(rnp[maxRaysPerBounce*nbounce])) ;
+                cpuPOField(&newMesh, hitArray, nShadowRays, LRays, shadowRays, RxPos, k, ranges, gainRx, nbounce+1, pol, &(rnp[maxRaysPerBounce*nbounce])) ;
                 
                 free(LRays);
                 free(RRays);

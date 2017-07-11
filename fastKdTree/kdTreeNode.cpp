@@ -306,11 +306,11 @@ void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght, Trian
             
             data.triAABBs[t].clipToTriangle(vertA, vertB, vertC, pos, maxAxis, ablft, abrgt);
             
-            if(ablft.surfaceArea() > 0.0001 ){
+            if(ablft.surfaceArea() > 1.0e-10 ){
                 (*left)->data.triangles.push_back(triIdx);
                 (*left)->data.triAABBs.push_back(ablft) ;
             }
-            if(abrgt.surfaceArea() > 0.0001 ){
+            if(abrgt.surfaceArea() > 1.0e-10 ){
                 (*rght)->data.triangles.push_back(triIdx);
                 (*rght)->data.triAABBs.push_back(abrgt) ;
             }

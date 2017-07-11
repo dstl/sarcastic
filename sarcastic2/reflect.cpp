@@ -79,6 +79,8 @@ void reflect(int    nRays,              // Number of rays to reflect
         VECT_ADD(rays[ind].org, hp, reflectedRays[ind].org);
         reflectedRays[ind].dir = R ;
         reflectedRays[ind].len = rays[ind].len + hits[ind].dist ;
+        reflectedRays[ind].id  = rays[ind].id ;
+
         
         // Now calculate forward scattered ray power by only considering the
         // specular component of the reflective surface texture.

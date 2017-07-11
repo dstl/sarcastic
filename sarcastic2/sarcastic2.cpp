@@ -78,10 +78,11 @@ int main(int argc, const char * argv[]) {
     ATS *accelTriangles = NULL;;
     int treeSize = 0;
     int polarisation ;
+    int rayGenMethod ;
     
     getUserInput(&hdr, &baseMesh, &moverMesh, &outCPHDFile,
                      &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad,
-                 &interrogateFP, &pulseUndersampleFactor, &polarisation, &status) ;
+                 &interrogateFP, &pulseUndersampleFactor, &polarisation, &rayGenMethod, &status) ;
     
     // Start timing after user input
     //
@@ -293,6 +294,7 @@ int main(int argc, const char * argv[]) {
         coreData[t].accelTriangles         = &accelTriangles ;
         coreData[t].treesize               = treeSize ;
         coreData[t].polarisation           = polarisation ;
+        coreData[t].rayGenMethod           = rayGenMethod ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){

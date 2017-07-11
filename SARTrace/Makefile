@@ -57,7 +57,7 @@ CPPSRC = \
 ../sarcastic2/accelerateTriangles.cpp \
 ../sarcastic2/buildRopesAndBoxes.cpp \
 ../bircs/buildKernel.cpp \
-../bircs/oclReflect.cpp \
+../sarcastic2/reflect.cpp \
 getSARTraceUserInput.cpp \
 SARTrace.cpp \
 SARTracebanner.cpp \

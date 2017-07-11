@@ -64,6 +64,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             r.org = TxPos ;
             r.pow = PowPerRay ;
             r.len = 0;
+            r.id  = i ;
             SPVector aimdir ;
             VECT_SUB(mean, TxPos, aimdir);
             VECT_NORM(aimdir, r.dir);
@@ -147,6 +148,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].org = TxPos ;
             (*rayArray)[i].pow = PowPerRay ;
             (*rayArray)[i].len = 0 ;
+            (*rayArray)[i].id  = i ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
             if (pol == VV || pol == VH || pol == V_) {
@@ -226,6 +228,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].org = TxPos ;
             (*rayArray)[i].pow = PowPerRay ;
             (*rayArray)[i].len = 0 ;
+            (*rayArray)[i].id  = i ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
             if (pol == VV || pol == VH || pol == V_) {
@@ -299,6 +302,7 @@ void buildRays(Ray **rayArray, int *nRays, int nAzRays, int nElRays, TriangleMes
             (*rayArray)[i].org = Opnt ;
             (*rayArray)[i].pow = PowPerRay ;
             (*rayArray)[i].len = 0 ;
+            (*rayArray)[i].id  = i ;
             VECT_CROSS((*rayArray)[i].dir, zHat, Hdir);
             VECT_CROSS(Hdir, (*rayArray)[i].dir, Vdir);
             if (pol == VV || pol == VH || pol == V_) {

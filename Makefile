@@ -43,3 +43,9 @@ all:
 	cd bircs ; make ; cd ..
 	cd sarcastic2 ; make ; cd ..
 	
+cleanall:
+	cd colladaToTriFile; make clean ; cd ..
+	cd materialise ; make clean ; cd ..
+	cd SARTrace ; make clean ; cd ..
+	cd bircs ; make clean ; cd ..
+	cd sarcastic2 ; make clean ; cd ..
