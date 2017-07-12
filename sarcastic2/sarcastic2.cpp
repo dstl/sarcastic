@@ -79,9 +79,10 @@ int main(int argc, const char * argv[]) {
     int treeSize = 0;
     int polarisation ;
     int rayGenMethod ;
+    int interogX,interogY ;
     
     getUserInput(&hdr, &baseMesh, &moverMesh, &outCPHDFile,
-                     &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad,
+                     &startPulse, &nPulses, &bounceToShow, &nAzBeam, &nElBeam, &interrogate, &interogPt, &interogRad, &interogX, &interogY,
                  &interrogateFP, &pulseUndersampleFactor, &polarisation, &rayGenMethod, &status) ;
     
     // Start timing after user input
@@ -312,12 +313,14 @@ int main(int argc, const char * argv[]) {
             intMaxR = intRg + interogRad/2.0 ;
             
             fprintf(interrogateFP, "\tInterrogate Output (Sarcastic %s)\n",FULL_VERSION);
-            fprintf(interrogateFP, "Time of run             : %s\n",asctime (timeinfo));
-            fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
-            fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
-            fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
-            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse/pulseUndersampleFactor,(startPulse/pulseUndersampleFactor)+nPulses);
-            fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
+            fprintf(interrogateFP, "Time of run                                 : %s",asctime (timeinfo));
+            fprintf(interrogateFP, "Interrogation point                         : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
+            fprintf(interrogateFP, "Interrogation point in image (x,y) pixels   : %03d,%03d\n",interogX,interogY);
+            fprintf(interrogateFP, "Slant range to point (near - mid - far) (m) : %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
+            fprintf(interrogateFP, "Transmitter location                        : %06.3f,%06.3f,%06.3f\n",
+                    newhdr.pulses[0].sat_ps_tx.x,newhdr.pulses[0].sat_ps_tx.y,newhdr.pulses[0].sat_ps_tx.z);
+            fprintf(interrogateFP, "Interrogation Pt Radius                     : %06.3f\n",interogRad);
+            fprintf(interrogateFP, "Interrogation Pulse                         : %d\n",startPulse/pulseUndersampleFactor);
             fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         }
         

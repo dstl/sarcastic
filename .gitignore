@@ -11,7 +11,11 @@ SarcasticVersion.h
 Version.h
 SartraceVersion.h
 .sartracerc*
-bin
+bin/bircs
+bin/colladaToTriFile
+bin/materialise
+bin/sarcastic
+bin/SARTrace
 # Ignore user specific Xcode files
 build/
 DerivedData

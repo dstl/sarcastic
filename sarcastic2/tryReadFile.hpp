@@ -52,4 +52,13 @@
 ///
 char * tryReadFile(const char *prompt, const char * key, const char * help, const char *def) ;
 
+/// Function to get user input checking that the input is a valid file for writing
+///  prompt  : the text to display when asking the user for input (the default value will also be displayed)
+///  key     : a unique bit of text (such as "AzPixelSize") which the input system will then use to store parameter values
+///  help    : the text to display to the user when they just enter '?'
+///  def     : the default, ie the value to take if the user just presses return
+///
+char * tryWriteFile(const char *prompt, const char * key, const char * help, const char *def) ;
+
+
 #endif /* tryReadFile_hpp */

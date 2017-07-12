@@ -47,7 +47,7 @@
 int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMesh, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam,
-                 int *interrogate, SPVector *interogPt, double *interogRad,
+                 int *interrogate, SPVector *interogPt, double *interogRad, int *interogX, int *interogY,
                  FILE **interrogateFP, int *pulseUndersampleFactor, int *polarisation, int *rayGenMethod, SPStatus *status){
     
     char * prompt;
@@ -220,63 +220,66 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     
     // Ask the user if he would like to interrogate a scattering point in a previously ray traced
     // image. If so, ask for surface file and image coords of point in image so that we can convert the
-    // image point to a scene coord vector.
+    // image point to a scene coord vector. Only do this if nPulses is '1'
     //
     char *surfaceFile ;
-    int  interogX, interogY ;
+//    int  interogX, interogY ;
     
     *interrogate = 0;
-    *interrogate = input_yesno((char *)"Interrogate a point in scene?", (char *)"interogPt",
-                               (char *)"Interrogate a point in the scene to find out which scattering primitives made it.",*interrogate);
-    
-    if(*interrogate){
-        sprintf(prompt, "/local_storage/DGM/surface.dat");
-        do {
-            im_init_status(fileStat, 0) ;
-            surfaceFile = input_string((char *)"Name of surface file", (char *)"surfaceFile",
-                                       (char *)"The name of a surface file to read from",
-                                       prompt);
-            if ( (fp = fopen(surfaceFile, "r")) == NULL){
-                printf(RED "Cannot access file %s\n" RESETCOLOR,surfaceFile);
-                fileStat.status = BAD_FILE ;
-            }else fclose(fp) ;
+    if (*nPulses == 1) {
+        
+        *interrogate = input_yesno((char *)"Interrogate a point in scene?", (char *)"interogPt",
+                                   (char *)"Interrogate a point in the scene to find out which scattering primitives made it.",*interrogate);
+        
+        if(*interrogate){
+            sprintf(prompt, "/local_storage/DGM/surface.dat");
+            do {
+                im_init_status(fileStat, 0) ;
+                surfaceFile = input_string((char *)"Name of surface file", (char *)"surfaceFile",
+                                           (char *)"The name of a surface file to read from",
+                                           prompt);
+                if ( (fp = fopen(surfaceFile, "r")) == NULL){
+                    printf(RED "Cannot access file %s\n" RESETCOLOR,surfaceFile);
+                    fileStat.status = BAD_FILE ;
+                }else fclose(fp) ;
+                
+            } while(fileStat.status != NO_ERROR);
             
-        } while(fileStat.status != NO_ERROR);
-        
-        SPImage surface ;
-        im_load(&surface, surfaceFile, &fileStat) ;
-        
-        interogX  = (int)surface.nx / 2 ;
-        interogY  = (int)surface.ny / 2;
-        
-        interogX  = input_int((char *)"X coordinate of image pixel to interrogate", (char *)"interogX",
-                              (char *)"location in x direction of the point in the SAR image to interrogate", interogX) ;
-        interogY  = input_int((char *)"Y coordinate of image pixel to interrogate", (char *)"interogY",
-                              (char *)"location in y direction of the point in the SAR image to interrogate", interogY) ;
-        
-        *interogRad = 1.0;
-        *interogRad = input_dbl((char *)"Radius (in m)  of region around point to interrogate", (char *)"interogRad",
-                                (char *)"Radius (in m) of region around point to interrogate", *interogRad);
-        
-        do {
-            sprintf(prompt, "/local_storage/DGM/interrogate.txt");
+            SPImage surface ;
+            im_load(&surface, surfaceFile, &fileStat) ;
             
-            im_init_status(fileStat, 0) ;
-            interrogFname = input_string((char *)"Name of file for interrogation output", (char *)"interrogFname",
-                                         (char *)"Name of file for interrogation output",
-                                         prompt);
-            if ( (*interrogateFP = fopen(interrogFname, "w")) == NULL){
-                printf(RED "Cannot access file %s\n" RESETCOLOR,interrogFname);
-                fileStat.status = BAD_FILE ;
-            }
+            *interogX  = (int)surface.nx / 2 ;
+            *interogY  = (int)surface.ny / 2;
             
-        } while(fileStat.status != NO_ERROR);
-        
-        *interogPt = surface.data.vect[interogY*surface.nx+interogX] ;
-        
-        im_destroy(&surface, &fileStat);
+            *interogX  = input_int((char *)"X coordinate of image pixel to interrogate", (char *)"interogX",
+                                  (char *)"location in x direction of the point in the SAR image to interrogate", *interogX) ;
+            *interogY  = input_int((char *)"Y coordinate of image pixel to interrogate", (char *)"interogY",
+                                  (char *)"location in y direction of the point in the SAR image to interrogate", *interogY) ;
+            
+            *interogRad = 1.0;
+            *interogRad = input_dbl((char *)"Radius (in m)  of region around point to interrogate", (char *)"interogRad",
+                                    (char *)"Radius (in m) of region around point to interrogate", *interogRad);
+            
+            
+             do {
+                sprintf(prompt, "/local_storage/DGM/interrogate.txt");
+                
+                im_init_status(fileStat, 0) ;
+                interrogFname = input_string((char *)"Name of file for interrogation output", (char *)"interrogFname",
+                                             (char *)"Name of file for interrogation output",
+                                             prompt);
+                if ( (*interrogateFP = fopen(interrogFname, "w")) == NULL){
+                    printf(RED "Cannot access file %s\n" RESETCOLOR,interrogFname);
+                    fileStat.status = BAD_FILE ;
+                }
+                
+            } while(fileStat.status != NO_ERROR);
+             
+            *interogPt = surface.data.vect[*interogY*surface.nx+ *interogX] ;
+            
+            im_destroy(&surface, &fileStat);
+        }
     }
-    
     free(prompt);
 
     return (status->status) ;

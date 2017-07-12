@@ -137,8 +137,8 @@ void * devPulseBlock ( void * threadArg ) {
     if(td->moverMesh->triangles.size() != 0){
         dynamicScene = true;
     }
-    // **** loop  start here
-    //
+    
+    
     
     startTimer(&threadTimer, &status) ;
     SPVector *rayAimPoints = NULL ;
@@ -151,6 +151,9 @@ void * devPulseBlock ( void * threadArg ) {
     double pulseDur, buildRaysDur, shootRaysDur, reflectDur, buildShadDur, packPulseDur, PODur ;
     pulseDur = buildRaysDur = shootRaysDur = reflectDur = buildShadDur = packPulseDur = PODur = 0.0;
     
+    // Pulse loop  start here
+    //
+
     for (int pulse=0; pulse<nPulses; pulse++){
         startTimer(&pulseTimer, &status);
         int pulseIndex = pulse + startPulse ;
@@ -498,29 +501,29 @@ void * devPulseBlock ( void * threadArg ) {
                     for ( int i=0; i<nShadowRays; i++){
                         irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
-                            CMPLX_ADD(magEForBounce, irp.Es, magEForBounce)
-//                            magEForBounce += CMPLX_MAG(irp.Es) ;
+                            CMPLX_ADD(magEForBounce, irp.Es, magEForBounce) ;
                             intCnt++;
                         }
                     }
-                    fprintf(interogFP, "Bounce %2d : Emag : %f Intersections found : %d\n", nbounce, CMPLX_MAG(magEForBounce), intCnt) ;
-                    
+                    fprintf(interogFP, "Bounce                     : %2d\n", nbounce) ;
+                    fprintf(interogFP, "E-field magnitude (approx) : %08.3f \n",CMPLX_MAG(magEForBounce)) ;
+                    fprintf(interogFP, "Intersections found        : %04d\n",intCnt) ;
+                    fprintf(interogFP, "Index\t\trange(m)\tEmag\t\tbouncepoints ----> \n") ;
                     for ( int i=0; i<nShadowRays; i++){
                         irp = rnp[(maxRaysPerBounce*nbounce)+i] ;
                         if ( irp.range > intMinR && irp.range < intMaxR ) {
                             int id = shadowRays[i].id ;
-                            fprintf(interogFP, "[%d] %f, %f\t",id,irp.range, CMPLX_MAG(irp.Es)) ;
-                            fprintf(interogFP, "%f,%f,%f",TxPos.x,TxPos.y,TxPos.z);
+                            fprintf(interogFP, "[%07d]\t%9.4f\t%6.3f\t",id,irp.range, CMPLX_MAG(irp.Es)) ;
                             for(int b=0; b<=nbounce; ++b){
-                                fprintf(interogFP, " -- %f,%f,%f",allHitPts[b*maxRaysPerBounce+id].x,allHitPts[b*maxRaysPerBounce+id].y,allHitPts[b*maxRaysPerBounce+id].z);
+                                fprintf(interogFP, "%-.4f,%-.4f,%-.4f\t",allHitPts[b*maxRaysPerBounce+id].x,allHitPts[b*maxRaysPerBounce+id].y,allHitPts[b*maxRaysPerBounce+id].z);
                             }
                             
 //                            fprintf(interogFP, "%f,\t%e,\t%2d,\t%4d,\t%06.3f,%06.3f,%06.3f\n",irp.range,CMPLX_MAG(irp.Es),nbounce,hitArray[i].trinum,shadowRays[i].org.x,shadowRays[i].org.y,shadowRays[i].org.z);
                             
                             fprintf(interogFP, "\n");
                         }
-                        fprintf(interogFP, "---------------------------------------------------\n");
                     }
+                    fprintf(interogFP, "---------------------------------------------------\n");
                 }
                 
                 free(LRays);
@@ -648,10 +651,6 @@ void * devPulseBlock ( void * threadArg ) {
     }
     
     free( rayAimPoints );
-//    if(!dynamicScene){
-//        free(tree);
-//        delete accelTriangles ;
-//    }
     
     // print timer Summary
     //
