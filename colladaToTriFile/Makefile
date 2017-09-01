@@ -38,6 +38,7 @@
 
 EXE         = colladaToTriFile
 INSTALL_DIR = /usr/local/dstl/bin
+VERSION    := $(shell `pwd`/GenGitVersion.sh)
 
 CPPSRC = \
 colladainterface.cpp \

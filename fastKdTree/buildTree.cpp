@@ -196,6 +196,8 @@ void kdTree::buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree,
     nodelist.clear() ;
     activelist->erase() ;
     
+    delete activelist ;
+    delete nextlist   ;
     return;
 }
 

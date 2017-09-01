@@ -63,6 +63,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree, 
         }
     }
     delete [] accelTriangles ;
+    delete [] hits ;
+    free(rays) ;
     return ;
     
 }
