@@ -78,6 +78,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     baseMesh->buildTriangleAABBs();
     baseMesh->buildTrianglelCentres();
     printf("Done \n");
+    free(baseScene);
 
     char *moversScene ;
     moversScene = input_string("Name of movers scene", "moversScene",
@@ -91,6 +92,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     }else{
         moverMesh = NULL ;
     }
+    free(moversScene) ;
     
     
     sprintf(prompt, "%s/cphdFile.cph",ROOTPATH);
@@ -189,6 +191,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
             printf("Invalid polarisation. Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\' or \'H_\'\n");
         }
     }while(!validpol);
+    free(polstr);
     
     // To save processing time only read in the CPHDFile PHD if we are going to create a new
     // CPHD file
@@ -281,6 +284,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
         }
     }
     free(prompt);
+    free(inCPHDFile) ;
 
     return (status->status) ;
     

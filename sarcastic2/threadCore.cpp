@@ -345,7 +345,11 @@ void * devPulseBlock ( void * threadArg ) {
                     reflectCount++ ;
             }
             
-            if( reflectCount == 0) break ;
+            if( reflectCount == 0) {
+                free(edgeHit);
+                free(hitArray);
+                break ;
+            }
             
             // shrink rayArray and hitArray to get rid of misses
             //
