@@ -125,13 +125,13 @@ kdTree::kdTreeNode::kdTreeNode(TriangleMesh &mesh)
 }
 
 
-kdTree::kdTreeNode::~kdTreeNode(){
-    
-    if (data.smallntris > 0) {
-        delete [] data.triangleMask ;
-    }
-    
-}
+//kdTree::kdTreeNode::~kdTreeNode(){
+//    
+//    if (data.smallntris > 0) {
+//        delete [] data.triangleMask ;
+//    }
+//    
+//}
 
 // Some routines for handling the kdTreeNode as a list
 //
@@ -160,7 +160,7 @@ AABB kdTree::kdTreeNode::BVforAllTris()
     return ans;
 }
 
-void kdTree::kdTreeNode::split(int k, double pos, kdTreeNode *left, kdTreeNode *rght)
+void kdTree::kdTreeNode::split(int k, double pos, std::shared_ptr<kdTreeNode> left, std::shared_ptr<kdTreeNode> rght)
 {
     if (smallroot == NULL) {
         printf("Error: split() function only works on small nodes. Did you mean medianSplit()?\n");
@@ -224,7 +224,7 @@ void kdTree::kdTreeNode::split(int k, double pos, kdTreeNode *left, kdTreeNode *
     return ;
 }
 
-void kdTree::kdTreeNode::medianSplit(kdTreeNode **left, kdTreeNode **rght, TriangleMesh &globalMesh)
+void kdTree::kdTreeNode::medianSplit(std::shared_ptr<kdTreeNode> *left, std::shared_ptr<kdTreeNode> *rght, TriangleMesh &globalMesh)
 // medianSplit() splits the node at the median point of the largest axis
 // and returns two child nodes that have their AABB's set and the triAABB's correctly clipped to the split plane.
 // In addition the triangles array in each child correctly holds the index of each triangle
@@ -339,7 +339,7 @@ bool kdTree::treeList::indexCheck(int position){
     return	true;
 }
 
-bool kdTree::treeList::insertNode(kdTreeNode *node, int position) {
+bool kdTree::treeList::insertNode(std::shared_ptr<kdTreeNode> node, int position) {
     if( !indexCheck(position) ) {
         exit(1);
     }
@@ -349,8 +349,8 @@ bool kdTree::treeList::insertNode(kdTreeNode *node, int position) {
         return true;
     }
     int count = 0;
-    kdTreeNode * p = head;
-    kdTreeNode * q = head;
+    std::shared_ptr<kdTreeNode> p = head;
+    std::shared_ptr<kdTreeNode> q = head;
     while (q) {
         if (count==position) {
             p->next = node;
@@ -375,12 +375,12 @@ bool kdTree::treeList::removeNode(int position) {
         return false;
     }
     int count = 0;
-    kdTreeNode * p = head;
-    kdTreeNode * q = head;
+    std::shared_ptr<kdTreeNode> p = head;
+    std::shared_ptr<kdTreeNode> q = head;
     while (q) {
         if (count == position) {
             p->next = q->next;
-            delete q;
+            q.reset();
             length--;
             return true;
         }
@@ -392,7 +392,7 @@ bool kdTree::treeList::removeNode(int position) {
     return false;
 }
 
-kdTree::kdTreeNode * kdTree::treeList::at(int position){
+std::shared_ptr<kdTree::kdTreeNode> kdTree::treeList::at(int position){
     if( !indexCheck(position) ) {
         exit(1);
     }
@@ -401,8 +401,8 @@ kdTree::kdTreeNode * kdTree::treeList::at(int position){
     }
     
     int count = 1;
-    kdTreeNode * p;
-    kdTreeNode * q = head;
+    std::shared_ptr<kdTreeNode> p;
+    std::shared_ptr<kdTreeNode> q = head;
     while (q) {
         if (count == position) {
             if (q->next == NULL) {
@@ -420,15 +420,15 @@ kdTree::kdTreeNode * kdTree::treeList::at(int position){
     return NULL;
 }
 
-kdTree::kdTreeNode * kdTree::treeList::front(){
+std::shared_ptr<kdTree::kdTreeNode> kdTree::treeList::front(){
     return head;
 }
 
-kdTree::kdTreeNode * kdTree::treeList::back(){
+std::shared_ptr<kdTree::kdTreeNode> kdTree::treeList::back(){
     return tail;
 }
 
-void kdTree::treeList::push_back(kdTreeNode *node){
+void kdTree::treeList::push_back(std::shared_ptr<kdTreeNode> node){
     
     // Create a new node pointer with allocated memory
     // so that when this function scope ends the memory
@@ -446,8 +446,8 @@ void kdTree::treeList::push_back(kdTreeNode *node){
         return ;
     }
     
-    kdTreeNode * p = tail ;
-    kdTreeNode * q = tail ;
+    std::shared_ptr<kdTreeNode> p = tail ;
+    std::shared_ptr<kdTreeNode> q = tail ;
     while (q){
         p = q ;
         q = p->next ;
@@ -459,7 +459,7 @@ void kdTree::treeList::push_back(kdTreeNode *node){
 }
 
 void kdTree::treeList::clear() {
-    kdTreeNode *p = head;
+    std::shared_ptr<kdTreeNode> p = head;
     while (p) {
         head = tail->next;
         p = head ;
@@ -469,10 +469,11 @@ void kdTree::treeList::clear() {
 }
 
 void kdTree::treeList::erase() {
-    kdTreeNode * p = head;
+    
+    std::shared_ptr<kdTreeNode> p = head;
     while (p) {
         head = head->next;
-        delete p;
+        p.reset();
         p = head;
     }
     length = 0;
@@ -480,19 +481,19 @@ void kdTree::treeList::erase() {
 }
 
 void kdTree::treeList::printList() {
-    kdTreeNode * p ;
-    kdTreeNode * q = head;
+    std::shared_ptr<kdTreeNode> p ;
+    std::shared_ptr<kdTreeNode> q = head;
     int count = 0 ;
     std::cout << "\n---------------------------\n";
     std::cout << "List output ( length "<<length<<" )"<<std::endl;
     while (q)
     {
         p = q;
-        printf("[%2d] <%p> left:<%p> right:<%p> smallroot:<%p>",count, p, p->leftChild,p->rghtChild,p->smallroot);
+        printf("[%2d] <%p> left:<%p> right:<%p> smallroot:<%p>",count, p.get(), p->leftChild.get(),p->rghtChild.get(),p->smallroot.get());
         if(p->next == NULL){
             printf("next is NULL\n");
         }else{
-            printf("next is %p\n", p->next) ;
+            printf("next is %p\n", p->next.get()) ;
         }
         q = p -> next;
         count++;

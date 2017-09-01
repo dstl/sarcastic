@@ -8,6 +8,7 @@
 
 #include "rayTrace.hpp"
 #include <SIlib2/SIlib2.h>
+//#define NOOUTPUTPOINTS
 
 
 void buildRays(Ray **rayArray, int nAzRays, int nElRays, SPVector TxPos, AABB SceneBoundingBox) ;
@@ -53,7 +54,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree, 
     endTimer(&rayTimer, &status);
     
     printf("%d rays traced in  %f seconds (%f rays / second) \n",nRays,timeElapsedInSeconds(&rayTimer, &status), nRays / timeElapsedInSeconds(&rayTimer, &status)) ;
-    
+
+#ifndef NOOUTPUTPOINTS
     SPVector hp;
     for (int i=0; i<nRays; ++i) {
         if(hits[i].trinum != -1){
@@ -62,6 +64,8 @@ void  rayTrace(TriangleMesh *mesh, kdTree::KdData *kdTree, int *numNodesInTree, 
             printf("%f, %f, %f\n",hp.x,hp.y,hp.z);
         }
     }
+#endif
+    
     delete [] accelTriangles ;
     delete [] hits ;
     free(rays) ;

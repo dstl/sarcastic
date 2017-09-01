@@ -48,9 +48,9 @@
 #include "buildTree.hpp"
 
 void kdTree::buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT printOutput){
-    std::vector<kdTree::kdTreeNode *> nodelist ;
+    std::vector<std::shared_ptr<kdTreeNode>> nodelist ;
     
-    kdTreeNode *p, *q;      // used for indexing through the linked list
+    std::shared_ptr<kdTreeNode> p, q;      // used for indexing through the linked list
     
     // Perform the Zhou KdTree build
     //
@@ -66,11 +66,12 @@ void kdTree::buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree,
     }
     nodelist.reserve(nodelistSize) ;
     
-    kdTreeNode rootnode(mesh) ;
+//    kdTreeNode rootnode(mesh) ;
+    std::shared_ptr<kdTreeNode> rootnode( new kdTreeNode(mesh) ) ;
     
     if (printOutput != OUTPUTNO)printf("Input Mesh has %ld triangles\n",mesh.triangles.size()) ;
     
-    activelist->push_back(&rootnode);
+    activelist->push_back(rootnode);
     
     int dpth = 0;
     if (printOutput != OUTPUTNO) {
@@ -214,7 +215,7 @@ void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, tree
     // than asking for each node at() a given location as the at() function steps through the
     // list from the head each time.
     //
-    kdTreeNode *p, *q;
+    std::shared_ptr<kdTreeNode> p, q;
     p = (*activelist)->front() ; // First node in list (head is at index 0)
     q = (*activelist)->front() ; // First node in list (head is at index 0)
     while (q) {
@@ -262,8 +263,9 @@ void kdTree::processLargeNodes(treeList **activelist, treeList **smalllist, tree
         }
         
         
-        kdTreeNode *leftNode = new kdTreeNode ;
-        kdTreeNode *rghtNode = new kdTreeNode ;
+        std::shared_ptr<kdTreeNode> leftNode(new kdTreeNode) ;
+        std::shared_ptr<kdTreeNode> rghtNode(new kdTreeNode) ;
+        
         p->medianSplit(&leftNode, &rghtNode, globalMesh);
         int numLeftChild  = (int)leftNode->data.triangles.size();
         int numRightChild = (int)rghtNode->data.triangles.size();
@@ -296,7 +298,7 @@ void kdTree::preProcessSmallNodes(treeList **smalllist)
 // in smalllist.
 //
 {
-    kdTreeNode *p, *q;
+    std::shared_ptr<kdTreeNode> p, q;
     
     p = (*smalllist)->front() ;
     q = (*smalllist)->front() ;
@@ -379,7 +381,7 @@ void kdTree::processSmallNodes(treeList **activelist, treeList **nextlist)
     AABB Vleft,Vrght ;
     float Al,Ar,ProbL,ProbR,SAHp ;
     
-    kdTreeNode *p,*q ;
+    std::shared_ptr<kdTreeNode> p,q ;
     
     p = (*activelist)->front();
     q = (*activelist)->front();
@@ -438,8 +440,8 @@ void kdTree::processSmallNodes(treeList **activelist, treeList **nextlist)
             if(minId == -1){
                 p->data.isLeaf = true ;
             }else{
-                kdTreeNode *leftNode = new kdTreeNode ;
-                kdTreeNode *rghtNode = new kdTreeNode ;
+                std::shared_ptr<kdTreeNode> leftNode ( new kdTreeNode ) ;
+                std::shared_ptr<kdTreeNode> rghtNode ( new kdTreeNode ) ;
                 
                 p->split(p->data.splitList[minId].dim, p->data.splitList[minId].pos, leftNode, rghtNode) ;
                 
@@ -459,7 +461,7 @@ void kdTree::processSmallNodes(treeList **activelist, treeList **nextlist)
     return ;
 }
 
-void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData **kdTreeOutput, int *numOfKdTreeNodes)
+void kdTree::preOrderTraversalNode(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, KdData **kdTreeOutput, int *numOfKdTreeNodes)
 {
     // There are two ways to store the tree:
     // Bread-first : the data structure contains all the nodes for each level
@@ -475,7 +477,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
     //
     
     int level ;
-    kdTreeNode *p;
+    std::shared_ptr<kdTreeNode> p;
     
     // Find the lowest level in the tree
     // and assign the index of each node as the address
@@ -533,7 +535,7 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
             (*kdTreeOutput)[address].leaf.leafDim = (unsigned char)0x4 ;
             (*kdTreeOutput)[address].leaf.leafDim = ((*kdTreeOutput)[address].leaf.leafDim) | p->data.dim ;
             (*kdTreeOutput)[address].leaf.triangleIndex = address ;
-            kdTreeNode *s = p->smallroot ;
+            std::shared_ptr<kdTreeNode> s = p->smallroot ;
             std::vector<int> triangles = s->data.triangles ;
             // check
             if (triangles.size() != p->data.smallntris) {
@@ -567,9 +569,9 @@ void kdTree::preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData *
     return;
 }
 
-void kdTree::buildSizes(std::vector<kdTreeNode *> *nodelist, int level){
+void kdTree::buildSizes(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, int level){
     
-    kdTreeNode *p,*l,*r;
+    std::shared_ptr<kdTreeNode> p,l,r;
     
     for(int i=0; i<nodelist->size(); ++i){
         p = (*nodelist)[i] ;
@@ -587,9 +589,9 @@ void kdTree::buildSizes(std::vector<kdTreeNode *> *nodelist, int level){
     return ;
 }
 
-void kdTree::buildAddresses(std::vector<kdTreeNode *> *nodelist, int level){
+void kdTree::buildAddresses(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, int level){
     
-    kdTreeNode *p,*l,*r;
+    std::shared_ptr<kdTreeNode>p,l,r;
     
     for(int i=0; i<nodelist->size(); ++i){
         p = (*nodelist)[i] ;
@@ -846,7 +848,7 @@ void kdTree::writeAABBtoPlyFile(AABB bv, std::string filename){
 }
 
 void kdTree::dumpsmall(treeList **list){
-    kdTreeNode *p, *n;
+    std::shared_ptr<kdTreeNode> p, n;
     
     if ((*list)->size() == 0) {
         return;
@@ -856,7 +858,7 @@ void kdTree::dumpsmall(treeList **list){
     int i=0;
     while(p){
         n = p;
-        printf("[%02d]<%p>  triMask=<%p>[%02d] ",i,p,p->data.triangleMask,p->data.smallntris) ;
+        printf("[%02d]<%p>  triMask=<%p>[%02d] ",i,p.get(),p->data.triangleMask,p->data.smallntris) ;
         for(int j=0; j<p->data.smallntris; ++j){
             printf("%d",p->data.triangleMask[j]) ;
         }
@@ -874,13 +876,13 @@ void kdTree::swapLists(treeList **a, treeList **b) {
     return  ;
 }
 
-void kdTree::printKdTreeNodes(std::vector<kdTreeNode *> nodelist){
+void kdTree::printKdTreeNodes(std::vector<std::shared_ptr<kdTreeNode>> nodelist){
     
-    kdTreeNode *p;
+    std::shared_ptr<kdTreeNode> p;
     
     for (int i=0; i<nodelist.size(); ++i){
         p = nodelist[i] ;
-        printf("[<%p>]",p);
+        printf("[<%p>]",p.get());
         for(int j=0;j<p->data.level;++j){
             printf("-");
         }
@@ -895,7 +897,7 @@ void kdTree::printKdTreeNodes(std::vector<kdTreeNode *> nodelist){
             printf(" ]");
         }else{
             printf("|");
-            printf("  [%p][%p]",p->leftChild ,p->rghtChild);
+            printf("  [%p][%p]",p->leftChild.get() ,p->rghtChild.get());
         }
         printf("\n");
     }
@@ -962,7 +964,7 @@ void kdTree::printKdTreeData(KdData **kdTree, int *numOfKdTreeNodes){
     return ;
 }
 
-void kdTree::printSummary(std::vector<kdTreeNode *> nodelist, TriangleMesh &mesh)
+void kdTree::printSummary(std::vector<std::shared_ptr<kdTreeNode>> nodelist, TriangleMesh &mesh)
 // Note that this complexity analysis is taken from [1]
 //
 //  1. Wald, Ingo, and Vlastimil Havran. "On building fast kd-trees for ray tracing,

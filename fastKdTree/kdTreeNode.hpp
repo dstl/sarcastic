@@ -139,10 +139,10 @@ namespace kdTree {
             unsigned char               *triangleMask   = NULL ;    // bit mask indicating if triangles[x] is in this node
         } data ;
         
-        kdTreeNode *next	        = NULL ;    // Next kdTreeNode in the list
-        kdTreeNode *leftChild	    = NULL ;    // ptr to left child node
-        kdTreeNode *rghtChild	    = NULL ;    // ptr ro rght child node
-        kdTreeNode *smallroot       = NULL ;    // This is the index into nodelist of the root of the smalllist tree for this node
+        std::shared_ptr<kdTreeNode> next	  = NULL ;    // Next kdTreeNode in the list
+        std::shared_ptr<kdTreeNode> leftChild = NULL ;    // ptr to left child node
+        std::shared_ptr<kdTreeNode> rghtChild = NULL ;    // ptr ro rght child node
+        std::shared_ptr<kdTreeNode> smallroot = NULL ;    // This is the index into nodelist of the root of the smalllist tree for this node
         
         // Define class methods here
         //
@@ -153,11 +153,11 @@ namespace kdTree {
         kdTreeNode(TriangleMesh &mesh) ;        // constructor using a triangleMesh as input. Builds Tri AABBs if they do not exist
         
         //    kdTreeNode(const kdTreeNode &node) ;    // copy constructor as we malloc in this class
-        ~kdTreeNode() ;							// default destructor
+//        ~kdTreeNode() ;							// default destructor
         
         AABB BVforAllTris();
-        void medianSplit(kdTreeNode **left, kdTreeNode **rght, TriangleMesh &globalMesh);
-        void split(int dim, double pos, kdTreeNode *left, kdTreeNode *rght) ;
+        void medianSplit(std::shared_ptr<kdTreeNode> *left, std::shared_ptr<kdTreeNode> *rght, TriangleMesh &globalMesh);
+        void split(int dim, double pos, std::shared_ptr<kdTreeNode> left, std::shared_ptr<kdTreeNode> rght) ;
         
     };
     
@@ -168,21 +168,21 @@ namespace kdTree {
     //
     class treeList {
         private :
-        kdTreeNode *head ;
-        kdTreeNode *tail ;
+        std::shared_ptr<kdTreeNode> head ;
+        std::shared_ptr<kdTreeNode> tail ;
         int length = 0 ;
         bool indexCheck(int position) ;
         
         public :
         treeList() ;
         int size() ;
-        bool insertNode(kdTreeNode *node, int position) ;
+        bool insertNode(std::shared_ptr<kdTreeNode> node, int position) ;
         bool removeNode(int position) ;
-        kdTreeNode * at(int ind) ;
-        kdTreeNode * front() ;
-        kdTreeNode * back() ;
-        void push_back(kdTreeNode *node);
-        void attach(kdTreeNode *node);
+        std::shared_ptr<kdTreeNode> at(int ind) ;
+        std::shared_ptr<kdTreeNode> front() ;
+        std::shared_ptr<kdTreeNode> back() ;
+        void push_back(std::shared_ptr<kdTreeNode> node);
+        void attach(std::shared_ptr<kdTreeNode> node);
         void clear() ;
         void erase() ;
         void printList() ;

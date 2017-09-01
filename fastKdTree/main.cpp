@@ -54,8 +54,9 @@
 
 #define ROOTPATH "/tmp"
 #define USECOLOR 0
-#define NAZRAYS 1
-#define NELRAYS 1
+#define NAZRAYS 500
+#define NELRAYS 500
+#define NTESTRUNS 5
 
 using namespace std;
 
@@ -83,38 +84,51 @@ int main(int argc, const char * argv[]) {
                               (char *) ROOTPATH"/delaunay.ply");
     
 
-    // Read in the triangle mesh from the input plyfile and check it's
-    // integrity
-    //
-    TriangleMesh mesh;
-    printf("Reading in file %s...\n",instr);
-    mesh.readPLYFile(instr);
-    printf("Done. Checking file Integrity...\n");
-    mesh.checkIntegrityAndRepair();
-    printf("Done \n");
-    mesh.buildTriangleAABBs();
+    for (int i=0; i<NTESTRUNS; ++i) {
+        printf("=======================================================================\n");
+        printf("\n");
+        printf("                    R U N   %d\n",i);
+        printf("\n");
+        printf("=======================================================================\n");
 
-    // Initialise and start timer
-    //
-    Timer runTimer ;
-    startTimer(&runTimer, &status) ;
-
-    kdTree::buildTree(mesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(/*kdTree::OUTPUTDATA |*/ kdTree::OUTPUTSUMM));
-    printf("Done!\n");
-
-    // end timer
-    //
-    endTimer(&runTimer, &status);
+        
+        // Read in the triangle mesh from the input plyfile and check it's
+        // integrity
+        //
+        TriangleMesh mesh;
+        printf("Reading in file %s...\n",instr);
+        mesh.readPLYFile(instr);
+        printf("Done. Checking file Integrity...\n");
+        mesh.checkIntegrityAndRepair();
+        printf("Done \n");
+        mesh.buildTriangleAABBs();
+        
+        // Initialise and start timer
+        //
+        Timer runTimer ;
+        startTimer(&runTimer, &status) ;
+        
+        kdTree::buildTree(mesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(/*kdTree::OUTPUTDATA |*/ kdTree::OUTPUTSUMM));
+        printf("Done!\n");
+        
+        // end timer
+        //
+        endTimer(&runTimer, &status);
+        
+        
+        if (USECOLOR==1) {
+            printf("KdTree constructed in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+        }else{
+            printf("KdTree constructed in  %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+        }
+        
+        printf("Ray tracing through tree...\n");
+        rayTrace(&mesh, tree, &treeSize, NAZRAYS, NELRAYS) ;
     
-    
-    if (USECOLOR==1) {
-        printf("KdTree constructed in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
-    }else{
-        printf("KdTree constructed in  %f seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
+        free(tree) ;
+        sleep(1);
+        
     }
-    
-    printf("Ray tracing through tree...\n");
-    rayTrace(&mesh, tree, &treeSize, NAZRAYS, NELRAYS) ;
     
     im_close_lib(&status);
     return 0;
