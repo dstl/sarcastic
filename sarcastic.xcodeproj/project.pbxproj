@@ -66,6 +66,7 @@
 		954BD4F71E795A24007A12E4 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		954D03521B7BC7AD003CCB86 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D03511B7BC7AD003CCB86 /* main.cpp */; };
 		954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
+		954D55421F59A28600D93844 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
 		95538E261BB06538009E8117 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
 		95538E271BB06538009E8117 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
 		95538E281BB06538009E8117 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
@@ -1874,6 +1875,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954D55421F59A28600D93844 /* printProgress.c in Sources */,
 				95E627531E7C906300BC7933 /* AABB.cpp in Sources */,
 				95C9D0FB1EEDC86100EB61D3 /* banner.cpp in Sources */,
 				95E6273D1E7C8B6F00BC7933 /* boxMullerRandom.c in Sources */,

@@ -66,6 +66,7 @@ threadCore.cpp
 
 SRC = \
 ../Common/boxMullerRandom.c \
+../Common/printProgress.c \
 ../sarcastic/ecef2SceneCoords.c \
 ../Common/matrixMultiplication.c \
 ../Common/ranf.c \

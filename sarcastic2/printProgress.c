@@ -40,10 +40,11 @@
 
 void printProgress(int percentDone, int nChars)
 {
-    int ppc = (float)100 / nChars ; // Percent per character
+    float ppc = (float)100.0 / nChars ; // Percent per character
     putchar('\r');
+    printf(" [%2d%%] ",percentDone);
     for (int i=0; i<nChars; ++i){
-        if (i * ppc < percentDone) {
+        if ((float)i * ppc < (float)percentDone) {
             putchar('>');
         }else{
             putchar('.');
