@@ -52,7 +52,7 @@ banner.cpp \
 
 SRC = ../Common/matrixMultiplication.c
 
-LIB = -lreadline -lSIlib
+LIB = -lreadline -lSIlib2
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
 CC   = clang -O3
 

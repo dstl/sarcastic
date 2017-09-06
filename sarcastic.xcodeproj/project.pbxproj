@@ -52,8 +52,6 @@
 		953FA1FD18F4289400EAD4F3 /* sarcastic.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1DF18F4289400EAD4F3 /* sarcastic.c */; };
 		953FA1FF18F4289400EAD4F3 /* threadCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E218F4289400EAD4F3 /* threadCore.c */; };
 		953FA20018F4289400EAD4F3 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
-		954485DF1EAA3CA20042F694 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
-		954485E01EAA3D3B0042F694 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
 		954485E81EB5D5540042F694 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954485E71EB5D5540042F694 /* main.cpp */; };
 		954485ED1EB5E8840042F694 /* bircsBanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485EC1EB5E8840042F694 /* bircsBanner.c */; };
 		95492F3A1A74EFC90061FCF7 /* oclPOField.c in Sources */ = {isa = PBXBuildFile; fileRef = 95492F391A74EFC90061FCF7 /* oclPOField.c */; };
@@ -66,7 +64,6 @@
 		954BD4F71E795A24007A12E4 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		954D03521B7BC7AD003CCB86 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D03511B7BC7AD003CCB86 /* main.cpp */; };
 		954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA511B4FFE4D00EC6D83 /* matrixMultiplication.c */; };
-		954D55421F59A28600D93844 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 954485DD1EAA3B510042F694 /* printProgress.c */; };
 		95538E261BB06538009E8117 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 953B54F31BA4523E00BFF41F /* pmath_rng.c */; };
 		95538E271BB06538009E8117 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DD1BA438DE0056AA4C /* boxMullerRandom.c */; };
 		95538E281BB06538009E8117 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 95AE61DF1BA438DE0056AA4C /* ranf.c */; };
@@ -75,6 +72,10 @@
 		95584C381E12A6CA00C7AFDB /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A59D81CF9A7DE00981E60 /* libreadline.tbd */; };
 		95584C391E12A72500C7AFDB /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */; };
 		955F772E19CF0FBC00BF3039 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 955F772C19CF0FBC00BF3039 /* OpenCLUtils.c */; };
+		95603AAC1F60239A00A7AB75 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 95603AAB1F60239A00A7AB75 /* printProgress.c */; };
+		95603AAD1F6023CD00A7AB75 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 95603AAB1F60239A00A7AB75 /* printProgress.c */; };
+		95603AAE1F60242E00A7AB75 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 95603AAB1F60239A00A7AB75 /* printProgress.c */; };
+		95603AB21F60269300A7AB75 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95603AB11F60269300A7AB75 /* libSIlib2-2.2.1.a */; };
 		9562DA401B48465400EC6D83 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA301B48465400EC6D83 /* tinystr.cpp */; };
 		9562DA411B48465400EC6D83 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA321B48465400EC6D83 /* tinyxml.cpp */; };
 		9562DA421B48465400EC6D83 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9562DA361B48465400EC6D83 /* tinyxmlerror.cpp */; };
@@ -482,7 +483,6 @@
 		953FA1E218F4289400EAD4F3 /* threadCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadCore.c; sourceTree = "<group>"; };
 		953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = TxPowerPerRay.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		953FA1E418F4289400EAD4F3 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TxPowerPerRay.h; sourceTree = "<group>"; };
-		954485DD1EAA3B510042F694 /* printProgress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = printProgress.c; path = sarcastic2/printProgress.c; sourceTree = SOURCE_ROOT; };
 		954485DE1EAA3B510042F694 /* printProgress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = printProgress.h; path = sarcastic2/printProgress.h; sourceTree = SOURCE_ROOT; };
 		954485E51EB5D5540042F694 /* bircs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bircs; sourceTree = BUILT_PRODUCTS_DIR; };
 		954485E71EB5D5540042F694 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -1410,7 +1410,7 @@
 				95D8F8C61B5E7A280057FA4C /* TriangleFile.h */,
 				95E9AE5C1D91B1000063993D /* TriangleMesh.cpp */,
 				95E9AE5D1D91B1000063993D /* TriangleMesh.hpp */,
-				954485DD1EAA3B510042F694 /* printProgress.c */,
+				95603AAB1F60239A00A7AB75 /* printProgress.c */,
 				954485DE1EAA3B510042F694 /* printProgress.h */,
 			);
 			name = Common;
@@ -1794,7 +1794,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				954485DF1EAA3CA20042F694 /* printProgress.c in Sources */,
+				95603AAE1F60242E00A7AB75 /* printProgress.c in Sources */,
 				95E627561E7C93D600BC7933 /* accelerateTriangles.cpp in Sources */,
 				95E627571E7C93D600BC7933 /* buildRopesAndBoxes.cpp in Sources */,
 				95497AAB1E72EE60008E5861 /* pmath_rng.c in Sources */,
@@ -1875,7 +1875,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				954D55421F59A28600D93844 /* printProgress.c in Sources */,
+				95603AAD1F6023CD00A7AB75 /* printProgress.c in Sources */,
 				95E627531E7C906300BC7933 /* AABB.cpp in Sources */,
 				95C9D0FB1EEDC86100EB61D3 /* banner.cpp in Sources */,
 				95E6273D1E7C8B6F00BC7933 /* boxMullerRandom.c in Sources */,
@@ -1918,7 +1918,6 @@
 				954D03521B7BC7AD003CCB86 /* main.cpp in Sources */,
 				954D035A1B7BCB07003CCB86 /* matrixMultiplication.c in Sources */,
 				958BAB571EED5FF300539F5F /* pmath_rng.c in Sources */,
-				954485E01EAA3D3B0042F694 /* printProgress.c in Sources */,
 				958258961D99368B00335811 /* tinystr.cpp in Sources */,
 				958258971D99368B00335811 /* tinyxml.cpp in Sources */,
 				958258981D99368B00335811 /* tinyxmlerror.cpp in Sources */,
@@ -1944,6 +1943,7 @@
 				95D8F8C71B5E7A280057FA4C /* TriangleFile.cpp in Sources */,
 				95D8F8C11B5E78580057FA4C /* trianglecpp.cpp in Sources */,
 				95C9D10E1EF05C7B00EB61D3 /* banner.cpp in Sources */,
+				95603AAC1F60239A00A7AB75 /* printProgress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
