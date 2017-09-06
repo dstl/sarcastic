@@ -281,7 +281,9 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build forward scattering rays ready for next turn round the loop
             //
-            oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+            //            oclReflect(context, commandQ, reflectKL, dTriangles, nRays, reflectLWS, rayArray, hitArray, reflectedRays);
+            reflect(nRays, rayArray, hitArray, accelTriangles, reflectedRays);
+
             
             // If debug out is required then capturing here using the origins of the Reflected rays
             // which will save us having to calculate the hit locations again
@@ -302,7 +304,8 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Build Shadowrays
             //
-            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, nRays, RxPos, reflectedRays, shadowRays, ranges);
+            buildShadowRays(nRays, RxPos, reflectedRays, shadowRays, ranges) ;
+            //            oclBuildShadowRays(context, commandQ, buildShadowsKL, buildShadowsLWS, nRays, RxPos, reflectedRays, shadowRays, ranges);
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
