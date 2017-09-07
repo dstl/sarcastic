@@ -48,7 +48,6 @@ CPPSRC = \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../colladaToTriFile/colladainterface.cpp \
-oclReflect.cpp \
 ../fastKdTree/splitCandidate.cpp \
 ../fastKdTree/AABB.cpp \
 ../fastKdTree/clipToAABB.cpp \
@@ -61,9 +60,9 @@ buildKernel.cpp \
 ../sarcastic2/buildRopesAndBoxes.cpp \
 ../sarcastic2/cpuPOField.cpp \
 main.cpp \
-oclRandomRays.cpp \
-oclBuildShadowRays.cpp \
-threadCore.cpp
+threadCore.cpp \
+../sarcastic2/shadowRays.cpp \
+../sarcastic2/reflect.cpp
 
 SRC = \
 bircsBanner.c \

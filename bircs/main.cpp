@@ -181,6 +181,22 @@ int main (int argc, char **argv){
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
     
+    /*
+    kdTree::buildTree(baseMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+    accelerateTriangles(&baseMesh,&accelTriangles) ;
+    // Initialise the tree and build ropes and boxes to increase efficiency when traversing
+    //
+    kdTree::KdData *node;
+    node = &(tree[0]) ;
+    // build Ropes and Boxes
+    //
+    AABB sceneAABB ;
+    sceneAABB = tree[0].brch.aabb ;
+    int Ropes[6] ;
+    for(int i=0; i<6; i++) Ropes[i] = NILROPE;
+    BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
+    */
+    
     // Start timing after user input
     //
     Timer runTimer ;

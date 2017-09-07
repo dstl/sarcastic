@@ -71,10 +71,10 @@ void cpuPOField(TriangleMesh       *mesh,
         rays[i].pow = rays[i].pow; // (4 * SIPC_pi * hits[i].dist * hits[i].dist) ;
     }
     
-    //    for(int i=0; i<ntris; ++i){
-    //        printf("Triangle [%d] has been hit %d times\n",i,hitsOnEachTri[i]);
-    //
-    //    }
+    //        for(int i=0; i<mesh->triangles.size(); ++i){
+    //            printf("Triangle [%d] has been hit %d times\n",i,hitsOnEachTri[i]);
+    //    
+    //        }
     
     
     // Define unit vectors for V & H fields
