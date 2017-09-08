@@ -51,7 +51,7 @@ CPPSRC = \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../Common/tinyxml/tinyxmlparser.cpp \
 ../fastKdTree/buildTree.cpp \
-../colladaToTriFile/colladainterface.cpp \
+../colladaToPlyFile/colladainterface.cpp \
 ../Common/TriangleMesh.cpp \
 ../sarcastic2/buildRays.cpp \
 ../sarcastic2/accelerateTriangles.cpp \
@@ -61,7 +61,9 @@ CPPSRC = \
 getSARTraceUserInput.cpp \
 SARTrace.cpp \
 SARTracebanner.cpp \
-traceThreadCore.cpp
+traceThreadCore.cpp \
+../Common/readMaterialFile.cpp
+
 
 SRC = \
 ../Common/matrixMultiplication.c \
@@ -80,7 +82,7 @@ CC   = clang -O3 -DOCLKERNELSPATH=$(OCLKERNELSPATH)
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic2 -I../sarcastic -I../Common -I/usr/local/include -I../fastKdTree -I../bircs -I../colladaToTriFile
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic2 -I../sarcastic -I../Common -I/usr/local/include -I../fastKdTree -I../bircs -I../colladaToPlyFile
 LFLAGS = -framework OpenCL -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
 
 %.o:	%.cpp

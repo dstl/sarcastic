@@ -37,14 +37,14 @@
 # ***************************************************************************/
 
 all:
-	cd colladaToTriFile; make ; cd ..
+	cd colladaToPlyFile; make ; cd ..
 	cd materialise ; make ; cd ..
 	cd SARTrace ; make ; cd ..
 	cd bircs ; make ; cd ..
 	cd sarcastic2 ; make ; cd ..
 	
 clean:
-	cd colladaToTriFile; make clean ; cd ..
+	cd colladaToPlyFile; make clean ; cd ..
 	cd materialise ; make clean ; cd ..
 	cd SARTrace ; make clean ; cd ..
 	cd bircs ; make clean ; cd ..

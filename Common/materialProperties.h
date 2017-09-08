@@ -50,6 +50,11 @@ typedef struct scatProps {
     float  shinyness   ;
 } scatProps ;
 #define NMATERIALS 10
+extern int         globalNumMats ;
+extern scatProps   *globalMatProps;
+extern int         *globalMatColours;
+
+
 // Resistivities taken from http://chemistry.about.com/od/moleculescompounds/a/Table-Of-Electrical-Resistivity-And-Conductivity.htm
 //
 static scatProps materialProperties[NMATERIALS] = {
@@ -78,5 +83,6 @@ static int materialColours[NMATERIALS][3] = {
     {137,  46, 014},        // 8 = Wood
     {100, 214, 050},        // 9 = Grass
 };
+
 
 #endif

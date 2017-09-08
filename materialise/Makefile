@@ -60,30 +60,31 @@ INSTALL_DIR = /usr/local/dstl/bin
 VERSION    := $(shell `pwd`/GenGitVersion.sh)
 
 CPPSRC = \
-../colladaToTriFile/colladainterface.cpp \
+../colladaToPlyFile/colladainterface.cpp \
 main.cpp \
 ../Common/tinyxml/tinystr.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../Common/tinyxml/tinyxmlparser.cpp \
-../Common/TriangleMesh.cpp
+../Common/TriangleMesh.cpp \
+../Common/readMaterialFile.cpp
 
 SRC = \
 ../Common/boxMullerRandom.c \
 ../Common/matrixMultiplication.c \
 ../Common/pmath_rng.c \
-../sarcastic2/printProgress.c \
+../Common/printProgress.c \
 ../Common/ranf.c
 
 
-LIB = -lreadline -lSIlib2 -lboost_filesystem -lboost_system -lboost_thread -lgmp.10 -lmpfr.4 -lCGAL_Core -lCGAL
+LIB = -lreadline -lSIlib2 -lboost_filesystem -lboost_system -lboost_thread-mt -lgmp.10 -lmpfr.4 -lCGAL_Core -lCGAL
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
 CC   = clang
 
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToTriFile 
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToPlyFile
 LFLAGS = -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib 
 
 %.o:	%.cpp

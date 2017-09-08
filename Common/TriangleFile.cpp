@@ -184,7 +184,7 @@ void TriangleFile::WriteFile(std::string fname){
             fwrite(&x, sizeof(double), 1, fp);
         }
         char matname[MAXMATNAME];
-        strcpy(matname, materialProperties[tri.matId].matname);
+        strcpy(matname, globalMatProps[tri.matId].matname);
         fwrite(matname, sizeof(char), MAXMATNAME, fp);
         
     }

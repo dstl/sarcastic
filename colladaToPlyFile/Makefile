@@ -36,7 +36,7 @@
 # *
 # ***************************************************************************/
 
-EXE         = colladaToTriFile
+EXE         = colladaToPlyFile
 INSTALL_DIR = /usr/local/dstl/bin
 VERSION    := $(shell `pwd`/GenGitVersion.sh)
 
@@ -48,7 +48,8 @@ banner.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../Common/tinyxml/tinyxmlparser.cpp \
-../Common/TriangleMesh.cpp 
+../Common/TriangleMesh.cpp \
+../Common/readMaterialFile.cpp
 
 SRC = ../Common/matrixMultiplication.c
 

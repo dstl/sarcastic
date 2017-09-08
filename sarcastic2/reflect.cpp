@@ -88,7 +88,7 @@ void reflect(int    nRays,              // Number of rays to reflect
         // returning to the sensor from a visible hit point
         // Note that this is because we use PO for last bounce but phong shding for all others
         //
-        ks =  materialProperties[T.textureInd].specular ;
+        ks =  globalMatProps[T.textureInd].specular ;
         // power at reflected point is Pt*Gtx / 4 PI R^2
         //
         double islf = (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);

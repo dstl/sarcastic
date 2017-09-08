@@ -67,9 +67,9 @@ extern "C" {
 #include "boxMullerRandom.h"
 #include "printProgress.h"
 }
-#include "materialProperties.h"
 #include <boost/filesystem.hpp>
 #include <vector>
+#include "readMaterialFile.hpp"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -182,6 +182,13 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
+    // Read in the material properties file if required
+    //
+    char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
+                               (char *)"The name of a 'materialfile' or 'none' (defaults used)",
+                               (char *) "materialProperties.txt");
+    initialiseMaterials(matfile, true);
+    
     TriangleMesh mesh, newMesh;
     mesh.readPLYFile(string(instr));
     mesh.checkIntegrityAndRepair();
@@ -256,7 +263,7 @@ int main(int argc, const char * argv[]) {
         
         // find material and from it max area
         //
-        double corrlen = materialProperties[commonMesh.triangles[0].mat].corlen ;
+        double corrlen = globalMatProps[commonMesh.triangles[0].mat].corlen ;
         double corrArea = corrlen * corrlen * 0.5 ;
         if(verbose)printf("setting max area to be %f m^2 (correlation length is %f m)\n",corrArea,corrlen);
         
@@ -339,7 +346,7 @@ int main(int argc, const char * argv[]) {
             if (f == start) {
                 // Interior point found - not on the boundary
                 //
-                Z = box_muller(0.0, materialProperties[commonMesh.triangles[0].mat].roughness) ;
+                Z = box_muller(0.0, globalMatProps[commonMesh.triangles[0].mat].roughness) ;
             }
             
             VECT_SCMULT(abscissa, x2d, v1);
@@ -382,7 +389,7 @@ int main(int argc, const char * argv[]) {
         cnt++;
     }
     
-
+ 
     printf("\nWriting %lu triangles to file %s...\n",newMesh.triangles.size(),oustr);
     newMesh.writePLYFile(std::string(oustr)) ;
     endTimer(&timer, &status);
@@ -400,6 +407,12 @@ int main(int argc, const char * argv[]) {
     im_close_lib(&status);
     std::cout << "Done in " << timeElapsedInSeconds(&timer, &status) << " seconds." << std::endl;
     
+    delete [] globalMatProps ;
+    delete [] globalMatColours ;
+    free(matfile);
+    free(instr);
+    free(oustr);
+
     return 0;
 }
 

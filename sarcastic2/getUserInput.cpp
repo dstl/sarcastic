@@ -41,6 +41,7 @@
 #include "getUserInput.hpp"
 #include "colourCodes.h"
 #include "tryReadFile.hpp"
+#include "readMaterialFile.hpp"
 
 #define ROOTPATH "/tmp"
 
@@ -286,6 +287,13 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     free(prompt);
     free(inCPHDFile) ;
 
+    // Read in the material properties file if required
+    //
+    char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
+                                 (char *)"The name of a 'materialfile' or 'none' (defaults used)",
+                                 (char *) "materialProperties.txt");
+    initialiseMaterials(matfile, true);
+    
     return (status->status) ;
     
 }

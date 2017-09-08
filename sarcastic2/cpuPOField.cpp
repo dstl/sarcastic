@@ -231,8 +231,8 @@ void POKernelCode(int ind,
     
     hp  = hitpoints[ind].hit ;
     ray = rays[ind] ;
-    Rs  = materialProperties[tri.mat].Rs ;
-    Rm  = materialProperties[tri.mat].Rm ;
+    Rs  = globalMatProps[tri.mat].Rs ;
+    Rm  = globalMatProps[tri.mat].Rm ;
     for(int i=0; i<9; i++)globalToLocalMat[i] = tri.glob2locMatrix[i] ;
     for(int i=0; i<9; i++)localToGlobalMat[i] = tri.loc2GlobMatrix[i] ;
     

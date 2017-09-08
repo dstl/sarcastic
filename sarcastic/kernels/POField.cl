@@ -623,7 +623,7 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         // Calculate Gamma_parallel and Gamma_perpendicular
         //
         matId   = tris[hitpoints[ind].tri].matId ;
-        Rs      = materialProperties[matId].resistivity ;
+        Rs      = globalMatProps[matId].resistivity ;
         GamParr = -1.0 * Z0 * cos_theta_il / (2*Rs + Z0*cos_theta_il) ;
         GamPerp = -1.0 * Z0 / ( 2.0*Rs*cos_theta_il + Z0);
         
