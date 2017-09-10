@@ -212,8 +212,9 @@ void * devPulseBlock ( void * threadArg ) {
             // Harmonic Motion
             //
             double A = 0.0125 ;
-            double f = 0.33 ;
+            double f = 12.5 ;
             S.x = A * sin(2 * SIPC_pi * t * f ) ;
+            S.y = A * sin(2 * SIPC_pi * t * f ) ;
 //            double Ts = 1/f;
 //            double frac = (t / Ts) - (int)(t / Ts) ;
 //            S.x = A * frac ;
