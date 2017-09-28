@@ -75,9 +75,8 @@ typedef struct rnpData_t {
 }rnpData_t ;
 
 typedef struct bircsThreadData {
-    int devIndex ;
+    int tid ;
     int nThreads ;
-    OCLPlatform platform ;
     AABB SceneBoundingBox ;
     int startPulse ;
     int nPulses ;
@@ -85,16 +84,8 @@ typedef struct bircsThreadData {
     int nElBeam ;
     SPVector * TxPositions ;    // Pointer to beginning of TxPos data
     SPVector * RxPositions ;    // Pointer to beginning of RxPos data
-    //    double * Fx0s ;             // Pointer to beginning of Fx0s data
-    //    double * FxSteps ;          // Pointer to beginning of FxSteps data
-    //    double * amp_sf0 ;          // Pointer to beginning of amp_sf0 data
     double gainRx ;
-    //    double chirpRate ;
-    //    double ADRate ;
-    //    double pulseDuration ;      // Pulse duration in seconds
-    //    double oneOverLambda ;
     double freq_centre ;        // Centre frequency
-    //    double StartFrequency ;
     int bounceToShow ;
     SPStatus status ;
     double PowPerRay ;          // Ray Power (Pp = (Pt * Gtx ))
@@ -102,8 +93,14 @@ typedef struct bircsThreadData {
     SPVector interogPt ;        // Position in scene coordinates of a point to be interogated
     double interogRad ;         // Radius in metres around interrogation point to calculate scattering for
     FILE ** interogFP ;         // File pointer to dump out interrogation data
-    TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
     int polarisation ;
+    TriangleMesh *sceneMesh ;    // Mesh of triangles in scene
+    kdTree::KdData ** tree ;
+    int treesize;
+    ATS **accelTriangles ;
+    SPVector * results ;
+    int rayGenMethod ;
+    
 } bircsThreadData ;
 
 enum  POLARISATION { VV, VH, HV, HH, V_, H_ } ;

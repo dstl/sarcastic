@@ -40,6 +40,8 @@
 extern "C" {
 #include "boxMullerRandom.h"
 #include "RCS.h"
+#include "printProgress.h"
+
 }
 #include "ranf.h"
 #include "threadCore.hpp"
@@ -65,11 +67,20 @@ void * devPulseBlock ( void * threadArg ) {
     int nAzBeam, nElBeam, bounceToShow, nrnpItems, nShadowRays, tid ;
     int nbounce, nxRay, nyRay, nRays, reflectCount, iray, nShadows, interrogate ;
     int maxRaysPerBounce, pol ;
+    int reportN = 10 ;
+    int rayGenMethod ;
 
+    int nThreads, nPulses, startPulse;
+    int hrs,min,sec;
     
     double gainRx, PowPerRay, derampRange ;
     double *ranges, *newranges, interogRad, k ;
+    double pCentDone, sexToGo ;
     
+    struct tm *p;
+    time_t current,complete;
+    char ct[1000];
+
     AABB SceneBoundingBox ;
     rangeAndPower * rnp ;
     Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
@@ -82,32 +93,33 @@ void * devPulseBlock ( void * threadArg ) {
     FILE *interogFP ;
     
     Timer threadTimer ;
-    kdTree::KdData *node;
     ATS *accelTriangles = NULL;
-    int Ropes[6] ;
     AABB sceneAABB ;
     
     kdTree::KdData * tree = NULL;
     int treeSize;
     int nTriangles;
     
+    tid              = td->tid ;
+    nThreads         = td->nThreads ;
+    startPulse       = td->startPulse ;
+    nPulses          = td->nPulses ;
     gainRx           = td->gainRx ;
     PowPerRay        = td->PowPerRay ;
     bounceToShow     = td->bounceToShow ;
     nAzBeam          = td->nAzBeam ;
     nElBeam          = td->nElBeam ;
     SceneBoundingBox = td->SceneBoundingBox ;
-    tid              = td->devIndex ;
     interrogate      = td->interrogate ;
     interogPt        = td->interogPt ;
     interogRad       = td->interogRad ;
     interogFP        = *(td->interogFP) ;
     k                = 2 * SIPC_pi / (SIPC_c / td->freq_centre) ;
     pol              = td->polarisation ;
+    rayGenMethod     = td->rayGenMethod ;
+
     
     VECT_CREATE(0, 0, 0, origin);
-    
-    fftwf_init_threads();
     im_init_status(status, 0) ;
     
     // **** loop  start here
@@ -116,33 +128,35 @@ void * devPulseBlock ( void * threadArg ) {
     startTimer(&threadTimer, &status) ;
     SPVector *rayAimPoints = NULL ;
     
+    tree = *(td->tree) ;
+    treeSize = td->treesize ;
+    accelTriangles = *(td->accelTriangles) ;
     TriangleMesh newMesh ;
-    
     newMesh = *(td->sceneMesh) ;
-    
-    // Build kdTree if required
-    //
-    
-    kdTree::buildTree(newMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
-    accelerateTriangles(&newMesh,&accelTriangles) ;
-    // Initialise the tree and build ropes and boxes to increase efficiency when traversing
-    //
-    node = &(tree[0]) ;
-    
-    // build Ropes and Boxes
-    //
-    sceneAABB = tree[0].brch.aabb ;
-    for(int i=0; i<6; i++) Ropes[i] = NILROPE;
-    BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
-    
-    // Allocate memory for items that are needed in all kernels
-    //
     nTriangles   = (int)newMesh.triangles.size() ; // number of triangles in array 'triangles'
-
     
-    for (int pulse=0; pulse<td->nPulses; pulse++){
-        int pulseIndex = (tid * td->nPulses) + pulse ;
-        
+    for (int pulse=0; pulse<nPulses; pulse++){
+        int pulseIndex = pulse + startPulse ;
+        if(tid == 0){
+            if( pulse % reportN == 0 && nPulses != 1){
+                pCentDone = 100.0*pulse/nPulses ;
+                printProgress(pCentDone, 60);
+                
+                if(pulse != 0 ){
+                    current  = time(NULL);
+                    sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
+                    hrs      = (int)floor(sexToGo/60/60) ;
+                    min      = (int)floor(sexToGo / 60) - (hrs*60);
+                    sec      = (int)sexToGo % 60;
+                    complete = current + sexToGo ;
+                    p        = localtime(&complete) ;
+                    strftime(ct, 1000, "%d/%b/%y %H:%M", p);
+                    printf(" ETC %s (in %2.0dh:%2.0dm:%2.0ds) ",ct,hrs,min,sec);
+                }else{
+                    printf("  Calculating ETC...");
+                }
+            }
+        }
         // Set correct parameters for beam to ray trace
         //
         TxPos = td->TxPositions[pulseIndex] ;
@@ -158,7 +172,7 @@ void * devPulseBlock ( void * threadArg ) {
         nxRay   = nAzBeam ;
         nyRay   = nElBeam ;
         nRays   = nxRay*nyRay;
-        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints, TRIANGLECENTRE, pol);
+        buildRays(&rayArray, &nRays, nAzBeam, nElBeam, &newMesh, TxPos, PowPerRay, td->SceneBoundingBox, &rayAimPoints, rayGenMethod, pol);
         maxRaysPerBounce = nRays;  // Use this for memory as nxRay/nyRay may be incorrect if buildRays set to triangle centres
         
         // Set up deramp range for this pulse
@@ -292,7 +306,6 @@ void * devPulseBlock ( void * threadArg ) {
                 iray     = 0 ;
                 for (int i=0; i<nRays; i++) {
                     hitsOnEachTri[ hitArray[i].trinum ]++ ;
-                    
                     // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
                     //
                     if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
@@ -378,9 +391,13 @@ void * devPulseBlock ( void * threadArg ) {
         }
         
         if(cmplx_mag <0 ){
-            printf("%f, %f, %f\n",0.0,phi,theta);
+            td->results[pulseIndex].r     = 0.0 ;
+            td->results[pulseIndex].theta = theta ;
+            td->results[pulseIndex].phi   = phi ;
         }else{
-            printf("%f, %f, %f\n",cmplx_mag,phi,theta);
+            td->results[pulseIndex].r     = cmplx_mag ;
+            td->results[pulseIndex].theta = theta ;
+            td->results[pulseIndex].phi   = phi ;
         }
         
         if (maxRCS.R < cmplx_mag){
@@ -392,21 +409,8 @@ void * devPulseBlock ( void * threadArg ) {
         free(rnp) ;
     }
     
-    double lambda = (SIPC_c / td->freq_centre);
-    double lambda_squared = lambda * lambda ;
-    printf("Maximum RCS was %f dB m^2 (%f m^2) at az:%fdeg, incidence: %fdeg\n",maxRCS.R,pow(10.0,maxRCS.R/10.0),RAD2DEG(maxRCS.phi), RAD2DEG(maxRCS.theta) );
-    printf("    1m^2 flat plate               : %f (%f dB m^2)\n",4*SIPC_pi / lambda_squared,10*log10(4*SIPC_pi / lambda_squared)); // 8620.677
-    printf("    1m dihedral                   : %f (%f dB m^2)\n",8*SIPC_pi / lambda_squared,10*log10(8*SIPC_pi / lambda_squared)); // 17241.354
-    printf("    1m trihedral                  : %f (%f dB m^2)\n",12*SIPC_pi/ lambda_squared,10*log10(12*SIPC_pi/ lambda_squared)); // 25862.031
-    printf("    1m dia Sphere                 : \n");
-    printf("        Rayleigh Region r<<lambda : %f ( %f dB m^2)\n", 9*SIPC_pi*0.5*0.5*pow(k*0.5,4), 10*log10(9*SIPC_pi*0.5*0.5*pow(k*0.5,4)));
-    printf("        Optical Region  r>>lambda : %f ( %f dB m^2)\n", SIPC_pi*0.5*0.5, 10*log10(SIPC_pi*0.5*0.5));
-    printf("         ( r = 0.5 m, lambda = %5.3f m )\n",lambda);
-
     
     free( rayAimPoints );
-    free(tree);
-    delete accelTriangles ;
     
     // return to parent thread
     //
