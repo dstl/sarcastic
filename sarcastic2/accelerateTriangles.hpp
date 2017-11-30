@@ -42,7 +42,7 @@
 #define accelerateTriangles_hpp
 
 #include <stdio.h>
-#include "Trianglemesh.hpp"
+#include "TriangleMesh.hpp"
 
 typedef struct ATS {
     int  triNum;    // Triangle ID

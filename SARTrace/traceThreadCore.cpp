@@ -41,7 +41,7 @@ extern "C" {
 #include "boxMullerRandom.h"
 }
 #include "ranf.h"
-#include "tracethreadCore.hpp"
+#include "traceThreadCore.hpp"
 #include "buildKernel.hpp"
 
 #define FASTPULSEBUILD
