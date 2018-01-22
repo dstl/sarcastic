@@ -674,8 +674,8 @@
 		958FE5071EFD665F00BD0F28 /* libSIlib2-2.1.5-3-9db1551-dirty.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.1.5-3-9db1551-dirty.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.1.5-3-9db1551-dirty.a"; sourceTree = "<group>"; };
 		958FE50F1EFE757500BD0F28 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../../usr/local/dstl/lib; sourceTree = "<group>"; };
 		958FE5171F0395F000BD0F28 /* libSIlib2-2.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.2.a"; path = "../../../../../usr/local/dstl/lib/libSIlib2-2.2.a"; sourceTree = "<group>"; };
-		95A046431AFBCD7E00FD0114 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = RCS.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
-		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCS.h; sourceTree = "<group>"; };
+		95A046431AFBCD7E00FD0114 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = RCS.c; path = ../sarcastic/RCS.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		95A046441AFBCD7E00FD0114 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCS.h; path = ../sarcastic/RCS.h; sourceTree = "<group>"; };
 		95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildTree.cpp; sourceTree = "<group>"; };
 		95A1F1E21E6C2F8B00FF4A20 /* buildTree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildTree.hpp; sourceTree = "<group>"; };
 		95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rayTrace.cpp; sourceTree = "<group>"; };
@@ -1139,8 +1139,6 @@
 				95492F391A74EFC90061FCF7 /* oclPOField.c */,
 				953FA1E218F4289400EAD4F3 /* threadCore.c */,
 				95209B181D7AEF8E008ACDD1 /* cpuPOField.c */,
-				95A046431AFBCD7E00FD0114 /* RCS.c */,
-				95A046441AFBCD7E00FD0114 /* RCS.h */,
 				955F772B19CF0FA500BF3039 /* Utils */,
 				953FA1CB18F4289400EAD4F3 /* kernels */,
 			);
@@ -1182,6 +1180,8 @@
 				95C9D1041EEF145D00EB61D3 /* oclRandomRays.cpp */,
 				95C9D10A1EEF165A00EB61D3 /* oclReflect.hpp */,
 				95C9D1001EEF142300EB61D3 /* oclReflect.cpp */,
+				95A046431AFBCD7E00FD0114 /* RCS.c */,
+				95A046441AFBCD7E00FD0114 /* RCS.h */,
 				9585F8BE1EBC6B3800257FBB /* threadCore.hpp */,
 				9585F8BD1EBC6B3800257FBB /* threadCore.cpp */,
 				954485EE1EB5E8B00042F694 /* GenGitVersion.sh */,

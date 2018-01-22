@@ -337,14 +337,20 @@ void POKernelCode(int ind,
     
     // Calculate Surface currents Jx,Jy,Mx,My
     //
-    Jx = 2 * cos_theta_i * (
-                            (cos_phi_i * Ei_theta_l / ((Z0 * cos_theta_i) + (2 * Rs)))
-                            - (sin_phi_i * Ei_phi_l   / (Z0 + (2 * Rs * cos_theta_i)))
-                            ) ;
-    Jy = 2 * cos_theta_i * (
-                            (sin_phi_i * Ei_theta_l / ((Z0 * cos_theta_i) + (2 * Rs)))
-                            + (cos_phi_i * Ei_phi_l   / (Z0 + (2 * Rs * cos_theta_i)))
-                            ) ;
+    double Gam_par = -Z0 * cos_theta_i / ((2 *  Rs) + (Z0*cos_theta_i));
+    double Gam_per = -Z0 / ((2*Rs*cos_theta_i)+Z0) ;
+    Jx = 2 * cos_theta_i * ((-1*(Ei_theta_l * cos_phi_i)/(Z0)) * Gam_par   +   (Ei_phi_l * sin_phi_i / Z0) * Gam_per ) ;
+    Jy = 2 * cos_theta_i * (-1*(Ei_theta_l * sin_phi_i / Z0)   * Gam_par   -   (Ei_phi_l * cos_phi_i / Z0) * Gam_per ) ;
+    
+//    double Jx_old = 2 * cos_theta_i * (
+//                            (cos_phi_i * Ei_theta_l / ((Z0 * cos_theta_i) + (2 * Rs)))
+//                            - (sin_phi_i * Ei_phi_l   / (Z0 + (2 * Rs * cos_theta_i)))
+//                            ) ;
+//    double Jy_old = 2 * cos_theta_i * (
+//                            (sin_phi_i * Ei_theta_l / ((Z0 * cos_theta_i) + (2 * Rs)))
+//                            + (cos_phi_i * Ei_phi_l   / (Z0 + (2 * Rs * cos_theta_i)))
+//                            ) ;
+    
     Mx = 2 * Z0 * (
                    (cos_theta_i * cos_theta_i * cos_phi_i * Hi_theta_l / ( 1 + (2 * Z0 * Rm * cos_theta_i)) )
                    - (sin_phi_i * Hi_phi_l / (cos_theta_i + (2 * Z0 * Rm)))
@@ -353,6 +359,8 @@ void POKernelCode(int ind,
                    (-1 * cos_theta_i * cos_theta_i * sin_phi_i * Hi_theta_l / (1 + (2 * Z0 * Rm * cos_theta_i)) )
                    + (cos_phi_i * Hi_phi_l / (cos_theta_i + (2 * Z0 * Rm)))
                    ) ;
+    Mx = My = 0.0;
+
     VECT_CREATE(Jx, Jy, 0, Jl);
     VECT_CREATE(Mx, My, 0, Ml);
     
