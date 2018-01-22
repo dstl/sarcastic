@@ -81,6 +81,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     printf("Done \n");
     free(baseScene);
 
+#ifdef DEVBUILD
     char *moversScene ;
     moversScene = input_string("Name of movers scene", "moversScene",
                               "Enter the name of a file that will contain the things that move. The file must be in a .PLY file format"
@@ -94,7 +95,9 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
         moverMesh = NULL ;
     }
     free(moversScene) ;
-    
+#else
+    moverMesh = NULL ;
+#endif
     
     sprintf(prompt, "%s/cphdFile.cph",ROOTPATH);
     char *inCPHDFile ;

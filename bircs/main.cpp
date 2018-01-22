@@ -47,11 +47,12 @@
 #include "accelerateTriangles.hpp"
 #include "threadCore.hpp"
 #include "readMaterialFile.hpp"
+#include <thread>
 
 extern "C" {
 #include "TxPowerPerRay.h"
 #include "ecef2SceneCoords.h"
-#include "OpenCLUtils.h"
+//#include "OpenCLUtils.h"
 #include "bircsBanner.h"
 }
 
@@ -68,23 +69,21 @@ int main (int argc, char **argv){
   
     TriangleMesh baseMesh ;
     AABB        SceneBoundingBox;
-    OCLPlatform platform;
-#define GPUCAPABILITY_MAJOR 2
-#define GPUCAPABILITY_MINOR 0
+
     
     SPVector unitBeamAz, unitBeamEl, rVect, zHat, interogPt ;
     double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, lambda, maxBeamUsedAz, maxBeamUsedEl, interogRad ;
     char *baseScene ;
-    int startPulse, nPulses, bounceToShow, interrogate ;
-    int nAzBeam, nElBeam, nVec, dev, rc ;
+    int startPulse, bounceToShow, interrogate ;
+    int nAzBeam, nElBeam, nVec, rc ;
     FILE *interrogateFP = NULL ;
-    
-    cl_int      err;
-    cl_uint     ndevs;
-    cl_ulong    memSizeTmp,devMemSize;
+    kdTree::KdData * tree = NULL;
+    ATS *accelTriangles = NULL;;
+    int treeSize = 0;
     
     SPVector  * RxPos         = NULL ;
     SPVector  * TxPos         = NULL ;
+    SPVector  * results       = NULL ;
     
     bircsBanner() ;
     
@@ -104,7 +103,10 @@ int main (int argc, char **argv){
     int nphis = 180;
     int nthetas = 90;
     double freq_centre = 1e9 ;
+    int rayGenMethod = 1 ;
     
+    // Get user input
+    //
     
     ILLAZ = input_int("IllAz", (char *)"ILLAZ", (char *)"Illumination azimuth", ILLAZ);
     ILLINC = input_int("ILLINC", (char *)"ILLINC", (char *)"Illumination inclination", ILLINC);
@@ -116,9 +118,27 @@ int main (int argc, char **argv){
     thetastart = input_dbl("thetastart", (char *)"THETASTART", (char *)"starting angle of incidence", thetastart);
     thetaend = input_dbl("thetaend", (char *)"THETAEND", (char *)"Ending angle of incidence", thetaend);
     nthetas = input_int("nthetas", (char *)"NTHETAS", (char *)"Number of elevation samples", nthetas);
-    nAzBeam = input_int("nAzBeam", (char *)"NAZBEAM", (char *)"Number of azimuth rays to cast for each observation position", nAzBeam);
-    nElBeam = input_int("nElBeam", (char *)"NELBEAM", (char *)"Number of elevation rays to cast for each observation position", nElBeam);
+    if(nthetas * nphis == 1){
     bounceToShow = input_int("bounceToShow", (char *)"BOUNCETOSHOW", (char *)"Output just the ray intersections corresponding to this bounce. (0=no bounce output)", bounceToShow);
+    }
+    do{
+        printf("There are four ways to cast rays in SARCASTIC :\n");
+        printf("\t1 : TRIANGLECENTRE\n");
+        printf("\t2 : RANDOMRAYS\n");
+        printf("\t3 : FIRSTTIMERANDOM\n");
+        printf("\t4 : PARALLELRANDOM\n");
+        rayGenMethod = input_int("Enter number for ray generation method or '?' for help", "RayGenMethod",
+          "SARCASTIC can generate rays in one of 4 ways. Here is an explanation of each method and why you should use it: \n\t1 : TRIANGLECENTRE \n\t\tThis method uses the centre of each triangle in the input mesh to determine the direction that\n\t\teach ray should be cast in. The origin is obviously the transmitter location for a given pulse.\n\t\tIt doesnt not try to perform any Z-buffering of triangles and so triangles that are behind another \n\t\tone will still generate a ray and will result in the nearer triangle being hit many times. (this gets \n\t\taccounted for in the RCS calculation and so doesnt affect the output.) Use this method to guarantee that\n\t\tevery triangle in the mesh (that can be illuminated by transmitted ray) is illuminated by the transmitted\n\t\tray. Use this method if: \n\t\t    You have a large scene with a smaller number of large triangles. \n\t\t    You want to make sure that every part of your model is illuminated \n\t\t    You have small triangles and so secondary and higher bounces will be incident on all faces of the mesh. \n\t2 : RANDOMRAYS \n\t\tThis method generates a Gaussian distribution of random rays. The size of the scene is measured first\n\t\tso that the entire scene is illuminated. If this method is selected then the number of rays in \n\t\tazimuth/cross-range and elevation will be asked for. Use this method if: \n\t\t    You want to perform a quick run and are not that bothered about illuminating every part of teh input mesh. \n\t\t    You have a small scene with large triangles. \n\t\t    You have large triangles and want to make sure there are many reflections from the surface of each triangle. \n\t3 : FIRSTIMERANDOM \n\t\tThis method is similar to method 2 in that it generates a Gaussian distribution of random rays. The difference\n\t\thowever is that after generating the aim point for the initial rays it then remembers the aim point for future\n\t\tpulses. This is useful if you want to make sure that pulse scattering centres are coherent from pulse to pulse.\n\t\tUse this method if: \n\t\t    You want to guarantee that a triangle correlates pulse to pulse over the entire SAR aperture \n\t4 : PARALLELRANDOM \n\t\tThis method is the same as method 2 in that it generates a Gaussian distribution of random rays. The difference\n\t\there is that the origin of each pulse is adjusted so that all the rays are parallel. Use this method if: \n\t\t    You are simulating a scene in the near field but would like it to be imaged in the far field. \n\n ",
+            rayGenMethod);
+    }while(rayGenMethod < 1 || rayGenMethod > 4);
+    
+    if (rayGenMethod == RANDOMRAYS || rayGenMethod == FIRSTTIMERANDOM || rayGenMethod == PARALLELRANDOM) {
+        nAzBeam = input_int((char *)"Azimuth rays in radar beam?", (char *)"nAzBeam",
+                             (char *)"Number of azimuth rays to use to construct radar beam. More is better but slower",nAzBeam);
+        nElBeam = input_int((char *)"Elevation rays in radar beam?", (char *)"nElBeam",
+                             (char *)"Number of elevation rays to use to construct radar beam. More is better but slower",nElBeam);
+    }
+
     char *polstr ;
     bool validpol ;
     int pol = 0 ;
@@ -177,7 +197,6 @@ int main (int argc, char **argv){
     thetastart = DEG2RAD(thetastart);
     thetaend = DEG2RAD(thetaend) ;
     
-    nPulses = nphis * nthetas ;
     double deltaiphi, deltaitheta;
     deltaiphi = (phiend-phistart) / nphis ;
     deltaitheta = (thetaend-thetastart) / (nthetas) ;
@@ -189,7 +208,6 @@ int main (int argc, char **argv){
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
     
-    /*
     kdTree::buildTree(baseMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
     accelerateTriangles(&baseMesh,&accelTriangles) ;
     // Initialise the tree and build ropes and boxes to increase efficiency when traversing
@@ -203,8 +221,8 @@ int main (int argc, char **argv){
     int Ropes[6] ;
     for(int i=0; i<6; i++) Ropes[i] = NILROPE;
     BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
-    */
     
+
     // Start timing after user input
     //
     Timer runTimer ;
@@ -214,8 +232,9 @@ int main (int argc, char **argv){
     
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
-    RxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses);
-    TxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses);
+    RxPos   = (SPVector *)sp_malloc(sizeof(SPVector)*nVec);
+    TxPos   = (SPVector *)sp_malloc(sizeof(SPVector)*nVec);
+    results = (SPVector *)sp_malloc(sizeof(SPVector)*nVec);
     
     double theta_s, phi_s;
     SPVector obsDir;
@@ -237,8 +256,8 @@ int main (int argc, char **argv){
     // multiply by sceneBeamMargin
     // set to be beamwidth
     
-    centreRange = VECT_MAG(TxPos[nPulses/2]);
-    VECT_MINUS( TxPos[nPulses/2], rVect ) ;
+    centreRange = VECT_MAG(TxPos[nVec/2]);
+    VECT_MINUS( TxPos[nVec/2], rVect ) ;
     VECT_CREATE(0, 0, 1., zHat) ;
     VECT_CROSS(rVect, zHat, unitBeamAz);
     VECT_NORM(unitBeamAz, unitBeamAz) ;
@@ -282,121 +301,59 @@ int main (int argc, char **argv){
     
     double TxPowPerRay, gainRx ;
     TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
-    //    printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
     
-    // Initialise OpenCL and load the relevent information into the
-    // platform structure. OCL tasks will use this later
-    //
-    
-    platform.clSelectedPlatformID = NULL;
-    err = oclGetPlatformID (&platform, &status);
-    if(err != CL_SUCCESS){
-        printf("Error: Failed to find a suitable OpenCL Launch platform\n");
-        exit(-1);
-    }
-    //    oclPrintPlatform(platform);
-    cl_context_properties props[] = {
-        CL_CONTEXT_PLATFORM, (cl_context_properties)platform.clSelectedPlatformID,
-        0
-    };
-    platform.props = props ;
-    
-    // Find number of devices on this platform
-    //
-    int useGPU = 0;
-    if (useGPU){
-        err = oclGetNamedGPUDevices(&platform, "NVIDIA", "",&platform.device_ids , &ndevs, &status);
-        if(err == CL_SUCCESS){
-            char cbuf[1024];
-            cl_uint max_compute_units;
-            //            printf("GPU DEVICES                 : %d\n",ndevs);
-            for(int d=0; d<ndevs; d++){
-                //                printf("DEVICE                      : %d\n",d);
-                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_VENDOR, sizeof(cbuf), &cbuf, NULL);
-                //                printf("  DEVICE VENDOR             : %s\n",cbuf);
-                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_NAME, sizeof(cbuf), &cbuf, NULL);
-                //                printf("  DEVICE NAME               : %s\n",cbuf);
-                clGetDeviceInfo(platform.device_ids[d], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &max_compute_units, NULL);
-                //                printf("  DEVICE MAX COMPUTE UNITS  : %d\n",max_compute_units);
-            }
-        }else{
-            printf("No GPU devices available with compute capability: %d.%d\n", GPUCAPABILITY_MAJOR, GPUCAPABILITY_MINOR);
-            exit(1);
-        }
+    unsigned nThreads;
+    if (bounceToShow != 0){
+        nThreads = 1;
     }else{
-        err = oclGetCPUDevices(&platform, &platform.device_ids, &ndevs, &status);
-        if(err == CL_SUCCESS){
-            //            printf("CPU DEVICES                 : %d\n",ndevs);
-        }
+        nThreads = std::thread::hardware_concurrency() ;
+    }
+    int pulsesPerThread;
+    if (nVec < nThreads) {
+        nThreads = nVec;
     }
     
-    
-    // Find out the maximum amount of memory that all OpenCL devices have
-    // For this task
-    //
-    devMemSize = 100e9;    // big number 100 GB
-    for (int dev=0; dev<ndevs; dev++){
-        err = clGetDeviceInfo(platform.device_ids[dev], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &memSizeTmp, NULL);
-        if(err != CL_SUCCESS){
-            printf("Error [%d] : couldn't obtain device info\n",err);
-        }
-        devMemSize = (memSizeTmp < devMemSize) ? memSizeTmp : devMemSize;
-    }
-    if (bounceToShow != 0) ndevs = 1;
-    platform.nDevs = ndevs ;
-    
-    //    printf("DEVICES USED                : %d\n",ndevs);
+    while (nVec % nThreads != 0) nVec-- ;
+    pulsesPerThread = nVec / nThreads ;
     
     pthread_t *threads;
-    threads = (pthread_t *)malloc(sizeof(pthread_t)*ndevs) ;
-    if (threads == NULL) {
-        printf("Error : Failed to malloc %d threads\n",ndevs);
-        exit(-1);
-    }
+    threads = (pthread_t *)sp_malloc(sizeof(pthread_t)*nThreads) ;
     
     bircsThreadData *threadDataArray ;
-    threadDataArray = (bircsThreadData *)sp_malloc(sizeof(bircsThreadData)*ndevs);
-    if (threadDataArray == NULL) {
-        printf("Error : Failed to malloc %d threadDataArrays\n",ndevs);
-        exit(-1);
-    }
+    threadDataArray = (bircsThreadData *)sp_malloc(sizeof(bircsThreadData)*nThreads);
     
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     
-    // Calculate how many pulses can be processed on a device at a time
-    //
-    int pulsesPerDevice;
-    
-    while (nPulses % ndevs != 0) nPulses-- ;
-    pulsesPerDevice = nPulses / ndevs ;
-    
-    for (dev=0; dev<ndevs; dev++) {
+    for (int t=0; t<nThreads; ++t) {
         
-        
-        threadDataArray[dev].devIndex               = dev ;
-        threadDataArray[dev].nThreads               = ndevs ;
-        threadDataArray[dev].platform               = platform ;
-        threadDataArray[dev].SceneBoundingBox       = SceneBoundingBox;
-        threadDataArray[dev].startPulse             = startPulse + dev*pulsesPerDevice ;
-        threadDataArray[dev].nPulses                = pulsesPerDevice ;
-        threadDataArray[dev].nAzBeam                = nAzBeam ;
-        threadDataArray[dev].nElBeam                = nElBeam ;
-        threadDataArray[dev].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
-        threadDataArray[dev].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
-        threadDataArray[dev].gainRx                 = gainRx;
-        threadDataArray[dev].PowPerRay              = TxPowPerRay ;
-        threadDataArray[dev].freq_centre            = freq_centre ;
-        threadDataArray[dev].bounceToShow           = bounceToShow-1;
-        threadDataArray[dev].status                 = status ;
-        threadDataArray[dev].interrogate            = interrogate ;
-        threadDataArray[dev].interogPt              = interogPt ;
-        threadDataArray[dev].interogRad             = interogRad ;
-        threadDataArray[dev].interogFP              = &interrogateFP ;
-        threadDataArray[dev].sceneMesh              = &baseMesh ;
-        threadDataArray[dev].polarisation           = pol ;
+        threadDataArray[t].tid                    = t ;
+        threadDataArray[t].nThreads               = nThreads ;
+        threadDataArray[t].SceneBoundingBox       = SceneBoundingBox;
+        threadDataArray[t].startPulse             = t*pulsesPerThread ;
+        threadDataArray[t].nPulses                = pulsesPerThread ;
+        threadDataArray[t].nAzBeam                = nAzBeam ;
+        threadDataArray[t].nElBeam                = nElBeam ;
+        threadDataArray[t].TxPositions            = TxPos ;           // Pointer to beginning of TxPos data
+        threadDataArray[t].RxPositions            = RxPos ;           // Pointer to beginning of RxPos data
+        threadDataArray[t].gainRx                 = gainRx;
+        threadDataArray[t].PowPerRay              = TxPowPerRay ;
+        threadDataArray[t].freq_centre            = freq_centre ;
+        threadDataArray[t].bounceToShow           = bounceToShow-1;
+        threadDataArray[t].status                 = status ;
+        threadDataArray[t].interrogate            = interrogate ;
+        threadDataArray[t].interogPt              = interogPt ;
+        threadDataArray[t].interogRad             = interogRad ;
+        threadDataArray[t].interogFP              = &interrogateFP ;
+        threadDataArray[t].sceneMesh              = &baseMesh ;
+        threadDataArray[t].tree                   = &tree ;
+        threadDataArray[t].accelTriangles         = &accelTriangles ;
+        threadDataArray[t].treesize               = treeSize ;
+        threadDataArray[t].polarisation           = pol ;
+        threadDataArray[t].results                = results ;
+        threadDataArray[t].rayGenMethod           = rayGenMethod ;
         
         if (bounceToShow)printf("\n+++++++++++++++++++++++++++++++++++++++\n");
         if (interrogate){
@@ -418,13 +375,13 @@ int main (int argc, char **argv){
             fprintf(interrogateFP, "Interrogation point     : %06.3f,%06.3f,%06.3f\n",interogPt.x,interogPt.y,interogPt.z);
             fprintf(interrogateFP, "Slant range to point (m): %06.3f --  %06.3f -- %06.3f\n", intMinR, intRg, intMaxR);
             fprintf(interrogateFP, "Interrogation Pt Radius : %06.3f\n",interogRad);
-            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nPulses);
+            fprintf(interrogateFP, "Interrogation Pulse(s)  : %d - %d\n",startPulse,startPulse+nVec);
             fprintf(interrogateFP, "Range\t\tPower\t\tbounce\tTriangle\tHitPoint\n");
             fprintf(interrogateFP, "--------------------------------------------------------------------\n");
         }
         // Create thread data for each device
         //
-        rc = pthread_create(&threads[dev], NULL, devPulseBlock, (void *) &threadDataArray[dev]) ;
+        rc = pthread_create(&threads[t], NULL, devPulseBlock, (void *) &threadDataArray[t]) ;
         if (rc){
             printf("ERROR; return code from pthread_create() is %d\n", rc);
             exit(-1);
@@ -433,8 +390,8 @@ int main (int argc, char **argv){
     
     pthread_attr_destroy(&attr);
     void * threadStatus ;
-    for (dev=0; dev<ndevs; dev++) {
-        rc = pthread_join(threads[dev], &threadStatus);
+    for (int t=0; t<nThreads; t++) {
+        rc = pthread_join(threads[t], &threadStatus);
         if (rc) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
             exit(-1);
@@ -447,14 +404,41 @@ int main (int argc, char **argv){
     }
     
     endTimer(&runTimer, &status) ;
-    //    printf("Done in " BOLD BLINK GREEN " %f " RESETCOLOR "seconds \n",timeElapsedInSeconds(&runTimer, &status)) ;
     
+    float maxR = 0.0 ;
+    float maxphi = 0.0 ;
+    float maxtheta = 0.0;
+    printf("\n--------------------------------------------------------------------\n");
+    for (int i=0; i<nVec; ++i){
+        if (results[i].r > maxR ) {
+            maxR     = results[i].r ;
+            maxphi   = results[i].phi ;
+            maxtheta = results[i].theta ;
+        }
+        printf("%f, %f, %f\n",results[i].r,results[i].phi,results[i].theta);
+    }
     
+    double k = 2 * SIPC_pi / lambda ;
+    double lambda_squared = lambda * lambda ;
+    printf("Maximum RCS was %f dB m^2 (%f m^2) at az:%fdeg, incidence: %fdeg\n",maxR,pow(10.0,maxR/10.0),RAD2DEG(maxphi), RAD2DEG(maxtheta) );
+    printf("    1m^2 flat plate               : %f (%f dB m^2)\n",4*SIPC_pi / lambda_squared,10*log10(4*SIPC_pi / lambda_squared)); // 8620.677
+    printf("    1m dihedral                   : %f (%f dB m^2)\n",8*SIPC_pi / lambda_squared,10*log10(8*SIPC_pi / lambda_squared)); // 17241.354
+    printf("    1m trihedral                  : %f (%f dB m^2)\n",12*SIPC_pi/ lambda_squared,10*log10(12*SIPC_pi/ lambda_squared)); // 25862.031
+    printf("    1m dia Sphere                 : \n");
+    printf("        Rayleigh Region r<<lambda : %f ( %f dB m^2)\n", 9*SIPC_pi*0.5*0.5*pow(k*0.5,4), 10*log10(9*SIPC_pi*0.5*0.5*pow(k*0.5,4)));
+    printf("        Optical Region  r>>lambda : %f ( %f dB m^2)\n", SIPC_pi*0.5*0.5, 10*log10(SIPC_pi*0.5*0.5));
+    printf("         ( r = 0.5 m, lambda = %5.3f m )\n",lambda);
+    printf("\n--------------------------------------------------------------------\n");
+
+
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;
     free(RxPos) ;
     free(TxPos) ;
+    free(results) ;
+    free(tree);
+    delete accelTriangles ;
     
     return 0;
     
