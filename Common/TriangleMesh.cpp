@@ -111,13 +111,13 @@ void TriangleMesh::readDAEFile  ( std::string filename ){
                     if (geom_vec[i].materialSide2 != std::string("material") && geom_vec[i].materialSide2 != std::string("")) {
                         triMaterial = geom_vec[i].materialSide2;
                     }else{
-                        triMaterial = materialProperties[0].matname;
+                        triMaterial = globalMatProps[0].matname;
                     }
                 }else if (geom_vec[i].materialSide2 == std::string("material") || geom_vec[i].materialSide2 == std::string("")){
                     if (geom_vec[i].materialSide1 != std::string("material") && geom_vec[i].materialSide1 != std::string("")) {
                         triMaterial = geom_vec[i].materialSide1;
                     }else{
-                        triMaterial = materialProperties[0].matname;
+                        triMaterial = globalMatProps[0].matname;
                     }
                 }
                 
@@ -234,7 +234,7 @@ void TriangleMesh::writePLYFile ( std::string filename ){
     //
     for(int i=0; i<triangles.size(); i++){
         fprintf(fp, "3 %d %d %d %d %d %d %d\n",triangles[i].a, triangles[i].b, triangles[i].c,
-                materialColours[triangles[i].mat][0],materialColours[triangles[i].mat][1],materialColours[triangles[i].mat][2], triangles[i].mat);
+                globalMatColours[triangles[i].mat*3+0],globalMatColours[triangles[i].mat*3+1],globalMatColours[triangles[i].mat*3+2], triangles[i].mat);
     }
     
     fclose(fp);

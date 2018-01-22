@@ -46,6 +46,7 @@
 #include "buildRopesAndBoxes.hpp"
 #include "accelerateTriangles.hpp"
 #include "threadCore.hpp"
+#include "readMaterialFile.hpp"
 
 extern "C" {
 #include "TxPowerPerRay.h"
@@ -151,6 +152,13 @@ int main (int argc, char **argv){
                             "Enter the name of a file that will be the base scene to be raytraced. The file must be in a .PLY file format"
                             ,ROOTPATH"/delaunay.ply") ;
     
+    // Read in the material properties file if required
+    //
+    char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
+                                 (char *)"The name of a 'materialfile' or 'none' (defaults used)",
+                                 (char *) "materialProperties.txt");
+    initialiseMaterials(matfile, true);
+    
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
     //
@@ -180,6 +188,22 @@ int main (int argc, char **argv){
     illInc   = ILLINC ;
     VECT_CREATE(illRange*sin(illInc)*cos(illAz), illRange*sin(illInc)*sin(illAz), illRange*cos(illInc), illOrigin) ;
     VECT_NORM(illOrigin, illDir) ;
+    
+    /*
+    kdTree::buildTree(baseMesh, &tree, &treeSize, (kdTree::TREEOUTPUT)(kdTree::OUTPUTSUMM)) ;
+    accelerateTriangles(&baseMesh,&accelTriangles) ;
+    // Initialise the tree and build ropes and boxes to increase efficiency when traversing
+    //
+    kdTree::KdData *node;
+    node = &(tree[0]) ;
+    // build Ropes and Boxes
+    //
+    AABB sceneAABB ;
+    sceneAABB = tree[0].brch.aabb ;
+    int Ropes[6] ;
+    for(int i=0; i<6; i++) Ropes[i] = NILROPE;
+    BuildRopesAndBoxes(node, Ropes, sceneAABB, tree);
+    */
     
     // Start timing after user input
     //

@@ -6,8 +6,8 @@
 #include <iostream>
 #include "colladainterface.h"
 #include <SIlib2/SIlib2.h>
-#include "materialProperties.h"
 #include "colourCodes.h"
+#include "readMaterialFile.hpp"
 
 extern "C" {
 #include "matrixMultiplication.h"
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     
     SPStatus status ;
     im_init_status(status, 0) ;
-    im_init_lib(&status, (char *)"readCollada", argc, (char **)argv);
+    im_init_lib(&status, (char *)"colladaToPlyFile", argc, (char **)argv);
     CHECK_STATUS_NON_PTR(status);
     
     banner(); 
@@ -37,6 +37,13 @@ int main(int argc, char* argv[]) {
     outFile = input_string("Name of output file", "outFile",
                            "The pathname of the file to create. This will be a binary file containing triangle and material information of the scene",
                            "/tmp/triangles.ply");
+    
+    // Read in the material properties file if required
+    //
+    char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
+                                 (char *)"The name of a 'materialfile' or 'none' (defaults used)",
+                                 (char *) "materialProperties.txt");
+    initialiseMaterials(matfile, true);
     
     TriangleMesh mesh;
     mesh.readDAEFile(inFile) ;

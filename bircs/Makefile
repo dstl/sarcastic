@@ -47,8 +47,7 @@ CPPSRC = \
 ../Common/tinyxml/tinystr.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
-../colladaToTriFile/colladainterface.cpp \
-oclReflect.cpp \
+../colladaToPlyFile/colladainterface.cpp \
 ../fastKdTree/splitCandidate.cpp \
 ../fastKdTree/AABB.cpp \
 ../fastKdTree/clipToAABB.cpp \
@@ -61,9 +60,10 @@ buildKernel.cpp \
 ../sarcastic2/buildRopesAndBoxes.cpp \
 ../sarcastic2/cpuPOField.cpp \
 main.cpp \
-oclRandomRays.cpp \
-oclBuildShadowRays.cpp \
-threadCore.cpp
+threadCore.cpp \
+../sarcastic2/shadowRays.cpp \
+../sarcastic2/reflect.cpp \
+../Common/readMaterialFile.cpp
 
 SRC = \
 bircsBanner.c \
@@ -85,7 +85,7 @@ CC   = clang -O3 -DOCLKERNELSPATH=$(OCLKERNELSPATH)
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToTriFile
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToPlyFile
 LFLAGS = -framework OpenCL -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
 
 %.o:	%.cpp

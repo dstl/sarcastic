@@ -393,6 +393,7 @@ int main(int argc, const char * argv[]) {
     im_close_lib(&status);
     free(RxPos) ;
     free(TxPos) ;
+    free(outCPHDFile);
     
     return 0;
     

@@ -81,10 +81,10 @@ public:
     
     void setMaterial(std::string material){
         std::transform(material.begin(), material.end(),material.begin(), ::toupper);
-        for(int i=0; i<NMATERIALS; i++){
-            if (material.find(std::string(materialProperties[i].matname)) != std::string::npos ) {
+        for(int i=0; i<globalNumMats; i++){
+            if (material.find(std::string(globalMatProps[i].matname)) != std::string::npos ) {
                 mat = i ;
-                i = NMATERIALS ;
+                i = globalNumMats ;
             }
         }
         return ;

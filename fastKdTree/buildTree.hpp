@@ -84,19 +84,19 @@ namespace kdTree {
     int reduce(unsigned char *list, long int size) ;
     int reduce(std::vector<int> list);
     void processSmallNodes(treeList **activelist, treeList **nextlist);
-    void buildSizes(std::vector<kdTreeNode *> *nodelist, int level) ;
-    void buildAddresses(std::vector<kdTreeNode *> *nodelist, int level);
+    void buildSizes(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, int level) ;
+    void buildAddresses(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, int level);
     void scanInclusive(int *in, int *out, int n) ;
     void scanExclusive(int *in, int *out, int n) ;
-    void preOrderTraversalNode(std::vector<kdTreeNode *> *nodelist, KdData **tree, int *numNodesInTree) ;
+    void preOrderTraversalNode(std::vector<std::shared_ptr<kdTreeNode>> *nodelist, KdData **tree, int *numNodesInTree) ;
     void dumpsmall(treeList **list) ;
     void writeAABBtoPlyFile(AABB bv, std::string filename);
     void writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename);
     void writeAABBtoPlyFile(std::vector<AABB> abs, std::string filename, int r, int g, int b);
     void swapLists(treeList **a, treeList **b) ;
-    void printKdTreeNodes(std::vector<kdTreeNode *> nodelist);
+    void printKdTreeNodes(std::vector<std::shared_ptr<kdTreeNode>> nodelist);
     void printKdTreeData(KdData **kdTree, int *numNodesInTree) ;
-    void printSummary(std::vector<kdTreeNode *> nodelist, TriangleMesh &mesh) ;
+    void printSummary(std::vector<std::shared_ptr<kdTreeNode>> nodelist, TriangleMesh &mesh) ;
 
     void buildTree(TriangleMesh &mesh, KdData **kdTree, int *numNodesInTree, TREEOUTPUT output) ;
     

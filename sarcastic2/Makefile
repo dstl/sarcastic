@@ -45,7 +45,7 @@ banner.cpp \
 buildRays.cpp \
 ../fastKdTree/buildTree.cpp \
 ../fastKdTree/clipToAABB.cpp \
-../colladaToTriFile/colladainterface.cpp \
+../colladaToPlyFile/colladainterface.cpp \
 ../fastKdTree/kdTreeNode.cpp \
 ../fastKdTree/rayTrace.cpp \
 reflect.cpp \
@@ -62,10 +62,12 @@ cpuPOField.cpp \
 buildRopesAndBoxes.cpp \
 sarcastic2.cpp \
 tryReadFile.cpp \
-threadCore.cpp
+threadCore.cpp \
+../Common/readMaterialFile.cpp
 
 SRC = \
 ../Common/boxMullerRandom.c \
+../Common/printProgress.c \
 ../sarcastic/ecef2SceneCoords.c \
 ../Common/matrixMultiplication.c \
 ../Common/ranf.c \
@@ -83,7 +85,7 @@ CC   = clang
 OBJ    = $(patsubst %.c, %.o, $(SRC))
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToTriFile
+CFLAGS = -m64 -c `SIlib2-config --cflags` -I../sarcastic -I../Common -I../Common/tinyxml -I../fastKdTree -I../sarcastic2 -I/usr/local/include -I../colladaToPlyFile
 LFLAGS = -arch x86_64 `SIlib2-config --libs` -L/usr/local/dstl/lib -L/usr/local/lib
 
 %.o:	%.cpp

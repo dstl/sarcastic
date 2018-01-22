@@ -216,8 +216,8 @@ __kernel void POField(__global Triangle * tris, // input array of triangles
         hp  = hitpoints[ind].hit ;
         ray = rays[ind] ;
         tri = tris[hitpoints[ind].tri] ;
-        Rs  = materialProperties[tri.matId].Rs ;
-        Rm  = materialProperties[tri.matId].Rm ;
+        Rs  = globalMatProps[tri.matId].Rs ;
+        Rm  = globalMatProps[tri.matId].Rm ;
         for(int i=0; i<9; i++)globalToLocalMat[i] = tri.globalToLocalMat[i];
         for(int i=0; i<9; i++)localToGlobalMat[i] = tri.localToGlobalMat[i];
         

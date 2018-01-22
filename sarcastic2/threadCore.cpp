@@ -41,6 +41,7 @@
 extern "C" {
 #include "boxMullerRandom.h"
 #include "RCS.h"
+#include "printProgress.h"
 }
 #include "ranf.h"
 #include "threadCore.hpp"
@@ -164,8 +165,8 @@ void * devPulseBlock ( void * threadArg ) {
         if(tid == 0){
             if( pulse % reportN == 0 && nPulses != 1){
                 pCentDone = 100.0*pulse/nPulses ;
-                printf("Processing pulses %6d - %6d out of %6d [%2d%%]",
-                       pulse, (pulse+((reportN > (nPulses)) ?  (nPulses*nThreads) : reportN*nThreads)), nPulses*nThreads ,(int)pCentDone);
+                printProgress(pCentDone, 60);
+                
                 if(pulse != 0 ){
                     current  = time(NULL);
                     sexToGo  = estimatedTimeRemaining(&threadTimer, pCentDone, &status);
@@ -174,10 +175,10 @@ void * devPulseBlock ( void * threadArg ) {
                     sec      = (int)sexToGo % 60;
                     complete = current + sexToGo ;
                     p        = localtime(&complete) ;
-                    strftime(ct, 1000, "%a %b %d %H:%M", p);
-                    printf("  ETC %s (in %2.0dh:%2.0dm:%2.0ds) \n",ct,hrs,min,sec);
+                    strftime(ct, 1000, "%d/%b/%y %H:%M", p);
+                    printf(" ETC %s (in %2.0dh:%2.0dm:%2.0ds) ",ct,hrs,min,sec);
                 }else{
-                    printf("  Calculating ETC...\n");
+                    printf("  Calculating ETC...");
                 }
             }
         }
@@ -211,11 +212,12 @@ void * devPulseBlock ( void * threadArg ) {
             // Harmonic Motion
             //
             double A = 0.0125 ;
-            double f = 0.33 ;
+            double f = 12.5 ;
             S.x = A * sin(2 * SIPC_pi * t * f ) ;
-            double Ts = 1/f;
-            double frac = (t / Ts) - (int)(t / Ts) ;
-            S.x = A * frac ;
+            S.y = A * sin(2 * SIPC_pi * t * f ) ;
+//            double Ts = 1/f;
+//            double frac = (t / Ts) - (int)(t / Ts) ;
+//            S.x = A * frac ;
             
             // Modification for top hat motion
             //
@@ -345,7 +347,11 @@ void * devPulseBlock ( void * threadArg ) {
                     reflectCount++ ;
             }
             
-            if( reflectCount == 0) break ;
+            if( reflectCount == 0) {
+                free(edgeHit);
+                free(hitArray);
+                break ;
+            }
             
             // shrink rayArray and hitArray to get rid of misses
             //
@@ -655,6 +661,7 @@ void * devPulseBlock ( void * threadArg ) {
     // print timer Summary
     //
     if(tid==0){
+        printf("\n");
         printf("           Timing Summary\n");
         printf("==========================================\n");
         printf("Time spent building rays          : %8.2f ms\n",buildRaysDur * nThreads);

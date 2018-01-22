@@ -36,8 +36,9 @@
 # *
 # ***************************************************************************/
 
-EXE         = colladaToTriFile
+EXE         = colladaToPlyFile
 INSTALL_DIR = /usr/local/dstl/bin
+VERSION    := $(shell `pwd`/GenGitVersion.sh)
 
 CPPSRC = \
 colladainterface.cpp \
@@ -47,11 +48,12 @@ banner.cpp \
 ../Common/tinyxml/tinyxml.cpp \
 ../Common/tinyxml/tinyxmlerror.cpp \
 ../Common/tinyxml/tinyxmlparser.cpp \
-../Common/TriangleMesh.cpp 
+../Common/TriangleMesh.cpp \
+../Common/readMaterialFile.cpp
 
 SRC = ../Common/matrixMultiplication.c
 
-LIB = -lreadline -lSIlib
+LIB = -lreadline -lSIlib2
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
 CC   = clang -O3
 

@@ -189,7 +189,7 @@ __kernel void reflectPower(__global Triangle * Triangles,       // Array of Tria
         modulo[0] = 0; modulo[1] = 1; modulo[2] = 2; modulo[3] = 0; modulo[4]=1;
         
         T   = Triangles[hits[ind].trinum];
-        tex = materialProperties[T.matInd] ;
+        tex = globalMatProps[T.matInd] ;
         
         // Create surface normal for texture associated with this hitpoint
         //

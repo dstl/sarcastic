@@ -48,6 +48,8 @@ extern "C" {
 #include "kdTreeNode.hpp"
 #include "accelerateTriangles.hpp"
 #include "rayTrace.hpp"
+#include "reflect.hpp"
+#include "shadowRays.hpp"
 #include "buildRays.hpp"
 
 #define NPOINTS (32)
