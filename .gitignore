@@ -41,3 +41,5 @@ BircsVersion.h
 .*rc_*
 materialise_version.h
 CTTVersion.h
+.colladaToPlyFilerc
+colladaToPlyFile
