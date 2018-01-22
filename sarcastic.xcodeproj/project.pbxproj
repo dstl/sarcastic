@@ -13,6 +13,7 @@
 		9500A6601E7C1FD00066E15B /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 953FA1E318F4289400EAD4F3 /* TxPowerPerRay.c */; };
 		9500A6641E7C22BF0066E15B /* getUserInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6621E7C22BF0066E15B /* getUserInput.cpp */; };
 		9500A6671E7C2E8D0066E15B /* threadCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500A6651E7C2E8D0066E15B /* threadCore.cpp */; };
+		950749611F791B5F00922809 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 952385E01F62D81F0016551D /* printProgress.c */; };
 		951482081ECF457E00AD72EC /* libCGAL_Core.12.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 951482061ECF457E00AD72EC /* libCGAL_Core.12.0.0.dylib */; };
 		951482091ECF457E00AD72EC /* libCGAL.12.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 951482071ECF457E00AD72EC /* libCGAL.12.0.0.dylib */; };
 		9514820D1ECF489D00AD72EC /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9514820A1ECF489D00AD72EC /* libboost_thread-mt.dylib */; };
@@ -1921,6 +1922,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950749611F791B5F00922809 /* printProgress.c in Sources */,
 				95AA4F241F630FD40060A4C9 /* readMaterialFile.cpp in Sources */,
 				95AA4F251F630FD40060A4C9 /* colladainterface.cpp in Sources */,
 				954D55431F60962F00D93844 /* shadowRays.cpp in Sources */,

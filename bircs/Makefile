@@ -73,7 +73,8 @@ bircsBanner.c \
 ../Common/boxMullerRandom.c \
 ../Common/pmath_rng.c \
 ../sarcastic/RCS.c \
-../sarcastic/OpenCLUtils.c
+../sarcastic/OpenCLUtils.c \
+../Common/printProgress.c
 
 
 LIB = -lreadline -lSIlib2
