@@ -77,7 +77,7 @@ SRC = \
 ../Common/ranf.c
 
 
-LIB = -lreadline -lSIlib2 -lboost_filesystem -lboost_system -lboost_thread -lgmp.10 -lmpfr.4 -lCGAL_Core -lCGAL
+LIB = -lreadline -lSIlib2 -lboost_filesystem -lboost_system -lboost_thread -lgmp.10 -lmpfr -lCGAL_Core -lCGAL
 CPP  = clang -O3 -x c++ -std=gnu++11 -stdlib=libc++
 CC   = clang
 
