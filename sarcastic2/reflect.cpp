@@ -93,12 +93,20 @@ void reflect(int    nRays,              // Number of rays to reflect
         //
         double islf = (4.0 * 3.1415926536 * hits[ind].dist * hits[ind].dist);
         islf = (islf < 1 ) ? 1 : islf ;
-        reflectedRays[ind].pow = rays[ind].pow * ks ;
         
         // Calculate the polarisation of the reflected ray based upon the polarisation
         // of the incident ray
         //
         VECT_CROSS(rays[ind].pol, N, perpol);
+        
+        // The reflected ray is calculated using Geometrical optics. PO is only used
+        // on the shadowrays back to the receiver. A diasadvantage of this is that
+        // the reflected power does not take into account the polarisation. To approximate
+        // the reduction in E-field intensity for a parallel polarised E-field multiply it
+        // by the sine of the angle between the normal and the polarisation.
+        //
+        double sintheta = VECT_MAG(perpol);
+        reflectedRays[ind].pow = rays[ind].pow * ks * sintheta * sintheta ;
         VECT_CROSS(perpol, reflectedRays[ind].dir, reflectedRays[ind].pol);
         VECT_NORM(reflectedRays[ind].pol,reflectedRays[ind].pol);
 
