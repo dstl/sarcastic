@@ -74,7 +74,6 @@
 		954D55471F609B7600D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
 		954D55481F609B8C00D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
 		954D55491F609B9D00D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
-		954D554A1F609BB200D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
 		954D554B1F609BC200D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
 		954D55531F629D1B00D93844 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 954D55521F629D1B00D93844 /* main.cpp */; };
 		954D55571F62A66700D93844 /* libSIlib2-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */; };
@@ -176,6 +175,8 @@
 		95A046451AFBCD7E00FD0114 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 95A046431AFBCD7E00FD0114 /* RCS.c */; };
 		95A1F1E31E6C2F8B00FF4A20 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E11E6C2F8B00FF4A20 /* buildTree.cpp */; };
 		95A1F1E61E6C7C3F00FF4A20 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */; };
+		95A9360120B9537E00CD9DD1 /* libSIlib2-2.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95A9360020B9537E00CD9DD1 /* libSIlib2-2.3.a */; };
+		95A936C620BC52D300CD9DD1 /* sceneExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95A936C420BC52D300CD9DD1 /* sceneExtent.cpp */; };
 		95AA4F151F6301DC0060A4C9 /* banner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AA4F0F1F6301DC0060A4C9 /* banner.cpp */; };
 		95AA4F161F6301DC0060A4C9 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AA4F101F6301DC0060A4C9 /* colladainterface.cpp */; };
 		95AA4F171F6301DC0060A4C9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AA4F131F6301DC0060A4C9 /* main.cpp */; };
@@ -681,6 +682,9 @@
 		95A1F1E21E6C2F8B00FF4A20 /* buildTree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buildTree.hpp; sourceTree = "<group>"; };
 		95A1F1E41E6C7C3F00FF4A20 /* rayTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rayTrace.cpp; sourceTree = "<group>"; };
 		95A1F1E51E6C7C3F00FF4A20 /* rayTrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rayTrace.hpp; sourceTree = "<group>"; };
+		95A9360020B9537E00CD9DD1 /* libSIlib2-2.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSIlib2-2.3.a"; path = "../../../../usr/local/dstl/lib/libSIlib2-2.3.a"; sourceTree = "<group>"; };
+		95A936C420BC52D300CD9DD1 /* sceneExtent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sceneExtent.cpp; path = Common/sceneExtent.cpp; sourceTree = SOURCE_ROOT; };
+		95A936C720BC5BA500CD9DD1 /* sceneExtent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = sceneExtent.hpp; path = Common/sceneExtent.hpp; sourceTree = SOURCE_ROOT; };
 		95AA4F0F1F6301DC0060A4C9 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = colladaToPlyFile/banner.cpp; sourceTree = SOURCE_ROOT; };
 		95AA4F101F6301DC0060A4C9 /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = colladaToPlyFile/colladainterface.cpp; sourceTree = SOURCE_ROOT; };
 		95AA4F111F6301DC0060A4C9 /* colladainterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colladainterface.h; path = colladaToPlyFile/colladainterface.h; sourceTree = SOURCE_ROOT; };
@@ -815,7 +819,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				954D554A1F609BB200D93844 /* libSIlib2-2.2.1.a in Frameworks */,
+				95A9360120B9537E00CD9DD1 /* libSIlib2-2.3.a in Frameworks */,
 				95E6273B1E7C8B3900BC7933 /* libexpat.tbd in Frameworks */,
 				954BD4F71E795A24007A12E4 /* libreadline.tbd in Frameworks */,
 				954BD4F21E794B61007A12E4 /* libfftw3f_threads.a in Frameworks */,
@@ -1252,6 +1256,7 @@
 		955F773619CF1D4700BF3039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95A9360020B9537E00CD9DD1 /* libSIlib2-2.3.a */,
 				954D55581F62A6B300D93844 /* libfftw3f_threads.a */,
 				954D55591F62A6B300D93844 /* libfftw3f.a */,
 				954D55451F609B5D00D93844 /* libSIlib2-2.2.1.a */,
@@ -1472,6 +1477,8 @@
 				9562DA501B4FFE4D00EC6D83 /* materialProperties.h */,
 				952385E61F62FF9A0016551D /* readMaterialFile.cpp */,
 				952385E71F62FF9A0016551D /* readMaterialFile.hpp */,
+				95A936C420BC52D300CD9DD1 /* sceneExtent.cpp */,
+				95A936C720BC5BA500CD9DD1 /* sceneExtent.hpp */,
 				9562D9D41B48465400EC6D83 /* tinyxml */,
 			);
 			name = Common;
@@ -1694,7 +1701,7 @@
 		9504210A17A24F9400A076FC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Dstl;
 				TargetAttributes = {
 					951482131ED4AAB400AD72EC = {
@@ -1987,6 +1994,7 @@
 				9500A6641E7C22BF0066E15B /* getUserInput.cpp in Sources */,
 				95CC27F61EC0B99D0092A2CE /* shadowRays.cpp in Sources */,
 				9500A6601E7C1FD00066E15B /* TxPowerPerRay.c in Sources */,
+				95A936C620BC52D300CD9DD1 /* sceneExtent.cpp in Sources */,
 				9500A65F1E7C17A20066E15B /* ecef2SceneCoords.c in Sources */,
 				9500A65E1E7C15410066E15B /* accelerateTriangles.cpp in Sources */,
 				95F2F1B61E7C5F740035F635 /* cpuPOField.cpp in Sources */,
@@ -2061,12 +2069,20 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2098,8 +2114,8 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				ONLY_ACTIVE_ARCH = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -2110,12 +2126,20 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2140,7 +2164,7 @@
 					/usr/local/lib,
 					/usr/local/dstl/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 			};
@@ -2149,6 +2173,7 @@
 		9504211E17A24F9400A076FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic/kernels\\\"",
@@ -2166,6 +2191,7 @@
 		9504211F17A24F9400A076FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "OCLKERNELSPATH=\\\"$(PROJECT_DIR)/sarcastic/kernels\\\"";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
