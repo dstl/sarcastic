@@ -1,0 +1,149 @@
+#!/bin/csh -f
+#***************************************************************************
+#*
+#*       Module:    configure
+#*      Program:    SIlib2
+#*   Created by:    Darren Muff 23/07/2013
+#*                  Copyright (c) 2013 [dstl]. All rights reserved.
+#*
+#*   Description:
+#*      configure script for SIlib2
+#*
+#*   CLASSIFICATION        :  UNCLASSIFIED
+#*   Date of CLASSN        :  19/07/2013
+#*
+#* Permission is hereby granted, free of charge, to any person obtaining a
+#* copy of this software and associated documentation files (the "Software"),
+#* to deal in the Software without restriction, including without limitation
+#* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#* and/or sell copies of the Software, and to permit persons to whom the
+#* Software is furnished to do so, subject to the following conditions:
+#*
+#* The above copyright notice and this permission notice shall be included
+#* in all copies or substantial portions of the Software.
+#*
+#* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#* DEALINGS IN THE SOFTWARE.
+#*
+#* THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
+#* USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
+#* SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
+#* IRELAND.
+#*
+#***************************************************************************/
+
+set CURR_DIR        = $PWD
+set required        = "clang gdal-config git sed wc awk uname ar mkdir cp rm ln cat chmod pwd doxygen"
+set def_INSTALL_DIR = /usr/local/dstl
+set CCtmp           = `which clang`
+
+echo "Searching for files required for this installation..."
+foreach req ($required)
+    echo $req ".......... `which $req`"
+if ($status) then
+        if ($req == doxygen) then
+            echo " "
+            echo "**** Warning: Cannot find $req. You will not be able to build the docs until this is in your path"
+	else if ($req == clang) then
+	    echo "**** Warning: clang not found trying gcc..."
+    	    echo "gcc.......... `which gcc`"
+	    if ( $status ) then 
+		echo "**** gcc not found - I need a C Compiler to compile with. "
+		exit 1
+	    else
+		set CCtmp = `which gcc`
+	    endif
+        else
+            echo "Error: required binary $req not found"
+            exit 1
+        endif
+    endif
+end
+
+set GDALCFLAGS  = `gdal-config --cflags`
+set GDALLIBS    = `gdal-config --libs`
+set CC          = $CCtmp
+
+#
+# Ask for parameters for installation directory
+#
+
+echo " "
+echo "Please enter the full path name of the directory"
+echo "that SIlib2 is to be installed into. Executable files"
+echo "will be placed in a bin subdirectory [$def_INSTALL_DIR]"
+echo " "
+
+set INSTALL_DIR = $<
+if ($INSTALL_DIR == "") then
+set INSTALL_DIR = $def_INSTALL_DIR
+endif
+
+echo "Setting install_dir to be $INSTALL_DIR"
+if ( ! (-d $INSTALL_DIR/bin) ) then
+    echo " "
+    echo "$INSTALL_DIR/bin does not exist. Shall I create it? [y/n]"
+    set yesno = $<
+    if ( $yesno == "y" || $yesno == "Y" || $yesno == "yes" || $yesno == "Yes" || $yesno == "YES") then
+        mkdir -p $INSTALL_DIR
+        mkdir -p $INSTALL_DIR/bin
+        mkdir -p $INSTALL_DIR/include
+        mkdir -p $INSTALL_DIR/lib
+        if ( ! -d $INSTALL_DIR ) then
+            echo "Error : Failed to create install directory $INSTALL_DIR"
+            exit 1
+        endif
+    else
+        echo "Exiting ... "
+        exit 1
+    endif
+endif
+
+set HAVE_GDAL = "No"
+rm -f test_gdal
+${CC} `gdal-config --cflags` -o test_gdal test_gdal.c -m64 `gdal-config --libs` >&/dev/null
+if ( -x "test_gdal" ) then
+    ./test_gdal
+    if ($status == 0) then
+        set HAVE_GDAL = "Yes"
+    endif
+endif
+
+set gdal_conf="have_gdal=$HAVE_GDAL"
+
+set HAVE_EXPAT = "No"
+rm -f test_expat
+${CC} -o test_expat test_expat.c -m64 -L/usr/local/lib64 -lexpat >&/dev/null
+if ( -x "test_expat" ) then
+    ./test_expat
+    if ($status == 0) then
+        set HAVE_EXPAT = "Yes"
+    endif
+endif
+
+if ($HAVE_EXPAT == "No") then
+    echo "Unfortunately the expat library doesn't appear to be installed"
+    echo " Its required for the CPHD-X reader."
+    exit 2
+endif
+
+sed s@_INSTALLDIR_@${INSTALL_DIR}@g Makefile.in > Makefile.1
+sed s@_CONF_HAVE_GDAL_@${gdal_conf}@g Makefile.1 > Makefile.2
+sed s@_CC_@"${CC}"@g Makefile.2 > Makefile
+
+rm -f Makefile.1 Makefile.2
+
+if ( -r $INSTALL_DIR/include/sensitive.h && ! -e sensitive.unclass.h) then
+    cp ./sensitive.h sensitive.unclass.h
+    cp $INSTALL_DIR/include/sensitive.h sensitive.h
+endif
+
+echo "Configuration is complete."
+echo " Now type 'make; make install; make docs' "
+echo " "
+echo " "
