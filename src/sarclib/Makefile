@@ -1,0 +1,117 @@
+#/***************************************************************************
+# *
+# *       Module:    Makefile.in
+# *      Program:    SARClib
+# *   Created by:    Darren Muff 21/07/2013
+# *                  Copyright (c) 2016 [dstl]. All rights reserved.
+# *
+# *   Description:
+# *      Makefile template
+# *
+# *   CLASSIFICATION        :  UNCLASSIFIED
+# *   Date of CLASSN        :  19/07/2013
+# *
+# * Permission is hereby granted, free of charge, to any person obtaining a
+# * copy of this software and associated documentation files (the "Software"),
+# * to deal in the Software without restriction, including without limitation
+# * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# * and/or sell copies of the Software, and to permit persons to whom the
+# * Software is furnished to do so, subject to the following conditions:
+# *
+# * The above copyright notice and this permission notice shall be included
+# * in all copies or substantial portions of the Software.
+# *
+# * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# * DEALINGS IN THE SOFTWARE.
+# *
+# * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
+# * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
+# * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
+# * IRELAND.
+# *
+# ***************************************************************************/
+
+SRC = alloc.c dataio.c dataio_au4.c dataio_c8.c dataio_ce.c dataio_cphd.c dataio_cphd3.c dataio_cphdx.c dataio_envi.c dataio_gdal.c dataio_gdal_stubs.c dataio_hdf4.c dataio_im.c dataio_input.c dataio_sicd.c dataio_sio.c dataio_srf.c enum2string.c fft_c8.c GeoVector.c image.c image_average.c image_conversion.c image_extract.c image_fft.c image_fftw.c image_interp.c image_math.c image_matrix.c image_pad.c image_random.c image_recip.c image_stats.c image_transpose.c image_unwrap.c interpolate.c kaiser.c latlon.c timer.c vector.c collectionGeometry.c printCPHDCollectionInfo.c
+
+INCLUDE = sarclib.h alloc.h cmplx.h dataio.h dataio_au4.h dataio_c8.h dataio_ce.h dataio_cphd.h dataio_envi.h dataio_gdal.h dataio_hdf4.h dataio_im.h dataio_sicd.h dataio_sio.h dataio_srf.h enum2string.h error_defn.h fft.h GeoConst.h GeoVector.h image.h image_interp.h image_stats.h interpolate.h latlon.h math_macro.h matrix.h sarclib_xml.h mtmaths.h  physical.h Timer.h vector.h window.h collectionGeometry.h Version.h
+
+CC	:= /usr/bin/clang
+CFLAGS = -O2 -Wall -c -g -D_REENTRANT -Wmissing-prototypes 
+
+# The following line is expanded by the configure script.
+have_gdal=Yes
+
+ifeq ($(have_gdal), No)
+	SRC += dataio_gdal_stubs.c
+	HAVE_GDAL=NO
+	GDAL_LIBS=
+	GDAL_CFLAGS=
+else
+	SRC += dataio_gdal.c
+	CFLAGS += -Dsarclib_HAVE_GDAL `gdal-config --cflags`
+	HAVE_GDAL=YES
+	GDAL_CFLAGS=-Dsarclib_HAVE_GDAL
+	GDAL_LIBS := $(shell gdal-config --libs)
+endif
+
+OBJ = $(patsubst %.c, %.o, $(SRC))
+
+# VERSION := $(shell `pwd`/GenGitVersion.sh)
+# CFLAGS+=-DVERSION="\"$(VERSION)\""
+
+uname :=  $(shell uname)
+
+ifeq ($(uname),SunOS)
+	CFLAGS += -m64 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_READLINE=1 -I/usr/local/dstl/include
+endif
+
+ifeq ($(uname),Linux)
+	CFLAGS += -m64 -std=gnu99 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_READLINE=1 -I/usr/local/include
+# Not need anymore?  -I/usr/local/cuda/include -I/opt/AMDAPP/include
+endif
+
+ifeq ($(uname),Darwin)
+	CFLAGS += -arch x86_64 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_READLINE=1 -I/usr/local/include
+endif
+
+lib:	libsarclib.a
+
+libsarclib.a:	$(OBJ) $(INCLUDE)
+		@echo Making library libsarclib.a
+		ar -r libsarclib.a $(OBJ)
+
+install:	lib
+		mkdir -p ../lib
+		mkdir -p ../scripts
+		cp libsarclib.a ../lib/libsarclib.a
+
+		mkdir -p ../include/sarclib
+		cp $(INCLUDE) ../include/sarclib
+		rm -f sarclib-config
+		@echo >sarclib-config "#!/bin/sh"
+		@echo >>sarclib-config "CONFIG_LIBS=\"-L../lib -lsarclib $(GDAL_LIBS) -lreadline -lexpat -lfftw3f -lfftw3f_threads\""
+		@echo >>sarclib-config "CONFIG_CFLAGS=\"-I../include $(GDAL_CFLAGS)\""
+		@echo >>sarclib-config "CONFIG_VERSION=\"$(VERSION)\""
+		@echo >>sarclib-config "CONFIG_PREFIX=\"../\""
+		@echo >>sarclib-config "CONFIG_GDAL=\"$(HAVE_GDAL)\""
+		cat >>sarclib-config sarclib-config.in
+		cp  sarclib-config ../scripts
+		chmod +x ../scripts/sarclib-config
+
+%.o:	%.c $(INCLUDE)
+	$(CC) $< $(CFLAGS) -o $@ 
+
+fft_c8.o:	fft_c8.c
+	$(CC) $< $(CFLAGS) -DTRUNCATE -o $@
+
+clean:	
+	rm -f *.o libsarclib.a
+
+
+
+
