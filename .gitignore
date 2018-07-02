@@ -43,3 +43,4 @@ materialise_version.h
 CTTVersion.h
 .colladaToPlyFilerc
 colladaToPlyFile
+.deps
