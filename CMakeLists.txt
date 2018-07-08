@@ -33,6 +33,7 @@ execute_process(COMMAND	bash "-c" "${GIT_EXECUTABLE} show --format=\"%ci\" | hea
 #
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/sarclib/Version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/sarclib/Version.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/SARTrace/SartraceVersion.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/SARTrace/SartraceVersion.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic/SarcasticVersion.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic/SarcasticVersion.h)
 
 # Check for required packages
 #
