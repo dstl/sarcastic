@@ -127,7 +127,7 @@ SPStatus * im_load_gdal_subset(SPImage *a, const char * fname, int64_t ox, int64
     
     gdal_data_type_on_disk = GDALGetRasterDataType(hBand);
     
-    GDALRasterIO(hBand, GF_Read, (int)ox, (int)oy, (int)a->nx, (int)a->ny, a->data.v, (int)a->nx, (int)a->ny, im_conv_to_gdal_type(a->image_type), 0, 0);
+    (void)GDALRasterIO(hBand, GF_Read, (int)ox, (int)oy, (int)a->nx, (int)a->ny, a->data.v, (int)a->nx, (int)a->ny, im_conv_to_gdal_type(a->image_type), 0, 0);
     GDALClose(hDataset);
     
     return status;
