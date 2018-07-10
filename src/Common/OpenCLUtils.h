@@ -86,7 +86,7 @@
 #define CL_CHECK_ERR(_expr)                                                         \
 ({                                                                                  \
     cl_int _err = CL_INVALID_VALUE;                                                 \
-    typeof(_expr) _ret = _expr;                                                     \
+    __typeof__(_expr) _ret = _expr;                                                     \
     if (_err != CL_SUCCESS) {                                                       \
         fprintf(stderr, "OpenCL Error: '%s' returned %d!\n", #_expr, (int)_err);    \
         abort();                                                                    \
