@@ -44,7 +44,6 @@
 
 #include "dataio_au4.h"
 #include "dataio_c8.h"
-#include "dataio_ce.h"
 #include "dataio_cphd.h"
 #include "dataio_envi.h"
 #include "dataio_gdal.h"

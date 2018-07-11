@@ -1,0 +1,17 @@
+#ifdef REVISION
+#undef REVISION
+#endif
+#ifdef SHORT_VERSION
+#undef SHORT_VERSION
+#endif
+#ifdef FULL_VERSION
+#undef FULL_VERSION
+#endif
+#ifdef VERSION_DATE
+#undef VERSION_DATE
+#endif
+#define REVISION "@REVISION@"
+#define SHORT_VERSION "@SHORT_VERSION@"
+#define FULL_VERSION "@FULL_VERSION@"
+#define VERSION_DATE "@VERSION_DATE@"
+#define COMMIT "@COMMIT@"
