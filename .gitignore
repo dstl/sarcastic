@@ -6,18 +6,10 @@
 # Ignore specific files
 .DS_Store
 ._*
-SarcasticVersion.h
-# Ignore user specific Xcode files
-Version.h
-SartraceVersion.h
-.sartracerc*
-bin/bircs
-bin/colladaToTriFile
-bin/materialise
-bin/sarcastic
-bin/SARTrace
+
 # Ignore user specific Xcode files
 build/
+bin/
 DerivedData
 *.pbxuser
 !default.pbxuser
@@ -33,14 +25,16 @@ xcuserdata
 *.xcuserstate
 Common/tinyxml
 ~$*
-.sarcasticrc*
-.fastKDTreerc*
-.readColladarc*
-.materialiserc*
-BircsVersion.h
 .*rc_*
+.deps
+
+# Ignore version files created by cmake
+SarcasticVersion.h
 materialise_version.h
 CTTVersion.h
-.colladaToPlyFilerc
-colladaToPlyFile
-.deps
+BircsVersion.h
+Version.h
+SartraceVersion.h
+tdpoclVersion.h
+cphdShell_version.h
+readCPHD_Version.h

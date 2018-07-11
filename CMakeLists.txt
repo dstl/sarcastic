@@ -59,8 +59,6 @@ endif()
 find_package(opencl REQUIRED)
 if(${OpenCL_FOUND})
 	include_directories( ${OPENCL_INCLUDE_DIR} )
-	message(" OPENCL include dir: ${OpenCL_INCLUDE_DIRS}")
-	message(" OpenCL_LIBRARIES: ${OpenCL_LIBRARIES}")
 endif()
 
 find_package(expat REQUIRED)
