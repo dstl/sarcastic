@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.11.4)
 project(sarcastic)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_FIND_FRAMEWORK LAST)
 set(NO_CMAKE_SYSTEM_PATH)
 set(CMAKE_BUILD_TYPE Release)
@@ -296,8 +297,17 @@ target_link_libraries(tdpocl sarclib)
 target_link_libraries(tdpocl ${FFTW_LIBRARIES})
 target_link_libraries(tdpocl ${OpenCL_LIBRARIES})
 
-
-#Set the location for library installation
-install(TARGETS sarclib DESTINATION src/lib)
+# Install the executables
+install(TARGETS 
+	SARTrace 
+	bircs 
+	colladaToPlyFile 
+	cphdInfo 
+	cphdShell 
+	materialise 
+	sarcastic 
+	tdpocl
+	DESTINATION bin
+)
 
 #target_link_libraries(sarclib gdal)
