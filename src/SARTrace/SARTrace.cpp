@@ -48,8 +48,6 @@ extern "C" {
 #include "TriangleMesh.hpp"
 #include "tryReadFile.hpp"
 
-#define ROOTPATH "/tmp"
-
 int main (int argc, char **argv){
     
     CPHDHeader  hdr ;

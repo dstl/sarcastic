@@ -68,7 +68,7 @@ int main(int argc, const char * argv[]) {
     
     char *fname, *fname_cstr;
     fname_cstr = (char *)sp_malloc(sizeof(char) *255) ;
-    sprintf(fname_cstr,"/local_storage/DGM/cphdFile.cph") ;
+    sprintf(fname_cstr,"cphdFile.cph") ;
     fname = input_string("Enter cphd filename", "Fname",
                          "A CPHD filename to examine", fname_cstr) ;
     free(fname_cstr);

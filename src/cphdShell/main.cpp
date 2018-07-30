@@ -431,7 +431,7 @@ int main(int argc, const char * argv[]) {
     printf("                      -------------- \n");
     char *outCPHDFile;
     outCPHDFile = input_string("Enter name of cphdfile to create", "outCPHDFilename",
-                               "The fully qualified pathname of the CPHD File to be crated", "/tmp/outputCPHDFile.cph") ;
+                               "The fully qualified pathname of the CPHD File to be crated", "outputCPHDFile.cph") ;
     char *fType;
     bool pass;
     do{

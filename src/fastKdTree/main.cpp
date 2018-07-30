@@ -52,7 +52,6 @@
 #include "rayTrace.hpp"
 
 
-#define ROOTPATH "/tmp"
 #define USECOLOR 0
 #define NAZRAYS 500
 #define NELRAYS 500
@@ -81,7 +80,7 @@ int main(int argc, const char * argv[]) {
     //
     char *instr = tryReadFile((char *)"Input triangle filename", (char *)"infilename",
                               (char *)"The name of a triangle .ply file containing triangle data",
-                              (char *) ROOTPATH"/delaunay.ply");
+                              (char *) "delaunay.ply");
     
 
     for (int i=0; i<NTESTRUNS; ++i) {

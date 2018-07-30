@@ -40,8 +40,6 @@
 #include "SARTrace.hpp"
 #include "colourCodes.h"
 
-static const char *rootpath = "/tmp" ;
-
 int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int *pulseToTrace, int *nRaysX, int *nRaysY,  SPStatus *status){
     
     char * prompt;
@@ -51,7 +49,7 @@ int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int 
     
     do {
         im_init_status(fileStat, 0) ;
-        sprintf(prompt, "%s/delaunay.ply",rootpath);
+        sprintf(prompt, "delaunay.ply");
         *meshFile = input_string((char *)"Triangle mesh file", (char *)"plyfile",
                    (char *)"The name of a triangle mesh \'.ply\' file containing the scene. The file can be created using colldaToTriFile using a .dae file as input (you can create a .dae file from Google Sketchup (tm))",
                    prompt);
@@ -63,7 +61,7 @@ int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int 
     
     do {
         im_init_status(fileStat, 0) ;
-        sprintf(prompt, "%s/cphdFile.cph",rootpath);
+        sprintf(prompt, "cphdFile.cph");
         *inCPHDFile = input_string((char *)"CPHD Filename", (char *)"CPHDFile",
                                    (char *)"The name of a CPHD file to use. The CPHD file is used to position the radar sensor location and RF parameters relative to the scene",
                                    prompt);
@@ -84,7 +82,7 @@ int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int 
     
     do {
         im_init_status(fileStat, 0) ;
-        sprintf(prompt, "%s/rayTraceOutput",rootpath);
+        sprintf(prompt, "rayTraceOutput");
         *outDir = input_string((char *)"Output directory", (char *)"OutDir",
                                (char *)"The name of a directory / folder to place bounce ray intersection information. Two sets of files are created in this folder, both in ',ply' format. The first contains the locations of each ray intersection with different files showing the locations after each bounce. The second contains the actual triangles that are hit on each bounce. This is useful as the Physical Optics properties of each triangle are calculated for the whole triangle and so only one hit per triangle is required. You can therefore use this to determine how many rays are required to fully illuminate the scene.",
                                prompt);

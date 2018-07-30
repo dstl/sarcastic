@@ -56,8 +56,6 @@ extern "C" {
 #include "bircsBanner.h"
 }
 
-#define ROOTPATH "/tmp"
-
 double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain);
 
 int main (int argc, char **argv){
@@ -170,13 +168,13 @@ int main (int argc, char **argv){
     }while(!validpol);
     baseScene = tryReadFile("Name of Base scene", "baseScene",
                             "Enter the name of a file that will be the base scene to be raytraced. The file must be in a .PLY file format"
-                            ,ROOTPATH"/delaunay.ply") ;
+                            ,"delaunay.ply") ;
     
     // Read in the material properties file if required
     //
     char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
                                  (char *)"The name of a 'materialfile' or 'none' (defaults used)",
-                                 (char *) "materialProperties.txt");
+                                 (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
     
     // Read in the triangle mesh from the input plyfile and check it's

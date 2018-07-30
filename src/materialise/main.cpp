@@ -99,7 +99,6 @@ typedef K::Point_2                                              Point_2;
 
 //#define DEBUGCOUNT 1529
 
-#define ROOTPATH "/tmp"
 #define REPORTN 100
 #define VERBOSE ((int) 0)
 
@@ -162,11 +161,11 @@ int main(int argc, const char * argv[]) {
     CHECK_STATUS_NON_PTR(status) ;
     char *instr = tryReadFile((char *)"Input triangle filename", (char *)"infilename",
                                (char *)"The name of a triangle file created with 'colladaToTriFile'",
-                               (char *) ROOTPATH"/triangles.ply");
+                               (char *) "triangles.ply");
     
     char *oustr = input_string((char *)"Output triangle filename", (char *)"oufilename",
                                (char *)"The name of the triangle file to be created",
-                               (char *) ROOTPATH"/delaunay.ply");
+                               (char *) "delaunay.ply");
     
     FILE *fpin ;
     fpin = fopen(instr, "r");
@@ -186,7 +185,7 @@ int main(int argc, const char * argv[]) {
     //
     char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
                                (char *)"The name of a 'materialfile' or 'none' (defaults used)",
-                               (char *) "materialProperties.txt");
+                               (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
     
     TriangleMesh mesh, newMesh;
@@ -237,7 +236,7 @@ int main(int argc, const char * argv[]) {
       
 #ifdef DEBUGCOUNT
         if(cnt == DEBUGCOUNT){
-            commonMesh.writePLYFile("/tmp/debug.ply");
+            commonMesh.writePLYFile("debug.ply");
         }
 #endif
         // Convert to 2Dpoints

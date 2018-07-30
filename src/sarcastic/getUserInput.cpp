@@ -43,8 +43,6 @@
 #include "tryReadFile.hpp"
 #include "readMaterialFile.hpp"
 
-#define ROOTPATH "/tmp"
-
 int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMesh, char **outCPHDFile,
                  int *startPulse, int *nPulses,
                  int *bounceToShow, int *nAzBeam, int *nElBeam,
@@ -67,7 +65,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     char *baseScene ;
     baseScene = tryReadFile("Name of Base scene", "baseScene",
                             "Enter the name of a file that will be the base scene to be raytraced. The file must be in a .PLY file format"
-                            ,ROOTPATH"/delaunay.ply") ;
+                            ,"delaunay.ply") ;
     
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
@@ -99,7 +97,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     moverMesh = NULL ;
 #endif
     
-    sprintf(prompt, "%s/cphdFile.cph",ROOTPATH);
+    sprintf(prompt, "cphdFile.cph");
     char *inCPHDFile ;
     inCPHDFile = tryReadFile((char *)"CPHD Filename", (char *)"CPHDFile",
                                (char *)"The name of a CPHD file to use.",
@@ -239,7 +237,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
                                    (char *)"Interrogate a point in the scene to find out which scattering primitives made it.",*interrogate);
         
         if(*interrogate){
-            sprintf(prompt, "/local_storage/DGM/surface.dat");
+            sprintf(prompt, "surface.dat");
             do {
                 im_init_status(fileStat, 0) ;
                 surfaceFile = input_string((char *)"Name of surface file", (char *)"surfaceFile",
@@ -269,7 +267,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
             
             
              do {
-                sprintf(prompt, "/local_storage/DGM/interrogate.txt");
+                sprintf(prompt, "interrogate.txt");
                 
                 im_init_status(fileStat, 0) ;
                 interrogFname = input_string((char *)"Name of file for interrogation output", (char *)"interrogFname",
@@ -294,7 +292,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
     //
     char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
                                  (char *)"The name of a 'materialfile' or 'none' (defaults used)",
-                                 (char *) "materialProperties.txt");
+                                 (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
     
     return (status->status) ;

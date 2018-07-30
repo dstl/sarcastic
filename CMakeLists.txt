@@ -7,6 +7,7 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 add_definitions(-DKERNELDIR="${CMAKE_SOURCE_DIR}/src/kernels") 
+add_definitions(-DMATERIALPROPS="${CMAKE_SOURCE_DIR}/scripts/MaterialProperties.txt") 
 
 # Make sure git exists and use it to get version information
 #
@@ -78,6 +79,11 @@ if(${BOOST_FOUND})
 	include_directories(${BOOST_INCLUDE_DIR})
 endif()
 
+find_package(readline REQUIRED)
+if(${READLINE_FOUND})
+    add_definitions(-DHAVE_READLINE=1)
+    link_libraries(${READLINE_LIBRARIES})
+endif()
 # find_package(Boost 1.4.0 COMPONENTS filesystem REQUIRED)
 
 find_package(CGAL REQUIRED)
@@ -265,8 +271,8 @@ target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Com
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/fastKdTree)
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
 target_link_libraries(sarcastic sarclib)
-# target_link_libraries(sarcastic ${EXPAT_LIBRARIES})
 target_link_libraries(sarcastic ${FFTW_LIBRARIES})
+
 
 # Generate cphdInfo executable
 add_executable(cphdInfo

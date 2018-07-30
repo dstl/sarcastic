@@ -32,17 +32,17 @@ int main(int argc, char* argv[]) {
     
     inFile = tryReadFile("Collada .dae file to read", "inFile",
                          "The pathname of a Collada file containing the scene",
-                         "/Users/Darren/Development/Models/scene.dae") ;
+                         "scene.dae") ;
     
     outFile = input_string("Name of output file", "outFile",
                            "The pathname of the file to create. This will be a binary file containing triangle and material information of the scene",
-                           "/tmp/triangles.ply");
+                           "triangles.ply");
     
     // Read in the material properties file if required
     //
     char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
                                  (char *)"The name of a 'materialfile' or 'none' (defaults used)",
-                                 (char *) "materialProperties.txt");
+                                 (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
     
     TriangleMesh mesh;
