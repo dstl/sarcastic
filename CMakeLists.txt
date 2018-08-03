@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.11.4)
 project(sarcastic)
+
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_FIND_FRAMEWORK LAST)
 set(NO_CMAKE_SYSTEM_PATH)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 add_definitions(-DKERNELDIR="${CMAKE_SOURCE_DIR}/src/kernels") 
 add_definitions(-DMATERIALPROPS="${CMAKE_SOURCE_DIR}/scripts/MaterialProperties.txt") 
 
@@ -37,6 +39,28 @@ execute_process(COMMAND	bash "-c" "${GIT_EXECUTABLE} log -1 --pretty=format:%h"
 		RESULT_VARIABLE	res
 		OUTPUT_VARIABLE	COMMIT
 		ERROR_QUIET	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND	bash "-c" "${GIT_EXECUTABLE} describe | sed -e 's/^v//' -e 's/^V//' | awk -F. '{print $1}'"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		RESULT_VARIABLE	res
+		OUTPUT_VARIABLE	MAJOR
+		ERROR_QUIET	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND	bash "-c" "${GIT_EXECUTABLE} describe | sed -e 's/^v//' -e 's/^V//' | awk -F. '{print $2}' | awk -F- '{print $1}'"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		RESULT_VARIABLE	res
+		OUTPUT_VARIABLE	MINOR
+		ERROR_QUIET	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND	bash "-c" "${GIT_EXECUTABLE} describe | sed -e 's/^v//' -e 's/^V//' | awk -F. '{print $2}' | awk -F- '{print $2}'"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		RESULT_VARIABLE	res
+		OUTPUT_VARIABLE	PATCH
+		ERROR_QUIET	OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+message("FULL_VERSION is ${FULL_VERSION}")
+message("SHORT_VERSION is ${SHORT_VERSION}")
+message("REVISION is ${REVISION}")
+message("MAJOR is ${MAJOR}")
+message("MINOR is ${MINOR}")
+message("PATCH is ${PATCH}")
 
 # Configure version header files
 #
@@ -315,5 +339,14 @@ install(TARGETS
 	tdpocl
 	DESTINATION bin
 )
+
+set(CPACK_PACKAGE_NAME "sarcastic")
+set(CPACK_GENERATOR "TGZ")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_PACKAGE_VERSION_MAJOR "${MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PATCH}")
+include(CPack)
+
 
 #target_link_libraries(sarclib gdal)
