@@ -1,4 +1,4 @@
-/***************************************************************************
+ /***************************************************************************
  *
  *       Module:    main.c
  *      Program:    cphdShell
@@ -108,7 +108,8 @@ int main(int argc, const char * argv[]) {
     lookstr = input_string("What is the look direction (l/r) ?", "TXlookDir",
                           "Which side of the the transmitter platform is the radar \n\
                           transmitting relative to the velocity vector of the platform.\n\
-                          (can be 'l','r','left','right')", lookstr) ;
+                          (can be 'l','r','left','right')", "left") ;
+
     if(!(strcmp(lookstr, "left")) || !(strcmp(lookstr,"l") || !(strcmp(lookstr,"L")) )){
         TXlookDir = 0 ;
         printf("Setting look direction to be 'left'\n");
@@ -128,7 +129,7 @@ int main(int argc, const char * argv[]) {
     do{
         char *mode;
         mode = input_string("Sensor mode?", "SARMODE",
-                            "Options are \"STRIPMAP\" or \"SPOTLIGHT\"", mode);
+                            "Options are \"STRIPMAP\" or \"SPOTLIGHT\"", "SPOTLIGHT");
         std::string SARModeStr  = std::string(mode) ;
         std::transform(SARModeStr.begin(), SARModeStr.end(), SARModeStr.begin(), ::toupper);
         if (SARModeStr == "STRIPMAP") {
@@ -260,8 +261,8 @@ int main(int argc, const char * argv[]) {
     double prfMaxBeam, prfMinBeam;
     prfMinBeam = Bdopp ;
     prfMaxBeam = SIPC_c /(2 * TxBeamHgtDis / tan(DEG2RAD(TxGraz))) ;
-    printf(" Minimum PRF to unabiguously sample beam (azim doppler)   : %f Hz\n", prfMinBeam) ;
-    printf(" Maximum PRF to unambigously sample beam (rnge ambiguity) : %f Hz\n", prfMaxBeam) ;
+    printf(" Minimum PRF to unambiguously sample beam (azim doppler)   : %f Hz\n", prfMinBeam) ;
+    printf(" Maximum PRF to unambiguously sample beam (rnge ambiguity) : %f Hz\n", prfMaxBeam) ;
     
     double PRF = 2000;
     double unambigBeamAz ;
