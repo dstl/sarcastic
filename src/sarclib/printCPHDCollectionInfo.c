@@ -133,9 +133,9 @@ int printCPHDCollectionInfo(CPHDHeader *hdr, SPStatus *status){
     double bandwidth = hdr->chirp_gamma * hdr->pulse_length ;
     printf("Transmit bandwidth          : %7.3f MHz\n",bandwidth/1e6);
     double slantResolution = SIPC_c/(2 * bandwidth);
-    printf("Slant Range resolution      : %7.1f m\n",slantResolution) ;
+    printf("Slant Range resolution      : %7.3f m\n",slantResolution) ;
     double groundResolution = slantResolution / cos(geom1.grazingRad) ;
-    printf("Ground Range resolution     : %7.1f m\n",groundResolution) ;
+    printf("Ground Range resolution     : %7.3f m\n",groundResolution) ;
     double fcent = hdr->freq_centre;
     printf("Transmit Centre Frequency   : %7.3f GHz\n", fcent/1e9) ;
     double fmin = fcent - bandwidth/2 ;

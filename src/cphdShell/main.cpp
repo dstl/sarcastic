@@ -325,7 +325,8 @@ int main(int argc, const char * argv[]) {
     double SAduration, SAlen, bandwidth;
     int Npulses;
     
-    SAlen = (TxRslant + (imageYSlant/2)) * wavelength / azRes;
+    // SAlen = (TxRslant + (imageYSlant/2)) * wavelength / azRes;
+    SAlen = TxRslant * wavelength * oversampAz / (2.0 * azRes * cos(TXSquint)) ;
     SAduration = SAlen / TxVel ;
     if (sarmode == SPOTLIGHT) {
         Npulses = ceil(oversampAz * SAduration * PRF) ;
