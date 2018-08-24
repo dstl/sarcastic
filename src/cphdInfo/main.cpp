@@ -44,7 +44,7 @@
 
 void banner (){
     printf(" \n");
-    printf(DARK GREEN "              cphdInfo - A Programme to read CPHD Files\n" NORMAL);
+    printf(DARK GREEN "              cphdInfo - A Programme to Read CPHD Files\n" NORMAL);
     printf(BLUE "                         Version :" RED" %s \n", SHORT_VERSION);
     printf(BLUE "                          Commit :" RED" %s \n", COMMIT);
     printf(BLUE "                Revision: " RED"%s, %s \n",REVISION, VERSION_DATE);

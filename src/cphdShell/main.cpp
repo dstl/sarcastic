@@ -52,7 +52,7 @@ typedef enum { SPOTLIGHT, STRIPMAP } SARMode_type;
 
 void banner (){
     printf(" \n");
-    printf(DARK GREEN "           cphdShell - A Programme to create blank CPHD shells\n" NORMAL);
+    printf(DARK GREEN "           cphdShell - A Programme to Create Blank CPHD Shells\n" NORMAL);
     printf(BLUE "                         Version :" RED" %s \n", SHORT_VERSION);
     printf(BLUE "                          Commit :" RED" %s \n", COMMIT);
     printf(BLUE "                Revision: " RED"%s, %s \n",REVISION, VERSION_DATE);
