@@ -185,9 +185,9 @@ void readMaterialFile(std::string fileName, bool printOutput)
     
     if (printOutput) {
         printf("Material properties used in this file : \n");
-        printf("    id         Name CorrLen Roughness    Rs      Rm   Specular Diffuse Shinyness  R   G   B\n");
+        printf(" id         Name CorrLen Roughness      Rs      Rm Specular Diffuse Shinyness  R   G   B\n");
         for(int i=0; i<globalNumMats; ++i){
-            printf("\t%2d ",i);
+            printf("%3d ",i);
             printf("%12s ",globalMatProps[i].matname);
             printf("%7.3f ",globalMatProps[i].corlen);
             printf("%9.3f ",globalMatProps[i].roughness);

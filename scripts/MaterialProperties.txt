@@ -1,17 +1,53 @@
 # Material Properties File
 # Version 1.0
+# Put comments in here
 # 
+# This file contains the scattering properties of various materials used by sarcastic
+# You can change any of the variables in this file or add more materials as you see fit.
+# If you add a material line then its critically important that you change the line
+# below starting with NMATERIALS to be followed by the number of materials in the table.
+# This number is used by the sarcastic tools to know how many materials to read.
+# 
+# Parameter Descriptions
+# ----------------------
+#
+# id        : This is the index of the material number in the table and is used to
+#      cross reference parameters throughout the execution of sarcastic tools.
+#
+# Name      : This is the name of the material. If colladaToPlyFile is run then these 
+#   names are searched in the collada file to work out which material each facet is 
+#   made of. This is useful if you use Sketchup to make your CAD model as you can 
+#   'paint' the facets in the CAD model with the paint tool and the color description
+#   of the paint will be associated with one of the names in the table below if the
+#   paint name matches.
+#
+# corrLen   : This is the correlation length of the facet. It is used when decomposing
+#   the triangle mesh into Delaunay triangles and sets the maximum area for each 
+#   Delaunay triangle.
+#
+# Roughness : After Delaunay triangulation the mesh triangles are distorted in the
+#   direction of the triangle normal by a random amount. The standard deviation of 
+#   the distortions are this number.
+#
+# Rs        : Electrical resistivity of the material
+# Rm        : Magnetic conductivity of the surface material
+# Specular  : The amount of ray energy passed forward in the specular direction
+#   after each bounce.
+# Diffuse   : The amount of energy scattered diffusely after each bounce (not used)
+# Shinyness : Not used
+# R,G,B     : Used for colouring each material when saving the triangles to a .ply file
+#
 #
 NMATERIALS 11
-# 	id	Name		corrLen     Roughness   Rs          Rm		Specular	Diffuse	Shinyness	R 	G 	B 
-	00 	Material 	0.05		0.0			0.0			9.0e9	0.7			0.3		50.0		255	255	255       
-	01	ASPHALT     0.5			0.05       	1.0e18     	9.0e9   0.8			0.2		30.0        128	128	128
-    02	BRICK       0.1			0.001      	1.0e18     	9.0e9   0.7        	0.3		20.0        224	224	224	
-    03	CONCRETE    0.2			0.01       	120.0      	9.0e9   0.3        	0.7     10.0        176	19	35
-    04	METAL       0.6			0.0        	1.0e-8     	9.0e9   1.0        	0.0     50.0        176	94	41
-    05	ROOFING     0.1			0.1        	1.0e18     	9.0e9   0.6        	0.4     40.0        214	186	062
-    06	VEGETATION  0.1			0.1        	2000.0     	9.0e9   0.2        	0.8     5.0         166	214	054
-    07	WATER       0.01		0.1        	2.0e1      	9.0e9   1.0        	0.0     50.0        056	125	214
-    08	WOOD        0.1			0.001      	1.0e14     	9.0e9   0.6        	0.4     10.0        137	046	014
-    09	GRASS       0.05		0.1        	2000.0     	9.0e9   0.2        	0.8     5.0         100	214	050
-    10	PLASTIC		0.05		0.0			1.0e20		9.0e9	0.7			0.3		40.0		200	0	0	    
+# id Name       corrLen Roughness Rs     Rm    Specular Diffuse Shinyness R   G   B 
+  00 Material   0.5     0.0       0.0    9.0e9 0.7      0.3     50.0      255 255 255
+  01 ASPHALT    0.5     0.05      1.0e18 9.0e9 0.8      0.2     30.0      128 128 128
+  02 BRICK      0.1     0.001     1.0e18 9.0e9 0.7      0.3     20.0      224 224 224
+  03 CONCRETE   0.2     0.01      120.0  9.0e9 0.3      0.7     10.0      176 19  35
+  04 METAL      0.6     0.0       1.0e-8 9.0e9 1.0      0.0     50.0      176 94  41
+  05 ROOFING    0.1     0.1       1.0e18 9.0e9 0.6      0.4     40.0      214 186 062
+  06 VEGETATION 0.1     0.1       2000.0 9.0e9 0.2      0.8     5.0       166 214 054
+  07 WATER      0.0     10.1      2.0e1  9.0e9 1.0      0.0     50.0      056 125 214
+  08 WOOD       0.1     0.001     1.0e14 9.0e9 0.6      0.4     10.0      137 046 014
+  09 GRASS      0.05    0.1       2000.0 9.0e9 0.2      0.8     5.0       100 214 050
+  10 PLASTIC    0.05    0.0       1.0e20 9.0e9 0.7      0.3     40.0      200 0   0     
