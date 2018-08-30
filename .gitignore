@@ -38,3 +38,4 @@ SartraceVersion.h
 tdpoclVersion.h
 cphdShell_version.h
 readCPHD_Version.h
+*.pyc
