@@ -53,6 +53,7 @@ extern "C" {
 #include "threadCore.hpp"
 #include <thread>
 #include <fftw3.h>
+#include "sceneExtent.hpp"
 
 
 int main(int argc, const char * argv[]) {
@@ -143,7 +144,7 @@ int main(int argc, const char * argv[]) {
     
     // Rotate Rx and Tx Coords to be relative to scene centre
     //
-    SPVector  *RxPos, *TxPos, SRP, zHat ;
+    SPVector  *RxPos, *TxPos, SRP ;
     double    lambda ;
     
     RxPos = (SPVector *)sp_malloc(sizeof(SPVector)*nPulses) ;
@@ -171,44 +172,9 @@ int main(int argc, const char * argv[]) {
     }
     
     double centreRange, maxEl, maxAz, minEl, minAz, dAz, dEl, maxBeamUsedAz, maxBeamUsedEl ;
-    SPVector rVect, unitBeamAz, unitBeamEl  ;
     AABB SceneBoundingBox ;
     centreRange = VECT_MAG(TxPos[nPulses/2]);
-    VECT_MINUS( TxPos[nPulses/2], rVect ) ;
-    VECT_CREATE(0, 0, 1., zHat) ;
-    VECT_CROSS(rVect, zHat, unitBeamAz);
-    VECT_NORM(unitBeamAz, unitBeamAz) ;
-    VECT_CROSS(unitBeamAz, rVect, unitBeamEl) ;
-    VECT_NORM(unitBeamEl, unitBeamEl) ;
-    
-    maxEl = maxAz = minEl = minAz = 0.0 ;
-    SPVector min,max; VECT_CREATE(9e10, 9e10, 9e10, min); VECT_CREATE(-9e10, -9e10, -9e10, max);
-    for(int i=0; i<baseMesh.triangles.size(); ++i){
-        for(int j=0; j<3; ++j){
-            min.cell[j] = (baseMesh.AABBs[i].AA.cell[j] < min.cell[j]) ? baseMesh.AABBs[i].AA.cell[j] : min.cell[j] ;
-            max.cell[j] = (baseMesh.AABBs[i].BB.cell[j] > max.cell[j]) ? baseMesh.AABBs[i].BB.cell[j] : max.cell[j] ;
-        }
-    }
-    SceneBoundingBox.AA = min ; SceneBoundingBox.BB = max ;
-    SPVector boxPts[8] ;
-    
-    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[0]);
-    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[1]);
-    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.AA.z, boxPts[2]);
-    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.AA.z, boxPts[3]);
-    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[4]);
-    VECT_CREATE(SceneBoundingBox.AA.x, SceneBoundingBox.BB.y, SceneBoundingBox.BB.z, boxPts[5]);
-    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.BB.y, SceneBoundingBox.BB.z, boxPts[6]);
-    VECT_CREATE(SceneBoundingBox.BB.x, SceneBoundingBox.AA.y, SceneBoundingBox.BB.z, boxPts[7]);
-    
-    for( int k=0; k<8; k++){
-        double El = VECT_DOT(boxPts[k], unitBeamEl) ;
-        double Az = VECT_DOT(boxPts[k], unitBeamAz) ;
-        maxEl = ( maxEl < El ) ? El : maxEl ;
-        maxAz = ( maxAz < Az ) ? Az : maxAz ;
-        minEl = ( minEl > El ) ? El : minEl ;
-        minAz = ( minAz > Az ) ? Az : minAz ;
-    }
+    sceneExtent(TxPos[nPulses/2], baseMesh, maxEl, maxAz, minEl, minAz, SceneBoundingBox);
     maxBeamUsedAz = (maxAz - minAz) / centreRange ;
     maxBeamUsedEl = (maxEl - minEl) / centreRange ;
 
@@ -329,7 +295,6 @@ int main(int argc, const char * argv[]) {
             printf("ERROR; return code from pthread_create() is %d\n", rc);
             exit(-1);
         }
-//        devPulseBlock(&coreData) ;
     }
     
     pthread_attr_destroy(&attr);

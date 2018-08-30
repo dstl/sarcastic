@@ -124,9 +124,9 @@ void getUserInput(int *USEGPU,              // Whether to use the GPU if its ava
     double surface_sx, surface_sy; 
     double slant_rng_res ;
         
-    *USEGPU   = input_yesno("Use GPU?","USEGPU",
-                            "USE GPU if its available. If it isnt then use the CPU.",
-                            TRUE);
+    // *USEGPU   = input_yesno("Use GPU?","USEGPU",
+    //                        "USE GPU if its available. If it isnt then use the CPU.",
+    //                        TRUE);
     
     *cphdFilename = input_string("CPHD Filename", "InputFName",
                                  "Name of a CPHD file to process into an image",
@@ -219,8 +219,8 @@ void getUserInput(int *USEGPU,              // Whether to use the GPU if its ava
     }
     
     int PerformRCSCorr = 0;
-    PerformRCSCorr = input_yesno("Perform RCS correction on image?", "RCSCorr",
-                                 "If yes then each pixel in the output image contains the Radar Cross Section at that location specified in metres^2", PerformRCSCorr);
+    //PerformRCSCorr = input_yesno("Perform RCS correction on image?", "RCSCorr",
+    //                            "If yes then each pixel in the output image contains the Radar Cross Section at that location specified in metres^2", PerformRCSCorr);
     if( PerformRCSCorr){
         *EIRP = input_dbl("EIRP", "EIRP",
                           "This is the Effective Isotropic Radiated Power in watts. It is required for the RCS \n \

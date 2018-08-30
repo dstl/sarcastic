@@ -283,6 +283,7 @@ add_executable(sarcastic
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/readMaterialFile.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/boxMullerRandom.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/printProgress.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/sceneExtent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic/ecef2SceneCoords.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/matrixMultiplication.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/ranf.c

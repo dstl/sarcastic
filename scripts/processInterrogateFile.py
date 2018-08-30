@@ -87,29 +87,28 @@ TxPos = Point(float(part.split(',')[0]),float(part.split(',')[1]),float(part.spl
 # each bounce. (Each bounce in the interrogate file is for a point in the image)
 #
 EsDict = dict()
-bounce = 0
 while True:
 	line = file.readline()
 	if not line: break
 	if line.split()[0] == 'Bounce':
 		ibounce = int(line.split(':')[1])
-		if ibounce == bounce :
-			line = file.readline()
-			E = float(line.split(':')[1])
-			EsDict[bounce] = E
-			bounce = bounce + 1
+		line = file.readline()
+		E = float(line.split(':')[1])
+		EsDict[ibounce] = E
 
 
 Es = sorted(EsDict, key=EsDict.__getitem__, reverse=True)
+maxBounce = max(k for k,v in EsDict.iteritems())
+
 print 'Summary of energy returned for each bounce for the interrogated image point (v/m^2)'
 for i in Es:
 	print '\tBounce ',i,' : ',EsDict[i]
 
-if question < 0 or question >= len(Es) :
+if question < 0 or question > maxBounce:
 	while True:
 	    try:
 	    	question = int(raw_input('Which bounce would you like to see ?'))
-	    	if question > -1 and question < len(Es):
+	    	if question > -1 and question <= maxBounce:
 		        break
 	    except:
 	        print("That's not a valid option!")

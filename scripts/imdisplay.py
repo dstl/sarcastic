@@ -5,6 +5,7 @@
 from osgeo import gdal
 from osgeo.gdalnumeric import *
 from osgeo.gdalconst import *
+from DstlDat import DstlDat
 
 # and of course numpy and opencv
 #
@@ -19,6 +20,10 @@ import argparse
 #
 from copy import copy, deepcopy
 
+def loadDatFile(fname):
+        f = DstlDat(fname)
+        dat = f.load((0,f.ny,0,f.nx))
+        return dat
 
 def xoversample(amparr, currentOversample, xover):
 	nx = amparr.shape[1]
@@ -77,13 +82,20 @@ if __name__ == '__main__':
 		dispPhase = False
 
 	fileName = args.filename
-	dataset  = gdal.Open(fileName, GA_ReadOnly)
-	amplitudeBand = dataset.GetRasterBand(1)
-	phaseBand     = dataset.GetRasterBand(2)
-	if dispPhase:
-		amplitudeArr = BandReadAsArray(phaseBand)
+	if fileName.endswith('.dat'):
+		cImg = loadDatFile(fileName)
+		amplitudeArr = np.abs(cImg)
+	elif fileName.endswith('.ntf'):
+		dataset  = gdal.Open(fileName, GA_ReadOnly)
+		amplitudeBand = dataset.GetRasterBand(1)
+		phaseBand     = dataset.GetRasterBand(2)
+		if dispPhase:
+			amplitudeArr = BandReadAsArray(phaseBand)
+		else:
+			amplitudeArr = BandReadAsArray(amplitudeBand)
 	else:
-		amplitudeArr = BandReadAsArray(amplitudeBand)
+		print 'Unknown File Type'
+		exit(1)
 	
 	if args.xsize :
 		xsize = args.xsize

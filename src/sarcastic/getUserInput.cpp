@@ -42,6 +42,7 @@
 #include "colourCodes.h"
 #include "tryReadFile.hpp"
 #include "readMaterialFile.hpp"
+#include "sceneExtent.hpp"
 
 int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMesh, char **outCPHDFile,
                  int *startPulse, int *nPulses,
@@ -132,13 +133,41 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
                                   (char *)"Which radar bounce should be displayed? (<1 is do not show bounce info)", *bounceToShow);
         if (*bounceToShow > MAXBOUNCES || *bounceToShow < 1) *bounceToShow = 0 ;
     }else{
-        
+        collectionGeom cGeom;
+        double maxEL, maxAz, minEl, minAz, centreRange, maxBeamUsedAz, PRF, BDop, sceneAz, SADistance, azResolution, maxAzUndersamp;
+        SPVector diff, Pos;
+        AABB sbb;
+
+        collectionGeometry(hdr, *startPulse + (*nPulses/2), hdr->grp, &cGeom, status);
+        Pos = hdr->pulses[*startPulse + (*nPulses/2)].sat_ps_tx ;
+        sceneExtent(Pos, *baseMesh, maxEL, maxAz, minEl, minAz, sbb);
+        centreRange    = VECT_MAG(Pos);
+        maxBeamUsedAz  = (maxAz - minAz) / centreRange ;
+        PRF            = hdr->num_azi / (hdr->pulses[hdr->num_azi-1].sat_tx_time - hdr->pulses[0].sat_tx_time) ;
+        BDop           = 2. * VECT_MAG(cGeom.vel) * maxBeamUsedAz * cos(cGeom.squintRad) * hdr->freq_centre / SIPC_c ;
+        sceneAz        = centreRange * maxBeamUsedAz ;
+        VECT_SUB(hdr->pulses[hdr->num_azi-1].sat_ps_tx, hdr->pulses[0].sat_ps_tx, diff);
+        SADistance     = VECT_MAG(diff) ;
+        azResolution   = fabs(cGeom.range * (SIPC_c / hdr->freq_centre) / (2.0 * SADistance * cos(cGeom.squintRad)));
+        maxAzUndersamp = hdr->num_azi / (sceneAz/ azResolution) ;
+        printf("Scene Doppler bandwidth     : %7.2f Hz\n",BDop);
+        printf("Mean PRF is                 : %7.2f Hz\n",PRF);
+        printf("Scene extent in azimuth     : %7.2f m\n",sceneAz);
+        printf("Finest azimuth resolution   : %7.2f m\n",azResolution) ;
+        printf("Min Az image pixels         : %5d pix \n",(int)(sceneAz / azResolution));
+        printf("Max undersample for image   : %5dx\n",(int)maxAzUndersamp);
+        double maxPulseUndersampling = (int)floor(PRF / (BDop)) ;
+
+        *pulseUndersampleFactor = (int)maxPulseUndersampling ;
         do {
             *pulseUndersampleFactor = input_int("Pulse undersampling factor", (char *)"pulseUndersampFact",
-                                                (char *)"Reduces the number of azimuth pulses that are processed. This effectively reduces teh collection PRF. If the simulated scene size is small then the azimuth ambiguities will not fold in far enough to affect the simulated scene.",
+                                                (char *)"Reduces the number of azimuth pulses that are processed. This effectively reduces the collection PRF. If the simulated scene size is small then the azimuth ambiguities will not fold in far enough to affect the simulated scene.",
                                                 *pulseUndersampleFactor);
         } while (*pulseUndersampleFactor <= 0) ;
-        
+        printf("Effective PRF is            : %f Hz\n", PRF / *pulseUndersampleFactor) ;
+        if (*pulseUndersampleFactor > maxAzUndersamp) {
+            printf(" *** Warning : undersampling factor is larger than required to unambiguously sample the scene at the finest resolution. Ambiguities may result ! ***\n");
+        }
     }
     
     *rayGenMethod = 1 ;
