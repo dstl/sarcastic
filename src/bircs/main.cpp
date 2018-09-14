@@ -50,7 +50,7 @@
 #include <thread>
 
 extern "C" {
-#include "TxPowerPerRay.h"
+// #include "TxPowerPerRay.h"
 #include "ecef2SceneCoords.h"
 //#include "OpenCLUtils.h"
 #include "bircsBanner.h"
@@ -297,8 +297,9 @@ int main (int argc, char **argv){
     dEl = maxBeamUsedEl / nElBeam;
     lambda = SIPC_c / freq_centre ;
     
-    double TxPowPerRay, gainRx ;
-    TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
+    // double TxPowPerRay, gainRx ;
+    // TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
+    double TxPowPerRay = 1.0, gainRx = 1.0 ;
     
     unsigned nThreads;
     if (bounceToShow != 0){

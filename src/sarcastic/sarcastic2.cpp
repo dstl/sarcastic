@@ -193,7 +193,7 @@ int main(int argc, const char * argv[]) {
            (dAz * centreRange), (dEl * centreRange / sin(cGeom.grazingRad)));
     
     double TxPowPerRay, gainRx ;
-    TxPowPerRay = TxPowerPerRay(dAz, dEl, &gainRx);
+    TxPowPerRay = TxPowerPerRay(&hdr, &gainRx);
     printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
     double TB = TxPowPerRay * hdr.pulse_length * hdr.chirp_gamma * hdr.pulse_length ;
     TxPowPerRay = TxPowPerRay * TB ;

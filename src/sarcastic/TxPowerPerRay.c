@@ -37,46 +37,62 @@
  *
  ***************************************************************************/
 #include <sarclib/sarclib.h>
-#include "TxPowerPerRay.h"
+// #include "TxPowerPerRay.h"
 
-double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain){
+// double TxPowerPerRay(double rayWidthRadians, double rayHeightRadians, double *receiverGain){
     
-    double txl,txh,rxl,rxh;
-    double gainTx, gainRx ;
-    double antAreaTx, antAreaRx ;
-    double Pray ;
+//     double txl,txh,rxl,rxh;
+//     double gainTx, gainRx ;
+//     double antAreaTx, antAreaRx ;
+//     double Pray ;
 
-    if (TxDishAntenna) {
-        txh = txl = TxAntLen ;
-        antAreaTx = SIPC_pi * (txl/2) * (txl/2) ;
-    }else{
-        txh = TxAntHei ;
-        txl = TxAntLen ;
-        antAreaTx = txh * txl ;
-    }
-    gainTx   = 4.0 * SIPC_pi * antAreaTx * (ApEffTx/100.0) / (lambda * lambda);
+//     if (TxDishAntenna) {
+//         txh = txl = TxAntLen ;
+//         antAreaTx = SIPC_pi * (txl/2) * (txl/2) ;
+//     }else{
+//         txh = TxAntHei ;
+//         txl = TxAntLen ;
+//         antAreaTx = txh * txl ;
+//     }
+//     gainTx   = 4.0 * SIPC_pi * antAreaTx * (ApEffTx/100.0) / (lambda * lambda);
 
-    if (monoStatic) {
-//        rxl = txl ;
-//        rxh = txh ;
-        gainRx = gainTx ;
-    }else{
-        if (RxDishAntenna) {
-            rxh = rxl = RxAntLen ;
-            antAreaRx = SIPC_pi * (rxl/2) * (rxl/2) ;
-        }else{
-            rxh = RxAntHei ;
-            rxl = RxAntLen ;
-            antAreaRx = rxh * rxl ;
-        }
-        gainRx   = 4.0 * SIPC_pi * antAreaRx * (ApEffRx/100.0) / (lambda * lambda);
+//     if (monoStatic) {
+// //        rxl = txl ;
+// //        rxh = txh ;
+//         gainRx = gainTx ;
+//     }else{
+//         if (RxDishAntenna) {
+//             rxh = rxl = RxAntLen ;
+//             antAreaRx = SIPC_pi * (rxl/2) * (rxl/2) ;
+//         }else{
+//             rxh = RxAntHei ;
+//             rxl = RxAntLen ;
+//             antAreaRx = rxh * rxl ;
+//         }
+//         gainRx   = 4.0 * SIPC_pi * antAreaRx * (ApEffRx/100.0) / (lambda * lambda);
 
-    }
+//     }
 
-//    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
-    Pray = Pt * gainTx ;
+// //    Pray = Pt * gainTx * rayWidthRadians * rayHeightRadians / (4.0*SIPC_pi) ;
+//     Pray = Pt * gainTx ;
     
+//     *receiverGain = gainRx ;
+//     return (Pray) ;
+   
+// }
+
+double TxPowerPerRay(CPHDHeader *hdr, double *receiverGain){
+    double Pt, lambda, antLenTx, antHeiTx, antAreaTx, gainTx, gainRx, Pray, AppEff ;
+
+    Pt        = 1000.0 ;       // Peak Transmit power assumed to be 1000 w (until its put in the CPHDFile)
+    AppEff    = 0.7 ;          // Aperture efficiency - assumed to be 70 %
+    lambda    = SIPC_c / hdr->freq_centre ;
+    antLenTx  = lambda / hdr->antenna_width_az ;
+    antHeiTx  = lambda / hdr->antenna_width_el ;
+    antAreaTx = antLenTx * antHeiTx ;
+    gainTx    = 4.0 * SIPC_pi * antAreaTx * AppEff / (lambda * lambda);
+    gainRx    = gainTx ; // Assume transmit antenna is same as receive antenna
+    Pray      = Pt * gainTx ;
     *receiverGain = gainRx ;
     return (Pray) ;
-   
 }
