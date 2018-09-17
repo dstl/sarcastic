@@ -8,8 +8,6 @@
 ._*
 
 # Ignore user specific Xcode files
-build/
-bin/
 DerivedData
 *.pbxuser
 !default.pbxuser
