@@ -45,7 +45,7 @@ double RCS(double PtGt, double EMagAtRx, double TxRange, double RxRange){
 
     
     // first calculation the isotropically radiated power from a point at a range
-    // from the transitter
+    // from the transmitter
     //
     double iso = PtGt / (4 * SIPC_pi * TxRange * TxRange) ; // power in Watts / m^2
     

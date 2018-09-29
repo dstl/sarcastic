@@ -323,7 +323,9 @@ add_executable(tdpocl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/getMemorySize.c 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/oclSRPRanges.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/OpenCLUtils.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic/TxPowerPerRay.c
 )
+target_include_directories(tdpocl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic)
 target_link_libraries(tdpocl sarclib)
 target_link_libraries(tdpocl ${FFTW_LIBRARIES})
 target_link_libraries(tdpocl ${OpenCL_LIBRARIES})

@@ -217,6 +217,7 @@ if __name__ == '__main__':
 			break
 		elif k == ord('a'):
 			print "mouse coords are :",(mouseX*xshrink)+xstart,(mouseY*yshrink)+ystart
+			print amparr[(mouseY*yshrink)+ystart][(mouseX*xshrink)+xstart]
 		# cv2.waitKey(0)
 
 	cv2.destroyAllWindows()

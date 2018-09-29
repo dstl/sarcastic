@@ -606,7 +606,9 @@ void * devPulseBlock ( void * threadArg ) {
 #ifdef TOTALRCSINPULSE
             double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
             double oneOverLambda = td->cphdhdr->freq_centre / SIPC_c ;
-            if(pulse%1==0)printf("%d, %e\n", pulseIndex+td->startPulse,cmplx_mag);
+            if(pulse%1==0)
+            printf("Total power for pulse is %f\n",CMPLX_MAG(targtot));
+            printf("PowPerRay = %f, derampRange=%f\n",PowPerRay,derampRange);
             printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log10(cmplx_mag));
             printf("For comparison: \n");
             printf("    1m^2 flat plate : %f (%f dB m^2)\n",1*SIPC_pi*4*oneOverLambda*oneOverLambda,10*log10(4*SIPC_pi*oneOverLambda*oneOverLambda)); // 8620.677
@@ -630,7 +632,7 @@ void * devPulseBlock ( void * threadArg ) {
                 pulseLine.data.cmpl_f[x] = tmp;
             }
             im_circshift(&pulseLine, -(pulseLine.nx/2), 0, &status);
-            im_fftw(&pulseLine, (FFTMODE)(FFT_X_ONLY+FWD+NOSCALE), &status);
+            im_fftw(&pulseLine, (FFTMODE)(FFT_X_ONLY+FWD+SCALE_N), &status);
             im_insert(&pulseLine, 0, pulseIndex, td->phd, &status) ;
             im_destroy(&pulseLine, &status) ;
             

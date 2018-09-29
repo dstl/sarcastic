@@ -192,11 +192,9 @@ int main(int argc, const char * argv[]) {
            (dAz * centreRange), (dEl * centreRange),
            (dAz * centreRange), (dEl * centreRange / sin(cGeom.grazingRad)));
     
-    double TxPowPerRay, gainRx ;
-    TxPowPerRay = TxPowerPerRay(&hdr, &gainRx);
-    printf("EIRP                        : %e Watts (%f dBW)\n",TxPowPerRay,10*log(TxPowPerRay));
-    double TB = TxPowPerRay * hdr.pulse_length * hdr.chirp_gamma * hdr.pulse_length ;
-    TxPowPerRay = TxPowPerRay * TB ;
+    double PtG, gainRx ;
+    PtG = TxPowerPerRay(&hdr, &gainRx);
+    printf("EIRP                        : %e Watts (%f dBW)\n",PtG,10*log10(PtG));
     
     SPImage cphd ;
     
@@ -243,7 +241,7 @@ int main(int argc, const char * argv[]) {
         coreData[t].nElBeam                = nElBeam ;
         coreData[t].cphdhdr                = &newhdr ;
         coreData[t].gainRx                 = gainRx;
-        coreData[t].PowPerRay              = TxPowPerRay ;
+        coreData[t].PowPerRay              = PtG ;
         if(outCPHDFile == NULL){
             coreData[t].phd                    = NULL ;
         }else{

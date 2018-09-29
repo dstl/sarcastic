@@ -43,7 +43,9 @@
 #include "tdp.h"
 #include "tdpcore.h"
 #include <unistd.h>
+#include "TxPowerPerRay.h"
 #define DEBUGLVL 10
+#define RCSCORRECT
 //#define     INLINEKERNELCODE
 #if defined INLINEKERNELCODE
 #include "tdpKernel.h"
@@ -528,27 +530,27 @@ int main(int argc, char *argv[])
             SPImage im;
             im_create (&im,      ITYPE_CMPL_FLOAT,  surface_nx, nSurfaceLinesThisChunk, 1.0, 1.0, &status);
             for (int dev = 0; dev<tdpCore_s.task_s.devsToUse; dev++) {
-                if(EIRP != 0.0){
-                    printf("  Performing RCS Correction...");
-                    double TxRange, RxRange,scFactor,m,p,rcs;
-                    double rcsFactor = (64.0 * SIPC_pi * SIPC_pi / EIRP);
-                    SPVector txtopix_v,rxtopix_v;
-                    for(int y=0; y<surfaces[dev].ny; y++){
-                        for(int x=0; x<surfaces[dev].nx; x++){
-                            VECT_SUB(surfaces[dev].data.vect[y*surfaces[dev].nx+x], hdr.pulses[startPulse+nPulses/2].sat_ps_tx, txtopix_v);
-                            VECT_SUB(surfaces[dev].data.vect[y*surfaces[dev].nx+x], hdr.pulses[startPulse+nPulses/2].sat_ps_rx, rxtopix_v);
-                            TxRange  = VECT_MAG(txtopix_v);
-                            RxRange  = VECT_MAG(rxtopix_v);
-                            m        = CMPLX_MAG(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]) / nPulses; // E in volts
-                            p        = CMPLX_PHASE(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]);         // phase
-                            scFactor = rcsFactor * RxRange * RxRange*TxRange * TxRange;
-                            rcs      = m * RCOMPOVERSAMPLE * m * RCOMPOVERSAMPLE * scFactor ;
-                            images[dev].data.cmpl_f[y*surfaces[dev].nx+x].r = rcs * cos(p);
-                            images[dev].data.cmpl_f[y*surfaces[dev].nx+x].i = rcs * sin(p);
-                        }
+#ifdef RCSCORRECT
+                printf("  Performing RCS Correction...");
+                double TxRange, RxRange, rcs, m, p, PtG, gainRx, maxrcs = -1e6;
+                SPVector txtopix_v,rxtopix_v;
+                PtG = TxPowerPerRay(&hdr, &gainRx);
+                for(int y=0; y<surfaces[dev].ny; y++){
+                    for(int x=0; x<surfaces[dev].nx; x++){
+                        VECT_SUB(surfaces[dev].data.vect[y*surfaces[dev].nx+x], hdr.pulses[startPulse+nPulses/2].sat_ps_tx, txtopix_v);
+                        VECT_SUB(surfaces[dev].data.vect[y*surfaces[dev].nx+x], hdr.pulses[startPulse+nPulses/2].sat_ps_rx, rxtopix_v);
+                        TxRange  = VECT_MAG(txtopix_v);
+                        RxRange  = VECT_MAG(rxtopix_v);
+                        m        = CMPLX_MAG(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]) ; // E in volts
+                        p        = CMPLX_PHASE(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]);         // phase
+                        rcs      = m * m * RCOMPOVERSAMPLE * RCOMPOVERSAMPLE * (4 * SIPC_pi * TxRange * TxRange) * (4 * SIPC_pi * RxRange * RxRange) / PtG ;
+                        maxrcs = (rcs > maxrcs ) ? rcs : maxrcs ;
+                        images[dev].data.cmpl_f[y*surfaces[dev].nx+x].r = rcs * cos(p);
+                        images[dev].data.cmpl_f[y*surfaces[dev].nx+x].i = rcs * sin(p);
                     }
-                    printf("Done\n");
                 }
+                printf("Done. Max RCS in scene is %8.2f m^2 (%5.0f dBm^2)\n",maxrcs, 10*log10(maxrcs));
+#endif
                 im_insert(&(images[dev]), dev * images[dev].nx, 0, &im, &status);
             }
             
