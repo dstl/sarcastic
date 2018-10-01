@@ -1,16 +1,13 @@
 /***************************************************************************
  *
- *       Module:    banner.c
- *      Program:    bircs
- *   Created by:    Darren Muff on 12/06/2017.
- *                  Copyright (c) 2017 [Dstl]. All rights reserved.
- *
- *   Description:
- *      Banner file for BIRCS
- *
- *
- *   CLASSIFICATION        :  OFFICIAL
- *   Date of CLASSN        :  12/06/2017
+ *           Module :  bircsBanner.h
+ *          Program :  bircs
+ *       Created by :  Darren Muff on 12/06/2017. 
+ *   CLASSIFICATION :  OFFICIAL
+ *   Date of CLASSN :  1/Oct/2018
+ *      Description :  Header for simple banner to print out version info
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -29,11 +26,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
  *
  ***************************************************************************/
 
