@@ -108,6 +108,7 @@ int main (int argc, char **argv){
     
     ILLAZ = input_int("IllAz", (char *)"ILLAZ", (char *)"Illumination azimuth", ILLAZ);
     ILLINC = input_int("ILLINC", (char *)"ILLINC", (char *)"Illumination inclination", ILLINC);
+    ILLRANGE = input_dbl("Illumination Range", (char *)"ILLRANGE", (char *)"Slant Range to scene centre for illumination", ILLRANGE);
     freq_centre = input_dbl("Centre Frequency", (char *)"freq", (char *)"Transmit centre frequency", freq_centre);
     obsdist = input_dbl("Slant range to scene centre", (char *)"SRdist", (char *)"Slant Range to scene centre", obsdist);
     phistart = input_dbl("phistart", (char *)"PHISTART", (char *)"Starting azimuth angle", phistart);
@@ -424,9 +425,9 @@ int main (int argc, char **argv){
     printf("    1m dihedral                   : %f (%f dB m^2)\n",8*SIPC_pi / lambda_squared,10*log10(8*SIPC_pi / lambda_squared)); // 17241.354
     printf("    1m trihedral                  : %f (%f dB m^2)\n",12*SIPC_pi/ lambda_squared,10*log10(12*SIPC_pi/ lambda_squared)); // 25862.031
     printf("    1m dia Sphere                 : \n");
-    printf("        Rayleigh Region r<<lambda : %f ( %f dB m^2)\n", 9*SIPC_pi*0.5*0.5*pow(k*0.5,4), 10*log10(9*SIPC_pi*0.5*0.5*pow(k*0.5,4)));
-    printf("        Optical Region  r>>lambda : %f ( %f dB m^2)\n", SIPC_pi*0.5*0.5, 10*log10(SIPC_pi*0.5*0.5));
-    printf("         ( r = 0.5 m, lambda = %5.3f m )\n",lambda);
+    // printf("        Rayleigh Region r<<lambda : %f ( %f dB m^2)\n", 9*SIPC_pi*0.5*0.5*pow(k*0.5,4), 10*log10(9*SIPC_pi*0.5*0.5*pow(k*0.5,4)));
+    // printf("        Optical Region  r>>lambda : %f ( %f dB m^2)\n", SIPC_pi*0.5*0.5, 10*log10(SIPC_pi*0.5*0.5));
+    // printf("         ( r = 0.5 m, lambda = %5.3f m )\n",lambda);
     printf("\n--------------------------------------------------------------------\n");
 
 

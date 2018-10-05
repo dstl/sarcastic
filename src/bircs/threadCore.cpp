@@ -86,7 +86,7 @@ void * devPulseBlock ( void * threadArg ) {
     Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
     Hit *hitArray, *newHits, *shadowHits;
     
-    SPVector aimdir, RxPos, TxPos, origin, interogPt;
+    SPVector aimdir_tx, aimdir_rx, RxPos, TxPos, origin, interogPt;
     SPVector maxRCS = {-9e99,0.0,0.0};
     SPStatus status;
     
@@ -177,8 +177,9 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Set up deramp range for this pulse
         //
-        VECT_MINUS(TxPos, aimdir) ;
-        derampRange = VECT_MAG(aimdir);
+        VECT_MINUS(TxPos, aimdir_tx) ;
+        VECT_MINUS(RxPos, aimdir_rx) ;
+        derampRange = (VECT_MAG(aimdir_tx) + VECT_MAG(aimdir_rx)) / 2.0;
         
         // Use Calloc for rnp as we will be testing for zeroes later on
         //
@@ -385,8 +386,7 @@ void * devPulseBlock ( void * threadArg ) {
             for (int i=0; i<nrnpItems; i++){
                 CMPLX_ADD(rnpData[i].Es, targtot, targtot);
             }
-            
-            cmplx_mag = 10*log10(RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange));
+            cmplx_mag = 10*log10(RCS(PowPerRay, CMPLX_MAG(targtot), VECT_MAG(aimdir_tx), VECT_MAG(aimdir_rx)));
             free(rnpData);
         }
         

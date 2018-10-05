@@ -175,8 +175,8 @@ int main(int argc, const char * argv[]) {
             }
             im_insert(&pulse, 0, i-start, &wbData, &status);
         }
-        im_fftw(&wbData, FFT_2D, &status) ;
-        im_circshift(&wbData, wbData.nx/2 , wbData.ny/2, &status) ;
+        im_fftw(&wbData, (FFTMODE)(FFT_X_ONLY+FWD+NOSCALE), &status) ;
+        im_circshift(&wbData, wbData.nx/2 , 1, &status) ;
         im_save(&wbData, ofname, &status);
         im_destroy(&pulse, &status) ;
         im_destroy(&wbData, &status) ;

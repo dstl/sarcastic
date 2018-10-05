@@ -51,7 +51,7 @@ extern "C" {
 #include <sarclib/sarclib.h>
 
 #define NOINTERSECTION -1
-//#define TOTALRCSINPULSE
+// #define TOTALRCSINPULSE
 
 
 void * devPulseBlock ( void * threadArg ) {
@@ -77,7 +77,7 @@ void * devPulseBlock ( void * threadArg ) {
     Ray *rayArray, *newRays, *reflectedRays, *shadowRays, *LRays, *RRays;
     Hit *hitArray, *newHits, *shadowHits;
     
-    SPVector aimdir, RxPos, TxPos, origin, interogPt, *allHitPts=NULL;
+    SPVector aimdir_tx,aimdir_rx, RxPos, TxPos, origin, interogPt, *allHitPts=NULL;
     SPCmplx pcorr, tmp;
     SPCmplxD targ ;
     SPImage pulseLine ;
@@ -296,8 +296,9 @@ void * devPulseBlock ( void * threadArg ) {
         
         // Set up deramp range for this pulse
         //
-        VECT_MINUS(TxPos, aimdir) ;
-        derampRange = VECT_MAG(aimdir);
+        VECT_MINUS(TxPos, aimdir_tx) ;
+        VECT_MINUS(RxPos, aimdir_rx) ;
+        derampRange = (VECT_MAG(aimdir_tx) + VECT_MAG(aimdir_rx)) / 2.0;
         derampPhase = -4.0 * SIPC_pi * derampRange * hdr->freq_centre / SIPC_c ; ;
         
         // Use Calloc for rnp as we will be testing for zeroes later on
@@ -590,6 +591,7 @@ void * devPulseBlock ( void * threadArg ) {
             double phse;
             SPCmplxD targtot = {0.0,0.0};
             for (int i=0; i<nrnpItems; i++){
+                CMPLX_ADD(rnpData[i].Es, targtot, targtot);
                 rangeLabel  = (rnpData[i].rdiff/sampSpacing) + (pulseLine.nx / 2) ;
                 if (rangeLabel > NPOINTS/2 && rangeLabel < nx - NPOINTS) {
                     
@@ -599,15 +601,14 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     packSinc(targ, pulseLine.data.cmpl_f, rnpData[i].rdiff, sampSpacing, pulseLine.nx, ikernel);
                     
-                    CMPLX_ADD(rnpData[i].Es, targtot, targtot);
                 }
             }
             
 #ifdef TOTALRCSINPULSE
-            double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), derampRange, derampRange);
+            double cmplx_mag = RCS(PowPerRay, CMPLX_MAG(targtot), VECT_MAG(aimdir_tx), VECT_MAG(aimdir_rx));
             double oneOverLambda = td->cphdhdr->freq_centre / SIPC_c ;
             if(pulse%1==0)
-            printf("Total power for pulse is %f\n",CMPLX_MAG(targtot));
+            printf("Total power for pulse is %e\n",CMPLX_MAG(targtot));
             printf("PowPerRay = %f, derampRange=%f\n",PowPerRay,derampRange);
             printf("Total RCS for pulse %d is %f m^2 (%f dB m^2)\n",pulse,cmplx_mag,10*log10(cmplx_mag));
             printf("For comparison: \n");

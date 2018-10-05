@@ -415,11 +415,8 @@ int main(int argc, char *argv[])
         // This uses the fftw3 library and multiple threads as set up in line 89
         //
         load_cphd(&cphd, &hdr, blk*nPulsesPerBlock+startPulse, blk*nPulsesPerBlock+nPulsesPerBlock+startPulse, &status);
-        
         im_zpad(&cphd, (int)(cphd.nx * RCOMPOVERSAMPLE), cphd.ny, &tdpCore_s.phd, &status);
-        
-        im_fftw(&tdpCore_s.phd, FFT_X_ONLY+REV+SCALE_N, &status);
-        
+        im_fftw(&tdpCore_s.phd, FFT_X_ONLY+REV, &status);
         im_circshift(&tdpCore_s.phd, tdpCore_s.phd.nx/2, 0, &status);
 
         // Do the phase correct thats required because the start frequency doesn't stay the same pulse to pulse
@@ -541,15 +538,15 @@ int main(int argc, char *argv[])
                         VECT_SUB(surfaces[dev].data.vect[y*surfaces[dev].nx+x], hdr.pulses[startPulse+nPulses/2].sat_ps_rx, rxtopix_v);
                         TxRange  = VECT_MAG(txtopix_v);
                         RxRange  = VECT_MAG(rxtopix_v);
-                        m        = CMPLX_MAG(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]) ; // E in volts
-                        p        = CMPLX_PHASE(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]);         // phase
-                        rcs      = m * m * RCOMPOVERSAMPLE * RCOMPOVERSAMPLE * (4 * SIPC_pi * TxRange * TxRange) * (4 * SIPC_pi * RxRange * RxRange) / PtG ;
-                        maxrcs = (rcs > maxrcs ) ? rcs : maxrcs ;
+                        m        = CMPLX_MAG(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]) ;  // E in volts
+                        p        = CMPLX_PHASE(images[dev].data.cmpl_f[y*surfaces[dev].nx+x]); // phase
+                        rcs      = RCOMPOVERSAMPLE * m * m * (4 * SIPC_pi * TxRange * TxRange) * (4 * SIPC_pi * RxRange * RxRange) / (PtG * PtG) ;
+                        maxrcs   = (rcs > maxrcs ) ? rcs : maxrcs ;
                         images[dev].data.cmpl_f[y*surfaces[dev].nx+x].r = rcs * cos(p);
                         images[dev].data.cmpl_f[y*surfaces[dev].nx+x].i = rcs * sin(p);
                     }
                 }
-                printf("Done. Max RCS in scene is %8.2f m^2 (%5.0f dBm^2)\n",maxrcs, 10*log10(maxrcs));
+                printf("Done. \n  Max RCS in scene is %8.2f m^2 (%5.0f dBm^2)\n",maxrcs, 10*log10(maxrcs));
 #endif
                 im_insert(&(images[dev]), dev * images[dev].nx, 0, &im, &status);
             }
