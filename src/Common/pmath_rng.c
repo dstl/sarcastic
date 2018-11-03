@@ -1,27 +1,24 @@
 /***************************************************************************
- *  pmath_rng.c
- *  triDecomp
- *
- *  Created by Muff Darren on 27/09/2014.
- *  Copyright (c) 2014 [dstl]. All rights reserved.
- *  Copyright (c) 1993,1994,1995,1996.
- *  The Regents of the University of California.  All rights reserved.
- *
- *  CLASSIFICATION       :   UNCLASSIFIED
- *  Date of CLASSN       :   25/09/2014
- *
+ * 
+ *           Module :  pmath_rng.c
+ *          Program :  Sarcastic
+ *       Created by :  Darren Muff on 27/09/2014
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  03-Nov-2018
+ *   Description:
  * This set of routines reproduces the Cray RANF family of random
  * number routines bit-for-bit.  Most of the routines here were
  * written by Jim Rathkopf, CP-Division, LLNL, and modified by
  * William C. Biester, B-Division. LLNL.  They were subsequently
  * modified for use in PMATH by Fred N. Fritsch, LC, LLNL.
- *
+ * further modifications for OpenCL scan primitives by Darren Muff, DSTL
+ *|
  * This version contains only the generator proper (equivalent to PM_RANF8
  * in the official PMATH version) and makes the seed and multiplier
  * directly accessible as arrays of doubles.  This was modified for use by
  * the Basis and Python module ranf.c, which contains its own seed and
  * multiplier management routines.  (FNF -- 9/4/96)
- *
+ *|
  * Service routines defined:
  *    PM_16to24 - Convert 3 16-bit shorts to 2 24-bit doubles
  *    PM_24to16 - Convert 2 24-bit doubles to 3 16-bit shorts
@@ -29,17 +26,19 @@
  *    PM_SSeed  - Set the seed from two 24-bit doubles (unsafe)
  *    PM_GMult  - Get the multiplier as two 24-bit doubles
  *    PM_SMult  - Set the multiplier from two 24-bit doubles (unsafe)
- *
+ *|
  * User-callable routines defined:
  *    PM_RANF   - The generator itself
- *
+ *|
  * Currently responsible person:
  *    Fred N. Fritsch
  *    Computer Applications Organization
  *    LCPD, ICF Group
  *    Lawrence Livermore National Laboratory
  *    fnf@llnl.gov
- *
+ *    Darren G. Muff
+ *    Defence Science and Technology Laboratory, UK
+ *|
  * Modifications:
  * (See individual SLATEC-format prologues for detailed modification records.)
  *    03-09-93  Integrated Jim's routines into my library system.  (WCB)
@@ -72,7 +71,8 @@
  *    09-04-96  Improved descriptions of the get/set routines.  (FNF)
  *    09-05-96  Added definitions of internal procedures PM_16to24 and
  *              PM_24to16 (see ranf.h).  (FNF)
- *
+ *    27-09-14  Adapted to work with OpenCK routines and scan primitives (DGM)
+ *|
  * This work was produced at the University of California, Lawrence
  * Livermore National Laboratory (UC LLNL) under contract no. W-7405-ENG-48
  * between the U.S. Department of Energy (DOE) and The Regents of the
@@ -117,10 +117,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ *   Copyright (c) 1993,1994,1995,1996. 
+ *      The Regents of the University of California.  All rights reserved.
+ * 
  ***************************************************************************/
 
 /* Get includes, typedefs, and protypes for ranf.c and pmath_rng.c */

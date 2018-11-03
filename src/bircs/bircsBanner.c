@@ -5,7 +5,7 @@
  *       Created by :  Darren Muff on 12/06/2017. 
  *   CLASSIFICATION :  OFFICIAL
  *   Date of CLASSN :  1/Oct/2018
- *      Description :  Simply banner to print out version information
+ *      Description :  Simple banner to print out version information
  * 
  *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
  *

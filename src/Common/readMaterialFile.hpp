@@ -1,10 +1,10 @@
 /***************************************************************************
- *
- *       Module:    readMaterialFile.hpp
- *      Program:    sarcastic (and others)
- *   Created by:    Darren Muff on 8/09/2017.
- *                  Copyright (c) 2017 Dstl. All rights reserved.
- *
+ * 
+ *           Module :  readMaterialFile.hpp
+ *          Program :  Sarcastic
+ *       Created by :  Darren Muff on 8/09/2017
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  03-Nov-2018
  *   Description:
  *       This programme reads in material properties from a text file.
  *   The material properties file :
@@ -30,12 +30,11 @@
  *       Shinyness is the alpha term in the phong shading equation and defines the solid angle that
  *       the specular scattering direction covers. (Higher values are smaller, more specular).
  *       R G B are used to define the colour of the material in any output files.
- *
- *   CLASSIFICATION        :  OFFICIAL
- *   Date of CLASSN        :  8/09/2017
- *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -43,7 +42,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -51,12 +50,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 
 #ifndef readMaterialFile_hpp

@@ -1,22 +1,20 @@
- /***************************************************************************
- *
- *       Module:    main.c
- *      Program:    cphdShell
- *   Created by:    Darren on 09/12/12016.
- *                  Copyright (c) 2016 Dstl. All rights reserved.
- *
+/***************************************************************************
+ * 
+ *           Module :  main.cpp
+ *          Program :  cphdShell
+ *       Created by :  Darren Muff on 09/12/12016
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  03-Nov-2018
  *   Description:
  *   Program to create a CPHD file from user input. Clues are provided along
  *   the way to ensure that the parameters are consistent within the CPHD file.
  *   The cphd file is a shell of an actual cphd file meaning that it contains no
  *   wideband information (just zeroes sop that it remains the correct size).
- *
- *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  20/11/2016
- *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -24,7 +22,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -32,12 +30,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 
 #include <iostream>
