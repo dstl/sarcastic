@@ -26,9 +26,16 @@ def processfile(ip, prog, classn):
 			while line and not line.endswith('*/\n'):
 				line = f.readline()
 				if regexpdesc.search(line) :
-					while line and not regexpblank.search(line) :
+					# Found the description now keep reading lines until two blank ones are found
+					blankcnt=0
+					while line and blankcnt != 2 :
 						desc = desc + line
 						line = f.readline()
+						if regexpblank.search(line) :
+							blankcnt = blankcnt + 1
+						else:
+							blankcnt = 0
+
 				if regexpcreated.search(line) :
 					createdate = regexpcreated.search(line).group(1)
 
