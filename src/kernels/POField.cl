@@ -1,3 +1,45 @@
+/***************************************************************************
+ * 
+ *           Module :  POField.cl
+ *          Program :  kernels
+ *       Created by :  Darren Muff on 02/08/2012
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
+ *      Description :
+ *          OpenCl kernel to calculate the reflected EM field strength
+ *          scattered from a planar facet using physical optics. An
+ *          explanation of the derivation of teh claculations can be found
+ *          in [1], Chapter 2
+ *
+ *          [1] Muff, D.G., (2018) "Electromagnetic ray-tracing for the 
+ *              investigation of multipath and vibration signatures in 
+ *              radar imagery". Doctoral thesis (Ph.D), UCL (University
+ *              College London). 
+ *              http://discovery.ucl.ac.uk/id/eprint/10053908
+ *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software")
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ * 
+ ***************************************************************************/
+
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 #define SIPC_pi 3.14159265358979323846
 #define SURFMAXN 4
