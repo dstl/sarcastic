@@ -1,13 +1,13 @@
 /***************************************************************************
  * 
  *           Module :  reflectionPower.cl
- *          Program :  kernels
+ *          Program :  sarcastic-kernels
  *       Created by :  Darren Muff on 02/08/2012
  *   CLASSIFICATION :  Official
  *   Date of CLASSN :  05-Nov-2018
  *      Description :
- *  OpenCl kernel code to calculate reflection power for an
- *  array of rays back at the receiver
+ *           OpenCl kernel code to calculate reflection power for an
+ *           array of rays back at the receiver
  *
  * 
  *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory

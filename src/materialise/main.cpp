@@ -1,12 +1,11 @@
 /***************************************************************************
- *
- *       Module:    main.cpp
- *      Program:    materialise
- *   Created by:    Darren Muff on 11/06/2017.
- *                  Copyright (c) 2017 Dstl. All rights reserved.
- *
+ * 
+ *           Module :  main.cpp
+ *          Program :  materialise
+ *       Created by :  Darren Muff on 11/06/2017
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
  *   Description:
- *  
  *      This programme reads in a .ply file and breaks it down into Delaunay
  *      triangles. The input .ply file can be a mesh or a triangle soup. In the 
  *      latter case (where vertex points can be unique to a triangle) the 
@@ -26,12 +25,11 @@
  *          [2] Laurent Rineau. 2D Conforming Triangulations and Meshes.
  *              In CGAL User and Reference Manual. CGAL Editorial Board, 4.10 edition, 2017
  *
- *
- *   CLASSIFICATION        :  OFFICIAL
- *   Date of CLASSN        :  11/06/2017
- *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -39,7 +37,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -47,12 +45,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 
 #define REAL double

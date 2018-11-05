@@ -1,24 +1,22 @@
 /***************************************************************************
- *
- *       Module:    getMemorySize.c
- *      Program:    tdpocl
- *   Created by:    Darren on 09/06/2013.
- *                  Copyright (c) 2013 [Dstl]. All rights reserved.
- *
- *   Description:
- *   Taken from 
- * Author:  David Robert Nadeau
- * Site:    http://NadeauSoftware.com/
- * License: Creative Commons Attribution 3.0 Unported License
+ * 
+ *           Module :  getMemorySize.c
+ *          Program :  tdpocl
+ *       Created by :  Darren Muff on 09/06/2013
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
+ *      Description : 
+ *          Taken from 
+ *          Author:  David Robert Nadeau
+ *          Site:    http://NadeauSoftware.com/
+ *          License: Creative Commons Attribution 3.0 Unported License
  *          http://creativecommons.org/licenses/by/3.0/deed.en_US
  *
- *
- *
- *   CLASSIFICATION        :  <PENDING>
- *   Date of CLASSN        :  14/03/2013
- *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -26,7 +24,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -34,12 +32,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 #include <stdio.h>
 #if defined(_WIN32)
@@ -57,8 +50,41 @@
 #error "Unable to define getMemorySize( ) for an unknown OS."
 #endif
 
-/**
- * Returns the size of physical memory (RAM) in bytes.
+/***************************************************************************
+ * 
+ *           Module :  getMemorySize.c
+ *          Program :  tdpocl
+ *       Created by :  Darren Muff on 09/06/2013
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
+ *      Description : 
+ *          Taken from 
+ *          Author:  David Robert Nadeau
+ *          Site:    http://NadeauSoftware.com/
+ *          License: Creative Commons Attribution 3.0 Unported License
+ *          http://creativecommons.org/licenses/by/3.0/deed.en_US
+ *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software")
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ * 
  */
 size_t getMemorySize( )
 {

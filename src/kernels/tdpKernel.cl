@@ -1,7 +1,7 @@
 /***************************************************************************
  * 
  *           Module :  tdpKernel.cl
- *          Program :  kernels
+ *          Program :  sarcastic-kernels
  *       Created by :  Darren Muff on 21/03/2013
  *   CLASSIFICATION :  Official
  *   Date of CLASSN :  05-Nov-2018

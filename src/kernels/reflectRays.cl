@@ -1,7 +1,7 @@
 /***************************************************************************
  * 
  *           Module :  reflectRays.cl
- *          Program :  kernels
+ *          Program :  sarcastic-kernels
  *       Created by :  Darren Muff on 02/08/2012
  *   CLASSIFICATION :  Official
  *   Date of CLASSN :  05-Nov-2018

@@ -1,17 +1,15 @@
 /***************************************************************************
+ * 
+ *           Module :  fft_c8.c
+ *          Program :  sarclib
+ *        Created by: Andrew Horne October 1980
+ *                    Alan Blake      26/1/1993
+ *                    Darren Muff     22/2/1995
+ *                    Matt Nottingham 12/09/2005.
  *
- *       Module:    fft_c8.c
- *      Program:    sarclib
- *   Created by:    Andrew Horne October 1980
- *                  Alan Blake      26/1/1993
- *                  Darren Muff     22/2/1995
- *                  Matt Nottingham 12/09/2005.
- *
- *                  Copyright (c) 1980 Royal Signals and Radar Establishment. All rights reserved.
- *                  Copyright (c) 1993,1996 Defence Research Agency, Malvern. All rights reserved.
- *                  Copyright (c) 2013 [dstl]. All rights reserved.
- *
- *   Description:
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
+ *      Description :
  *       C version of Singleton FFT algorithm converted from ADLIB and
  *       FORTRAN code used at RSRE in the 1980's and 1990's. Historical
  *       information attached to explain old-school fft algorithm
@@ -24,7 +22,6 @@
  *
  *	Call using FFT(SIG(0),SIG(0),...) where the first element is in
  *	SIG(0)
- *
  *
  *        PURPOSE
  *           TO COMPUTE A COMPLEX(MULTIVARIATE)FOURIER TRANSFORM USING A
@@ -99,15 +96,15 @@
  *           OPTION USED       OPT=1
  *           DATE              021574
  *
- *
- *
  ***************************************************************************
  *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  19/07/2013
- *
+ *   Copyright (c) 1980 Royal Signals and Radar Establishment. All rights reserved.
+ *   Copyright (c) 1993,1996 Defence Research Agency, Malvern. All rights reserved.
+ *   Copyright (c) 2013 [dstl]. All rights reserved. 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -115,7 +112,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -123,12 +120,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 
 

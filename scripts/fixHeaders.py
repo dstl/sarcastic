@@ -9,11 +9,12 @@ import os
 def processfile(ip, prog, classn):
 	regexpdesc = re.compile(r'description\s*:[a-z\s]*',re.IGNORECASE)
 	regexpblank = re.compile(r'^\s*\*\s*$',re.IGNORECASE)
-	regexpcreated = re.compile(r'created\s*by\s*.*\s([0-9]*/.*/[0-9]*).*',re.IGNORECASE)
+	regexpcreated = re.compile(r'created\s*by:\s*([a-z]*\s[a-z]*)\son\s([0-9]*/.*/[0-9]*).*',re.IGNORECASE)
 	desc = ""
 	date = datetime.datetime.today().strftime('%d-%b-%Y')
 	ps = subprocess.Popen(('git', 'log', '--format=%ad',ip), stdout=subprocess.PIPE, cwd=currdir)
 	createdate = subprocess.check_output(('tail', '-1'), stdin=ps.stdout).decode().rstrip()
+	createname = "Darren Muff"
 	ps.wait()
 	headerfound = False
 	createdLine = ""
@@ -37,13 +38,14 @@ def processfile(ip, prog, classn):
 							blankcnt = 0
 
 				if regexpcreated.search(line) :
-					createdate = regexpcreated.search(line).group(1)
+					createname = regexpcreated.search(line).group(1)
+					createdate = regexpcreated.search(line).group(2)
 
 			print('/***************************************************************************')
 			print(' * ')
 			print(' *           Module : ',ip)
 			print(' *          Program : ',prog)
-			print(' *       Created by :  Darren Muff on',createdate)
+			print(' *       Created by :  %s on %s' % (createname, createdate)) 
 			print(' *   CLASSIFICATION : ',classn)
 			print(' *   Date of CLASSN : ',now.strftime("%d-%b-%Y"))
 			print(desc.rstrip())

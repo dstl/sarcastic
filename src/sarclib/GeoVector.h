@@ -1,11 +1,11 @@
-/** @file********************************************************************
- *
- *       Module:    GeoVector.h
- *      Program:    sarclib
- *   Created by:    Darren Muff on 21/07/2013.
- *                  Copyright (c) 2013 [dstl]. All rights reserved.
- *
- *   Description:
+/***************************************************************************
+ * 
+ *           Module :  GeoVector.h
+ *          Program :  sarclib
+ *       Created by :  Darren Muff on 21/07/2013
+ *   CLASSIFICATION :  Official
+ *   Date of CLASSN :  05-Nov-2018
+ *      Description :
  *      C functions for handling geo-points. The functions use the SPVector class
  *      which is used for storing ECEF coords of the point. The functions use the
  *      WGS84(G873) ellipsoid and uses EGM96 for its GEOID. (The GEOID is the
@@ -19,7 +19,6 @@
  *      Transverse Mercator (UTM) and Latitide / Longitude.
  *      The calculations here are taken from [5] and adapted from code kindly provided by
  *      David Yip and Bob Harrison, Lockheed Martin, Denver
- *
  *
  *	References:
  *		[0] Burtch, R.; "A Comparision of Methods Used in Rectangular to Geodetic Coordinate
@@ -40,12 +39,11 @@
  *			Universal Transverse Mercator (UTM) and Universal Polar Stereographic
  *			(UPS)", DMA Technical Manual, DMATM 8358.2, 18 September 1989.
  *
- *
- *   CLASSIFICATION        :  UNCLASSIFIED
- *   Date of CLASSN        :  13th September 2011
- *
+ * 
+ *   (c) Crown Copyright 2018 Defence Science and Technology Laboratory
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
+ * copy of this software and associated documentation files (the "Software")
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
@@ -53,7 +51,7 @@
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -61,12 +59,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
- * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
- * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
- * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
- * IRELAND.
- *
+ * 
  ***************************************************************************/
 
 #ifndef sarclib_GeoVector_h
