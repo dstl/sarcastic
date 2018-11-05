@@ -1,6 +1,6 @@
 
 
-<h2> License </h2>
+## License
 
  (c) Crown Copyright 2018 Defence Science and Technology Laboratory
   
@@ -22,7 +22,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   DEALINGS IN THE SOFTWARE.
 
-<h2> TinyXML is released under the zlib license: </h2>
+## TinyXML is released under the zlib license:
 
 This software is provided 'as-is', without any express or implied 
 warranty. In no event will the authors be held liable for any 
