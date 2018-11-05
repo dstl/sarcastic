@@ -4,7 +4,7 @@
 # *       Module:    ProcessInterrogateFile.py
 # *      Program:    ProcessInterrogateFile.py
 # *   Created by:    Darren Muff on 12/07/2017.
-# *                  Copyright (c) 2017 Dstl. All rights reserved.
+# *                  Copyright (c) 2018 Dstl. All rights reserved.
 # *
 # *   Description:
 # *     This script is used to extract information about individual rays from 
@@ -47,10 +47,6 @@
 # * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # * DEALINGS IN THE SOFTWARE.
 # *
-# * THE SOFTWARE IN ITS ENTIRETY OR ANY SUBSTANTIAL PORTION SHOULD NOT BE
-# * USED AS A WHOLE OR COMPONENT PART OF DERIVATIVE SOFTWARE THAT IS BEING
-# * SOLD TO THE GOVERNMENT OF THE UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN
-# * IRELAND.
 # *
 # ***************************************************************************/
 
