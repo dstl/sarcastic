@@ -177,12 +177,12 @@ extern "C" {
             s48[1] = (u32)clock_time;
 #else
             struct timeval tv;
-            struct timezone tz;
+            // struct timezone tz;
 #if !defined(__sgi)
             int gettimeofday();
 #endif
             
-            (void)gettimeofday(&tv,&tz);
+            (void)gettimeofday(&tv,NULL);
             s48[0] = (u32)tv.tv_sec;
             s48[1] = (u32)tv.tv_usec;
 #endif /* !_WIN32 */

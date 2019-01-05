@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <sarclib/sarclib.h>
 #include <vector>
+#include <algorithm>
 
 typedef int OutCode;
 

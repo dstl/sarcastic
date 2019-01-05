@@ -42,6 +42,7 @@
 #include <sarclib/sarclib.h>
 #include <set>
 #include "AABB.hpp"
+#include <algorithm>
 
 enum  TRIVERTEX {
     vertA = 0,

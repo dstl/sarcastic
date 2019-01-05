@@ -6,7 +6,8 @@ set(CMAKE_FIND_FRAMEWORK LAST)
 set(NO_CMAKE_SYSTEM_PATH)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 add_definitions(-DKERNELDIR="${CMAKE_SOURCE_DIR}/src/kernels") 
 add_definitions(-DMATERIALPROPS="${CMAKE_SOURCE_DIR}/scripts/MaterialProperties.txt") 
@@ -76,44 +77,45 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/tdpoclVersion.h.in ${CMAKE
 
 # Check for required packages
 #
-find_package(gdal REQUIRED)
+find_package(GDAL REQUIRED)
 if(${GDAL_FOUND})
     include_directories(SARTrace, ${GDAL_INCLUDE_DIR})
     add_definitions(-Dsarclib_HAVE_GDAL) 
 endif()
 
-find_package(opencl REQUIRED)
+find_package(OpenCL REQUIRED)
 if(${OpenCL_FOUND})
 	include_directories( ${OPENCL_INCLUDE_DIR} )
 endif()
 
-find_package(expat REQUIRED)
+find_package(EXPAT REQUIRED)
 if(${EXPAT_FOUND})
 	link_libraries(${EXPAT_LIBRARIES})
 endif()
 
-find_package(fftw REQUIRED)
+find_package(FFTW REQUIRED)
 if(${FFTW_FOUND})
 	include_directories( ${FFTW_INCLUDE_DIR} )
 	set(CMAKE_EXE_LINKER_FLAGS "-lfftw3f -lfftw3f_threads" CACHE INTERNAL "" FORCE)
 endif()
 
-find_package(boost REQUIRED COMPONENTS filesystem)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 if(${BOOST_FOUND})
 	include_directories(${BOOST_INCLUDE_DIR})
 endif()
 
-find_package(readline REQUIRED)
+find_package(Readline REQUIRED)
 if(${READLINE_FOUND})
     add_definitions(-DHAVE_READLINE=1)
     link_libraries(${READLINE_LIBRARIES})
 endif()
-# find_package(Boost 1.4.0 COMPONENTS filesystem REQUIRED)
 
 find_package(CGAL REQUIRED)
 if(${CGAL_FOUND})
 	include_directories(${CGAL_INCLUDE_DIR})
 endif()
+
+find_package (Threads)
 
 #  Set file specific add_definitions
 #
@@ -211,8 +213,9 @@ target_include_directories(bircs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/collada
 target_link_libraries(bircs sarclib)
 target_link_libraries(bircs ${FFTW_LIBRARIES})
 target_link_libraries(bircs ${OpenCL_LIBRARIES})
+target_link_libraries (bircs ${CMAKE_THREAD_LIBS_INIT})
 
-# Generate coolatoToPlyFile executable
+# Generate colladaToPlyFile executable
 add_executable(colladaToPlyFile 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile/colladainterface.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile/main.cpp 
@@ -251,7 +254,7 @@ target_include_directories(materialise PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/c
 target_include_directories(materialise PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/fastKdTree)
 target_link_libraries(materialise sarclib)
 target_link_libraries(materialise ${Boost_LIBRARIES})
-target_link_libraries(materialise Boost_filesystem)
+target_link_libraries(materialise boost_filesystem)
 target_link_libraries(materialise ${GMP_LIBRARIES})
 target_link_libraries(materialise ${CGAL_LIBRARIES})
 
@@ -297,6 +300,7 @@ target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/fas
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
 target_link_libraries(sarcastic sarclib)
 target_link_libraries(sarcastic ${FFTW_LIBRARIES})
+target_link_libraries (sarcastic ${CMAKE_THREAD_LIBS_INIT})
 
 
 # Generate cphdInfo executable
@@ -329,6 +333,7 @@ target_include_directories(tdpocl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcas
 target_link_libraries(tdpocl sarclib)
 target_link_libraries(tdpocl ${FFTW_LIBRARIES})
 target_link_libraries(tdpocl ${OpenCL_LIBRARIES})
+target_link_libraries(tdpocl m)
 
 # Install the executables
 install(TARGETS 

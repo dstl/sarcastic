@@ -44,6 +44,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #if defined __CUFILE__ ||  defined __cplusplus
 extern "C"

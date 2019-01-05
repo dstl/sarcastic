@@ -38,6 +38,8 @@
 #include "cphdShell_version.h"
 #include "colourCodes.h"
 #include "ecef2SceneCoords.hpp"
+#include <algorithm>
+
 
 SPVector ptOnStraightLineTrajectory(SPVector SACentre, SPVector velocity, double tRelToSACentre) ;
 

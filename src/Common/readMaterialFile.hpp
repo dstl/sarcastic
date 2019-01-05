@@ -62,6 +62,7 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <string.h>
 
 /// Function to read in material properties from a file
 /// fileName is input
