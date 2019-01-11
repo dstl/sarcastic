@@ -9,16 +9,15 @@ shows you how to use SARCASTIC to simulate a SAR collection and then view the re
 ## Dependencies
 To install the SARCASTIC tools you will need the following installed and working on your system:
 
-*  cmake
-*  git
-*  gdal
-*  opencl
-*  expat
-*  fftw
-*  boost
-*  CGAL
-*  readline
-*  boost
+*  cmake    (Version > 3.13.2 - on some systems called cmake3)
+*  git      (Version > 2.17)
+*  gdal     (Version > 2.3.2_1)
+*  opencl   (Version > 1.2)
+*  expat    (Version > 2.2.1)
+*  fftw     (Version > 3.3.8)
+*  boost    (Version > 1.68.0_1)
+*  CGAL     (Version > 4.13)
+*  readline (Version > 7.0.5)
 
 	
 ## Suggested Additional Packages
@@ -32,7 +31,7 @@ SARCASTIC is compiled using the cmake build system. To build sarcastic just type
 ```
 
 $ cd build
-$ cmake ..
+$ cmake .. (or cmake3 ..)
 $ make
 $ make install
 
