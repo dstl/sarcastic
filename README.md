@@ -21,7 +21,7 @@ To install the SARCASTIC tools you will need the following installed and working
 
 	
 ## Suggested Additional Packages
-SARCASTIC uses a pretty basic CAD model file format called .ply (Stanford Triangle Format). You can find out more about it at http://paulbourke.net/dataformats/ply/. There are many ways to make a .ply file from a CAD model. My preferred way at the moment is to use Sketchup Make (Its free) and export the file as a collada file before conversion to a .ply file.
+SARCASTIC uses a pretty basic CAD model file format called .ply (Stanford Triangle Format). You can find out more about it at http://paulbourke.net/dataformats/ply/. There are many ways to make a .ply file from a CAD model. My preferred way at the moment is to use [Sketchup Make](https://help.sketchup.com/en/downloading-older-versions) (Its free) and export the file as a collada file before conversion to a .ply file.
 A useful (and pretty awesome) tool to visualise your CAD model is meshlab which can be obtained from http://www.meshlab.net.
 There are some useful python scripts in the scripts folder. To use these you will need python-2.7 installed.
 
