@@ -354,7 +354,9 @@ set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_PACKAGE_VERSION_MAJOR "${MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PATCH}")
+set(CPACK_SOURCE_IGNORE_FILES "/build;/.git/;/bin/;/.DS_Store;/.gitignore;/*.pyc;~$;${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
 
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 #target_link_libraries(sarclib gdal)

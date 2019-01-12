@@ -30,10 +30,26 @@ SARCASTIC is compiled using the cmake build system. To build sarcastic just type
 
 ```
 
+$ mkdir build
 $ cd build
 $ cmake .. (or cmake3 ..)
 $ make
 $ make install
 
 ```
+
+## Distribution
+
+To package sarcastic up to give to others you have a couple of choices. If you just want to sent the source code as a tarball (without any version control history such as git) you type the command
+
+```
+$ make dist
+```
+
+If you want to move a precompiled distribution then the command is :
+
+```
+$ make package
+```
+
 
