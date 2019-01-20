@@ -127,95 +127,95 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9500CADA21F30D0600505875 /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		9500CADA21F30D0600505875 /* sarcastic */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; name = sarcastic; path = ../../../../../../../../Development/sarcastic/bin/sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
 		9500CAE821F30DA400505875 /* colladaToPlyFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToPlyFile; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CAFD21F30F7900505875 /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = ../../../src/colladaToPlyFile/colladainterface.cpp; sourceTree = "<group>"; };
-		9500CAFE21F30F7900505875 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = ../../../src/colladaToPlyFile/banner.cpp; sourceTree = "<group>"; };
-		9500CAFF21F30F7900505875 /* colladainterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colladainterface.h; path = ../../../src/colladaToPlyFile/colladainterface.h; sourceTree = "<group>"; };
-		9500CB0021F30F7900505875 /* CTTVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CTTVersion.h.in; path = ../../../src/colladaToPlyFile/CTTVersion.h.in; sourceTree = "<group>"; };
-		9500CB0121F30F7900505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/colladaToPlyFile/main.cpp; sourceTree = "<group>"; };
+		9500CAFD21F30F7900505875 /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = ../../src/colladaToPlyFile/colladainterface.cpp; sourceTree = SOURCE_ROOT; };
+		9500CAFE21F30F7900505875 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = ../../src/colladaToPlyFile/banner.cpp; sourceTree = SOURCE_ROOT; };
+		9500CAFF21F30F7900505875 /* colladainterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colladainterface.h; path = ../../src/colladaToPlyFile/colladainterface.h; sourceTree = SOURCE_ROOT; };
+		9500CB0021F30F7900505875 /* CTTVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CTTVersion.h.in; path = ../../src/colladaToPlyFile/CTTVersion.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB0121F30F7900505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/colladaToPlyFile/main.cpp; sourceTree = SOURCE_ROOT; };
 		9500CB0921F3112D00505875 /* materialise */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = materialise; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CB1021F3117000505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/materialise/main.cpp; sourceTree = "<group>"; };
-		9500CB1121F3117000505875 /* materialise_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = materialise_version.h.in; path = ../../../src/materialise/materialise_version.h.in; sourceTree = "<group>"; };
-		9500CB1321F311EC00505875 /* getUserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = getUserInput.cpp; path = ../../../src/sarcastic/getUserInput.cpp; sourceTree = "<group>"; };
-		9500CB1421F311EC00505875 /* reflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reflect.cpp; path = ../../../src/sarcastic/reflect.cpp; sourceTree = "<group>"; };
-		9500CB1521F311EC00505875 /* threadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = threadCore.hpp; path = ../../../src/sarcastic/threadCore.hpp; sourceTree = "<group>"; };
-		9500CB1621F311EC00505875 /* buildRopesAndBoxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildRopesAndBoxes.cpp; path = ../../../src/sarcastic/buildRopesAndBoxes.cpp; sourceTree = "<group>"; };
-		9500CB1721F311EC00505875 /* cpuPOField.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cpuPOField.hpp; path = ../../../src/sarcastic/cpuPOField.hpp; sourceTree = "<group>"; };
-		9500CB1821F311EC00505875 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = ../../../src/sarcastic/banner.cpp; sourceTree = "<group>"; };
-		9500CB1921F311EC00505875 /* sarcastic2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sarcastic2.cpp; path = ../../../src/sarcastic/sarcastic2.cpp; sourceTree = "<group>"; };
-		9500CB1A21F311EC00505875 /* buildRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildRays.hpp; path = ../../../src/sarcastic/buildRays.hpp; sourceTree = "<group>"; };
-		9500CB1B21F311EC00505875 /* sarcastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sarcastic.h; path = ../../../src/sarcastic/sarcastic.h; sourceTree = "<group>"; };
-		9500CB1C21F311EC00505875 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TxPowerPerRay.h; path = ../../../src/sarcastic/TxPowerPerRay.h; sourceTree = "<group>"; };
-		9500CB1D21F311EC00505875 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TxPowerPerRay.c; path = ../../../src/sarcastic/TxPowerPerRay.c; sourceTree = "<group>"; };
-		9500CB1E21F311EC00505875 /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ecef2SceneCoords.h; path = ../../../src/sarcastic/ecef2SceneCoords.h; sourceTree = "<group>"; };
-		9500CB1F21F311EC00505875 /* buildRopesAndBoxes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildRopesAndBoxes.hpp; path = ../../../src/sarcastic/buildRopesAndBoxes.hpp; sourceTree = "<group>"; };
-		9500CB2021F311EC00505875 /* threadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threadCore.cpp; path = ../../../src/sarcastic/threadCore.cpp; sourceTree = "<group>"; };
-		9500CB2121F311EC00505875 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RCS.c; path = ../../../src/sarcastic/RCS.c; sourceTree = "<group>"; };
-		9500CB2221F311EC00505875 /* shadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadowRays.cpp; path = ../../../src/sarcastic/shadowRays.cpp; sourceTree = "<group>"; };
-		9500CB2321F311EC00505875 /* shadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = shadowRays.hpp; path = ../../../src/sarcastic/shadowRays.hpp; sourceTree = "<group>"; };
-		9500CB2421F311EC00505875 /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecef2SceneCoords.c; path = ../../../src/sarcastic/ecef2SceneCoords.c; sourceTree = "<group>"; };
-		9500CB2521F311EC00505875 /* SarcasticVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SarcasticVersion.h.in; path = ../../../src/sarcastic/SarcasticVersion.h.in; sourceTree = "<group>"; };
-		9500CB2621F311EC00505875 /* sarcastic2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sarcastic2.hpp; path = ../../../src/sarcastic/sarcastic2.hpp; sourceTree = "<group>"; };
-		9500CB2721F311EC00505875 /* tryReadFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tryReadFile.cpp; path = ../../../src/sarcastic/tryReadFile.cpp; sourceTree = "<group>"; };
-		9500CB2821F311EC00505875 /* tryReadFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tryReadFile.hpp; path = ../../../src/sarcastic/tryReadFile.hpp; sourceTree = "<group>"; };
-		9500CB2921F311ED00505875 /* accelerateTriangles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = accelerateTriangles.cpp; path = ../../../src/sarcastic/accelerateTriangles.cpp; sourceTree = "<group>"; };
-		9500CB2A21F311ED00505875 /* buildRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildRays.cpp; path = ../../../src/sarcastic/buildRays.cpp; sourceTree = "<group>"; };
-		9500CB2B21F311ED00505875 /* getUserInput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = getUserInput.hpp; path = ../../../src/sarcastic/getUserInput.hpp; sourceTree = "<group>"; };
-		9500CB2C21F311ED00505875 /* reflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = reflect.hpp; path = ../../../src/sarcastic/reflect.hpp; sourceTree = "<group>"; };
-		9500CB2D21F311ED00505875 /* accelerateTriangles.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = accelerateTriangles.hpp; path = ../../../src/sarcastic/accelerateTriangles.hpp; sourceTree = "<group>"; };
-		9500CB2E21F311ED00505875 /* cpuPOField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuPOField.cpp; path = ../../../src/sarcastic/cpuPOField.cpp; sourceTree = "<group>"; };
-		9500CB2F21F311ED00505875 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCS.h; path = ../../../src/sarcastic/RCS.h; sourceTree = "<group>"; };
+		9500CB1021F3117000505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/materialise/main.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1121F3117000505875 /* materialise_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = materialise_version.h.in; path = ../../src/materialise/materialise_version.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB1321F311EC00505875 /* getUserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = getUserInput.cpp; path = ../../src/sarcastic/getUserInput.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1421F311EC00505875 /* reflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reflect.cpp; path = ../../src/sarcastic/reflect.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1521F311EC00505875 /* threadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = threadCore.hpp; path = ../../src/sarcastic/threadCore.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB1621F311EC00505875 /* buildRopesAndBoxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildRopesAndBoxes.cpp; path = ../../src/sarcastic/buildRopesAndBoxes.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1721F311EC00505875 /* cpuPOField.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cpuPOField.hpp; path = ../../src/sarcastic/cpuPOField.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB1821F311EC00505875 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = ../../src/sarcastic/banner.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1921F311EC00505875 /* sarcastic2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sarcastic2.cpp; path = ../../src/sarcastic/sarcastic2.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB1A21F311EC00505875 /* buildRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildRays.hpp; path = ../../src/sarcastic/buildRays.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB1B21F311EC00505875 /* sarcastic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sarcastic.h; path = ../../src/sarcastic/sarcastic.h; sourceTree = SOURCE_ROOT; };
+		9500CB1C21F311EC00505875 /* TxPowerPerRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TxPowerPerRay.h; path = ../../src/sarcastic/TxPowerPerRay.h; sourceTree = SOURCE_ROOT; };
+		9500CB1D21F311EC00505875 /* TxPowerPerRay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TxPowerPerRay.c; path = ../../src/sarcastic/TxPowerPerRay.c; sourceTree = SOURCE_ROOT; };
+		9500CB1E21F311EC00505875 /* ecef2SceneCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ecef2SceneCoords.h; path = ../../src/sarcastic/ecef2SceneCoords.h; sourceTree = SOURCE_ROOT; };
+		9500CB1F21F311EC00505875 /* buildRopesAndBoxes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildRopesAndBoxes.hpp; path = ../../src/sarcastic/buildRopesAndBoxes.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2021F311EC00505875 /* threadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threadCore.cpp; path = ../../src/sarcastic/threadCore.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2121F311EC00505875 /* RCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RCS.c; path = ../../src/sarcastic/RCS.c; sourceTree = SOURCE_ROOT; };
+		9500CB2221F311EC00505875 /* shadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadowRays.cpp; path = ../../src/sarcastic/shadowRays.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2321F311EC00505875 /* shadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = shadowRays.hpp; path = ../../src/sarcastic/shadowRays.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2421F311EC00505875 /* ecef2SceneCoords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecef2SceneCoords.c; path = ../../src/sarcastic/ecef2SceneCoords.c; sourceTree = SOURCE_ROOT; };
+		9500CB2521F311EC00505875 /* SarcasticVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SarcasticVersion.h.in; path = ../../src/sarcastic/SarcasticVersion.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB2621F311EC00505875 /* sarcastic2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sarcastic2.hpp; path = ../../src/sarcastic/sarcastic2.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2721F311EC00505875 /* tryReadFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tryReadFile.cpp; path = ../../src/sarcastic/tryReadFile.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2821F311EC00505875 /* tryReadFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tryReadFile.hpp; path = ../../src/sarcastic/tryReadFile.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2921F311ED00505875 /* accelerateTriangles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = accelerateTriangles.cpp; path = ../../src/sarcastic/accelerateTriangles.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2A21F311ED00505875 /* buildRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildRays.cpp; path = ../../src/sarcastic/buildRays.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2B21F311ED00505875 /* getUserInput.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = getUserInput.hpp; path = ../../src/sarcastic/getUserInput.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2C21F311ED00505875 /* reflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = reflect.hpp; path = ../../src/sarcastic/reflect.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2D21F311ED00505875 /* accelerateTriangles.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = accelerateTriangles.hpp; path = ../../src/sarcastic/accelerateTriangles.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB2E21F311ED00505875 /* cpuPOField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuPOField.cpp; path = ../../src/sarcastic/cpuPOField.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB2F21F311ED00505875 /* RCS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCS.h; path = ../../src/sarcastic/RCS.h; sourceTree = SOURCE_ROOT; };
 		9500CB4221F3120E00505875 /* bircs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bircs; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CB4921F3123E00505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/bircs/main.cpp; sourceTree = "<group>"; };
-		9500CB4A21F3123E00505875 /* oclReflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclReflect.hpp; path = ../../../src/bircs/oclReflect.hpp; sourceTree = "<group>"; };
-		9500CB4B21F3123E00505875 /* BircsVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BircsVersion.h.in; path = ../../../src/bircs/BircsVersion.h.in; sourceTree = "<group>"; };
-		9500CB4C21F3123E00505875 /* oclBuildShadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclBuildShadowRays.hpp; path = ../../../src/bircs/oclBuildShadowRays.hpp; sourceTree = "<group>"; };
-		9500CB4D21F3123E00505875 /* buildKernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildKernel.hpp; path = ../../../src/bircs/buildKernel.hpp; sourceTree = "<group>"; };
-		9500CB4E21F3123E00505875 /* oclReflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclReflect.cpp; path = ../../../src/bircs/oclReflect.cpp; sourceTree = "<group>"; };
-		9500CB4F21F3123E00505875 /* bircsBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bircsBanner.h; path = ../../../src/bircs/bircsBanner.h; sourceTree = "<group>"; };
-		9500CB5021F3123E00505875 /* oclRandomRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclRandomRays.cpp; path = ../../../src/bircs/oclRandomRays.cpp; sourceTree = "<group>"; };
-		9500CB5121F3123E00505875 /* buildKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildKernel.cpp; path = ../../../src/bircs/buildKernel.cpp; sourceTree = "<group>"; };
-		9500CB5221F3123E00505875 /* threadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = threadCore.hpp; path = ../../../src/bircs/threadCore.hpp; sourceTree = "<group>"; };
-		9500CB5321F3123E00505875 /* bircsBanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bircsBanner.c; path = ../../../src/bircs/bircsBanner.c; sourceTree = "<group>"; };
-		9500CB5421F3123E00505875 /* oclBuildShadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclBuildShadowRays.cpp; path = ../../../src/bircs/oclBuildShadowRays.cpp; sourceTree = "<group>"; };
-		9500CB5521F3123E00505875 /* oclRandomRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclRandomRays.hpp; path = ../../../src/bircs/oclRandomRays.hpp; sourceTree = "<group>"; };
-		9500CB5621F3123E00505875 /* threadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threadCore.cpp; path = ../../../src/bircs/threadCore.cpp; sourceTree = "<group>"; };
+		9500CB4921F3123E00505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/bircs/main.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB4A21F3123E00505875 /* oclReflect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclReflect.hpp; path = ../../src/bircs/oclReflect.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB4B21F3123E00505875 /* BircsVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BircsVersion.h.in; path = ../../src/bircs/BircsVersion.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB4C21F3123E00505875 /* oclBuildShadowRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclBuildShadowRays.hpp; path = ../../src/bircs/oclBuildShadowRays.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB4D21F3123E00505875 /* buildKernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildKernel.hpp; path = ../../src/bircs/buildKernel.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB4E21F3123E00505875 /* oclReflect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclReflect.cpp; path = ../../src/bircs/oclReflect.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB4F21F3123E00505875 /* bircsBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bircsBanner.h; path = ../../src/bircs/bircsBanner.h; sourceTree = SOURCE_ROOT; };
+		9500CB5021F3123E00505875 /* oclRandomRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclRandomRays.cpp; path = ../../src/bircs/oclRandomRays.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB5121F3123E00505875 /* buildKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildKernel.cpp; path = ../../src/bircs/buildKernel.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB5221F3123E00505875 /* threadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = threadCore.hpp; path = ../../src/bircs/threadCore.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB5321F3123E00505875 /* bircsBanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bircsBanner.c; path = ../../src/bircs/bircsBanner.c; sourceTree = SOURCE_ROOT; };
+		9500CB5421F3123E00505875 /* oclBuildShadowRays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oclBuildShadowRays.cpp; path = ../../src/bircs/oclBuildShadowRays.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB5521F3123E00505875 /* oclRandomRays.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = oclRandomRays.hpp; path = ../../src/bircs/oclRandomRays.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB5621F3123E00505875 /* threadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threadCore.cpp; path = ../../src/bircs/threadCore.cpp; sourceTree = SOURCE_ROOT; };
 		9500CB6221F3127300505875 /* cphdInfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cphdInfo; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CB6921F312A400505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../../src/cphdInfo/colourCodes.h; sourceTree = "<group>"; };
-		9500CB6A21F312A400505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/cphdInfo/main.cpp; sourceTree = "<group>"; };
-		9500CB6B21F312A400505875 /* readCPHD_Version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readCPHD_Version.h.in; path = ../../../src/cphdInfo/readCPHD_Version.h.in; sourceTree = "<group>"; };
+		9500CB6921F312A400505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../src/cphdInfo/colourCodes.h; sourceTree = SOURCE_ROOT; };
+		9500CB6A21F312A400505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/cphdInfo/main.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB6B21F312A400505875 /* readCPHD_Version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readCPHD_Version.h.in; path = ../../src/cphdInfo/readCPHD_Version.h.in; sourceTree = SOURCE_ROOT; };
 		9500CB7121F312C600505875 /* cphdShell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cphdShell; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CB7821F312ED00505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../../src/cphdShell/colourCodes.h; sourceTree = "<group>"; };
-		9500CB7921F312ED00505875 /* ecef2SceneCoords.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ecef2SceneCoords.hpp; path = ../../../src/cphdShell/ecef2SceneCoords.hpp; sourceTree = "<group>"; };
-		9500CB7A21F312ED00505875 /* cphdShell_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cphdShell_version.h.in; path = ../../../src/cphdShell/cphdShell_version.h.in; sourceTree = "<group>"; };
-		9500CB7B21F312ED00505875 /* ecef2SceneCoords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ecef2SceneCoords.cpp; path = ../../../src/cphdShell/ecef2SceneCoords.cpp; sourceTree = "<group>"; };
-		9500CB7C21F312ED00505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/cphdShell/main.cpp; sourceTree = "<group>"; };
+		9500CB7821F312ED00505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../src/cphdShell/colourCodes.h; sourceTree = SOURCE_ROOT; };
+		9500CB7921F312ED00505875 /* ecef2SceneCoords.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ecef2SceneCoords.hpp; path = ../../src/cphdShell/ecef2SceneCoords.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB7A21F312ED00505875 /* cphdShell_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cphdShell_version.h.in; path = ../../src/cphdShell/cphdShell_version.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB7B21F312ED00505875 /* ecef2SceneCoords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ecef2SceneCoords.cpp; path = ../../src/cphdShell/ecef2SceneCoords.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB7C21F312ED00505875 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/cphdShell/main.cpp; sourceTree = SOURCE_ROOT; };
 		9500CB8321F3135800505875 /* SARTrace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SARTrace; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CB8A21F3137D00505875 /* SARTracebanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SARTracebanner.cpp; path = ../../../src/SARTrace/SARTracebanner.cpp; sourceTree = "<group>"; };
-		9500CB8B21F3137D00505875 /* getSARTraceUserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = getSARTraceUserInput.cpp; path = ../../../src/SARTrace/getSARTraceUserInput.cpp; sourceTree = "<group>"; };
-		9500CB8C21F3137D00505875 /* traceThreadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = traceThreadCore.hpp; path = ../../../src/SARTrace/traceThreadCore.hpp; sourceTree = "<group>"; };
-		9500CB8D21F3137D00505875 /* SARTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SARTrace.cpp; path = ../../../src/SARTrace/SARTrace.cpp; sourceTree = "<group>"; };
-		9500CB8E21F3137D00505875 /* SARTrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SARTrace.hpp; path = ../../../src/SARTrace/SARTrace.hpp; sourceTree = "<group>"; };
-		9500CB8F21F3137D00505875 /* SartraceVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SartraceVersion.h.in; path = ../../../src/SARTrace/SartraceVersion.h.in; sourceTree = "<group>"; };
-		9500CB9021F3137D00505875 /* traceThreadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = traceThreadCore.cpp; path = ../../../src/SARTrace/traceThreadCore.cpp; sourceTree = "<group>"; };
+		9500CB8A21F3137D00505875 /* SARTracebanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SARTracebanner.cpp; path = ../../src/SARTrace/SARTracebanner.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB8B21F3137D00505875 /* getSARTraceUserInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = getSARTraceUserInput.cpp; path = ../../src/SARTrace/getSARTraceUserInput.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB8C21F3137D00505875 /* traceThreadCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = traceThreadCore.hpp; path = ../../src/SARTrace/traceThreadCore.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB8D21F3137D00505875 /* SARTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SARTrace.cpp; path = ../../src/SARTrace/SARTrace.cpp; sourceTree = SOURCE_ROOT; };
+		9500CB8E21F3137D00505875 /* SARTrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SARTrace.hpp; path = ../../src/SARTrace/SARTrace.hpp; sourceTree = SOURCE_ROOT; };
+		9500CB8F21F3137D00505875 /* SartraceVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SartraceVersion.h.in; path = ../../src/SARTrace/SartraceVersion.h.in; sourceTree = SOURCE_ROOT; };
+		9500CB9021F3137D00505875 /* traceThreadCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = traceThreadCore.cpp; path = ../../src/SARTrace/traceThreadCore.cpp; sourceTree = SOURCE_ROOT; };
 		9500CB9921F313C500505875 /* tdpocl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tdpocl; sourceTree = BUILT_PRODUCTS_DIR; };
-		9500CBA021F313E700505875 /* tdpcore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tdpcore.c; path = ../../../src/tdpocl/tdpcore.c; sourceTree = "<group>"; };
-		9500CBA121F313E700505875 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCLUtils.h; path = ../../../src/tdpocl/OpenCLUtils.h; sourceTree = "<group>"; };
-		9500CBA221F313E700505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../../src/tdpocl/colourCodes.h; sourceTree = "<group>"; };
-		9500CBA321F313E700505875 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getUserInput.c; path = ../../../src/tdpocl/getUserInput.c; sourceTree = "<group>"; };
-		9500CBA421F313E700505875 /* getMemorySize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getMemorySize.c; path = ../../../src/tdpocl/getMemorySize.c; sourceTree = "<group>"; };
-		9500CBA521F313E700505875 /* tdp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdp.h; path = ../../../src/tdpocl/tdp.h; sourceTree = "<group>"; };
-		9500CBA621F313E700505875 /* tdpKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdpKernel.h; path = ../../../src/tdpocl/tdpKernel.h; sourceTree = "<group>"; };
-		9500CBA721F313E700505875 /* geotiffWrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = geotiffWrite.c; path = ../../../src/tdpocl/geotiffWrite.c; sourceTree = "<group>"; };
-		9500CBA821F313E700505875 /* oclSRPRanges.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oclSRPRanges.c; path = ../../../src/tdpocl/oclSRPRanges.c; sourceTree = "<group>"; };
-		9500CBA921F313E700505875 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = OpenCLUtils.c; path = ../../../src/tdpocl/OpenCLUtils.c; sourceTree = "<group>"; };
-		9500CBAA21F313E700505875 /* topotrimSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = topotrimSetup.c; path = ../../../src/tdpocl/topotrimSetup.c; sourceTree = "<group>"; };
-		9500CBAB21F313E700505875 /* tdp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tdp.c; path = ../../../src/tdpocl/tdp.c; sourceTree = "<group>"; };
-		9500CBAC21F313E800505875 /* tdpcore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdpcore.h; path = ../../../src/tdpocl/tdpcore.h; sourceTree = "<group>"; };
-		9500CBAD21F313E800505875 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = banner.c; path = ../../../src/tdpocl/banner.c; sourceTree = "<group>"; };
-		9500CBAE21F313E800505875 /* createSurface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = createSurface.c; path = ../../../src/tdpocl/createSurface.c; sourceTree = "<group>"; };
-		9500CBAF21F313E800505875 /* tdpoclVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tdpoclVersion.h.in; path = ../../../src/tdpocl/tdpoclVersion.h.in; sourceTree = "<group>"; };
+		9500CBA021F313E700505875 /* tdpcore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tdpcore.c; path = ../../src/tdpocl/tdpcore.c; sourceTree = SOURCE_ROOT; };
+		9500CBA121F313E700505875 /* OpenCLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCLUtils.h; path = ../../src/tdpocl/OpenCLUtils.h; sourceTree = SOURCE_ROOT; };
+		9500CBA221F313E700505875 /* colourCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../src/tdpocl/colourCodes.h; sourceTree = SOURCE_ROOT; };
+		9500CBA321F313E700505875 /* getUserInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getUserInput.c; path = ../../src/tdpocl/getUserInput.c; sourceTree = SOURCE_ROOT; };
+		9500CBA421F313E700505875 /* getMemorySize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getMemorySize.c; path = ../../src/tdpocl/getMemorySize.c; sourceTree = SOURCE_ROOT; };
+		9500CBA521F313E700505875 /* tdp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdp.h; path = ../../src/tdpocl/tdp.h; sourceTree = SOURCE_ROOT; };
+		9500CBA621F313E700505875 /* tdpKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdpKernel.h; path = ../../src/tdpocl/tdpKernel.h; sourceTree = SOURCE_ROOT; };
+		9500CBA721F313E700505875 /* geotiffWrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = geotiffWrite.c; path = ../../src/tdpocl/geotiffWrite.c; sourceTree = SOURCE_ROOT; };
+		9500CBA821F313E700505875 /* oclSRPRanges.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oclSRPRanges.c; path = ../../src/tdpocl/oclSRPRanges.c; sourceTree = SOURCE_ROOT; };
+		9500CBA921F313E700505875 /* OpenCLUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = OpenCLUtils.c; path = ../../src/tdpocl/OpenCLUtils.c; sourceTree = SOURCE_ROOT; };
+		9500CBAA21F313E700505875 /* topotrimSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = topotrimSetup.c; path = ../../src/tdpocl/topotrimSetup.c; sourceTree = SOURCE_ROOT; };
+		9500CBAB21F313E700505875 /* tdp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tdp.c; path = ../../src/tdpocl/tdp.c; sourceTree = SOURCE_ROOT; };
+		9500CBAC21F313E800505875 /* tdpcore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tdpcore.h; path = ../../src/tdpocl/tdpcore.h; sourceTree = SOURCE_ROOT; };
+		9500CBAD21F313E800505875 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = banner.c; path = ../../src/tdpocl/banner.c; sourceTree = SOURCE_ROOT; };
+		9500CBAE21F313E800505875 /* createSurface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = createSurface.c; path = ../../src/tdpocl/createSurface.c; sourceTree = SOURCE_ROOT; };
+		9500CBAF21F313E800505875 /* tdpoclVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tdpoclVersion.h.in; path = ../../src/tdpocl/tdpoclVersion.h.in; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,8 +341,9 @@
 				9500CB1D21F311EC00505875 /* TxPowerPerRay.c */,
 				9500CB1C21F311EC00505875 /* TxPowerPerRay.h */,
 			);
-			path = sarcastic;
-			sourceTree = "<group>";
+			name = sarcastic;
+			path = ../../src/sarcastic;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CAE921F30DA400505875 /* colladaToPlyFile */ = {
 			isa = PBXGroup;
@@ -353,8 +354,9 @@
 				9500CB0021F30F7900505875 /* CTTVersion.h.in */,
 				9500CB0121F30F7900505875 /* main.cpp */,
 			);
-			path = colladaToPlyFile;
-			sourceTree = "<group>";
+			name = colladaToPlyFile;
+			path = ../../src/colladaToPlyFile;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB0A21F3112D00505875 /* materialise */ = {
 			isa = PBXGroup;
@@ -362,8 +364,9 @@
 				9500CB1021F3117000505875 /* main.cpp */,
 				9500CB1121F3117000505875 /* materialise_version.h.in */,
 			);
-			path = materialise;
-			sourceTree = "<group>";
+			name = materialise;
+			path = ../../src/materialise;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB4321F3120E00505875 /* bircs */ = {
 			isa = PBXGroup;
@@ -383,8 +386,9 @@
 				9500CB5621F3123E00505875 /* threadCore.cpp */,
 				9500CB5221F3123E00505875 /* threadCore.hpp */,
 			);
-			path = bircs;
-			sourceTree = "<group>";
+			name = bircs;
+			path = ../../src/bircs;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB6321F3127300505875 /* cphdInfo */ = {
 			isa = PBXGroup;
@@ -393,8 +397,9 @@
 				9500CB6A21F312A400505875 /* main.cpp */,
 				9500CB6B21F312A400505875 /* readCPHD_Version.h.in */,
 			);
-			path = cphdInfo;
-			sourceTree = "<group>";
+			name = cphdInfo;
+			path = ../../src/cphdInfo;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB7221F312C600505875 /* cphdShell */ = {
 			isa = PBXGroup;
@@ -405,8 +410,9 @@
 				9500CB7921F312ED00505875 /* ecef2SceneCoords.hpp */,
 				9500CB7C21F312ED00505875 /* main.cpp */,
 			);
-			path = cphdShell;
-			sourceTree = "<group>";
+			name = cphdShell;
+			path = ../../src/cphdShell;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB8421F3135900505875 /* SARTrace */ = {
 			isa = PBXGroup;
@@ -419,8 +425,9 @@
 				9500CB9021F3137D00505875 /* traceThreadCore.cpp */,
 				9500CB8C21F3137D00505875 /* traceThreadCore.hpp */,
 			);
-			path = SARTrace;
-			sourceTree = "<group>";
+			name = SARTrace;
+			path = ../../src/SARTrace;
+			sourceTree = SOURCE_ROOT;
 		};
 		9500CB9A21F313C500505875 /* tdpocl */ = {
 			isa = PBXGroup;
@@ -442,8 +449,9 @@
 				9500CBAF21F313E800505875 /* tdpoclVersion.h.in */,
 				9500CBAA21F313E700505875 /* topotrimSetup.c */,
 			);
-			path = tdpocl;
-			sourceTree = "<group>";
+			name = tdpocl;
+			path = ../../src/tdpocl;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
