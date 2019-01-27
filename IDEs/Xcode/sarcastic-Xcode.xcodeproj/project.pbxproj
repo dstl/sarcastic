@@ -58,8 +58,32 @@
 		9547A2FB21FDE956005272A9 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
 		9547A2FE21FDEA0F005272A9 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
 		9547A2FF21FDEA0F005272A9 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
-		9547A30221FDECFB005272A9 /* colladaToPlyFile in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CAE821F30DA400505875 /* colladaToPlyFile */; };
+		9547A30221FDECFB005272A9 /* colladaToPlyFile in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CAE821F30DA400505875 /* colladaToPlyFile */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9547A30421FDF4D1005272A9 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		9547A30721FE06F0005272A9 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CAFD21F30F7900505875 /* colladainterface.cpp */; };
+		9547A30821FE070B005272A9 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
+		9547A30921FE070B005272A9 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F221FDE8FC005272A9 /* tinyxmlerror.cpp */; };
+		9547A30A21FE070B005272A9 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
+		9547A30B21FE070B005272A9 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
+		9547A30C21FE071D005272A9 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
+		9547A30D21FE071D005272A9 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F721FDE956005272A9 /* TriangleMesh.cpp */; };
+		9547A30E21FE072A005272A9 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F621FDE956005272A9 /* matrixMultiplication.c */; };
+		9547A32921FE0810005272A9 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32521FE07B5005272A9 /* boxMullerRandom.c */; };
+		9547A32A21FE0821005272A9 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
+		9547A32B21FE0821005272A9 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32121FE07B5005272A9 /* printProgress.c */; };
+		9547A32C21FE0821005272A9 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
+		9547A32E21FE08B2005272A9 /* libCGAL.13.0.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A32D21FE08B2005272A9 /* libCGAL.13.0.2.dylib */; };
+		9547A32F21FE08D6005272A9 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		9547A33021FE08E2005272A9 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		9547A33221FE0997005272A9 /* libCGAL_Core.13.0.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33121FE0997005272A9 /* libCGAL_Core.13.0.2.dylib */; };
+		9547A33321FE09E1005272A9 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		9547A33421FE09E1005272A9 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		9547A33721FE09E1005272A9 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33521FE09E1005272A9 /* libboost_system.a */; };
+		9547A33821FE09E1005272A9 /* libboost_system-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33621FE09E1005272A9 /* libboost_system-mt.a */; };
+		9547A33B21FE0A05005272A9 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */; };
+		9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33A21FE0A05005272A9 /* libboost_filesystem.a */; };
+		9547A33E21FE0A2D005272A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33D21FE0A2D005272A9 /* libgmp.a */; };
+		9547A33F21FE0A9C005272A9 /* materialise in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB0921F3112D00505875 /* materialise */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		95C471D421F50E410019FECF /* cmplx.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C4718121F50E3D0019FECF /* cmplx.h */; };
 		95C471D521F50E410019FECF /* image_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 95C4718221F50E3D0019FECF /* image_matrix.c */; };
 		95C471D621F50E410019FECF /* math_macro.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C4718321F50E3D0019FECF /* math_macro.h */; };
@@ -146,6 +170,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9547A30521FE06AE005272A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
 		95C4722921F8A5780019FECF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
@@ -168,8 +199,8 @@
 		9500CAE621F30DA400505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = "";
-			dstSubfolderSpec = 16;
+			dstPath = $PROJECT_DIR/../../bin;
+			dstSubfolderSpec = 0;
 			files = (
 				9547A30221FDECFB005272A9 /* colladaToPlyFile in CopyFiles */,
 			);
@@ -177,12 +208,13 @@
 		};
 		9500CB0721F3112D00505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				9547A33F21FE0A9C005272A9 /* materialise in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CB4021F3120E00505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -331,6 +363,39 @@
 		9547A2FC21FDEA0F005272A9 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../../../usr/local/Cellar/fftw/3.3.8/lib/libfftw3f.a; sourceTree = "<group>"; };
 		9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f_threads.a; path = ../../../../../../usr/local/Cellar/fftw/3.3.8/lib/libfftw3f_threads.a; sourceTree = "<group>"; };
 		9547A30321FDF4D1005272A9 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
+		9547A30F21FE07B4005272A9 /* Triangle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Triangle.m; path = ../../src/Common/Triangle.m; sourceTree = "<group>"; };
+		9547A31021FE07B4005272A9 /* printProgress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = printProgress.h; path = ../../src/Common/printProgress.h; sourceTree = "<group>"; };
+		9547A31121FE07B4005272A9 /* trianglecpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = trianglecpp.cpp; path = ../../src/Common/trianglecpp.cpp; sourceTree = "<group>"; };
+		9547A31221FE07B4005272A9 /* matrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = matrixMultiplication.h; path = ../../src/Common/matrixMultiplication.h; sourceTree = "<group>"; };
+		9547A31321FE07B4005272A9 /* pmath_rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pmath_rng.c; path = ../../src/Common/pmath_rng.c; sourceTree = "<group>"; };
+		9547A31421FE07B4005272A9 /* MVectorObjc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MVectorObjc.h; path = ../../src/Common/MVectorObjc.h; sourceTree = "<group>"; };
+		9547A31521FE07B4005272A9 /* TriangleFile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TriangleFile.cpp; path = ../../src/Common/TriangleFile.cpp; sourceTree = "<group>"; };
+		9547A31621FE07B4005272A9 /* OpenCLUtils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = OpenCLUtils.c; path = ../../src/Common/OpenCLUtils.c; sourceTree = "<group>"; };
+		9547A31721FE07B4005272A9 /* colourCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = colourCodes.h; path = ../../src/Common/colourCodes.h; sourceTree = "<group>"; };
+		9547A31821FE07B4005272A9 /* sceneExtent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = sceneExtent.hpp; path = ../../src/Common/sceneExtent.hpp; sourceTree = "<group>"; };
+		9547A31921FE07B4005272A9 /* MVectorObjc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MVectorObjc.m; path = ../../src/Common/MVectorObjc.m; sourceTree = "<group>"; };
+		9547A31A21FE07B4005272A9 /* TriangleFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TriangleFile.h; path = ../../src/Common/TriangleFile.h; sourceTree = "<group>"; };
+		9547A31B21FE07B5005272A9 /* ranf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ranf.h; path = ../../src/Common/ranf.h; sourceTree = "<group>"; };
+		9547A31C21FE07B5005272A9 /* materialProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = materialProperties.h; path = ../../src/Common/materialProperties.h; sourceTree = "<group>"; };
+		9547A31D21FE07B5005272A9 /* OpenCLUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenCLUtils.h; path = ../../src/Common/OpenCLUtils.h; sourceTree = "<group>"; };
+		9547A31E21FE07B5005272A9 /* readMaterialFile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = readMaterialFile.hpp; path = ../../src/Common/readMaterialFile.hpp; sourceTree = "<group>"; };
+		9547A31F21FE07B5005272A9 /* boxMullerRandom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = boxMullerRandom.h; path = ../../src/Common/boxMullerRandom.h; sourceTree = "<group>"; };
+		9547A32021FE07B5005272A9 /* radarMaterial.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = radarMaterial.h; path = ../../src/Common/radarMaterial.h; sourceTree = "<group>"; };
+		9547A32121FE07B5005272A9 /* printProgress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = printProgress.c; path = ../../src/Common/printProgress.c; sourceTree = "<group>"; };
+		9547A32221FE07B5005272A9 /* radarMaterial.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = radarMaterial.m; path = ../../src/Common/radarMaterial.m; sourceTree = "<group>"; };
+		9547A32321FE07B5005272A9 /* trianglecpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = trianglecpp.h; path = ../../src/Common/trianglecpp.h; sourceTree = "<group>"; };
+		9547A32421FE07B5005272A9 /* Triangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Triangle.h; path = ../../src/Common/Triangle.h; sourceTree = "<group>"; };
+		9547A32521FE07B5005272A9 /* boxMullerRandom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = boxMullerRandom.c; path = ../../src/Common/boxMullerRandom.c; sourceTree = "<group>"; };
+		9547A32621FE07B5005272A9 /* TriangleMesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = TriangleMesh.hpp; path = ../../src/Common/TriangleMesh.hpp; sourceTree = "<group>"; };
+		9547A32721FE07B5005272A9 /* sceneExtent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sceneExtent.cpp; path = ../../src/Common/sceneExtent.cpp; sourceTree = "<group>"; };
+		9547A32821FE07B5005272A9 /* ranf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ranf.c; path = ../../src/Common/ranf.c; sourceTree = "<group>"; };
+		9547A32D21FE08B2005272A9 /* libCGAL.13.0.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL.13.0.2.dylib; path = ../../../../../../usr/local/Cellar/cgal/4.13/lib/libCGAL.13.0.2.dylib; sourceTree = "<group>"; };
+		9547A33121FE0997005272A9 /* libCGAL_Core.13.0.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL_Core.13.0.2.dylib; path = ../../../../../../usr/local/Cellar/cgal/4.13/lib/libCGAL_Core.13.0.2.dylib; sourceTree = "<group>"; };
+		9547A33521FE09E1005272A9 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_system.a; sourceTree = "<group>"; };
+		9547A33621FE09E1005272A9 /* libboost_system-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_system-mt.a"; path = "../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_system-mt.a"; sourceTree = "<group>"; };
+		9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_filesystem-mt.a"; path = "../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_filesystem-mt.a"; sourceTree = "<group>"; };
+		9547A33A21FE0A05005272A9 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_filesystem.a; sourceTree = "<group>"; };
+		9547A33D21FE0A2D005272A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../../../../usr/local/Cellar/gmp/6.1.2_2/lib/libgmp.a; sourceTree = "<group>"; };
 		95C4717C21F50DA40019FECF /* libsarclib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsarclib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		95C4718121F50E3D0019FECF /* cmplx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cmplx.h; path = ../../src/sarclib/cmplx.h; sourceTree = "<group>"; };
 		95C4718221F50E3D0019FECF /* image_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = image_matrix.c; path = ../../src/sarclib/image_matrix.c; sourceTree = "<group>"; };
@@ -440,6 +505,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9547A33E21FE0A2D005272A9 /* libgmp.a in Frameworks */,
+				9547A33B21FE0A05005272A9 /* libboost_filesystem-mt.a in Frameworks */,
+				9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */,
+				9547A33721FE09E1005272A9 /* libboost_system.a in Frameworks */,
+				9547A33821FE09E1005272A9 /* libboost_system-mt.a in Frameworks */,
+				9547A33321FE09E1005272A9 /* libfftw3f.a in Frameworks */,
+				9547A33421FE09E1005272A9 /* libfftw3f_threads.a in Frameworks */,
+				9547A33221FE0997005272A9 /* libCGAL_Core.13.0.2.dylib in Frameworks */,
+				9547A32E21FE08B2005272A9 /* libCGAL.13.0.2.dylib in Frameworks */,
+				9547A33021FE08E2005272A9 /* libreadline.tbd in Frameworks */,
+				9547A32F21FE08D6005272A9 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +746,32 @@
 		9547A30121FDEA5D005272A9 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				9547A32521FE07B5005272A9 /* boxMullerRandom.c */,
+				9547A31F21FE07B5005272A9 /* boxMullerRandom.h */,
+				9547A31721FE07B4005272A9 /* colourCodes.h */,
+				9547A31C21FE07B5005272A9 /* materialProperties.h */,
+				9547A31221FE07B4005272A9 /* matrixMultiplication.h */,
+				9547A31421FE07B4005272A9 /* MVectorObjc.h */,
+				9547A31921FE07B4005272A9 /* MVectorObjc.m */,
+				9547A31621FE07B4005272A9 /* OpenCLUtils.c */,
+				9547A31D21FE07B5005272A9 /* OpenCLUtils.h */,
+				9547A31321FE07B4005272A9 /* pmath_rng.c */,
+				9547A32121FE07B5005272A9 /* printProgress.c */,
+				9547A31021FE07B4005272A9 /* printProgress.h */,
+				9547A32021FE07B5005272A9 /* radarMaterial.h */,
+				9547A32221FE07B5005272A9 /* radarMaterial.m */,
+				9547A32821FE07B5005272A9 /* ranf.c */,
+				9547A31B21FE07B5005272A9 /* ranf.h */,
+				9547A31E21FE07B5005272A9 /* readMaterialFile.hpp */,
+				9547A32721FE07B5005272A9 /* sceneExtent.cpp */,
+				9547A31821FE07B4005272A9 /* sceneExtent.hpp */,
+				9547A32421FE07B5005272A9 /* Triangle.h */,
+				9547A30F21FE07B4005272A9 /* Triangle.m */,
+				9547A31121FE07B4005272A9 /* trianglecpp.cpp */,
+				9547A32321FE07B5005272A9 /* trianglecpp.h */,
+				9547A31521FE07B4005272A9 /* TriangleFile.cpp */,
+				9547A31A21FE07B4005272A9 /* TriangleFile.h */,
+				9547A32621FE07B5005272A9 /* TriangleMesh.hpp */,
 				9547A2F621FDE956005272A9 /* matrixMultiplication.c */,
 				9547A2F821FDE956005272A9 /* readMaterialFile.cpp */,
 				9547A2F721FDE956005272A9 /* TriangleMesh.cpp */,
@@ -774,6 +876,13 @@
 		95C4722721F8A5640019FECF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9547A33D21FE0A2D005272A9 /* libgmp.a */,
+				9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */,
+				9547A33A21FE0A05005272A9 /* libboost_filesystem.a */,
+				9547A33621FE09E1005272A9 /* libboost_system-mt.a */,
+				9547A33521FE09E1005272A9 /* libboost_system.a */,
+				9547A33121FE0997005272A9 /* libCGAL_Core.13.0.2.dylib */,
+				9547A32D21FE08B2005272A9 /* libCGAL.13.0.2.dylib */,
 				9547A30321FDF4D1005272A9 /* libreadline.tbd */,
 				9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */,
 				9547A2FC21FDEA0F005272A9 /* libfftw3f.a */,
@@ -877,6 +986,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9547A30621FE06AE005272A9 /* PBXTargetDependency */,
 			);
 			name = materialise;
 			productName = materialise;
@@ -1091,6 +1201,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9547A32A21FE0821005272A9 /* pmath_rng.c in Sources */,
+				9547A32B21FE0821005272A9 /* printProgress.c in Sources */,
+				9547A32C21FE0821005272A9 /* ranf.c in Sources */,
+				9547A32921FE0810005272A9 /* boxMullerRandom.c in Sources */,
+				9547A30E21FE072A005272A9 /* matrixMultiplication.c in Sources */,
+				9547A30C21FE071D005272A9 /* readMaterialFile.cpp in Sources */,
+				9547A30D21FE071D005272A9 /* TriangleMesh.cpp in Sources */,
+				9547A30821FE070B005272A9 /* tinyxml.cpp in Sources */,
+				9547A30921FE070B005272A9 /* tinyxmlerror.cpp in Sources */,
+				9547A30A21FE070B005272A9 /* tinyxmlparser.cpp in Sources */,
+				9547A30B21FE070B005272A9 /* tinystr.cpp in Sources */,
+				9547A30721FE06F0005272A9 /* colladainterface.cpp in Sources */,
 				9500CB1221F3117000505875 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1209,6 +1331,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9547A30621FE06AE005272A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 9547A30521FE06AE005272A9 /* PBXContainerItemProxy */;
+		};
 		95C4722A21F8A5780019FECF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 95C4717B21F50DA40019FECF /* sarclib */;
@@ -1398,6 +1525,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/cgal/4.13/lib,
+					/usr/local/Cellar/fftw/3.3.8/lib,
+					/usr/local/Cellar/boost/1.68.0_1/lib,
+					/usr/local/Cellar/gmp/6.1.2_2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1406,6 +1540,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/cgal/4.13/lib,
+					/usr/local/Cellar/fftw/3.3.8/lib,
+					/usr/local/Cellar/boost/1.68.0_1/lib,
+					/usr/local/Cellar/gmp/6.1.2_2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
