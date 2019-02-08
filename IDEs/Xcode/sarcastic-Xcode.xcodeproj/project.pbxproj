@@ -42,7 +42,6 @@
 		9500CBB021F313E800505875 /* tdpcore.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA021F313E700505875 /* tdpcore.c */; };
 		9500CBB121F313E800505875 /* getUserInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA321F313E700505875 /* getUserInput.c */; };
 		9500CBB221F313E800505875 /* getMemorySize.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA421F313E700505875 /* getMemorySize.c */; };
-		9500CBB321F313E800505875 /* geotiffWrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA721F313E700505875 /* geotiffWrite.c */; };
 		9500CBB421F313E800505875 /* oclSRPRanges.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA821F313E700505875 /* oclSRPRanges.c */; };
 		9500CBB521F313E800505875 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBA921F313E700505875 /* OpenCLUtils.c */; };
 		9500CBB621F313E800505875 /* topotrimSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBAA21F313E700505875 /* topotrimSetup.c */; };
@@ -84,6 +83,113 @@
 		9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33A21FE0A05005272A9 /* libboost_filesystem.a */; };
 		9547A33E21FE0A2D005272A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33D21FE0A2D005272A9 /* libgmp.a */; };
 		9547A33F21FE0A9C005272A9 /* materialise in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB0921F3112D00505875 /* materialise */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C18CD220DFE7D00053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C18CF220DFEAD00053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C18D0220DFEB600053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C18D1220DFED300053ED0 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959C18D2220DFED300053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C18D3220DFF0C00053ED0 /* cphdShell in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB7121F312C600505875 /* cphdShell */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C18D8220E10A200053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C18D9220E10D800053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C18DA220E10F600053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C18DB220E114600053ED0 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959C18DC220E114600053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C18DD220E11B300053ED0 /* cphdInfo in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB6221F3127300505875 /* cphdInfo */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C18E5220E175600053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C18E7220E17D200053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C18E8220E17D800053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C18E9220E17EB00053ED0 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959C18EA220E17EB00053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C18EB220E180600053ED0 /* sarcastic in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CADA21F30D0600505875 /* sarcastic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C18F2220E226D00053ED0 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EC220E226D00053ED0 /* clipToAABB.cpp */; };
+		959C18F3220E226D00053ED0 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18ED220E226D00053ED0 /* rayTrace.cpp */; };
+		959C18F4220E226D00053ED0 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EE220E226D00053ED0 /* AABB.cpp */; };
+		959C18F5220E226D00053ED0 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EF220E226D00053ED0 /* kdTreeNode.cpp */; };
+		959C18F6220E226D00053ED0 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F0220E226D00053ED0 /* buildTree.cpp */; };
+		959C18F7220E226D00053ED0 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F1220E226D00053ED0 /* splitCandidate.cpp */; };
+		959C18F8220E232100053ED0 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32521FE07B5005272A9 /* boxMullerRandom.c */; };
+		959C18F9220E232100053ED0 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
+		959C18FA220E232100053ED0 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32121FE07B5005272A9 /* printProgress.c */; };
+		959C18FB220E232100053ED0 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
+		959C18FC220E232100053ED0 /* sceneExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32721FE07B5005272A9 /* sceneExtent.cpp */; };
+		959C18FD220E232100053ED0 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F621FDE956005272A9 /* matrixMultiplication.c */; };
+		959C18FE220E232100053ED0 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
+		959C18FF220E232100053ED0 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F721FDE956005272A9 /* TriangleMesh.cpp */; };
+		959C1900220E232100053ED0 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
+		959C1901220E232100053ED0 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F221FDE8FC005272A9 /* tinyxmlerror.cpp */; };
+		959C1902220E232100053ED0 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
+		959C1903220E232100053ED0 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
+		959C1904220E234400053ED0 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CAFD21F30F7900505875 /* colladainterface.cpp */; };
+		959C1909220E243A00053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C190A220E24C100053ED0 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32521FE07B5005272A9 /* boxMullerRandom.c */; };
+		959C190B220E24C100053ED0 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31621FE07B4005272A9 /* OpenCLUtils.c */; };
+		959C190C220E24C100053ED0 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
+		959C190D220E24C100053ED0 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32121FE07B5005272A9 /* printProgress.c */; };
+		959C190E220E24C100053ED0 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
+		959C190F220E24C100053ED0 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F621FDE956005272A9 /* matrixMultiplication.c */; };
+		959C1910220E24C100053ED0 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
+		959C1911220E24C100053ED0 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F721FDE956005272A9 /* TriangleMesh.cpp */; };
+		959C1912220E24C100053ED0 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
+		959C1913220E24C100053ED0 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F221FDE8FC005272A9 /* tinyxmlerror.cpp */; };
+		959C1914220E24C100053ED0 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
+		959C1915220E24C100053ED0 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
+		959C1916220E24DA00053ED0 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CAFD21F30F7900505875 /* colladainterface.cpp */; };
+		959C1917220E258300053ED0 /* accelerateTriangles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2921F311ED00505875 /* accelerateTriangles.cpp */; };
+		959C1918220E258300053ED0 /* buildRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2A21F311ED00505875 /* buildRays.cpp */; };
+		959C1919220E258300053ED0 /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1621F311EC00505875 /* buildRopesAndBoxes.cpp */; };
+		959C191A220E258300053ED0 /* cpuPOField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2E21F311ED00505875 /* cpuPOField.cpp */; };
+		959C191B220E258300053ED0 /* RCS.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2121F311EC00505875 /* RCS.c */; };
+		959C191C220E258300053ED0 /* reflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1421F311EC00505875 /* reflect.cpp */; };
+		959C191D220E258300053ED0 /* shadowRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2221F311EC00505875 /* shadowRays.cpp */; };
+		959C191E220E258300053ED0 /* tryReadFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2721F311EC00505875 /* tryReadFile.cpp */; };
+		959C191F220E258300053ED0 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1D21F311EC00505875 /* TxPowerPerRay.c */; };
+		959C1920220E281300053ED0 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18ED220E226D00053ED0 /* rayTrace.cpp */; };
+		959C1921220E282400053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C1922220E282D00053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C1923220E284400053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C1925220E284400053ED0 /* libfftw3l_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C1924220E284400053ED0 /* libfftw3l_threads.a */; };
+		959C1926220E28EB00053ED0 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EE220E226D00053ED0 /* AABB.cpp */; };
+		959C1927220E28EB00053ED0 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F0220E226D00053ED0 /* buildTree.cpp */; };
+		959C1928220E28EC00053ED0 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EC220E226D00053ED0 /* clipToAABB.cpp */; };
+		959C1929220E28EC00053ED0 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EF220E226D00053ED0 /* kdTreeNode.cpp */; };
+		959C192A220E292900053ED0 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F1220E226D00053ED0 /* splitCandidate.cpp */; };
+		959C192B220E295800053ED0 /* bircs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB4221F3120E00505875 /* bircs */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C192E220E297600053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C1931220E2B1300053ED0 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32521FE07B5005272A9 /* boxMullerRandom.c */; };
+		959C1932220E2B1300053ED0 /* OpenCLUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31621FE07B4005272A9 /* OpenCLUtils.c */; };
+		959C1933220E2B1300053ED0 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
+		959C1934220E2B1300053ED0 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
+		959C1935220E2B1300053ED0 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F621FDE956005272A9 /* matrixMultiplication.c */; };
+		959C1936220E2B1300053ED0 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
+		959C1937220E2B1300053ED0 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F721FDE956005272A9 /* TriangleMesh.cpp */; };
+		959C1938220E2B1300053ED0 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
+		959C1939220E2B1300053ED0 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F221FDE8FC005272A9 /* tinyxmlerror.cpp */; };
+		959C193A220E2B1300053ED0 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
+		959C193B220E2B1300053ED0 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
+		959C193C220E2B1300053ED0 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CAFD21F30F7900505875 /* colladainterface.cpp */; };
+		959C193D220E2B1300053ED0 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EE220E226D00053ED0 /* AABB.cpp */; };
+		959C193E220E2B1300053ED0 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F0220E226D00053ED0 /* buildTree.cpp */; };
+		959C193F220E2B1300053ED0 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EC220E226D00053ED0 /* clipToAABB.cpp */; };
+		959C1940220E2B1300053ED0 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18EF220E226D00053ED0 /* kdTreeNode.cpp */; };
+		959C1941220E2B1300053ED0 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18ED220E226D00053ED0 /* rayTrace.cpp */; };
+		959C1942220E2B1300053ED0 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959C18F1220E226D00053ED0 /* splitCandidate.cpp */; };
+		959C1943220E2B1300053ED0 /* accelerateTriangles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2921F311ED00505875 /* accelerateTriangles.cpp */; };
+		959C1944220E2B1300053ED0 /* buildRays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2A21F311ED00505875 /* buildRays.cpp */; };
+		959C1945220E2B1300053ED0 /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1621F311EC00505875 /* buildRopesAndBoxes.cpp */; };
+		959C1946220E2B1300053ED0 /* ecef2SceneCoords.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2421F311EC00505875 /* ecef2SceneCoords.c */; };
+		959C1947220E2B1300053ED0 /* reflect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1421F311EC00505875 /* reflect.cpp */; };
+		959C1948220E2B3400053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C1949220E2B3B00053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C194A220E2B5500053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C194B220E2B5500053ED0 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959C194C220E2B7700053ED0 /* SARTrace in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB8321F3135800505875 /* SARTrace */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C1951220E2C5B00053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959C1952220E2C6300053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959C1953220E2C6900053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959C1954220E2C8400053ED0 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959C1955220E2C8400053ED0 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959C1956220E2C9900053ED0 /* tdpocl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB9921F313C500505875 /* tdpocl */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959C1957220E2CE300053ED0 /* TxPowerPerRay.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1D21F311EC00505875 /* TxPowerPerRay.c */; };
 		95C471D421F50E410019FECF /* cmplx.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C4718121F50E3D0019FECF /* cmplx.h */; };
 		95C471D521F50E410019FECF /* image_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 95C4718221F50E3D0019FECF /* image_matrix.c */; };
 		95C471D621F50E410019FECF /* math_macro.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C4718321F50E3D0019FECF /* math_macro.h */; };
@@ -177,6 +283,48 @@
 			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
 			remoteInfo = sarclib;
 		};
+		959C18CB220DFE6200053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959C18D6220E106100053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959C18E3220E174D00053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959C1905220E238400053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959C192C220E296F00053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959C194D220E2B9400053ED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
 		95C4722921F8A5780019FECF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
@@ -189,12 +337,13 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		9500CAD821F30D0600505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C18EB220E180600053ED0 /* sarcastic in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CAE621F30DA400505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -218,53 +367,58 @@
 		};
 		9500CB4021F3120E00505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C192B220E295800053ED0 /* bircs in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CB6021F3127300505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C18DD220E11B300053ED0 /* cphdInfo in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CB6F21F312C600505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C18D3220DFF0C00053ED0 /* cphdShell in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CB8121F3135800505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C194C220E2B7700053ED0 /* SARTrace in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9500CB9721F313C500505875 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR/../../bin;
 			dstSubfolderSpec = 0;
 			files = (
+				959C1956220E2C9900053ED0 /* tdpocl in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9500CADA21F30D0600505875 /* sarcastic */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
+		9500CADA21F30D0600505875 /* sarcastic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sarcastic; sourceTree = BUILT_PRODUCTS_DIR; };
 		9500CAE821F30DA400505875 /* colladaToPlyFile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = colladaToPlyFile; sourceTree = BUILT_PRODUCTS_DIR; };
 		9500CAFD21F30F7900505875 /* colladainterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colladainterface.cpp; path = ../../src/colladaToPlyFile/colladainterface.cpp; sourceTree = SOURCE_ROOT; };
 		9500CAFE21F30F7900505875 /* banner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = banner.cpp; path = ../../src/colladaToPlyFile/banner.cpp; sourceTree = SOURCE_ROOT; };
@@ -396,6 +550,22 @@
 		9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_filesystem-mt.a"; path = "../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_filesystem-mt.a"; sourceTree = "<group>"; };
 		9547A33A21FE0A05005272A9 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		9547A33D21FE0A2D005272A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../../../../usr/local/Cellar/gmp/6.1.2_2/lib/libgmp.a; sourceTree = "<group>"; };
+		9547A34021FE0F8C005272A9 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C18CE220DFEAD00053ED0 /* libexpat.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libexpat.tbd; path = usr/lib/libexpat.tbd; sourceTree = SDKROOT; };
+		959C18D5220E055600053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C18DE220E130E00053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C18E0220E143900053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C18E2220E169700053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C18EC220E226D00053ED0 /* clipToAABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipToAABB.cpp; path = ../fastKdTree/clipToAABB.cpp; sourceTree = "<group>"; };
+		959C18ED220E226D00053ED0 /* rayTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rayTrace.cpp; path = ../fastKdTree/rayTrace.cpp; sourceTree = "<group>"; };
+		959C18EE220E226D00053ED0 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AABB.cpp; path = ../fastKdTree/AABB.cpp; sourceTree = "<group>"; };
+		959C18EF220E226D00053ED0 /* kdTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kdTreeNode.cpp; path = ../fastKdTree/kdTreeNode.cpp; sourceTree = "<group>"; };
+		959C18F0220E226D00053ED0 /* buildTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildTree.cpp; path = ../fastKdTree/buildTree.cpp; sourceTree = "<group>"; };
+		959C18F1220E226D00053ED0 /* splitCandidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = splitCandidate.cpp; path = ../fastKdTree/splitCandidate.cpp; sourceTree = "<group>"; };
+		959C1907220E23AA00053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C1924220E284400053ED0 /* libfftw3l_threads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3l_threads.a; path = ../../../../../../usr/local/Cellar/fftw/3.3.8/lib/libfftw3l_threads.a; sourceTree = "<group>"; };
+		959C1930220E29D300053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959C194F220E2BD400053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		95C4717C21F50DA40019FECF /* libsarclib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsarclib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		95C4718121F50E3D0019FECF /* cmplx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cmplx.h; path = ../../src/sarclib/cmplx.h; sourceTree = "<group>"; };
 		95C4718221F50E3D0019FECF /* image_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = image_matrix.c; path = ../../src/sarclib/image_matrix.c; sourceTree = "<group>"; };
@@ -487,6 +657,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C18E9220E17EB00053ED0 /* libfftw3f_threads.a in Frameworks */,
+				959C18EA220E17EB00053ED0 /* libfftw3f.a in Frameworks */,
+				959C18E8220E17D800053ED0 /* libreadline.tbd in Frameworks */,
+				959C18E7220E17D200053ED0 /* libexpat.tbd in Frameworks */,
+				959C18E5220E175600053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +698,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C1925220E284400053ED0 /* libfftw3l_threads.a in Frameworks */,
+				959C1923220E284400053ED0 /* libfftw3f.a in Frameworks */,
+				959C1922220E282D00053ED0 /* libexpat.tbd in Frameworks */,
+				959C1921220E282400053ED0 /* libreadline.tbd in Frameworks */,
+				959C1909220E243A00053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +710,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C18DB220E114600053ED0 /* libfftw3f_threads.a in Frameworks */,
+				959C18DC220E114600053ED0 /* libfftw3f.a in Frameworks */,
+				959C18DA220E10F600053ED0 /* libreadline.tbd in Frameworks */,
+				959C18D9220E10D800053ED0 /* libexpat.tbd in Frameworks */,
+				959C18D8220E10A200053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,6 +722,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C18D1220DFED300053ED0 /* libfftw3f_threads.a in Frameworks */,
+				959C18D2220DFED300053ED0 /* libfftw3f.a in Frameworks */,
+				959C18D0220DFEB600053ED0 /* libreadline.tbd in Frameworks */,
+				959C18CF220DFEAD00053ED0 /* libexpat.tbd in Frameworks */,
+				959C18CD220DFE7D00053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,6 +734,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C194A220E2B5500053ED0 /* libfftw3f.a in Frameworks */,
+				959C194B220E2B5500053ED0 /* libfftw3f_threads.a in Frameworks */,
+				959C1949220E2B3B00053ED0 /* libexpat.tbd in Frameworks */,
+				959C1948220E2B3400053ED0 /* libreadline.tbd in Frameworks */,
+				959C192E220E297600053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,6 +746,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C1954220E2C8400053ED0 /* libfftw3f.a in Frameworks */,
+				959C1955220E2C8400053ED0 /* libfftw3f_threads.a in Frameworks */,
+				959C1953220E2C6900053ED0 /* libreadline.tbd in Frameworks */,
+				959C1952220E2C6300053ED0 /* libexpat.tbd in Frameworks */,
+				959C1951220E2C5B00053ED0 /* libsarclib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,12 +769,12 @@
 			children = (
 				9547A30121FDEA5D005272A9 /* Common */,
 				95C4718021F50DE80019FECF /* sarclib */,
-				9500CB4321F3120E00505875 /* bircs */,
-				9500CAE921F30DA400505875 /* colladaToPlyFile */,
-				9500CB6321F3127300505875 /* cphdInfo */,
 				9500CB7221F312C600505875 /* cphdShell */,
+				9500CB6321F3127300505875 /* cphdInfo */,
+				9500CAE921F30DA400505875 /* colladaToPlyFile */,
 				9500CB0A21F3112D00505875 /* materialise */,
 				9500CADC21F30D0600505875 /* sarcastic */,
+				9500CB4321F3120E00505875 /* bircs */,
 				9500CB8421F3135900505875 /* SARTrace */,
 				9500CB9A21F313C500505875 /* tdpocl */,
 				9500CADB21F30D0600505875 /* Products */,
@@ -601,6 +801,13 @@
 		9500CADC21F30D0600505875 /* sarcastic */ = {
 			isa = PBXGroup;
 			children = (
+				959C18EE220E226D00053ED0 /* AABB.cpp */,
+				959C18F0220E226D00053ED0 /* buildTree.cpp */,
+				959C18EC220E226D00053ED0 /* clipToAABB.cpp */,
+				959C18EF220E226D00053ED0 /* kdTreeNode.cpp */,
+				959C18ED220E226D00053ED0 /* rayTrace.cpp */,
+				959C18F1220E226D00053ED0 /* splitCandidate.cpp */,
+				959C18E2220E169700053ED0 /* GenGitVersion.sh */,
 				9500CB2921F311ED00505875 /* accelerateTriangles.cpp */,
 				9500CB2D21F311ED00505875 /* accelerateTriangles.hpp */,
 				9500CB1821F311EC00505875 /* banner.cpp */,
@@ -638,6 +845,7 @@
 		9500CAE921F30DA400505875 /* colladaToPlyFile */ = {
 			isa = PBXGroup;
 			children = (
+				9547A34021FE0F8C005272A9 /* GenGitVersion.sh */,
 				9500CAFE21F30F7900505875 /* banner.cpp */,
 				9500CAFD21F30F7900505875 /* colladainterface.cpp */,
 				9500CAFF21F30F7900505875 /* colladainterface.h */,
@@ -651,6 +859,7 @@
 		9500CB0A21F3112D00505875 /* materialise */ = {
 			isa = PBXGroup;
 			children = (
+				959C18DE220E130E00053ED0 /* GenGitVersion.sh */,
 				9500CB1021F3117000505875 /* main.cpp */,
 				9500CB1121F3117000505875 /* materialise_version.h.in */,
 			);
@@ -661,6 +870,7 @@
 		9500CB4321F3120E00505875 /* bircs */ = {
 			isa = PBXGroup;
 			children = (
+				959C1907220E23AA00053ED0 /* GenGitVersion.sh */,
 				9500CB5321F3123E00505875 /* bircsBanner.c */,
 				9500CB4F21F3123E00505875 /* bircsBanner.h */,
 				9500CB4B21F3123E00505875 /* BircsVersion.h.in */,
@@ -683,6 +893,7 @@
 		9500CB6321F3127300505875 /* cphdInfo */ = {
 			isa = PBXGroup;
 			children = (
+				959C18E0220E143900053ED0 /* GenGitVersion.sh */,
 				9500CB6921F312A400505875 /* colourCodes.h */,
 				9500CB6A21F312A400505875 /* main.cpp */,
 				9500CB6B21F312A400505875 /* readCPHD_Version.h.in */,
@@ -694,6 +905,7 @@
 		9500CB7221F312C600505875 /* cphdShell */ = {
 			isa = PBXGroup;
 			children = (
+				959C18D5220E055600053ED0 /* GenGitVersion.sh */,
 				9500CB7821F312ED00505875 /* colourCodes.h */,
 				9500CB7A21F312ED00505875 /* cphdShell_version.h.in */,
 				9500CB7B21F312ED00505875 /* ecef2SceneCoords.cpp */,
@@ -707,6 +919,7 @@
 		9500CB8421F3135900505875 /* SARTrace */ = {
 			isa = PBXGroup;
 			children = (
+				959C1930220E29D300053ED0 /* GenGitVersion.sh */,
 				9500CB8B21F3137D00505875 /* getSARTraceUserInput.cpp */,
 				9500CB8D21F3137D00505875 /* SARTrace.cpp */,
 				9500CB8E21F3137D00505875 /* SARTrace.hpp */,
@@ -722,6 +935,7 @@
 		9500CB9A21F313C500505875 /* tdpocl */ = {
 			isa = PBXGroup;
 			children = (
+				959C194F220E2BD400053ED0 /* GenGitVersion.sh */,
 				9500CBAD21F313E800505875 /* banner.c */,
 				9500CBA221F313E700505875 /* colourCodes.h */,
 				9500CBAE21F313E800505875 /* createSurface.c */,
@@ -876,6 +1090,8 @@
 		95C4722721F8A5640019FECF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				959C1924220E284400053ED0 /* libfftw3l_threads.a */,
+				959C18CE220DFEAD00053ED0 /* libexpat.tbd */,
 				9547A33D21FE0A2D005272A9 /* libgmp.a */,
 				9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */,
 				9547A33A21FE0A05005272A9 /* libboost_filesystem.a */,
@@ -893,6 +1109,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		959C18C9220DF3BA00053ED0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		95C4717821F50DA40019FECF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -944,6 +1167,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CAE121F30D0700505875 /* Build configuration list for PBXNativeTarget "sarcastic" */;
 			buildPhases = (
+				959C18E6220E178C00053ED0 /* ShellScript */,
 				9500CAD621F30D0600505875 /* Sources */,
 				9500CAD721F30D0600505875 /* Frameworks */,
 				9500CAD821F30D0600505875 /* CopyFiles */,
@@ -951,6 +1175,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C18E4220E174D00053ED0 /* PBXTargetDependency */,
 			);
 			name = sarcastic;
 			productName = sarcastic;
@@ -961,6 +1186,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CAEC21F30DA400505875 /* Build configuration list for PBXNativeTarget "colladaToPlyFile" */;
 			buildPhases = (
+				959C18CA220DFA7000053ED0 /* ShellScript */,
+				959C18C9220DF3BA00053ED0 /* Headers */,
 				9500CAE421F30DA400505875 /* Sources */,
 				9500CAE521F30DA400505875 /* Frameworks */,
 				9500CAE621F30DA400505875 /* CopyFiles */,
@@ -979,6 +1206,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB0D21F3112D00505875 /* Build configuration list for PBXNativeTarget "materialise" */;
 			buildPhases = (
+				959C18E1220E15F000053ED0 /* ShellScript */,
 				9500CB0521F3112D00505875 /* Sources */,
 				9500CB0621F3112D00505875 /* Frameworks */,
 				9500CB0721F3112D00505875 /* CopyFiles */,
@@ -997,6 +1225,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB4621F3120E00505875 /* Build configuration list for PBXNativeTarget "bircs" */;
 			buildPhases = (
+				959C1908220E23E400053ED0 /* ShellScript */,
 				9500CB3E21F3120E00505875 /* Sources */,
 				9500CB3F21F3120E00505875 /* Frameworks */,
 				9500CB4021F3120E00505875 /* CopyFiles */,
@@ -1004,6 +1233,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C1906220E238400053ED0 /* PBXTargetDependency */,
 			);
 			name = bircs;
 			productName = bircs;
@@ -1014,6 +1244,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB6621F3127300505875 /* Build configuration list for PBXNativeTarget "cphdInfo" */;
 			buildPhases = (
+				959C18DF220E13BA00053ED0 /* ShellScript */,
 				9500CB5E21F3127300505875 /* Sources */,
 				9500CB5F21F3127300505875 /* Frameworks */,
 				9500CB6021F3127300505875 /* CopyFiles */,
@@ -1021,6 +1252,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C18D7220E106100053ED0 /* PBXTargetDependency */,
 			);
 			name = cphdInfo;
 			productName = cphdInfo;
@@ -1031,6 +1263,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB7521F312C600505875 /* Build configuration list for PBXNativeTarget "cphdShell" */;
 			buildPhases = (
+				959C18D4220E052B00053ED0 /* ShellScript */,
 				9500CB6D21F312C600505875 /* Sources */,
 				9500CB6E21F312C600505875 /* Frameworks */,
 				9500CB6F21F312C600505875 /* CopyFiles */,
@@ -1038,6 +1271,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C18CC220DFE6200053ED0 /* PBXTargetDependency */,
 			);
 			name = cphdShell;
 			productName = cphdShell;
@@ -1048,6 +1282,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB8721F3135900505875 /* Build configuration list for PBXNativeTarget "SARTrace" */;
 			buildPhases = (
+				959C192F220E298100053ED0 /* ShellScript */,
 				9500CB7F21F3135800505875 /* Sources */,
 				9500CB8021F3135800505875 /* Frameworks */,
 				9500CB8121F3135800505875 /* CopyFiles */,
@@ -1055,6 +1290,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C192D220E296F00053ED0 /* PBXTargetDependency */,
 			);
 			name = SARTrace;
 			productName = SARTrace;
@@ -1065,6 +1301,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9500CB9D21F313C500505875 /* Build configuration list for PBXNativeTarget "tdpocl" */;
 			buildPhases = (
+				959C1950220E2C2100053ED0 /* ShellScript */,
 				9500CB9521F313C500505875 /* Sources */,
 				9500CB9621F313C500505875 /* Frameworks */,
 				9500CB9721F313C500505875 /* CopyFiles */,
@@ -1072,6 +1309,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				959C194E220E2B9400053ED0 /* PBXTargetDependency */,
 			);
 			name = tdpocl;
 			productName = tdpocl;
@@ -1145,32 +1383,190 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9500CAD921F30D0600505875 /* sarcastic */,
+				95C4717B21F50DA40019FECF /* sarclib */,
+				9500CB7021F312C600505875 /* cphdShell */,
+				9500CB6121F3127300505875 /* cphdInfo */,
 				9500CAE721F30DA400505875 /* colladaToPlyFile */,
 				9500CB0821F3112D00505875 /* materialise */,
+				9500CAD921F30D0600505875 /* sarcastic */,
 				9500CB4121F3120E00505875 /* bircs */,
-				9500CB6121F3127300505875 /* cphdInfo */,
-				9500CB7021F312C600505875 /* cphdShell */,
 				9500CB8221F3135800505875 /* SARTrace */,
 				9500CB9821F313C500505875 /* tdpocl */,
-				95C4717B21F50DA40019FECF /* sarclib */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		959C18CA220DFA7000053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/colladaToPlyFile/GenGitVersion.sh\nmv -f $PROJECT_DIR/CTTVersion.h $PROJECT_DIR/../../src/colladaToPlyFile\n";
+		};
+		959C18D4220E052B00053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/cphdShell/GenGitVersion.sh\nmv -f $PROJECT_DIR/cphdShell_version.h $PROJECT_DIR/../../src/cphdShell\n";
+		};
+		959C18DF220E13BA00053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/cphdInfo/GenGitVersion.sh\nmv -f $PROJECT_DIR/readCPHD_Version.h $PROJECT_DIR/../../src/cphdInfo\n";
+		};
+		959C18E1220E15F000053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/materialise/GenGitVersion.sh\nmv -f $PROJECT_DIR/materialise_version.h $PROJECT_DIR/../../src/materialise\n";
+		};
+		959C18E6220E178C00053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/sarcastic/GenGitVersion.sh\nmv -f $PROJECT_DIR/SarcasticVersion.h $PROJECT_DIR/../../src/sarcastic\n";
+		};
+		959C1908220E23E400053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/bircs/GenGitVersion.sh\nmv -f $PROJECT_DIR/BircsVersion.h $PROJECT_DIR/../../src/bircs\n";
+		};
+		959C192F220E298100053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/SARTrace/GenGitVersion.sh\nmv -f $PROJECT_DIR/SartraceVersion.h $PROJECT_DIR/../../src/SARTrace\n";
+		};
+		959C1950220E2C2100053ED0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/../../src/tdpocl/GenGitVersion.sh\nmv -f $PROJECT_DIR/tdpoclVersion.h $PROJECT_DIR/../../src/tdpocl\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9500CAD621F30D0600505875 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C1904220E234400053ED0 /* colladainterface.cpp in Sources */,
+				959C18F8220E232100053ED0 /* boxMullerRandom.c in Sources */,
+				959C18F9220E232100053ED0 /* pmath_rng.c in Sources */,
+				959C18FA220E232100053ED0 /* printProgress.c in Sources */,
+				959C18FB220E232100053ED0 /* ranf.c in Sources */,
+				959C18FC220E232100053ED0 /* sceneExtent.cpp in Sources */,
+				959C18FD220E232100053ED0 /* matrixMultiplication.c in Sources */,
+				959C18FE220E232100053ED0 /* readMaterialFile.cpp in Sources */,
+				959C18FF220E232100053ED0 /* TriangleMesh.cpp in Sources */,
+				959C1900220E232100053ED0 /* tinyxml.cpp in Sources */,
+				959C1901220E232100053ED0 /* tinyxmlerror.cpp in Sources */,
+				959C1902220E232100053ED0 /* tinyxmlparser.cpp in Sources */,
+				959C1903220E232100053ED0 /* tinystr.cpp in Sources */,
+				959C18F4220E226D00053ED0 /* AABB.cpp in Sources */,
 				9500CB3D21F311ED00505875 /* cpuPOField.cpp in Sources */,
 				9500CB3521F311ED00505875 /* TxPowerPerRay.c in Sources */,
 				9500CB3821F311ED00505875 /* shadowRays.cpp in Sources */,
 				9500CB3021F311ED00505875 /* getUserInput.cpp in Sources */,
 				9500CB3621F311ED00505875 /* threadCore.cpp in Sources */,
+				959C18F5220E226D00053ED0 /* kdTreeNode.cpp in Sources */,
 				9500CB3321F311ED00505875 /* banner.cpp in Sources */,
 				9500CB3221F311ED00505875 /* buildRopesAndBoxes.cpp in Sources */,
 				9500CB3921F311ED00505875 /* ecef2SceneCoords.c in Sources */,
+				959C18F3220E226D00053ED0 /* rayTrace.cpp in Sources */,
+				959C18F6220E226D00053ED0 /* buildTree.cpp in Sources */,
+				959C18F7220E226D00053ED0 /* splitCandidate.cpp in Sources */,
+				959C18F2220E226D00053ED0 /* clipToAABB.cpp in Sources */,
 				9500CB3421F311ED00505875 /* sarcastic2.cpp in Sources */,
 				9500CB3721F311ED00505875 /* RCS.c in Sources */,
 				9500CB3C21F311ED00505875 /* buildRays.cpp in Sources */,
@@ -1221,6 +1617,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C192A220E292900053ED0 /* splitCandidate.cpp in Sources */,
+				959C1926220E28EB00053ED0 /* AABB.cpp in Sources */,
+				959C1927220E28EB00053ED0 /* buildTree.cpp in Sources */,
+				959C1928220E28EC00053ED0 /* clipToAABB.cpp in Sources */,
+				959C1929220E28EC00053ED0 /* kdTreeNode.cpp in Sources */,
+				959C1920220E281300053ED0 /* rayTrace.cpp in Sources */,
+				959C1917220E258300053ED0 /* accelerateTriangles.cpp in Sources */,
+				959C1918220E258300053ED0 /* buildRays.cpp in Sources */,
+				959C1919220E258300053ED0 /* buildRopesAndBoxes.cpp in Sources */,
+				959C191A220E258300053ED0 /* cpuPOField.cpp in Sources */,
+				959C191B220E258300053ED0 /* RCS.c in Sources */,
+				959C191C220E258300053ED0 /* reflect.cpp in Sources */,
+				959C191D220E258300053ED0 /* shadowRays.cpp in Sources */,
+				959C191E220E258300053ED0 /* tryReadFile.cpp in Sources */,
+				959C191F220E258300053ED0 /* TxPowerPerRay.c in Sources */,
+				959C1916220E24DA00053ED0 /* colladainterface.cpp in Sources */,
+				959C190A220E24C100053ED0 /* boxMullerRandom.c in Sources */,
+				959C190B220E24C100053ED0 /* OpenCLUtils.c in Sources */,
+				959C190C220E24C100053ED0 /* pmath_rng.c in Sources */,
+				959C190D220E24C100053ED0 /* printProgress.c in Sources */,
+				959C190E220E24C100053ED0 /* ranf.c in Sources */,
+				959C190F220E24C100053ED0 /* matrixMultiplication.c in Sources */,
+				959C1910220E24C100053ED0 /* readMaterialFile.cpp in Sources */,
+				959C1911220E24C100053ED0 /* TriangleMesh.cpp in Sources */,
+				959C1912220E24C100053ED0 /* tinyxml.cpp in Sources */,
+				959C1913220E24C100053ED0 /* tinyxmlerror.cpp in Sources */,
+				959C1914220E24C100053ED0 /* tinyxmlparser.cpp in Sources */,
+				959C1915220E24C100053ED0 /* tinystr.cpp in Sources */,
 				9500CB5B21F3123E00505875 /* bircsBanner.c in Sources */,
 				9500CB5821F3123E00505875 /* oclReflect.cpp in Sources */,
 				9500CB5D21F3123E00505875 /* threadCore.cpp in Sources */,
@@ -1252,6 +1676,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C1931220E2B1300053ED0 /* boxMullerRandom.c in Sources */,
+				959C1932220E2B1300053ED0 /* OpenCLUtils.c in Sources */,
+				959C1933220E2B1300053ED0 /* pmath_rng.c in Sources */,
+				959C1934220E2B1300053ED0 /* ranf.c in Sources */,
+				959C1935220E2B1300053ED0 /* matrixMultiplication.c in Sources */,
+				959C1936220E2B1300053ED0 /* readMaterialFile.cpp in Sources */,
+				959C1937220E2B1300053ED0 /* TriangleMesh.cpp in Sources */,
+				959C1938220E2B1300053ED0 /* tinyxml.cpp in Sources */,
+				959C1939220E2B1300053ED0 /* tinyxmlerror.cpp in Sources */,
+				959C193A220E2B1300053ED0 /* tinyxmlparser.cpp in Sources */,
+				959C193B220E2B1300053ED0 /* tinystr.cpp in Sources */,
+				959C193C220E2B1300053ED0 /* colladainterface.cpp in Sources */,
+				959C193D220E2B1300053ED0 /* AABB.cpp in Sources */,
+				959C193E220E2B1300053ED0 /* buildTree.cpp in Sources */,
+				959C193F220E2B1300053ED0 /* clipToAABB.cpp in Sources */,
+				959C1940220E2B1300053ED0 /* kdTreeNode.cpp in Sources */,
+				959C1941220E2B1300053ED0 /* rayTrace.cpp in Sources */,
+				959C1942220E2B1300053ED0 /* splitCandidate.cpp in Sources */,
+				959C1943220E2B1300053ED0 /* accelerateTriangles.cpp in Sources */,
+				959C1944220E2B1300053ED0 /* buildRays.cpp in Sources */,
+				959C1945220E2B1300053ED0 /* buildRopesAndBoxes.cpp in Sources */,
+				959C1946220E2B1300053ED0 /* ecef2SceneCoords.c in Sources */,
+				959C1947220E2B1300053ED0 /* reflect.cpp in Sources */,
 				9500CB9421F3137D00505875 /* traceThreadCore.cpp in Sources */,
 				9500CB9321F3137D00505875 /* SARTrace.cpp in Sources */,
 				9500CB9121F3137D00505875 /* SARTracebanner.cpp in Sources */,
@@ -1263,10 +1710,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C1957220E2CE300053ED0 /* TxPowerPerRay.c in Sources */,
 				9500CBB121F313E800505875 /* getUserInput.c in Sources */,
 				9500CBB221F313E800505875 /* getMemorySize.c in Sources */,
 				9500CBB421F313E800505875 /* oclSRPRanges.c in Sources */,
-				9500CBB321F313E800505875 /* geotiffWrite.c in Sources */,
 				9500CBB821F313E800505875 /* banner.c in Sources */,
 				9500CBB621F313E800505875 /* topotrimSetup.c in Sources */,
 				9500CBB521F313E800505875 /* OpenCLUtils.c in Sources */,
@@ -1335,6 +1782,36 @@
 			isa = PBXTargetDependency;
 			target = 95C4717B21F50DA40019FECF /* sarclib */;
 			targetProxy = 9547A30521FE06AE005272A9 /* PBXContainerItemProxy */;
+		};
+		959C18CC220DFE6200053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C18CB220DFE6200053ED0 /* PBXContainerItemProxy */;
+		};
+		959C18D7220E106100053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C18D6220E106100053ED0 /* PBXContainerItemProxy */;
+		};
+		959C18E4220E174D00053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C18E3220E174D00053ED0 /* PBXContainerItemProxy */;
+		};
+		959C1906220E238400053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C1905220E238400053ED0 /* PBXContainerItemProxy */;
+		};
+		959C192D220E296F00053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C192C220E296F00053ED0 /* PBXContainerItemProxy */;
+		};
+		959C194E220E2B9400053ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959C194D220E2B9400053ED0 /* PBXContainerItemProxy */;
 		};
 		95C4722A21F8A5780019FECF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1485,6 +1962,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1493,6 +1974,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1555,6 +2040,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"KERNELDIR=\"\\\"${PROJECT_DIR}/../../src/kernels\\\"\"",
+					"MATERIALPROPS=\"\\\"${PROJECT_DIR}/../../scripts/MaterialProperties.txt\\\"\"",
+					sarclib_HAVE_GDAL,
+					"HAVE_READLINE=1",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1563,6 +2058,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"KERNELDIR=\"\\\"${PROJECT_DIR}/../../src/kernels\\\"\"",
+					"MATERIALPROPS=\"\\\"${PROJECT_DIR}/../../scripts/MaterialProperties.txt\\\"\"",
+					sarclib_HAVE_GDAL,
+					"HAVE_READLINE=1",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1571,6 +2076,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1579,6 +2088,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1587,6 +2100,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1595,6 +2112,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1603,6 +2124,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1611,6 +2136,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1619,6 +2148,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MATERIALPROPS=\"\\\"${PROJECT_DIR}/../../scripts/MaterialProperties.txt\\\"\"",
+					sarclib_HAVE_GDAL,
+					"HAVE_READLINE=1",
+					"KERNELDIR=\"\\\"${PROJECT_DIR}/../../src/kernels\\\"\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1627,6 +2166,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MATERIALPROPS=\"\\\"${PROJECT_DIR}/../../scripts/MaterialProperties.txt\\\"\"",
+					sarclib_HAVE_GDAL,
+					"HAVE_READLINE=1",
+					"KERNELDIR=\"\\\"${PROJECT_DIR}/../../src/kernels\\\"\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

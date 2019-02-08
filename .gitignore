@@ -37,3 +37,4 @@ tdpoclVersion.h
 cphdShell_version.h
 readCPHD_Version.h
 *.pyc
+IDEs/Xcode/build

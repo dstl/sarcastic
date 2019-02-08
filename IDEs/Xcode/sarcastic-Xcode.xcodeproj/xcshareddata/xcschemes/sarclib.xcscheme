@@ -5,15 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "# Type a script or drag a script file from your workspace to insert its path.&#10;">
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -23,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9500CB0821F3112D00505875"
-               BuildableName = "materialise"
-               BlueprintName = "materialise"
+               BlueprintIdentifier = "95C4717B21F50DA40019FECF"
+               BuildableName = "libsarclib.a"
+               BlueprintName = "sarclib"
                ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -38,15 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
-            ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -60,16 +42,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
+            BlueprintIdentifier = "95C4717B21F50DA40019FECF"
+            BuildableName = "libsarclib.a"
+            BlueprintName = "sarclib"
             ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -79,16 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
+            BlueprintIdentifier = "95C4717B21F50DA40019FECF"
+            BuildableName = "libsarclib.a"
+            BlueprintName = "sarclib"
             ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

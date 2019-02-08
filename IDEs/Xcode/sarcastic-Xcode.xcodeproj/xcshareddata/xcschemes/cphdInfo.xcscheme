@@ -5,15 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "# Type a script or drag a script file from your workspace to insert its path.&#10;">
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -23,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9500CB0821F3112D00505875"
-               BuildableName = "materialise"
-               BlueprintName = "materialise"
+               BlueprintIdentifier = "9500CB6121F3127300505875"
+               BuildableName = "cphdInfo"
+               BlueprintName = "cphdInfo"
                ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -41,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
+            BlueprintIdentifier = "9500CB6121F3127300505875"
+            BuildableName = "cphdInfo"
+            BlueprintName = "cphdInfo"
             ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,9 +55,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
+            BlueprintIdentifier = "9500CB6121F3127300505875"
+            BuildableName = "cphdInfo"
+            BlueprintName = "cphdInfo"
             ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -83,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9500CB0821F3112D00505875"
-            BuildableName = "materialise"
-            BlueprintName = "materialise"
+            BlueprintIdentifier = "9500CB6121F3127300505875"
+            BuildableName = "cphdInfo"
+            BlueprintName = "cphdInfo"
             ReferencedContainer = "container:sarcastic-Xcode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
