@@ -514,7 +514,6 @@ void TriangleMesh::checkIntegrityAndRepair(){
     Triangle3DVec Ntri, Ncalc;
     float area,distance;
     std::vector<Triangle> newtriangles;
-    int cnt = 0;
     
     for (int i=0 ; i< triangles.size(); ++i){
         aa = triangles[i].a ;
@@ -533,8 +532,6 @@ void TriangleMesh::checkIntegrityAndRepair(){
         //
         if ( !(!(Ncalc == Ntri) || area < 1e-10 || isnan(distance)) ) {
             newtriangles.push_back(triangles[i]);
-        }else{
-            cnt++;
         }
     }
     triangles = newtriangles ;

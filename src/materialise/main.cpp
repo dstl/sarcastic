@@ -50,6 +50,7 @@
 
 #define REAL double
 #define ANSI_DECLARATORS
+#define EXCEPTIONIGNORE
 
 #include "materialise_version.h"
 #include <iostream>
@@ -292,8 +293,27 @@ int main(int argc, const char * argv[]) {
                 printf("%f,%f\n",bx,by);
             }
 #endif
-
-            cdt.insert_constraint(vha, vhb);
+            try{
+                cdt.insert_constraint(vha, vhb);
+            }
+            catch(...){
+                char exceptFName[255];
+                sprintf(exceptFName ,"/tmp/exception_%03d_%03d.ply",cnt,n);
+                
+                cout << endl;
+                cout << "*** Exception Error +++ Exception Error +++ Exception Error +++ Exception Error ***" << endl;
+                cout << " I Caught an exception thrown when trying to insert a constraint into the mesh!" <<endl;
+                cout << " This usually occurs when triangles within the input mesh pass through each other or intersect" << endl;
+                cout << " rather than adjoin each other. To help you find the offending triangles im going to write" << endl;
+                cout << " out the triangle mesh that I was currently triangulating. If you view this with the input" << endl;
+                cout << " mesh then you should be able to find the cause of the problem and correct it." << endl;
+                cout << " Mesh is written to file : " << std::string(exceptFName) << endl;
+                cout << "*** Exception Error +++ Exception Error +++ Exception Error +++ Exception Error ***" << endl;
+                commonMesh.writePLYFile(std::string(exceptFName)) ;
+#ifndef EXCEPTIONIGNORE
+                exit(-1);
+#endif
+            }
         }
         
         std::list<Point_2> list_of_seeds;
@@ -307,6 +327,12 @@ int main(int argc, const char * argv[]) {
         trianglateTimer += timeElapsedInMilliseconds(&triangulate_t, &status);
  
         startTimer(&roughen_t, &status);
+        // If the new mesh is made from a material that has surface roughness then find the vertices that are
+        // interior to the mesh and random adjust their Z-value. We cannot do this to exterior vertices as
+        // this would cause gaps between this mesh and its neighbours.
+        // A Discussion on finding interior vertices can be found at
+        // https://stackoverflow.com/questions/44195776/cgal-find-interior-points-in-a-mesh
+        //
         Vertex v ;
         CDT::Locate_type loc = CDT::Locate_type::VERTEX ;
         int li;
@@ -316,6 +342,9 @@ int main(int argc, const char * argv[]) {
         int vind = 0;
         SPVector *Points3D = (SPVector *)sp_malloc(sizeof(SPVector) * cdt.number_of_vertices() ) ;
         for(Vertex_iterator vit = cdt.vertices_begin(); vit !=cdt.vertices_end() ; vit++){
+            if(cdt.number_of_vertices() > 10000 && vind % 100 == 0 && globalMatProps[commonMesh.triangles[0].mat].roughness != 0){
+                printf("\r[%03.3f%%]",100*(float)vind / (float)cdt.number_of_vertices());
+            }
             
             v = *vit ;
             vit->info() = vind ;
@@ -323,22 +352,24 @@ int main(int argc, const char * argv[]) {
             x2d = query.x() ;
             y2d = query.y() ;
             Z = 0 ;
-            Face_handle f =  cdt.locate(query, loc, li);
+            if(globalMatProps[commonMesh.triangles[0].mat].roughness != 0){
+                Face_handle f =  cdt.locate(query, loc, li);
+                
+                bool current_face_in_domain ;
+                Face_handle start = f ;
+                do {
+                    current_face_in_domain = f->is_in_domain() ;
+                    Vertex_handle vh = f->vertex(li);
+                    f = f->neighbor(cdt.ccw(li));
+                    li = f->index(vh) ;
+                }
+                while(current_face_in_domain && f != start) ;
             
-            bool current_face_in_domain ;
-            Face_handle start = f ;
-            do {
-                current_face_in_domain = f->is_in_domain() ;
-                Vertex_handle vh = f->vertex(li);
-                f = f->neighbor(cdt.ccw(li));
-                li = f->index(vh) ;
-            }
-            while(current_face_in_domain && f != start) ;
-            
-            if (f == start) {
-                // Interior point found - not on the boundary
-                //
-                Z = box_muller(0.0, globalMatProps[commonMesh.triangles[0].mat].roughness) ;
+                if (f == start) {
+                    // Interior point found - not on the boundary
+                    //
+                    Z = box_muller(0.0, globalMatProps[commonMesh.triangles[0].mat].roughness) ;
+                }
             }
             
             VECT_SCMULT(abscissa, x2d, v1);
@@ -413,7 +444,7 @@ TriangleMesh growTriangles(TriangleMesh *mesh)
 /// Takes the first triangle from the Triangles vector<> within the input mesh and finds all the coplanar triangles
 /// inside the triangles vector<>. These are removed from the input mesh and returned as another mesh
 /// The function 'grows' the coplanar region around the first triangle of the input mesh so that
-/// other faces in the maesh that have the same normal but are not attached to the first region
+/// other faces in the mesh that have the same normal but are not attached to the first region
 /// are not considered. Finally the function checks for 'polygamous' triangles within the input mesh
 /// these are triangles that have more that one adjoining partner triangle along one of its edges. If
 /// any are found the polygamous triangle is cut into two at the offending vertex to ensure that the output is a true
