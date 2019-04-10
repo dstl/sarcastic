@@ -137,7 +137,7 @@ int main (int argc, char **argv){
     do{
         validpol = false ;
         polstr = input_string("Enter polarisation to simulate", "Polarisation",
-                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined",polstr ) ;
+                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined","VV" ) ;
         if (!strcasecmp(polstr, "vv")) {
             pol = VV ;
             validpol = true ;
