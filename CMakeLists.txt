@@ -169,6 +169,7 @@ target_include_directories(SARTrace PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(SARTrace sarclib)
 target_link_libraries(SARTrace ${FFTW_LIBRARIES})
 target_link_libraries(SARTrace ${OpenCL_LIBRARIES})
+target_link_libraries(SARTrace stdc++)
 target_link_libraries(SARTrace m)
 
 # Generate bircs executable
@@ -216,7 +217,9 @@ target_include_directories(bircs PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(bircs sarclib)
 target_link_libraries(bircs ${FFTW_LIBRARIES})
 target_link_libraries(bircs ${OpenCL_LIBRARIES})
-target_link_libraries (bircs ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bircs ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bircs stdc++)
+target_link_libraries(bircs m)
 
 # Generate colladaToPlyFile executable
 add_executable(colladaToPlyFile 
@@ -235,6 +238,8 @@ target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Common)
 target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
 target_link_libraries(colladaToPlyFile sarclib)
+target_link_libraries(colladaToPlyFile stdc++)
+target_link_libraries(colladaToPlyFile m)
 
 # Generate materialise executable
 add_executable(materialise
@@ -306,14 +311,17 @@ target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/col
 target_include_directories(sarcastic PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(sarcastic sarclib)
 target_link_libraries(sarcastic ${FFTW_LIBRARIES})
-target_link_libraries (sarcastic ${CMAKE_THREAD_LIBS_INIT})
-
+target_link_libraries(sarcastic ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(sarcastic stdc++)
+target_link_libraries(sarcastic m)
 
 # Generate cphdInfo executable
 add_executable(cphdInfo
 	${CMAKE_CURRENT_SOURCE_DIR}/src/cphdInfo/main.cpp
 )
 target_link_libraries(cphdInfo sarclib)
+target_link_libraries(cphdInfo stdc++)
+target_link_libraries(cphdInfo m)
 
 # Generate cphdShell executable
 add_executable(cphdShell
@@ -321,6 +329,8 @@ add_executable(cphdShell
 	${CMAKE_CURRENT_SOURCE_DIR}/src/cphdShell/ecef2SceneCoords.cpp
 )
 target_link_libraries(cphdShell sarclib)
+target_link_libraries(cphdShell stdc++)
+target_link_libraries(cphdShell m)
 
 # Generate tdpocl executable
 add_executable(tdpocl
