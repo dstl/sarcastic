@@ -34,11 +34,6 @@
 #ifndef tdpocl_tdpcore_h
 #define tdpocl_tdpcore_h
 #include <sarclib/sarclib.h>
-#if defined (__APPLE__) || defined(MACOSX)
-#include <OpenCL/opencl.h>
-#else
-#include <CL/opencl.h>
-#endif
 #define NPOINTS (8)
 #define OVERSAMP (512)
 #include "OpenCLUtils.h"
