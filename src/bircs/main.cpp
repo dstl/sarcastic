@@ -171,6 +171,8 @@ int main (int argc, char **argv){
                                  (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
 
+    // Get the output name from the user, open the file for write and check that it all worked.
+    //
     char * outfname = input_string("Output filename", "outputFileName",
 				   "The name of the file to dump the results into - will be ASCII in form of RCS, Phi, Theta",
 				   "bircs_output.txt");
