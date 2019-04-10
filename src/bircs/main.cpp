@@ -170,6 +170,16 @@ int main (int argc, char **argv){
                                  (char *)"The name of a 'materialfile' or 'none' (defaults used)",
                                  (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
+
+    char * outfname = input_string("Output filename", "outputFileName",
+				   "The name of the file to dump the results into - will be ASCII in form of RCS, Phi, Theta",
+				   "bircs_output.txt");
+    FILE * fp = fopen(outfname, "w");
+    if (fp == NULL) {
+      fprintf(stderr, "Failed to open file %s for write.\n", outfname);
+      perror("Open failed: ");
+      exit(1);
+    }
     
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
@@ -408,8 +418,10 @@ int main (int argc, char **argv){
             maxphi   = results[i].phi ;
             maxtheta = results[i].theta ;
         }
-        printf("%f, %f, %f\n",results[i].r,results[i].phi,results[i].theta);
+        fprintf(fp, "%f, %f, %f\n",results[i].r,results[i].phi,results[i].theta);
     }
+
+    fclose(fp);
     
     double k = 2 * SIPC_pi / lambda ;
     double lambda_squared = lambda * lambda ;
