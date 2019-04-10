@@ -223,7 +223,7 @@ int oclGetCPUDevices(OCLPlatform  *platform,    // Platform to look for devices
     cl_uint ciErrNum;
     CHECK_STATUS(status) ;
 
-    ciErrNum = clGetDeviceIDs (platform->clSelectedPlatformID, CL_DEVICE_TYPE_CPU, 0, NULL, deviceCount);
+    ciErrNum = clGetDeviceIDs (platform->clSelectedPlatformID, CL_DEVICE_TYPE_DEFAULT, 0, NULL, deviceCount);
     // check for 0 devices found or errors...
     //
     if (deviceCount == 0){
@@ -231,6 +231,7 @@ int oclGetCPUDevices(OCLPlatform  *platform,    // Platform to look for devices
         status->status = OPENCL_NO_DEVICES_FOUND ;
         return( status->status );
     }else if (ciErrNum != CL_SUCCESS){
+        printf("Device count %d\n", *deviceCount);
         if(status->debug >= 10)printf(" Error %i in clGetDeviceIDs call !!!\n\n", ciErrNum);
         status->status = ciErrNum ;
         return( status->status );
@@ -240,7 +241,7 @@ int oclGetCPUDevices(OCLPlatform  *platform,    // Platform to look for devices
             status->status = OPENCL_MALLOC_FAIL ;
             return( status->status );
         }
-        ciErrNum = clGetDeviceIDs (platform->clSelectedPlatformID, CL_DEVICE_TYPE_CPU, *deviceCount, *devices, NULL);
+        ciErrNum = clGetDeviceIDs (platform->clSelectedPlatformID, CL_DEVICE_TYPE_DEFAULT, *deviceCount, *devices, NULL);
         if(ciErrNum != CL_SUCCESS){
             if(status->debug >= 10)printf(" Failed to collect GPU device IDs. Error %i\n",ciErrNum);
             status->status = ciErrNum ;

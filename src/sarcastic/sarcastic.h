@@ -38,11 +38,6 @@
 #include "SarcasticVersion.h"
 #include <string.h>
 #include <sys/time.h>
-#if defined (__APPLE__) || defined(MACOSX)
-#include <OpenCL/opencl.h>
-#else
-#include <CL/opencl.h>
-#endif
 #include "OpenCLUtils.h"
 #include "materialProperties.h"
 #include "RCS.h"

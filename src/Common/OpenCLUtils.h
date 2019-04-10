@@ -38,6 +38,11 @@
 #include <math.h>
 #include <sys/stat.h>
 #include <string.h>
+
+#ifndef CL_TARGET_OPENCL_VERSION
+#define CL_TARGET_OPENCL_VERSION 120
+#endif
+
 #if defined (__APPLE__) || defined(MACOSX)
 #include <OpenCL/opencl.h>
 #else

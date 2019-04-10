@@ -321,7 +321,9 @@ int main(int argc, const char * argv[]) {
     int Npulses;
     
     // SAlen = (TxRslant + (imageYSlant/2)) * wavelength / azRes;
-    SAlen = TxRslant * wavelength * oversampAz / (2.0 * azRes * cos(TXSquint)) ;
+    printf("Rslant %f lambda %f osamp %f azRes %f c(squint) %f\n",
+	   TxRslant, wavelength, oversampAz, azRes, TXSquint);
+    SAlen = TxRslant * wavelength * oversampAz / (2.0 * azRes * cos(DEG2RAD(TXSquint))) ;
     SAduration = SAlen / TxVel ;
     if (sarmode == SPOTLIGHT) {
         Npulses = ceil(oversampAz * SAduration * PRF) ;
@@ -467,6 +469,7 @@ int main(int argc, const char * argv[]) {
     printf("Calculating Narrowaband data...\n");
     
     hdr.num_azi = Npulses ;
+    printf("Num pulses: %d\n", Npulses);
     hdr.pulses  = (CPHDPulse *)sp_calloc(hdr.num_azi, sizeof(CPHDPulse));
     hdr.antenna_width_az = TxBeamLenAng ;
     hdr.antenna_width_el = TxBeamHgtAng ;

@@ -39,11 +39,6 @@ extern "C" {
 #include "ranf.h"
 #include "threadCore.hpp"
 #include <sys/time.h>
-#if defined (__APPLE__) || defined(MACOSX)
-#include <OpenCL/opencl.h>
-#else
-#include <CL/opencl.h>
-#endif
 #include "buildKernel.hpp"
 #include "rayTrace.hpp"
 #include "cpuPOField.hpp"

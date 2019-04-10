@@ -43,6 +43,7 @@
 #define kdTreeNode_hpp
 
 #include <stdio.h>
+#include <memory>
 #include "TriangleMesh.hpp"
 #include "AABB.hpp"
 #include "splitCandidate.hpp"
