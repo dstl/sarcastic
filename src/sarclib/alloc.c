@@ -41,7 +41,7 @@ sp_calloc_fn(size_t count, size_t size, const char * fname, int line)
     ret = calloc(count,size);
     
     if (! ret) {
-        fprintf(stderr, "Failed to alloc memory at %s:%d\n", fname, line);
+      fprintf(stderr, "Failed to alloc %ld bytes of memory at %s:%d\n", count * size, fname, line);
         exit(67);
     }
     
@@ -56,7 +56,7 @@ sp_malloc_fn(size_t size, const char * fname, int line)
     ret = malloc(size);
     
     if (! ret) {
-        fprintf(stderr, "Failed to alloc memory at %s:%d\n", fname, line);
+      fprintf(stderr, "Failed to alloc %ld bytes of memory at %s:%d\n", size, fname, line);
         exit(67);
     }
     

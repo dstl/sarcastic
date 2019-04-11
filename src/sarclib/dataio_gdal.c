@@ -122,9 +122,13 @@ SPStatus * im_load_gdal_subset(SPImage *a, const char * fname, int64_t ox, int64
     
     gdal_data_type_on_disk = GDALGetRasterDataType(hBand);
     
-    (void)GDALRasterIO(hBand, GF_Read, (int)ox, (int)oy, (int)a->nx, (int)a->ny, a->data.v, (int)a->nx, (int)a->ny, im_conv_to_gdal_type(a->image_type), 0, 0);
+    CPLErr ioerr = GDALRasterIO(hBand, GF_Read, (int)ox, (int)oy, (int)a->nx, (int)a->ny, a->data.v, (int)a->nx, (int)a->ny, im_conv_to_gdal_type(a->image_type), 0, 0);
+    if (ioerr != CE_None) {
+        status->status = BAD_FILE;
+    }
     GDALClose(hDataset);
-    
+    CHECK_STATUS(status);
+ 
     return status;
 }
 

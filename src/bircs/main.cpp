@@ -137,7 +137,7 @@ int main (int argc, char **argv){
     do{
         validpol = false ;
         polstr = input_string("Enter polarisation to simulate", "Polarisation",
-                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined",polstr ) ;
+                              "Options are \'VV\',\'VH\',\'HV\',\'HH\',\'V_\', and \'H_\'. If one of the last two are used then the received H and V fields will be combined","VV" ) ;
         if (!strcasecmp(polstr, "vv")) {
             pol = VV ;
             validpol = true ;
@@ -170,6 +170,18 @@ int main (int argc, char **argv){
                                  (char *)"The name of a 'materialfile' or 'none' (defaults used)",
                                  (char *) MATERIALPROPS);
     initialiseMaterials(matfile, true);
+
+    // Get the output name from the user, open the file for write and check that it all worked.
+    //
+    char * outfname = input_string("Output filename", "outputFileName",
+				   "The name of the file to dump the results into - will be ASCII in form of RCS, Phi, Theta",
+				   "bircs_output.txt");
+    FILE * fp = fopen(outfname, "w");
+    if (fp == NULL) {
+      fprintf(stderr, "Failed to open file %s for write.\n", outfname);
+      perror("Open failed: ");
+      exit(1);
+    }
     
     // Read in the triangle mesh from the input plyfile and check it's
     // integrity
@@ -408,8 +420,10 @@ int main (int argc, char **argv){
             maxphi   = results[i].phi ;
             maxtheta = results[i].theta ;
         }
-        printf("%f, %f, %f\n",results[i].r,results[i].phi,results[i].theta);
+        fprintf(fp, "%f, %f, %f\n",results[i].r,results[i].phi,results[i].theta);
     }
+
+    fclose(fp);
     
     double k = 2 * SIPC_pi / lambda ;
     double lambda_squared = lambda * lambda ;

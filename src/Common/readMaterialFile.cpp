@@ -120,7 +120,6 @@ void readMaterialFile(std::string fileName, bool printOutput)
             }
         }
     }
-    delete [] matverify ;
     
     for(int i=0; i<globalNumMats; i++){
         if ((int)matverify[i] != 1) {
@@ -128,6 +127,7 @@ void readMaterialFile(std::string fileName, bool printOutput)
             exit(1);
         }
     }
+    delete [] matverify ;
         
     globalMatProps   = new scatProps [globalNumMats] ;
     globalMatColours = new int [globalNumMats*3] ;

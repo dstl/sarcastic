@@ -41,11 +41,6 @@
 #include <unistd.h>
 #include <fftw3.h>
 #include "tdpoclVersion.h"
-#if defined (__APPLE__) || defined(MACOSX)
-#include <OpenCL/opencl.h>
-#else
-#include <CL/opencl.h>
-#endif
 #include <sarclib/sarclib.h>
 #include "tdpcore.h"
 #include "OpenCLUtils.h"

@@ -16,7 +16,7 @@ set(CMAKE_FIND_FRAMEWORK LAST)
 set(NO_CMAKE_SYSTEM_PATH)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -D_GNU_SOURCE")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 add_definitions(-DKERNELDIR="${CMAKE_SOURCE_DIR}/src/kernels") 
@@ -176,9 +176,12 @@ target_include_directories(SARTrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Comm
 target_include_directories(SARTrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic)
 target_include_directories(SARTrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/bircs)
 target_include_directories(SARTrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
+target_include_directories(SARTrace PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(SARTrace sarclib)
 target_link_libraries(SARTrace ${FFTW_LIBRARIES})
 target_link_libraries(SARTrace ${OpenCL_LIBRARIES})
+target_link_libraries(SARTrace stdc++)
+target_link_libraries(SARTrace m)
 
 # Generate bircs executable
 add_executable(bircs
@@ -221,10 +224,13 @@ target_include_directories(bircs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Common)
 target_include_directories(bircs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic)
 target_include_directories(bircs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/bircs)
 target_include_directories(bircs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
+target_include_directories(bircs PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(bircs sarclib)
 target_link_libraries(bircs ${FFTW_LIBRARIES})
 target_link_libraries(bircs ${OpenCL_LIBRARIES})
-target_link_libraries (bircs ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bircs ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bircs stdc++)
+target_link_libraries(bircs m)
 
 # Generate colladaToPlyFile executable
 add_executable(colladaToPlyFile 
@@ -243,6 +249,8 @@ target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Common)
 target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
 target_link_libraries(colladaToPlyFile sarclib)
+target_link_libraries(colladaToPlyFile stdc++)
+target_link_libraries(colladaToPlyFile m)
 
 # Generate materialise executable
 add_executable(materialise
@@ -268,6 +276,8 @@ target_link_libraries(materialise ${Boost_LIBRARIES})
 target_link_libraries(materialise boost_filesystem)
 target_link_libraries(materialise ${GMP_LIBRARIES})
 target_link_libraries(materialise ${CGAL_LIBRARIES})
+target_link_libraries(materialise stdc++)
+target_link_libraries(materialise m)
 
 # Generate sarcastic executable
 add_executable(sarcastic
@@ -309,16 +319,20 @@ target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sar
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Common)
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/fastKdTree)
 target_include_directories(sarcastic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/colladaToPlyFile)
+target_include_directories(sarcastic PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(sarcastic sarclib)
 target_link_libraries(sarcastic ${FFTW_LIBRARIES})
-target_link_libraries (sarcastic ${CMAKE_THREAD_LIBS_INIT})
-
+target_link_libraries(sarcastic ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(sarcastic stdc++)
+target_link_libraries(sarcastic m)
 
 # Generate cphdInfo executable
 add_executable(cphdInfo
 	${CMAKE_CURRENT_SOURCE_DIR}/src/cphdInfo/main.cpp
 )
 target_link_libraries(cphdInfo sarclib)
+target_link_libraries(cphdInfo stdc++)
+target_link_libraries(cphdInfo m)
 
 # Generate cphdShell executable
 add_executable(cphdShell
@@ -326,6 +340,8 @@ add_executable(cphdShell
 	${CMAKE_CURRENT_SOURCE_DIR}/src/cphdShell/ecef2SceneCoords.cpp
 )
 target_link_libraries(cphdShell sarclib)
+target_link_libraries(cphdShell stdc++)
+target_link_libraries(cphdShell m)
 
 # Generate tdpocl executable
 add_executable(tdpocl
@@ -337,10 +353,12 @@ add_executable(tdpocl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/tdpcore.c 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/getMemorySize.c 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/oclSRPRanges.c
-	${CMAKE_CURRENT_SOURCE_DIR}/src/tdpocl/OpenCLUtils.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Common/OpenCLUtils.c
 	${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic/TxPowerPerRay.c
 )
+target_include_directories(tdpocl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Common)
 target_include_directories(tdpocl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/sarcastic)
+target_include_directories(tdpocl PRIVATE ${OpenCL_INCLUDE_DIR})
 target_link_libraries(tdpocl sarclib)
 target_link_libraries(tdpocl ${FFTW_LIBRARIES})
 target_link_libraries(tdpocl ${OpenCL_LIBRARIES})
