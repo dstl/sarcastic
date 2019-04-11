@@ -48,6 +48,9 @@
 		9500CBB721F313E800505875 /* tdp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBAB21F313E700505875 /* tdp.c */; };
 		9500CBB821F313E800505875 /* banner.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBAD21F313E800505875 /* banner.c */; };
 		9500CBB921F313E800505875 /* createSurface.c in Sources */ = {isa = PBXBuildFile; fileRef = 9500CBAE21F313E800505875 /* createSurface.c */; };
+		9511D3B7225F796700BDCE9E /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33D21FE0A2D005272A9 /* libgmp.a */; };
+		9511D3BC225F7C2B00BDCE9E /* libCGAL_Core.13.0.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9511D3B8225F7B8400BDCE9E /* libCGAL_Core.13.0.3.dylib */; };
+		9511D3BD225F7C2B00BDCE9E /* libCGAL.13.0.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9511D3B9225F7B8400BDCE9E /* libCGAL.13.0.3.dylib */; };
 		9547A2EF21FDE88B005272A9 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
 		9547A2F321FDE8FD005272A9 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
 		9547A2F421FDE8FD005272A9 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
@@ -71,17 +74,14 @@
 		9547A32A21FE0821005272A9 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
 		9547A32B21FE0821005272A9 /* printProgress.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32121FE07B5005272A9 /* printProgress.c */; };
 		9547A32C21FE0821005272A9 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
-		9547A32E21FE08B2005272A9 /* libCGAL.13.0.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A32D21FE08B2005272A9 /* libCGAL.13.0.2.dylib */; };
 		9547A32F21FE08D6005272A9 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
 		9547A33021FE08E2005272A9 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
-		9547A33221FE0997005272A9 /* libCGAL_Core.13.0.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33121FE0997005272A9 /* libCGAL_Core.13.0.2.dylib */; };
 		9547A33321FE09E1005272A9 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
 		9547A33421FE09E1005272A9 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
 		9547A33721FE09E1005272A9 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33521FE09E1005272A9 /* libboost_system.a */; };
 		9547A33821FE09E1005272A9 /* libboost_system-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33621FE09E1005272A9 /* libboost_system-mt.a */; };
 		9547A33B21FE0A05005272A9 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */; };
 		9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33A21FE0A05005272A9 /* libboost_filesystem.a */; };
-		9547A33E21FE0A2D005272A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33D21FE0A2D005272A9 /* libgmp.a */; };
 		9547A33F21FE0A9C005272A9 /* materialise in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB0921F3112D00505875 /* materialise */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		959C18CD220DFE7D00053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
 		959C18CF220DFEAD00053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
@@ -579,6 +579,8 @@
 		9500CBAD21F313E800505875 /* banner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = banner.c; path = ../../src/tdpocl/banner.c; sourceTree = SOURCE_ROOT; };
 		9500CBAE21F313E800505875 /* createSurface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = createSurface.c; path = ../../src/tdpocl/createSurface.c; sourceTree = SOURCE_ROOT; };
 		9500CBAF21F313E800505875 /* tdpoclVersion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tdpoclVersion.h.in; path = ../../src/tdpocl/tdpoclVersion.h.in; sourceTree = SOURCE_ROOT; };
+		9511D3B8225F7B8400BDCE9E /* libCGAL_Core.13.0.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL_Core.13.0.3.dylib; path = ../../../../../../usr/local/Cellar/cgal/4.14/lib/libCGAL_Core.13.0.3.dylib; sourceTree = "<group>"; };
+		9511D3B9225F7B8400BDCE9E /* libCGAL.13.0.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL.13.0.3.dylib; path = ../../../../../../usr/local/Cellar/cgal/4.14/lib/libCGAL.13.0.3.dylib; sourceTree = "<group>"; };
 		9547A2EE21FDE88B005272A9 /* tinystr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../src/Common/tinyxml/tinystr.cpp; sourceTree = "<group>"; };
 		9547A2F021FDE8FC005272A9 /* tinyxml.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../src/Common/tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
 		9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../src/Common/tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
@@ -753,17 +755,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9547A33E21FE0A2D005272A9 /* libgmp.a in Frameworks */,
+				9511D3BC225F7C2B00BDCE9E /* libCGAL_Core.13.0.3.dylib in Frameworks */,
+				9511D3BD225F7C2B00BDCE9E /* libCGAL.13.0.3.dylib in Frameworks */,
+				9547A32F21FE08D6005272A9 /* libsarclib.a in Frameworks */,
 				9547A33B21FE0A05005272A9 /* libboost_filesystem-mt.a in Frameworks */,
 				9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */,
 				9547A33721FE09E1005272A9 /* libboost_system.a in Frameworks */,
 				9547A33821FE09E1005272A9 /* libboost_system-mt.a in Frameworks */,
 				9547A33321FE09E1005272A9 /* libfftw3f.a in Frameworks */,
 				9547A33421FE09E1005272A9 /* libfftw3f_threads.a in Frameworks */,
-				9547A33221FE0997005272A9 /* libCGAL_Core.13.0.2.dylib in Frameworks */,
-				9547A32E21FE08B2005272A9 /* libCGAL.13.0.2.dylib in Frameworks */,
 				9547A33021FE08E2005272A9 /* libreadline.tbd in Frameworks */,
-				9547A32F21FE08D6005272A9 /* libsarclib.a in Frameworks */,
+				9511D3B7225F796700BDCE9E /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1179,6 +1181,8 @@
 		95C4722721F8A5640019FECF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9511D3B8225F7B8400BDCE9E /* libCGAL_Core.13.0.3.dylib */,
+				9511D3B9225F7B8400BDCE9E /* libCGAL.13.0.3.dylib */,
 				959C1924220E284400053ED0 /* libfftw3l_threads.a */,
 				959C18CE220DFEAD00053ED0 /* libexpat.tbd */,
 				9547A33D21FE0A2D005272A9 /* libgmp.a */,
@@ -2053,6 +2057,7 @@
 					"$PROJECT_DIR/../../src/**",
 				);
 				INSTALL_PATH = bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2121,6 +2126,7 @@
 					"$PROJECT_DIR/../../src/**",
 				);
 				INSTALL_PATH = bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2187,6 +2193,7 @@
 					/usr/local/Cellar/fftw/3.3.8/lib,
 					/usr/local/Cellar/boost/1.68.0_1/lib,
 					/usr/local/Cellar/gmp/6.1.2_2/lib,
+					/usr/local/Cellar/cgal/4.14/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2202,6 +2209,7 @@
 					/usr/local/Cellar/fftw/3.3.8/lib,
 					/usr/local/Cellar/boost/1.68.0_1/lib,
 					/usr/local/Cellar/gmp/6.1.2_2/lib,
+					/usr/local/Cellar/cgal/4.14/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
