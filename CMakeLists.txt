@@ -8,7 +8,8 @@ IF(APPLE)
     set(CMAKE_USE_PTHREADS_INIT 1)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
 ELSE()
-	find_package (Threads)
+	find_package (Threads REQUIRED)
+	link_libraries(Threads::Threads)
 ENDIF()
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
@@ -18,6 +19,7 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -D_GNU_SOURCE")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+set(CMAKE_EXE_LINKER_FLAGS "-L/usr/local/lib")
 
 add_definitions(-DKERNELDIR="${CMAKE_SOURCE_DIR}/src/kernels") 
 add_definitions(-DMATERIALPROPS="${CMAKE_SOURCE_DIR}/scripts/MaterialProperties.txt") 
@@ -106,7 +108,7 @@ endif()
 find_package(FFTW REQUIRED)
 if(${FFTW_FOUND})
 	include_directories( ${FFTW_INCLUDE_DIR} )
-	set(CMAKE_EXE_LINKER_FLAGS "-L/usr/local/lib -lfftw3f -lfftw3f_threads" CACHE INTERNAL "" FORCE)
+	link_libraries(fftw3f_threads.a fftw3f)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS filesystem)
@@ -251,6 +253,7 @@ target_include_directories(colladaToPlyFile PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 target_link_libraries(colladaToPlyFile sarclib)
 target_link_libraries(colladaToPlyFile stdc++)
 target_link_libraries(colladaToPlyFile m)
+target_link_libraries(colladaToPlyFile ${FFTW_LIBRARIES})
 
 # Generate materialise executable
 add_executable(materialise
