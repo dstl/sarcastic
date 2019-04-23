@@ -438,6 +438,7 @@ int main (int argc, char **argv){
     printf("\n--------------------------------------------------------------------\n");
 
 
+    printf("BIRCS completed in %f secs \n",timeElapsedInSeconds(&runTimer, &status));
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;

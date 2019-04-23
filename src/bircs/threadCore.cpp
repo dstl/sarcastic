@@ -402,6 +402,8 @@ void * devPulseBlock ( void * threadArg ) {
     
     // return to parent thread
     //
+    endTimer(&threadTimer, &status) ;
+    //.printf("Thread %d has completed in %f secs \n",tid, timeElapsedInSeconds(&threadTimer, &status));
     pthread_exit(NULL) ;
 }
 

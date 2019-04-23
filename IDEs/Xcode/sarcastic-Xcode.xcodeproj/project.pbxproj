@@ -83,6 +83,31 @@
 		9547A33B21FE0A05005272A9 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33921FE0A04005272A9 /* libboost_filesystem-mt.a */; };
 		9547A33C21FE0A05005272A9 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A33A21FE0A05005272A9 /* libboost_filesystem.a */; };
 		9547A33F21FE0A9C005272A9 /* materialise in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9500CB0921F3112D00505875 /* materialise */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		959BC6A1226E336A00322322 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC694226E336900322322 /* main.cpp */; };
+		959BC6A2226E336A00322322 /* splitCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC698226E336A00322322 /* splitCandidate.cpp */; };
+		959BC6A3226E336A00322322 /* rayTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC699226E336A00322322 /* rayTrace.cpp */; };
+		959BC6A4226E336A00322322 /* kdTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC69A226E336A00322322 /* kdTreeNode.cpp */; };
+		959BC6A5226E336A00322322 /* clipToAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC69B226E336A00322322 /* clipToAABB.cpp */; };
+		959BC6A6226E336A00322322 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC69C226E336A00322322 /* AABB.cpp */; };
+		959BC6A7226E336A00322322 /* buildTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 959BC69D226E336A00322322 /* buildTree.cpp */; };
+		959BC6AA226F15A000322322 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
+		959BC6AB226F15C100322322 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F721FDE956005272A9 /* TriangleMesh.cpp */; };
+		959BC6AC226F161E00322322 /* libfftw3f_threads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FD21FDEA0F005272A9 /* libfftw3f_threads.a */; };
+		959BC6AD226F161E00322322 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A2FC21FDEA0F005272A9 /* libfftw3f.a */; };
+		959BC6AE226F162600322322 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
+		959BC6AF226F162F00322322 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
+		959BC6B0226F16CE00322322 /* buildRopesAndBoxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB1621F311EC00505875 /* buildRopesAndBoxes.cpp */; };
+		959BC6B1226F16F000322322 /* accelerateTriangles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CB2921F311ED00505875 /* accelerateTriangles.cpp */; };
+		959BC6B2226F173000322322 /* boxMullerRandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32521FE07B5005272A9 /* boxMullerRandom.c */; };
+		959BC6B3226F173000322322 /* matrixMultiplication.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F621FDE956005272A9 /* matrixMultiplication.c */; };
+		959BC6B4226F173F00322322 /* ranf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A32821FE07B5005272A9 /* ranf.c */; };
+		959BC6B5226F174F00322322 /* pmath_rng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9547A31321FE07B4005272A9 /* pmath_rng.c */; };
+		959BC6B6226F178700322322 /* readMaterialFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F821FDE956005272A9 /* readMaterialFile.cpp */; };
+		959BC6B7226F17F600322322 /* colladainterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9500CAFD21F30F7900505875 /* colladainterface.cpp */; };
+		959BC6B8226F181000322322 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F021FDE8FC005272A9 /* tinyxml.cpp */; };
+		959BC6B9226F181000322322 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F221FDE8FC005272A9 /* tinyxmlerror.cpp */; };
+		959BC6BA226F181000322322 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2F121FDE8FC005272A9 /* tinyxmlparser.cpp */; };
+		959BC6BB226F181000322322 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9547A2EE21FDE88B005272A9 /* tinystr.cpp */; };
 		959C18CD220DFE7D00053ED0 /* libsarclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C4717C21F50DA40019FECF /* libsarclib.a */; };
 		959C18CF220DFEAD00053ED0 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 959C18CE220DFEAD00053ED0 /* libexpat.tbd */; };
 		959C18D0220DFEB600053ED0 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9547A30321FDF4D1005272A9 /* libreadline.tbd */; };
@@ -277,6 +302,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		9547A30521FE06AE005272A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95C4717B21F50DA40019FECF;
+			remoteInfo = sarclib;
+		};
+		959BC6A8226F158E00322322 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9500CAD221F30D0600505875 /* Project object */;
 			proxyType = 1;
@@ -478,6 +510,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		959BC68B226E331A00322322 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		959C195A220E305400053ED0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -625,6 +666,20 @@
 		9547A33A21FE0A05005272A9 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../../../../usr/local/Cellar/boost/1.68.0_1/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		9547A33D21FE0A2D005272A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../../../../usr/local/Cellar/gmp/6.1.2_2/lib/libgmp.a; sourceTree = "<group>"; };
 		9547A34021FE0F8C005272A9 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
+		959BC68D226E331A00322322 /* fastKDTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fastKDTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		959BC694226E336900322322 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../src/fastKdTree/main.cpp; sourceTree = "<group>"; };
+		959BC695226E336900322322 /* clipToAABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipToAABB.hpp; path = ../../../src/fastKdTree/clipToAABB.hpp; sourceTree = "<group>"; };
+		959BC696226E336A00322322 /* buildTree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buildTree.hpp; path = ../../../src/fastKdTree/buildTree.hpp; sourceTree = "<group>"; };
+		959BC697226E336A00322322 /* AABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AABB.hpp; path = ../../../src/fastKdTree/AABB.hpp; sourceTree = "<group>"; };
+		959BC698226E336A00322322 /* splitCandidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = splitCandidate.cpp; path = ../../../src/fastKdTree/splitCandidate.cpp; sourceTree = "<group>"; };
+		959BC699226E336A00322322 /* rayTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rayTrace.cpp; path = ../../../src/fastKdTree/rayTrace.cpp; sourceTree = "<group>"; };
+		959BC69A226E336A00322322 /* kdTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kdTreeNode.cpp; path = ../../../src/fastKdTree/kdTreeNode.cpp; sourceTree = "<group>"; };
+		959BC69B226E336A00322322 /* clipToAABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipToAABB.cpp; path = ../../../src/fastKdTree/clipToAABB.cpp; sourceTree = "<group>"; };
+		959BC69C226E336A00322322 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AABB.cpp; path = ../../../src/fastKdTree/AABB.cpp; sourceTree = "<group>"; };
+		959BC69D226E336A00322322 /* buildTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildTree.cpp; path = ../../../src/fastKdTree/buildTree.cpp; sourceTree = "<group>"; };
+		959BC69E226E336A00322322 /* splitCandidate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = splitCandidate.hpp; path = ../../../src/fastKdTree/splitCandidate.hpp; sourceTree = "<group>"; };
+		959BC69F226E336A00322322 /* kdTreeNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = kdTreeNode.hpp; path = ../../../src/fastKdTree/kdTreeNode.hpp; sourceTree = "<group>"; };
+		959BC6A0226E336A00322322 /* rayTrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = rayTrace.hpp; path = ../../../src/fastKdTree/rayTrace.hpp; sourceTree = "<group>"; };
 		959C18CE220DFEAD00053ED0 /* libexpat.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libexpat.tbd; path = usr/lib/libexpat.tbd; sourceTree = SDKROOT; };
 		959C18D5220E055600053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
 		959C18DE220E130E00053ED0 /* GenGitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GenGitVersion.sh; sourceTree = "<group>"; };
@@ -829,6 +884,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		959BC68A226E331A00322322 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				959BC6AF226F162F00322322 /* libexpat.tbd in Frameworks */,
+				959BC6AE226F162600322322 /* libreadline.tbd in Frameworks */,
+				959BC6AC226F161E00322322 /* libfftw3f_threads.a in Frameworks */,
+				959BC6AD226F161E00322322 /* libfftw3f.a in Frameworks */,
+				959BC6AA226F15A000322322 /* libsarclib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		959C1959220E305400053ED0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -860,6 +927,7 @@
 				9500CB8421F3135900505875 /* SARTrace */,
 				9500CB9A21F313C500505875 /* tdpocl */,
 				959C195D220E305400053ED0 /* all */,
+				959BC68E226E331A00322322 /* fastKDTree */,
 				9500CADB21F30D0600505875 /* Products */,
 				95C4722721F8A5640019FECF /* Frameworks */,
 			);
@@ -878,6 +946,7 @@
 				9500CB9921F313C500505875 /* tdpocl */,
 				95C4717C21F50DA40019FECF /* libsarclib.a */,
 				959C195C220E305400053ED0 /* all */,
+				959BC68D226E331A00322322 /* fastKDTree */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1079,6 +1148,26 @@
 				9547A2EE21FDE88B005272A9 /* tinystr.cpp */,
 			);
 			name = Common;
+			sourceTree = "<group>";
+		};
+		959BC68E226E331A00322322 /* fastKDTree */ = {
+			isa = PBXGroup;
+			children = (
+				959BC69C226E336A00322322 /* AABB.cpp */,
+				959BC697226E336A00322322 /* AABB.hpp */,
+				959BC69D226E336A00322322 /* buildTree.cpp */,
+				959BC696226E336A00322322 /* buildTree.hpp */,
+				959BC69B226E336A00322322 /* clipToAABB.cpp */,
+				959BC695226E336900322322 /* clipToAABB.hpp */,
+				959BC69A226E336A00322322 /* kdTreeNode.cpp */,
+				959BC69F226E336A00322322 /* kdTreeNode.hpp */,
+				959BC694226E336900322322 /* main.cpp */,
+				959BC699226E336A00322322 /* rayTrace.cpp */,
+				959BC6A0226E336A00322322 /* rayTrace.hpp */,
+				959BC698226E336A00322322 /* splitCandidate.cpp */,
+				959BC69E226E336A00322322 /* splitCandidate.hpp */,
+			);
+			path = fastKDTree;
 			sourceTree = "<group>";
 		};
 		959C195D220E305400053ED0 /* all */ = {
@@ -1409,6 +1498,24 @@
 			productReference = 9500CB9921F313C500505875 /* tdpocl */;
 			productType = "com.apple.product-type.tool";
 		};
+		959BC68C226E331A00322322 /* fastKDTree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 959BC693226E331A00322322 /* Build configuration list for PBXNativeTarget "fastKDTree" */;
+			buildPhases = (
+				959BC689226E331A00322322 /* Sources */,
+				959BC68A226E331A00322322 /* Frameworks */,
+				959BC68B226E331A00322322 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				959BC6A9226F158E00322322 /* PBXTargetDependency */,
+			);
+			name = fastKDTree;
+			productName = fastKDTree;
+			productReference = 959BC68D226E331A00322322 /* fastKDTree */;
+			productType = "com.apple.product-type.tool";
+		};
 		959C195B220E305400053ED0 /* all */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 959C1960220E305400053ED0 /* Build configuration list for PBXNativeTarget "all" */;
@@ -1485,6 +1592,9 @@
 					9500CB9821F313C500505875 = {
 						CreatedOnToolsVersion = 10.1;
 					};
+					959BC68C226E331A00322322 = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
 					959C195B220E305400053ED0 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -1499,6 +1609,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 9500CAD121F30D0600505875;
 			productRefGroup = 9500CADB21F30D0600505875 /* Products */;
@@ -1515,6 +1626,7 @@
 				9500CB8221F3135800505875 /* SARTrace */,
 				9500CB9821F313C500505875 /* tdpocl */,
 				959C195B220E305400053ED0 /* all */,
+				959BC68C226E331A00322322 /* fastKDTree */,
 			);
 		};
 /* End PBXProject section */
@@ -1846,6 +1958,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		959BC689226E331A00322322 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				959BC6B8226F181000322322 /* tinyxml.cpp in Sources */,
+				959BC6B9226F181000322322 /* tinyxmlerror.cpp in Sources */,
+				959BC6BA226F181000322322 /* tinyxmlparser.cpp in Sources */,
+				959BC6BB226F181000322322 /* tinystr.cpp in Sources */,
+				959BC6B7226F17F600322322 /* colladainterface.cpp in Sources */,
+				959BC6B6226F178700322322 /* readMaterialFile.cpp in Sources */,
+				959BC6B5226F174F00322322 /* pmath_rng.c in Sources */,
+				959BC6B4226F173F00322322 /* ranf.c in Sources */,
+				959BC6B2226F173000322322 /* boxMullerRandom.c in Sources */,
+				959BC6B3226F173000322322 /* matrixMultiplication.c in Sources */,
+				959BC6B1226F16F000322322 /* accelerateTriangles.cpp in Sources */,
+				959BC6B0226F16CE00322322 /* buildRopesAndBoxes.cpp in Sources */,
+				959BC6AB226F15C100322322 /* TriangleMesh.cpp in Sources */,
+				959BC6A4226E336A00322322 /* kdTreeNode.cpp in Sources */,
+				959BC6A7226E336A00322322 /* buildTree.cpp in Sources */,
+				959BC6A3226E336A00322322 /* rayTrace.cpp in Sources */,
+				959BC6A2226E336A00322322 /* splitCandidate.cpp in Sources */,
+				959BC6A6226E336A00322322 /* AABB.cpp in Sources */,
+				959BC6A5226E336A00322322 /* clipToAABB.cpp in Sources */,
+				959BC6A1226E336A00322322 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		959C1958220E305400053ED0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1912,6 +2051,11 @@
 			isa = PBXTargetDependency;
 			target = 95C4717B21F50DA40019FECF /* sarclib */;
 			targetProxy = 9547A30521FE06AE005272A9 /* PBXContainerItemProxy */;
+		};
+		959BC6A9226F158E00322322 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95C4717B21F50DA40019FECF /* sarclib */;
+			targetProxy = 959BC6A8226F158E00322322 /* PBXContainerItemProxy */;
 		};
 		959C18CC220DFE6200053ED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2359,6 +2503,34 @@
 			};
 			name = Release;
 		};
+		959BC691226E331A00322322 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		959BC692226E331A00322322 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fftw/3.3.8/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		959C1961220E305400053ED0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2479,6 +2651,15 @@
 			buildConfigurations = (
 				9500CB9E21F313C500505875 /* Debug */,
 				9500CB9F21F313C500505875 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		959BC693226E331A00322322 /* Build configuration list for PBXNativeTarget "fastKDTree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				959BC691226E331A00322322 /* Debug */,
+				959BC692226E331A00322322 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
