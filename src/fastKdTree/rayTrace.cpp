@@ -115,7 +115,7 @@ void stacklessTraverse(const int ind,           // Index of ray to trace in rays
                        ATS * accelTriangles,    // An array of triangles in accelerated format
                        const int nRays,         // Number of rays - size of rays array and hits array
                        Ray * rays,              // array of rays to process.
-                       Hit *hits                // Location of ray hits
+                       Hit *hits                // Location of ray hits - Output
 ){
     int dimToUse ;
     int cnt, i ;

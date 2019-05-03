@@ -61,6 +61,8 @@ void * devPulseBlock ( void * threadArg ) {
     int reportN = 10 ;
     int tid, nThreads, nPulses, startPulse;
     int pol, rayGenMethod;
+    bool monostatic = true;
+    bool calcShadowRays = true ;
     
     double gainRx, PowPerRay, derampRange, derampPhase, pCentDone, sexToGo ;
     double rangeLabel, phasecorr,resolution,sampSpacing=0, *ikernel=NULL, bandwidth ;
@@ -172,7 +174,7 @@ void * devPulseBlock ( void * threadArg ) {
                     strftime(ct, 1000, "%d/%b/%y %H:%M", p);
                     printf(" ETC %s (in %2.0dh:%2.0dm:%2.0ds) ",ct,hrs,min,sec);
                 }else{
-                    printf("  Calculating ETC...");
+                    printf(" Calculating ETC...");
                 }
             }
         }
@@ -183,6 +185,7 @@ void * devPulseBlock ( void * threadArg ) {
         //
         TxPos = hdr->pulses[pulseIndex].sat_ps_tx ;
         RxPos = hdr->pulses[pulseIndex].sat_ps_rx ;
+        if( (TxPos.x == RxPos.x) && (TxPos.y == RxPos.y) && (TxPos.z == RxPos.z) )  monostatic = true;
         TriangleMesh newMesh ;
         if(dynamicScene){
             // Construct a new kdTree for this pulse taking into account any movers
@@ -308,6 +311,16 @@ void * devPulseBlock ( void * threadArg ) {
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
             
+            // If this pulse is monostatic then the first bounce ray intersections by definition will be
+            // visible to the receiver and so no shadowrays are needed to be calculated
+            // This is quite a saving
+            //
+            if(nbounce == 0 && monostatic){
+                calcShadowRays = false ;
+            }else{
+                calcShadowRays = true ;
+            }
+            
             // Malloc space for hits for this bounce
             //
             hitArray = (Hit *)sp_malloc(nRays * sizeof(Hit));
@@ -409,7 +422,7 @@ void * devPulseBlock ( void * threadArg ) {
             //
 //            oclKdTreeHits(context, commandQ, stackTraverseKL, nRays, stackTraverseLWS, dTriangles , dKdTree, dtriListData, dtriListPtrs, SceneBoundingBox, shadowRays, shadowHits);
             startTimer(&shootRayTimer, &status);
-            shootRay(tree, accelTriangles, nRays, shadowRays, shadowHits) ;
+            if(calcShadowRays)shootRay(tree, accelTriangles, nRays, shadowRays, shadowHits) ;
             endTimer(&shootRayTimer, &status);
             shootRaysDur += timeElapsedInMilliseconds(&shootRayTimer, &status);
             
@@ -434,7 +447,7 @@ void * devPulseBlock ( void * threadArg ) {
             }
             for(int i= 0 ; i<nRays; i++){
                 hitsOnEachTri[ hitArray[i].trinum ]++ ;
-                if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
+                if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                     nShadows++ ;
                 }
             }
@@ -455,7 +468,7 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
                     //
-                    if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
+                    if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                         newRays[iray] = shadowRays[i] ;
                         newHits[iray] = hitArray[i] ;
                         LRays[iray]   = rayArray[i] ;

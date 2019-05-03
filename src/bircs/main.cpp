@@ -425,7 +425,6 @@ int main (int argc, char **argv){
 
     fclose(fp);
     
-    double k = 2 * SIPC_pi / lambda ;
     double lambda_squared = lambda * lambda ;
     printf("Maximum RCS was %f dB m^2 (%f m^2) at az:%fdeg, incidence: %fdeg\n",maxR,pow(10.0,maxR/10.0),RAD2DEG(maxphi), RAD2DEG(maxtheta) );
     printf("    1m^2 flat plate               : %f (%f dB m^2)\n",4*SIPC_pi / lambda_squared,10*log10(4*SIPC_pi / lambda_squared)); // 8620.677
@@ -438,7 +437,18 @@ int main (int argc, char **argv){
     printf("\n--------------------------------------------------------------------\n");
 
 
-    printf("BIRCS completed in %f secs \n",timeElapsedInSeconds(&runTimer, &status));
+    double runtime = timeElapsedInSeconds(&runTimer, &status);
+    printf("BIRCS completed in      : %4.4f secs \n",runtime);
+    printf("Measurements per second : %f \n", runtime / (nphis * nthetas)) ;
+    if(rayGenMethod == 1){
+        printf("Total Rays cast         : %3.2f million \n", (double)((int)baseMesh.triangles.size() * nphis * nthetas) / 1000000.0);
+        printf("Rays per second         : %4.2e \n", ((int)baseMesh.triangles.size() * nphis * nthetas) / runtime );
+    }else{
+        printf("Total Rays cast         : %3.2f million \n", (double)(nAzBeam * nElBeam) * nphis * nthetas / 1000000.0);
+        printf("Rays per second         : %4.2e \n", ((nAzBeam * nElBeam) * nphis * nthetas) / runtime );
+    }
+    printf("\n--------------------------------------------------------------------\n");
+
     im_close_lib(&status);
     free ( threadDataArray );
     free ( threads ) ;
