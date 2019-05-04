@@ -435,19 +435,26 @@ void * devPulseBlock ( void * threadArg ) {
             
             SPVector normal;
             for(int i=0; i<nRays; i++){
-                normal = newMesh.triangles[hitArray[i].trinum].N.asSPVector() ;
                 // A ray might be on the plane of a triangle having arrived from the side obscured from the receiver
                 // (infinitely thin triangle plane). To make sure rays do not pass through a triangle, make sure the normal
                 // is pointing in the same direction as the reflected ray
                 //
+                normal = newMesh.triangles[hitArray[i].trinum].N.asSPVector() ;
                 if( VECT_DOT(normal, reflectedRays[i].dir) < 0){
                     VECT_MINUS(normal, normal);
                 }
+                // shadowRays propagate from RxPoint so when facing[i] is negative then hitpoint is visible to receiver
+                //
                 facing[i] =VECT_DOT(normal, shadowRays[i].dir);
-            }
-            for(int i= 0 ; i<nRays; i++){
+                // Keep a count of the number of times a triangle is hit as we calculate the facet RCS per intersection
+                //
                 hitsOnEachTri[ hitArray[i].trinum ]++ ;
-                if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
+                // If the shadow ray intersects a facet further away that the hit point then cull it
+                //
+                if ( shadowHits[i].dist > ranges[i]) shadowHits[i].trinum = NOINTERSECTION ;
+                // Now count the number of shadow rays so that we can resize the arrays
+                //
+                if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] < -0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                     nShadows++ ;
                 }
             }
@@ -468,7 +475,7 @@ void * devPulseBlock ( void * threadArg ) {
                     
                     // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
                     //
-                    if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
+                    if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] < -0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                         newRays[iray] = shadowRays[i] ;
                         newHits[iray] = hitArray[i] ;
                         LRays[iray]   = rayArray[i] ;

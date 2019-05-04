@@ -58,7 +58,7 @@ void cpuPOField(TriangleMesh       *mesh,
                 Hit                 *hits,              // Array of hit locations to x-ref with triangles for material props
                 int                 nRays,              // The number of reflected rays being considered
                 Ray                 *rays,              // unit vector rays arriving at hitpoint
-                Ray                 *shadowRays,        // Array of reflected rays - used for their origin as its the reflection point to Rx
+                Ray                 *shadowRays,        // Unused - can be removed
                 SPVector            RxPos,              // Location of Receiver in x,y,z
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
