@@ -34,6 +34,7 @@
 
 #include "SARTrace.hpp"
 #include "colourCodes.h"
+#include "readMaterialFile.hpp"
 
 int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int *pulseToTrace, int *nRaysX, int *nRaysY,  SPStatus *status){
     
@@ -82,8 +83,15 @@ int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int 
                                (char *)"The name of a directory / folder to place bounce ray intersection information. Two sets of files are created in this folder, both in ',ply' format. The first contains the locations of each ray intersection with different files showing the locations after each bounce. The second contains the actual triangles that are hit on each bounce. This is useful as the Physical Optics properties of each triangle are calculated for the whole triangle and so only one hit per triangle is required. You can therefore use this to determine how many rays are required to fully illuminate the scene.",
                                prompt);
         if( access( *outDir, R_OK ) == -1 ){
-            printf(RED "Cannot access file %s\n" RESETCOLOR,*outDir);
-            fileStat.status = BAD_FILE ;
+            printf(RED "Cannot access directory %s ! \n" RESETCOLOR,*outDir);
+            printf(GREEN "I'll create it for you..." RESETCOLOR);
+            const int dir_err = mkdir(*outDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            if (-1 == dir_err){
+                printf(RED "Error creating directory! \n" RESETCOLOR);
+                fileStat.status = BAD_FILE ;
+            }else{
+                printf(GREEN "Directory successfully created !\n" RESETCOLOR);
+            }
         }
     } while(fileStat.status != NO_ERROR);
     
@@ -96,6 +104,13 @@ int getSARTraceUserInput(char **inCPHDFile, char **meshFile, char **outDir, int 
                         (char *)"The number of rays to cast in the Y or vertical direction. A radar beam is simulated by generating a 2D gaussian random distribution of rays that illuminate the entire scene. Larger scenes therefore require more rays to fully sample the scene", *nRaysY);
     
     free(prompt);
+    
+    // Read in the material properties file if required
+    //
+    char *matfile = input_string((char *)"Input materialfile filename", (char *)"materialfilename",
+                                 (char *)"The name of a 'materialfile' or 'none' (defaults used)",
+                                 (char *) MATERIALPROPS);
+    initialiseMaterials(matfile, true);
     
     return (status->status) ;
     

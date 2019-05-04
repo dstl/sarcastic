@@ -50,7 +50,7 @@ void buildShadowRays(int                 nRays,              // The number of re
         origin              = reflectedRays[ind].org ;
         rxp                 = RxPos ;
         
-        VECT_SUB(rxp, origin, dir);
+        VECT_SUB(origin, rxp, dir);     // Cast shadow rays from RX point to hitpoint
         
         rng                 = VECT_MOD(dir);
         unitvect_tmp        = 1.0 / rng;
@@ -58,7 +58,7 @@ void buildShadowRays(int                 nRays,              // The number of re
         VECT_SCMULT(dir, unitvect_tmp, dir) ;
         
         ranges[ind]         = rng ;
-        shadowRays[ind].org = origin ;
+        shadowRays[ind].org = rxp ;
         shadowRays[ind].dir = dir ;
         shadowRays[ind].pow = reflectedRays[ind].pow ;
         shadowRays[ind].len = reflectedRays[ind].len ;

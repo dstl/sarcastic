@@ -34,12 +34,31 @@
 
 #include "cpuPOField.hpp"
 
+// Function to convert a hitpoint in barycentric u,v coordinates to a 3D point
+//
+SPVector hpAsVec(TriangleMesh *mesh, Hit hp){
+    int tri_t = hp.trinum ;
+    float u, v;
+    SPVector A, B, C, ans ;
+    
+    A = mesh->vertices[mesh->triangles[tri_t].a].asSPVector() ;
+    B = mesh->vertices[mesh->triangles[tri_t].b].asSPVector() ;
+    C = mesh->vertices[mesh->triangles[tri_t].c].asSPVector() ;
+    u = hp.u ;
+    v = hp.v ;
+
+    ans.x = (B.x - A.x)*u + (C.x - A.x)*v + A.x ;
+    ans.y = (B.y - A.y)*u + (C.y - A.y)*v + A.y ;
+    ans.z = (B.z - A.z)*u + (C.z - A.z)*v + A.z ;
+
+    return (ans) ;
+}
 
 void cpuPOField(TriangleMesh       *mesh,
                 Hit                 *hits,              // Array of hit locations to x-ref with triangles for material props
                 int                 nRays,              // The number of reflected rays being considered
                 Ray                 *rays,              // unit vector rays arriving at hitpoint
-                Ray                 *shadowRays,        // Array of reflected rays - used for their origin as its the reflection point to Rx
+                Ray                 *shadowRays,        // Unused - can be removed
                 SPVector            RxPos,              // Location of Receiver in x,y,z
                 double              k,                  // Wavenumber constant k = 2 * PI / Lambda
                 double              *ranges,            // Range to receiver for each shadow ray (precalculated in shadowRay generation)
@@ -59,7 +78,7 @@ void cpuPOField(TriangleMesh       *mesh,
     int *hitsOnEachTri  = (int *)sp_calloc(mesh->triangles.size(), sizeof(int));
     
     for(int i=0; i<nRays; i++){
-        hitpoints[i].hit = shadowRays[i].org ;
+        hitpoints[i].hit = hpAsVec(mesh, hits[i]);
         hitpoints[i].tri = hits[i].trinum ;
         hitsOnEachTri[hitpoints[i].tri]++;
         rays[i].pow = rays[i].pow; // (4 * SIPC_pi * hits[i].dist * hits[i].dist) ;

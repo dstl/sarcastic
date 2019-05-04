@@ -60,6 +60,8 @@ void * devPulseBlock ( void * threadArg ) {
 
     int nThreads, nPulses, startPulse;
     int hrs,min,sec;
+    bool monostatic = true;
+    bool calcShadowRays = true ;
     
     double gainRx, PowPerRay, derampRange ;
     double *ranges, *newranges, interogRad, k ;
@@ -141,7 +143,7 @@ void * devPulseBlock ( void * threadArg ) {
                     strftime(ct, 1000, "%d/%b/%y %H:%M", p);
                     printf(" ETC %s (in %2.0dh:%2.0dm:%2.0ds) ",ct,hrs,min,sec);
                 }else{
-                    printf("  Calculating ETC...");
+                    printf(" Calculating ETC...");
                 }
             }
         }
@@ -149,6 +151,7 @@ void * devPulseBlock ( void * threadArg ) {
         //
         TxPos = td->TxPositions[pulseIndex] ;
         RxPos = td->RxPositions[pulseIndex] ;
+        if( (TxPos.x == RxPos.x) && (TxPos.y == RxPos.y) && (TxPos.z == RxPos.z) )  monostatic = true;
         double phi = atan2(RxPos.y,RxPos.x);
         double theta = atan2(sqrt(RxPos.x*RxPos.x+RxPos.y*RxPos.y),RxPos.z);
         
@@ -174,6 +177,16 @@ void * devPulseBlock ( void * threadArg ) {
         rnp = (rangeAndPower *)sp_calloc(maxRaysPerBounce*MAXBOUNCES, sizeof(rangeAndPower));
         
         while ( nbounce < MAXBOUNCES &&  nRays != 0){
+            
+            // If this pulse is monostatic then the first bounce ray intersections by definition will be
+            // visible to the receiver and so no shadowrays are needed to be calculated
+            // This is quite a saving
+            //
+            if(nbounce == 0 && monostatic){
+                calcShadowRays = false ;
+            }else{
+                calcShadowRays = true ;
+            }
             
             // Malloc space for hits for this bounce
             //
@@ -254,7 +267,7 @@ void * devPulseBlock ( void * threadArg ) {
             
             // Work out which rays have a path back to receiver using stackless traverse kernel
             //
-            shootRay(tree, accelTriangles, nRays, shadowRays, shadowHits) ;
+            if(calcShadowRays)shootRay(tree, accelTriangles, nRays, shadowRays, shadowHits) ;
             
             // Shrink the shadowRays to only include those that made it back to the sensor
             // in order to calculate power at sensor we also need the Illumination or LRays
@@ -265,19 +278,26 @@ void * devPulseBlock ( void * threadArg ) {
             
             SPVector normal;
             for(int i=0; i<nRays; i++){
-                normal = newMesh.triangles[hitArray[i].trinum].N.asSPVector() ;
                 // A ray might be on the plane of a triangle having arrived from the side obscured from the receiver
                 // (infinitely thin triangle plane). To make sure rays do not pass through a triangle, make sure the normal
                 // is pointing in the same direction as the reflected ray
                 //
+                normal = newMesh.triangles[hitArray[i].trinum].N.asSPVector() ;
                 if( VECT_DOT(normal, reflectedRays[i].dir) < 0){
                     VECT_MINUS(normal, normal);
                 }
+                // shadowRays propagate from RxPoint so when facing[i] is negative then hitpoint is visible to receiver
+                //
                 facing[i] =VECT_DOT(normal, shadowRays[i].dir);
-            }
-            for(int i= 0 ; i<nRays; i++){
+                // Keep a count of the number of times a triangle is hit as we calculate the facet RCS per intersection
+                //
                 hitsOnEachTri[ hitArray[i].trinum ]++ ;
-                if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
+                // If the shadow ray intersects a facet further away that the hit point then cull it
+                //
+                if ( shadowHits[i].dist > ranges[i]) shadowHits[i].trinum = NOINTERSECTION ;
+                // Now count the number of shadow rays so that we can resize the arrays
+                //
+                if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] < -0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                     nShadows++ ;
                 }
             }
@@ -297,7 +317,7 @@ void * devPulseBlock ( void * threadArg ) {
                     hitsOnEachTri[ hitArray[i].trinum ]++ ;
                     // Remove any shadowRays that are from a triangle whose normal is not in the same direction as the Receiver
                     //
-                    if ( (shadowHits[i].trinum == NOINTERSECTION) && (facing[i] > 0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1) ){
+                    if ( ((shadowHits[i].trinum == NOINTERSECTION) && (facing[i] < -0.1) && (hitsOnEachTri[hitArray[i].trinum] <= 1)) || !calcShadowRays ){
                         newRays[iray] = shadowRays[i] ;
                         newHits[iray] = hitArray[i] ;
                         LRays[iray]   = rayArray[i] ;
@@ -402,6 +422,8 @@ void * devPulseBlock ( void * threadArg ) {
     
     // return to parent thread
     //
+    endTimer(&threadTimer, &status) ;
+    //.printf("Thread %d has completed in %f secs \n",tid, timeElapsedInSeconds(&threadTimer, &status));
     pthread_exit(NULL) ;
 }
 
