@@ -124,7 +124,7 @@ void getUserInput(int *USEGPU,              // Whether to use the GPU if its ava
     
     *cphdFilename = input_string("CPHD Filename", "InputFName",
                                  "Name of a CPHD file to process into an image",
-                                 "/local_storage/DGM/first.cph");
+                                 "cphdFile.cph");
     // Check the integrity of the CPHD file
     //
     im_init(&im, status);
