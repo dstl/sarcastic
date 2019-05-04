@@ -150,9 +150,7 @@ int getUserInput(CPHDHeader *hdr, TriangleMesh *baseMesh, TriangleMesh *moverMes
         printf("Finest azimuth resolution   : %7.2f m\n",azResolution) ;
         printf("Min Az image pixels         : %5d pix \n",(int)(sceneAz / azResolution));
         printf("Max undersample for image   : %5dx\n",(int)maxAzUndersamp);
-        double maxPulseUndersampling = (int)floor(PRF / (BDop)) ;
-
-        *pulseUndersampleFactor = (int)maxPulseUndersampling ;
+        *pulseUndersampleFactor = 1 ;
         do {
             *pulseUndersampleFactor = input_int("Pulse undersampling factor", (char *)"pulseUndersampFact",
                                                 (char *)"Reduces the number of azimuth pulses that are processed. This effectively reduces the collection PRF. If the simulated scene size is small then the azimuth ambiguities will not fold in far enough to affect the simulated scene.",

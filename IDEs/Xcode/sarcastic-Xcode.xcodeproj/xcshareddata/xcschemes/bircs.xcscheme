@@ -64,7 +64,7 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-n -r /local_storage/DGM/ISS/.bircsrc"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
